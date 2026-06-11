@@ -1,0 +1,165 @@
+/* Projektentwicklungs-Konfigurator – Layout Option A (3 Spalten) mit B-Struktur.
+   Zielgeräte: Notebook bis großer Bildschirm, Tablet ok, keine Smartphone-Optimierung. */
+
+:root {
+  --bg: #f3f5f7;
+  --karte: #ffffff;
+  --rand: #d8dee5;
+  --text: #1f2933;
+  --muted: #6b7280;
+  --akzent: #155e90;
+  --akzent-hell: #e8f1f8;
+  --warn-bg: #fdf3e3;
+  --warn-rand: #e3b35c;
+  --ok-bg: #e9f6ec;
+  --ok-rand: #5fae6e;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* Kopfzeile */
+.topbar {
+  display: flex; align-items: center; gap: 24px;
+  padding: 10px 20px; background: #15293b; color: #fff;
+  position: sticky; top: 0; z-index: 10;
+}
+.brand { display: flex; flex-direction: column; gap: 2px; }
+.badge.demo {
+  font-size: 11px; color: #ffd966;
+}
+.tabs { display: flex; gap: 4px; flex: 1; }
+.tab {
+  background: transparent; color: #cfd8e3; border: none;
+  padding: 8px 14px; cursor: pointer; border-radius: 6px; font-size: 13px;
+}
+.tab:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.tab.aktiv { background: var(--akzent); color: #fff; font-weight: 600; }
+.kopf-status { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.kopf-netto { font-weight: 700; margin-left: 8px; }
+
+/* Ampeln */
+.ampel { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; }
+.ampel.gross { width: 26px; height: 26px; flex: none; }
+.ampel.klein { width: 11px; height: 11px; margin-right: 4px; }
+
+/* Layout */
+.drei-spalten {
+  display: grid; grid-template-columns: 270px 1fr 360px;
+  gap: 16px; padding: 16px 20px; flex: 1; align-items: start;
+}
+.seite { padding: 16px 20px; flex: 1; }
+.karten-reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+
+.karte {
+  background: var(--karte); border: 1px solid var(--rand); border-radius: 10px;
+  padding: 14px 16px; margin-bottom: 16px;
+}
+.karte h2 { margin: 0 0 12px; font-size: 17px; }
+.karte h3 { margin: 0 0 10px; font-size: 14px; }
+.karte h4 { margin: 14px 0 6px; font-size: 13px; color: var(--muted); }
+
+/* Sektionen links */
+.sektion {
+  display: flex; justify-content: space-between; width: 100%;
+  background: transparent; border: none; border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; font-size: 13px; text-align: left; color: var(--text);
+}
+.sektion:hover { background: var(--akzent-hell); }
+.sektion.aktiv { background: var(--akzent); color: #fff; font-weight: 600; }
+.fortschritt { color: inherit; opacity: 0.75; font-variant-numeric: tabular-nums; }
+
+/* Fragen */
+.frage { margin-bottom: 12px; }
+.frage label { display: flex; flex-direction: column; gap: 4px; }
+.frage-label { font-weight: 600; }
+.einheit { color: var(--muted); font-weight: 400; }
+.tooltip { cursor: help; color: var(--akzent); }
+input, select {
+  padding: 7px 9px; border: 1px solid var(--rand); border-radius: 6px;
+  font: inherit; background: #fff; max-width: 420px;
+}
+input:focus, select:focus { outline: 2px solid var(--akzent); outline-offset: 0; }
+.inline-zahl { max-width: 110px; padding: 3px 6px; text-align: right; }
+button {
+  padding: 7px 12px; border: 1px solid var(--rand); border-radius: 6px;
+  background: #fff; cursor: pointer; font: inherit;
+}
+button:hover { border-color: var(--akzent); color: var(--akzent); }
+button.primaer { background: var(--akzent); border-color: var(--akzent); color: #fff; font-weight: 600; }
+button.primaer:hover { opacity: 0.92; color: #fff; }
+button:disabled { opacity: 0.5; cursor: default; }
+
+/* Live-Panel */
+.live { position: sticky; top: 64px; }
+.status-zeile { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.dq-label { font-size: 13px; margin-bottom: 4px; }
+.dq-balken { height: 8px; background: #e5e9ee; border-radius: 4px; overflow: hidden; }
+.dq-balken div { height: 100%; background: var(--akzent); }
+.mini-fakten { margin: 12px 0; display: grid; gap: 6px; }
+.mini-fakten div { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.mini-fakten span:first-child { color: var(--muted); }
+
+/* Tabellen */
+table { border-collapse: collapse; width: 100%; }
+table.stack td, table.fakten td { padding: 4px 6px; border-bottom: 1px solid #eef1f4; font-size: 13px; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+tr.summe td { font-weight: 700; border-top: 2px solid var(--rand); }
+table.lv th {
+  text-align: left; font-size: 12px; color: var(--muted);
+  border-bottom: 2px solid var(--rand); padding: 6px;
+}
+table.lv td { padding: 6px; border-bottom: 1px solid #eef1f4; vertical-align: top; font-size: 13px; }
+tr.gruppe td { background: var(--akzent-hell); font-weight: 700; }
+tr.gewaehlt td { background: #f5fbf5; }
+tr.diff td { background: #fdecea; font-weight: 600; }
+td.code { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+details summary { cursor: pointer; }
+.begruendung { color: var(--muted); font-size: 12px; padding: 6px 0 2px 16px; }
+
+/* Hinweise */
+.hinweis { color: var(--muted); font-size: 12px; }
+.hinweis a { color: var(--akzent); cursor: pointer; text-decoration: underline; }
+.warnbox {
+  background: var(--warn-bg); border: 1px solid var(--warn-rand);
+  border-radius: 6px; padding: 8px 10px; font-size: 13px;
+}
+.okbox {
+  background: var(--ok-bg); border: 1px solid var(--ok-rand);
+  border-radius: 6px; padding: 8px 10px; font-size: 13px;
+}
+.warnliste { margin: 6px 0; padding-left: 18px; font-size: 13px; }
+.warnliste li { margin-bottom: 4px; }
+.checkliste { margin: 6px 0; padding-left: 4px; list-style: none; font-size: 13px; }
+.checkliste li { margin-bottom: 5px; }
+.kriterien { margin: 6px 0; padding-left: 4px; list-style: none; font-size: 13px; }
+.kriterien li { margin-bottom: 4px; }
+.kriterien .ok { color: #1a7f37; }
+.kriterien .fehlt { color: #c0392b; }
+
+.tabs-sekundaer { display: flex; gap: 6px; margin-bottom: 14px; }
+.tabs-sekundaer .tab { background: #fff; color: var(--text); border: 1px solid var(--rand); }
+.tabs-sekundaer .tab.aktiv { background: var(--akzent); color: #fff; border-color: var(--akzent); }
+
+.druckkopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.zeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.zeile input { flex: 1; min-width: 220px; }
+
+.fussnote { padding: 10px 20px 18px; color: var(--muted); font-size: 12px; }
+
+/* Druck (Handover-Export via window.print) */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; font-size: 12px; }
+  .karte { border: none; padding: 0 0 12px; margin-bottom: 8px; break-inside: avoid; }
+  .seite { padding: 0; }
+  .karten-reihe { display: block; }
+}
