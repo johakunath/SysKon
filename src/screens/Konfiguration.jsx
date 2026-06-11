@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { SEKTIONEN } from '../data/fragen.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
-import { euro, num, AMPEL_FARBE, VARIANTEN_NAME } from './format.js'
+import { euro, num, VARIANTEN_NAME } from './format.js'
 
 function Frage({ frage, wert, onChange, gesperrt }) {
   return (
@@ -118,7 +118,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
         <div className="karte live">
           <h3>Live-Ergebnis</h3>
           <div className="status-zeile">
-            <span className="ampel gross" style={{ background: AMPEL_FARBE[ergebnis.status] }} />
+            <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
             <div>
               <strong>{STATUS_LABEL[ergebnis.status]}</strong>
               <div className="hinweis">{ergebnis.statusQuellen.length
@@ -139,7 +139,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             <div>
               <span>Schall am Immissionsort</span>
               <strong>
-                <span className="ampel klein" style={{ background: AMPEL_FARBE[d.schall_ampel_aktiv] }} />
+                <span className={`ampel klein ${d.schall_ampel_aktiv ?? 'unbekannt'}`} />
                 {d.schall_lp_aktiv != null ? `${num(d.schall_lp_aktiv, 1)} dB(A) / Grenze ${d.schall_grenzwert}` : 'unvollständig'}
               </strong>
             </div>

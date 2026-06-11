@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { LV_GRUPPEN } from '../data/katalog.js'
 import { STATUS_LABEL } from '../logic/engine.js'
-import { euro, num, prozent, AMPEL_FARBE, VARIANTEN_NAME } from './format.js'
+import { euro, num, prozent, VARIANTEN_NAME } from './format.js'
 
 export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
   const [tab, setTab] = useState('konfiguration')
@@ -32,7 +32,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                 <tr><td>WP-Deckungsanteil</td><td>{prozent(annahmen.wp_deckungsanteil)} der Wärmemenge, Rest Gas-Bestandskessel</td></tr>
                 <tr><td>Aufstellvariante</td><td><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong></td></tr>
                 <tr><td>Status</td><td>
-                  <span className="ampel klein" style={{ background: AMPEL_FARBE[ergebnis.status] }} />
+                  <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
                   <strong> {STATUS_LABEL[ergebnis.status]}</strong>
                 </td></tr>
                 <tr><td>Datenqualität</td><td>{ergebnis.dq} %</td></tr>
@@ -76,7 +76,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                   <tr key={v} className={v === eingaben.aufstellvariante ? 'gewaehlt' : ''}>
                     <td>{VARIANTEN_NAME[v]}{v === eingaben.aufstellvariante ? ' (gewählt)' : ''}</td>
                     <td>{num(s.lp, 1)} dB(A) (−{s.abschlag} dB)</td>
-                    <td><span className="ampel klein" style={{ background: AMPEL_FARBE[s.ampel] }} /> {s.ampel}</td>
+                    <td><span className={`ampel klein ${s.ampel ?? 'unbekannt'}`} /> {s.ampel}</td>
                   </tr>
                 ))}
               </tbody>

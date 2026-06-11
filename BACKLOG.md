@@ -25,6 +25,8 @@ Neue Items unten in der passenden Sektion anlegen (nächste freie SK-Nummer).
 | SK-15 | Screen 5 Testfälle | Speichern (localStorage), Rechenlauf, Diff-Tabelle | `src/screens/Testfaelle.jsx` | hoch | Erledigt 11.06.2026 |
 | SK-21 | Render-Smoke-Test Screens | Alle 5 Screens rendern fehlerfrei mit jedem Preset (SSR, ohne Browser) | `tests/screens.test.jsx` | hoch | Erledigt 11.06.2026 |
 | SK-22 | Review-Fix: `!=` bei leerem Feld | PR-#1-Review: unbeantwortetes Feld darf keinen Negativ-Treffer auslösen (R17 machte leere Konfiguration rot) | `src/logic/engine.js`, `tests/presets.test.js` | hoch | Erledigt 11.06.2026 |
+| SK-23 | Schriften IBM Plex (self-hosted) | Neue Dependencies `@fontsource/ibm-plex-sans` + `@fontsource/ibm-plex-mono`. Begründung: eigenständiges Ingenieurs-Schriftbild, identisch auf allen Rechnern, Tabellenziffern für €/kW/dB-Spalten; lokal gebundelt statt Google-CDN (DSGVO) | `package.json`, `src/main.jsx` | mittel | Erledigt 11.06.2026 |
+| SK-24 | Redesign „Stahlblau & Signal" | Durchgängiges Erscheinungsbild: Design-Tokens, Stahlblau-Topbar, Haarlinien statt Schatten, Monospace-Ziffern, Status-Ampeln als CSS-Klassen, dezente 140-ms-Übergänge (mit `prefers-reduced-motion`) | `src/styles.css`, `src/App.jsx`, `src/screens/*.jsx`, `src/screens/format.js` | mittel | Erledigt 11.06.2026 |
 
 ## v0.1 Verbesserungen (offen)
 

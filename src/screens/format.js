@@ -8,8 +8,6 @@ export const num = (n, stellen = 0) => n == null ? '–'
 
 export const prozent = (n) => n == null ? '–' : `${Math.round(n * 100)} %`
 
-export const AMPEL_FARBE = { gruen: '#1a7f37', gelb: '#b58105', orange: '#d4570b', rot: '#c0392b', unbekannt: '#6b7280' }
-
 export const VARIANTEN_NAME = {
   fundament: 'Standard-Fundament',
   einhausung: 'Schutz-/Schall-Einhausung',
