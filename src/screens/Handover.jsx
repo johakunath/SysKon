@@ -1,7 +1,7 @@
 import React from 'react'
 import { SEKTIONEN } from '../data/fragen.js'
 import { STATUS_LABEL } from '../logic/engine.js'
-import { euro, AMPEL_FARBE } from './format.js'
+import { euro } from './format.js'
 
 const EMPFEHLUNG = {
   gruen: 'Richt-LV versandfähig. Übergabe an PE zur Bestätigung der Aufstellvariante und Terminierung der Vor-Ort-Aufnahme.',
@@ -36,7 +36,7 @@ export default function Handover({ ergebnis }) {
           <button className="primaer no-print" onClick={() => window.print()}>Drucken / PDF</button>
         </div>
         <p>
-          <span className="ampel klein" style={{ background: AMPEL_FARBE[ergebnis.status] }} />
+          <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
           <strong> Status: {STATUS_LABEL[ergebnis.status]}</strong> · Datenqualität {ergebnis.dq} % ·
           interner PE-Aufwandsscore {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
           Netto-LV {euro(ergebnis.lv.netto)} (Demo)

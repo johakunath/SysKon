@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { ANNAHMEN } from './data/annahmen.js'
 import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
 import { berechne, STATUS_LABEL } from './logic/engine.js'
-import { euro, AMPEL_FARBE } from './screens/format.js'
+import { euro } from './screens/format.js'
 import Konfiguration from './screens/Konfiguration.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
 import Handover from './screens/Handover.jsx'
@@ -43,7 +43,7 @@ export default function App() {
           ))}
         </nav>
         <div className="kopf-status">
-          <span className="ampel" style={{ background: AMPEL_FARBE[ergebnis.status] }} />
+          <span className={`ampel ${ergebnis.status ?? 'unbekannt'}`} />
           <span>{STATUS_LABEL[ergebnis.status]}</span>
           <span className="kopf-netto">{euro(ergebnis.lv.netto)} netto</span>
         </div>
