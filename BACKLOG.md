@@ -24,6 +24,7 @@ Neue Items unten in der passenden Sektion anlegen (nächste freie SK-Nummer).
 | SK-14 | Screen 4 Annahmen & Regeln | Inline-editierbare Annahmen, Regeltabelle, Live-Neuberechnung | `src/screens/Annahmen.jsx` | hoch | Erledigt 11.06.2026 |
 | SK-15 | Screen 5 Testfälle | Speichern (localStorage), Rechenlauf, Diff-Tabelle | `src/screens/Testfaelle.jsx` | hoch | Erledigt 11.06.2026 |
 | SK-21 | Render-Smoke-Test Screens | Alle 5 Screens rendern fehlerfrei mit jedem Preset (SSR, ohne Browser) | `tests/screens.test.jsx` | hoch | Erledigt 11.06.2026 |
+| SK-22 | Review-Fix: `!=` bei leerem Feld | PR-#1-Review: unbeantwortetes Feld darf keinen Negativ-Treffer auslösen (R17 machte leere Konfiguration rot) | `src/logic/engine.js`, `tests/presets.test.js` | hoch | Erledigt 11.06.2026 |
 
 ## v0.1 Verbesserungen (offen)
 

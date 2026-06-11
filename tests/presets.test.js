@@ -61,6 +61,18 @@ describe('Presets gegen HANDOVER-Erwartungen', () => {
     expect(erg.statusQuellen.some(q => q.regelId === 'R04' && q.wert === 'rot')).toBe(true)
   })
 
+  it('unbeantworteter Technologiepfad ist nicht rot (R17 feuert nur bei Antwort)', () => {
+    const eingaben = { ...PRESETS.find(p => p.id === 'referenz').eingaben }
+    delete eingaben.technologiepfad
+    const erg = berechne(eingaben)
+    expect(erg.gefeuert).not.toContain('R17')
+    expect(erg.status).not.toBe('rot')
+    // aber: explizit gewählter Pfad außerhalb MVP bleibt rot
+    const rot = berechne({ ...eingaben, technologiepfad: 'monoenergetisch' })
+    expect(rot.gefeuert).toContain('R17')
+    expect(rot.status).toBe('rot')
+  })
+
   it('Engine-Mechanik: exclude schlägt require, Status nimmt schlechteste Stufe', () => {
     const erg = lauf('tf3')
     // R11 (grün) feuert nicht, schlechtere Stufen dominieren

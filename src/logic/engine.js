@@ -45,7 +45,8 @@ export function pruefeBedingung(b, ctx, annahmen = ANNAHMEN) {
   const soll = deref(b.wert, ctx, annahmen)
   switch (b.op) {
     case '=': return ist === soll
-    case '!=': return ist !== soll
+    // '!=' nur bei beantwortetem Feld: ein leeres Feld ist „unbekannt", kein Negativ-Treffer
+    case '!=': return ist !== undefined && ist !== null && ist !== '' && ist !== soll
     case '>': return zahl(ist) !== null && zahl(ist) > zahl(soll)
     case '>=': return zahl(ist) !== null && zahl(ist) >= zahl(soll)
     case '<': return zahl(ist) !== null && zahl(ist) < zahl(soll)

@@ -2,6 +2,7 @@
 //
 // Bedingungs-DSL (`wenn`):
 //   { feld, op, wert }            op: '=' '!=' '>' '>=' '<' '<=' 'in' 'nicht_in' 'nicht_leer'
+//                                 '!=' feuert nur bei beantwortetem Feld (leer ≠ Negativ-Treffer)
 //   { und: [bedingung, ...] }     alle müssen zutreffen
 //   { oder: [bedingung, ...] }    mindestens eine trifft zu
 //   `feld` greift auf Eingaben UND Zwischenergebnisse (calc.ableiten) zu.
