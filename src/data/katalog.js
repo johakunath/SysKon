@@ -1,0 +1,191 @@
+// Datenebene 3/3: Komponentenkatalog (HANDOVER §2.1/§2.3).
+// 6 modulare Pakettypen + Basispakete. Jede LV-Position:
+//   menge      Zahl oder '@feld' (Zwischenergebnis, z. B. '@wp_module')
+//   einheit    'Stk' | 'pausch.' | ...
+//   kosten     { typ:'fix'|'je_modul'|'prozent_lv', annahme:'<key aus annahmen.js>' }
+//              je_modul: Annahme (€/kW) × wp_modul_kw × Menge
+//              prozent_lv: % der Brutto-LV-Kosten p.a. (Opex)
+//   foerder    Schlüssel des Förderanteils in annahmen.js
+//   tag        'capex' | 'opex'  (bereitet Stufe 2 Grundpreis/Arbeitspreis vor)
+//   bedingung  optionale Bedingung (DSL wie regeln.js); ohne = immer dabei.
+//              Spezialfeld 'require_<modul>' = true, wenn eine Regel das Modul erzwingt.
+// Pakete mit `varianten` wählen die Variante über das Eingabefeld `variantenFeld`.
+
+export const KATALOG = [
+  {
+    id: 'wp', pakettyp: 'Wärmepumpe', gruppe: 'Wärmepumpenpaket',
+    positionen: [
+      { id: 'wp_modul', text: 'Luft-Wasser-WP-Modul 20 kW (herstellerneutral)',
+        menge: '@wp_module', einheit: 'Stk',
+        kosten: { typ: 'je_modul', annahme: 'k_wp_je_kw' }, foerder: 'f_wp', tag: 'capex',
+        begruendung: 'Kaskadenauslegung: WP-Leistung ≈ Leistungsanteil × Heizlast, gerundet auf 20-kW-Module (1–6).' },
+    ],
+  },
+  {
+    id: 'hybrid', pakettyp: 'Hybrid-Einbindung', gruppe: 'Hybrid-Einbindung',
+    bedingung: { feld: 'technologiepfad', op: '=', wert: 'hybrid' },
+    positionen: [
+      { id: 'hybrid_einbindung', text: 'Hydraulische und regelungstechnische Einbindung Bestandskessel',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_hybrid' }, foerder: 'f_hybrid', tag: 'capex',
+        begruendung: 'Hybridpfad: WP speist Puffer, Bestandskessel leistet nach (Nachheizlogik).' },
+      { id: 'fossil_bestand', text: 'Weiternutzung Gas-Bestandskessel (fossile Einheit)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: null }, foerder: 'f_fossil', tag: 'capex', pruefpflichtig: true,
+        begruendung: 'Bestand bleibt – 0 € im LV, aber nicht förderfähig (R02) und prüfpflichtig (R01).' },
+    ],
+  },
+  {
+    id: 'hydraulik', pakettyp: 'Hydraulik', gruppe: 'Hydraulik',
+    positionen: [
+      { id: 'hydraulik_basis', text: 'Hydraulikpaket (max. 2 Heizkreise, Pumpengruppen, Abgleich, Regelung)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_hydraulik' }, foerder: 'f_hydraulik', tag: 'capex',
+        begruendung: 'Pflichtbaustein: Einbindung in den vorhandenen Heizkreis (MVP ≤ 2 Heizkreise).' },
+    ],
+  },
+  {
+    id: 'speicher_ww', pakettyp: 'Hydraulik', gruppe: 'Speicher / Warmwasser',
+    bedingung: { feld: 'require_speicher_ww', op: '=', wert: true },
+    positionen: [
+      { id: 'speicher_ww_modul', text: 'Speicher-/Warmwassermodul (Puffer + WW-Bereitung)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_speicher_ww' }, foerder: 'f_speicher', tag: 'capex',
+        begruendung: 'Durch Regel erzwungen (R03: zentrale Warmwasserbereitung).' },
+    ],
+  },
+  {
+    id: 'aufstellung', pakettyp: 'Aufstellung', gruppe: 'Aufstellung',
+    variantenFeld: 'aufstellvariante',
+    varianten: [
+      { wert: 'fundament', name: 'Standard-Fundament',
+        positionen: [
+          { id: 'aufst_fundament', text: 'Fundament, Anbindung Heizraum, Witterungsschutz',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_fundament' }, foerder: 'f_aufstellung', tag: 'capex',
+            begruendung: 'Niedrigster Zusatz-CapEx, hohe Heizraumabhängigkeit.' },
+        ]},
+      { wert: 'einhausung', name: 'Schutz-/Schall-Einhausung',
+        positionen: [
+          { id: 'aufst_einhausung', text: 'Einhausung inkl. Schallwand und Vandalismusschutz',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_einhausung' }, foerder: 'f_aufstellung', tag: 'capex',
+            begruendung: 'Mittlerer CapEx, adressiert Schall- und Vandalismusrisiken (−12 dB Demo).' },
+        ]},
+      { wert: 'kompakt_container', name: 'Kompakt-Container',
+        positionen: [
+          { id: 'aufst_kompakt', text: 'Kompakt-Container vorkonfektioniert inkl. Stellfläche',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_kompakt_container' }, foerder: 'f_aufstellung', tag: 'capex',
+            begruendung: 'Hoher CapEx, entlastet Heizraum, hohe Vorkonfektionierung (−15 dB Demo).' },
+        ]},
+      { wert: 'vollcontainer', name: 'Vollcontainer',
+        positionen: [
+          { id: 'aufst_voll', text: 'Vollcontainer (begehbar, Technik weitgehend integriert)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_vollcontainer' }, foerder: 'f_aufstellung', tag: 'capex',
+            begruendung: 'Premium-Variante: maximale Standardisierung, minimale Heizraumabhängigkeit (−15 dB Demo).' },
+        ]},
+    ],
+  },
+  {
+    id: 'schall', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
+    bedingung: { und: [
+      { feld: 'schallhaube', op: '=', wert: 'ja' },
+      { feld: 'aufstellvariante', op: '=', wert: 'fundament' },
+    ]},
+    positionen: [
+      { id: 'schallhaube_pos', text: 'Standard-Schallhaube für WP-Kaskade',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_schallhaube' }, foerder: 'f_aufstellung', tag: 'capex',
+        begruendung: 'Schallminderung −8 dB (Demo) bei Fundamentaufstellung.' },
+    ],
+  },
+  {
+    id: 'elektro', pakettyp: 'Basis', gruppe: 'Elektro / Netzanschluss',
+    positionen: [
+      { id: 'elektro_netz', text: 'Elektro-/Netzanschlusspaket (Zuleitung, Zähler, WP-Tarif)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_elektro' }, foerder: 'f_elektro', tag: 'capex',
+        begruendung: 'Pflichtbaustein; bei unbekanntem Netzanschluss prüfpflichtig (R08).' },
+    ],
+  },
+  {
+    id: 'monitoring', pakettyp: 'Monitoring', gruppe: 'Monitoring',
+    variantenFeld: 'monitoring_variante',
+    varianten: [
+      { wert: 'basic', name: 'Monitoring Basic',
+        positionen: [
+          { id: 'mon_basic', text: 'Monitoring Basic (verpflichtend): Zähler, Datenlogger, Fernablesung',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_monitoring_basic' }, foerder: 'f_monitoring', tag: 'capex',
+            begruendung: 'Monitoring Basic ist im Contracting-Modell verpflichtend.' },
+        ]},
+      { wert: 'plus', name: 'Monitoring Plus',
+        positionen: [
+          { id: 'mon_basic2', text: 'Monitoring Basic (verpflichtend): Zähler, Datenlogger, Fernablesung',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_monitoring_basic' }, foerder: 'f_monitoring', tag: 'capex',
+            begruendung: 'Monitoring Basic ist im Contracting-Modell verpflichtend.' },
+          { id: 'mon_plus', text: 'Monitoring Plus (erweiterte Sensorik, Effizienz-Reporting)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_monitoring_plus' }, foerder: 'f_monitoring', tag: 'capex',
+            begruendung: 'Optionale Erweiterung für Effizienznachweis und Betriebsführung.' },
+        ]},
+    ],
+  },
+  {
+    id: 'installation', pakettyp: 'Basis', gruppe: 'Installation / Inbetriebnahme',
+    positionen: [
+      { id: 'install_ibn', text: 'Installation, Montage und Inbetriebnahme',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_install' }, foerder: 'f_install', tag: 'capex',
+        begruendung: 'Pflichtbaustein: Montage der Gesamtanlage inkl. IBN-Protokoll.' },
+    ],
+  },
+  {
+    id: 'umfeld', pakettyp: 'Basis', gruppe: 'Umfeldmaßnahmen',
+    positionen: [
+      { id: 'umfeld_pausch', text: 'Umfeldmaßnahmen (Trasse, Durchbrüche, Wiederherstellung)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_umfeld' }, foerder: 'f_umfeld', tag: 'capex',
+        begruendung: 'Nur förderfähig in Verbindung mit dem erneuerbaren Teil (Demo: 80 %).' },
+    ],
+  },
+  {
+    id: 'service', pakettyp: 'Service', gruppe: 'Service / Betrieb (p.a.)',
+    variantenFeld: 'service_variante',
+    varianten: [
+      { wert: 'basis', name: 'Service Basis',
+        positionen: [
+          { id: 'om_basis', text: 'Wartung & Instandhaltung (O&M)',
+            menge: 1, einheit: '€/a',
+            kosten: { typ: 'prozent_lv', annahme: 'om_prozent_pa' }, foerder: 'f_monitoring', tag: 'opex',
+            begruendung: 'O&M als % der Brutto-LV-Kosten p.a. (Demo: Service Basis).' },
+        ]},
+      { wert: 'komfort', name: 'Service Komfort',
+        positionen: [
+          { id: 'om_komfort', text: 'Wartung, Instandhaltung & Störungsdienst (O&M Komfort)',
+            menge: 1, einheit: '€/a',
+            kosten: { typ: 'prozent_lv', annahme: 'om_prozent_komfort' }, foerder: 'f_monitoring', tag: 'opex',
+            begruendung: 'Erweiterter Service inkl. Störungsdienst (Demo-Zuschlag).' },
+        ]},
+    ],
+  },
+  {
+    id: 'monitoring_pa', pakettyp: 'Monitoring', gruppe: 'Service / Betrieb (p.a.)',
+    positionen: [
+      { id: 'mon_pa', text: 'Monitoring-Betrieb (Datendienst)',
+        menge: 1, einheit: '€/a',
+        kosten: { typ: 'fix', annahme: 'monitoring_pa' }, foerder: 'f_monitoring', tag: 'opex',
+        begruendung: 'Laufender Monitoring-Dienst (verpflichtend).' },
+    ],
+  },
+]
+
+// Anzeige-Reihenfolge der LV-Gruppen (HANDOVER §15 B)
+export const LV_GRUPPEN = [
+  'Wärmepumpenpaket', 'Hybrid-Einbindung', 'Hydraulik', 'Speicher / Warmwasser',
+  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Monitoring',
+  'Installation / Inbetriebnahme', 'Umfeldmaßnahmen',
+]
