@@ -33,7 +33,7 @@ Neue Items unten in der passenden Sektion anlegen (nächste freie SK-Nummer).
 | ID | Titel | Beschreibung | Dateien | Prio | Status |
 |---|---|---|---|---|---|
 | SK-16 | Druck-Stylesheet verfeinern | `window.print()`-Ausgabe des Handover-Screens sauber formatieren (Seitenumbrüche, keine Navigation) | `src/styles.css`, `src/screens/Handover.jsx` | mittel | Offen |
-| SK-17 | Tooltips vervollständigen | Jede Frage in A–J bekommt einen „Warum fragen wir das?"-Tooltip | `src/data/fragen.js` | mittel | Offen |
+| SK-17 | Tooltips vervollständigen | Jede Frage in A–J bekommt einen „Warum fragen wir das?"-Tooltip | `src/data/fragen.js` | mittel | Erledigt 12.06.2026 |
 | SK-18 | LV-Export CSV | LV-Tabelle als CSV herunterladen (ohne neue Dependency) | `src/screens/Ergebnis.jsx` | niedrig | Offen |
 | SK-19 | Engine-Unit-Tests | Einzeltests für exclude>require, Status-Verschlechterung, DQ-Deckelung | `tests/engine.test.js` (neu) | mittel | Offen |
 | SK-20 | Eingabevalidierung | Plausibilitätsgrenzen für Zahlenfelder (z. B. Fläche, MWh) mit Inline-Hinweis | `src/data/fragen.js`, `src/screens/Konfiguration.jsx` | mittel | Erledigt 12.06.2026 |
