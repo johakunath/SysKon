@@ -49,6 +49,8 @@ Neue Items unten in der passenden Sektion anlegen (nächste freie SK-Nummer).
 | SK-39 | Handover: Aktionsorientierte Tabelle | Prüfpunkte als Tabelle mit Owner/Status, kompakte Nächster-Schritt-Box | `src/screens/Handover.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
 | SK-40 | Admin-Bereich kennzeichnen | Admin-Banner auf Annahmen & Testfälle-Seiten | `src/screens/Annahmen.jsx`, `src/screens/Testfaelle.jsx` | niedrig | Erledigt 12.06.2026 |
 
+| SK-41 | Engine: Warnungen mit Status annotieren | `warn`-Effekte enthalten kein `status`-Feld; Blocker-Filter in Ergebnis.jsx läuft immer leer. Engine soll nach dem Fixpunkt jede Warnung mit dem korrelierten Status aus `statusQuellen` anreichern. | `src/logic/engine.js`, `tests/engine.test.js` | hoch | Erledigt 12.06.2026 |
+
 ## Roadmap (aus HANDOVER, nicht v0.1)
 
 | ID | Titel | Beschreibung | Prio | Status |
