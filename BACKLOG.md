@@ -47,7 +47,7 @@ Neue Items unten in der passenden Sektion anlegen (nächste freie SK-Nummer).
 | SK-37 | Konfiguration: Durchgehende Formularansicht | Alle Fragen sichtbar, Sidebar als Anker-Navigation, Live-Panel auf KPIs reduziert | `src/screens/Konfiguration.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
 | SK-38 | Ergebnis: Summary-Strip + Regel-IDs verstecken | Entscheidungs-Strip über Tabs, Regel-IDs in aufklappbarem Nachweis | `src/screens/Ergebnis.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
 | SK-39 | Handover: Aktionsorientierte Tabelle | Prüfpunkte als Tabelle mit Owner/Status, kompakte Nächster-Schritt-Box | `src/screens/Handover.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
-| SK-40 | Admin-Bereich kennzeichnen | Admin-Banner auf Annahmen & Testfälle-Seiten | `src/screens/Annahmen.jsx`, `src/screens/Testfaelle.jsx` | niedrig | Offen |
+| SK-40 | Admin-Bereich kennzeichnen | Admin-Banner auf Annahmen & Testfälle-Seiten | `src/screens/Annahmen.jsx`, `src/screens/Testfaelle.jsx` | niedrig | Erledigt 12.06.2026 |
 
 ## Roadmap (aus HANDOVER, nicht v0.1)
 

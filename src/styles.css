@@ -283,6 +283,12 @@ details summary:hover { color: var(--akzent); }
 .pruef-tabelle td { padding: 7px 6px; border-bottom: 1px solid var(--zeile); font-size: 13px; vertical-align: middle; }
 .pruef-tabelle tbody tr:hover td { background: var(--hover-flaeche); }
 
+.admin-banner {
+  background: var(--st-gelb-hell); border: 1px solid var(--st-gelb);
+  border-radius: var(--radius-klein); padding: 8px 16px;
+  font-size: 12px; color: var(--text); margin-bottom: 12px;
+}
+
 .druckkopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .zeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
 .zeile input { flex: 1; min-width: 220px; }

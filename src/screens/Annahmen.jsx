@@ -8,6 +8,9 @@ export default function Annahmen({ annahmen, setAnnahmen, ergebnis }) {
 
   return (
     <div className="seite">
+      <div className="admin-banner no-print">
+        ⚙ Admin-Bereich · Änderungen wirken sofort auf alle Berechnungen. Nur für Demo-Administration.
+      </div>
       <div className="karte">
         <div className="druckkopf">
           <h2>Annahmen & Regeln</h2>
