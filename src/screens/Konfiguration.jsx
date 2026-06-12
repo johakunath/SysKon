@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { SEKTIONEN } from '../data/fragen.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
@@ -48,8 +48,6 @@ function Frage({ frage, wert, onChange, gesperrt }) {
 }
 
 export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen }) {
-  const [aktiv, setAktiv] = useState('A')
-
   const sichtbar = (f) => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen)
   const beantwortet = (f) => {
     const w = eingaben[f.id]
@@ -58,7 +56,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
   const fortschritt = (s) => {
     const fragen = s.fragen.filter(f => f.dq > 0 && sichtbar(f))
     const fertig = fragen.filter(beantwortet).length
-    return `${fertig}/${fragen.length}`
+    return { fertig, gesamt: fragen.length, komplett: fertig === fragen.length && fragen.length > 0 }
   }
 
   const ladePreset = (id) => {
@@ -66,65 +64,69 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
     if (p) setEingaben({ ...p.eingaben })
   }
 
-  const sektion = SEKTIONEN.find(s => s.id === aktiv)
   const gesperrteVarianten = ergebnis.excluded.aufstellvariante ?? []
   const d = ergebnis.derived
-
-  // Paketstack: LV-Gruppen mit Summen
-  const stack = []
-  for (const p of ergebnis.lv.positionen) {
-    const e = stack.find(x => x.gruppe === p.gruppe)
-    if (e) e.summe += p.betrag
-    else stack.push({ gruppe: p.gruppe, summe: p.betrag })
-  }
 
   return (
     <div className="drei-spalten">
       <aside className="spalte-links">
-        <div className="karte">
-          <h3>Startkonfiguration</h3>
-          <select value="" onChange={e => e.target.value && ladePreset(e.target.value)}>
-            <option value="">Preset laden …</option>
-            {PRESETS.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-          <p className="hinweis">Presets sind gespeicherte Eingabesätze – Demos starten nie leer.</p>
-        </div>
-        <div className="karte">
-          <h3>Eingabesektionen</h3>
-          {SEKTIONEN.map(s => (
-            <button
-              key={s.id}
-              className={aktiv === s.id ? 'sektion aktiv' : 'sektion'}
-              onClick={() => setAktiv(s.id)}
-            >
-              <span>{s.id} · {s.titel}</span>
-              <span className="fortschritt">{fortschritt(s)}</span>
-            </button>
-          ))}
+        <div className="karte sektion-nav">
+          <div className="preset-zeile">
+            <select onChange={e => e.target.value && ladePreset(e.target.value)} defaultValue="">
+              <option value="" disabled>Preset laden …</option>
+              {PRESETS.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+          </div>
+          <h4>Abschnitte</h4>
+          {SEKTIONEN.map(s => {
+            const fp = fortschritt(s)
+            return (
+              <a
+                key={s.id}
+                className={`sektion-anker${fp.komplett ? ' komplett' : ''}`}
+                href={`#sek-${s.id}`}
+                onClick={e => {
+                  e.preventDefault()
+                  document.getElementById(`sek-${s.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }}
+              >
+                <span>{s.id} · {s.titel}</span>
+                <span className={`fortschritt${fp.komplett ? ' ok' : ''}`}>
+                  {fp.komplett ? '✓' : `${fp.fertig}/${fp.gesamt}`}
+                </span>
+              </a>
+            )
+          })}
         </div>
       </aside>
 
       <main className="spalte-mitte">
-        <div className="karte">
-          <h2>{sektion.id} · {sektion.titel}</h2>
-          {sektion.fragen.filter(sichtbar).map(f => (
-            <Frage
-              key={f.id}
-              frage={f}
-              wert={eingaben[f.id]}
-              gesperrt={f.id === 'aufstellvariante' ? gesperrteVarianten : null}
-              onChange={(wert) => setEingaben({ ...eingaben, [f.id]: wert })}
-            />
-          ))}
-          {sektion.id === 'F' && gesperrteVarianten.length > 0 && (
-            <p className="warnbox">
-              Gesperrte Aufstellvarianten: {gesperrteVarianten.map(v => VARIANTEN_NAME[v]).join(', ')} (Schall oder Fläche, R05/R07).
-            </p>
-          )}
-          {sektion.id === 'C' && eingaben.technologiepfad === 'monoenergetisch' && (
-            <p className="warnbox">Monoenergetischer Pfad ist in v0.1 nur ein Roadmap-Platzhalter (Status rot, R17).</p>
-          )}
-        </div>
+        {SEKTIONEN.map(s => {
+          const fragenSichtbar = s.fragen.filter(sichtbar)
+          if (fragenSichtbar.length === 0) return null
+          return (
+            <div key={s.id} id={`sek-${s.id}`} className="karte sek-block">
+              <h2>{s.id} · {s.titel}</h2>
+              {fragenSichtbar.map(f => (
+                <Frage
+                  key={f.id}
+                  frage={f}
+                  wert={eingaben[f.id]}
+                  gesperrt={f.id === 'aufstellvariante' ? gesperrteVarianten : null}
+                  onChange={(wert) => setEingaben({ ...eingaben, [f.id]: wert })}
+                />
+              ))}
+              {s.id === 'F' && gesperrteVarianten.length > 0 && (
+                <p className="warnbox">
+                  Gesperrte Aufstellvarianten: {gesperrteVarianten.map(v => VARIANTEN_NAME[v]).join(', ')} (Schall oder Fläche, R05/R07).
+                </p>
+              )}
+              {s.id === 'C' && eingaben.technologiepfad === 'monoenergetisch' && (
+                <p className="warnbox">Monoenergetischer Pfad ist in v0.1 nur ein Roadmap-Platzhalter (Status rot, R17).</p>
+              )}
+            </div>
+          )
+        })}
       </main>
 
       <aside className="spalte-rechts">
@@ -147,29 +149,9 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
           <div className="mini-fakten">
             <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
-            <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW = {d.wp_kw} kW</strong></div>
-            <div><span>Wärmebedarf</span><strong>{num(d.waermebedarf_mwh)} MWh/a</strong></div>
-            <div>
-              <span>Schall am Immissionsort</span>
-              <strong>
-                <span className={`ampel klein ${d.schall_ampel_aktiv ?? 'unbekannt'}`} />
-                {d.schall_lp_aktiv != null ? `${num(d.schall_lp_aktiv, 1)} dB(A) / Grenze ${d.schall_grenzwert}` : 'unvollständig'}
-              </strong>
-            </div>
+            <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
+            <div><span>Netto-LV</span><strong>{euro(ergebnis.lv.netto)}</strong></div>
           </div>
-
-          <h4>Paketstack</h4>
-          <table className="stack">
-            <tbody>
-              {stack.map(s => (
-                <tr key={s.gruppe}><td>{s.gruppe}</td><td className="r">{euro(s.summe)}</td></tr>
-              ))}
-              <tr><td>Contingency ({Math.round(annahmen.contingency * 100)} %)</td><td className="r">{euro(ergebnis.lv.contingency)}</td></tr>
-              <tr className="summe"><td>Brutto-LV</td><td className="r">{euro(ergebnis.lv.brutto)}</td></tr>
-              <tr><td>Förderung (Demo)</td><td className="r">−{euro(ergebnis.lv.foerderung)}</td></tr>
-              <tr className="summe"><td>Netto-LV</td><td className="r">{euro(ergebnis.lv.netto)}</td></tr>
-            </tbody>
-          </table>
 
           {ergebnis.warnungen.length > 0 && (
             <>
