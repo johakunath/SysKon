@@ -161,6 +161,9 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgb(14 90 138 / 0.18);
 }
 input[type='number'] { font-family: var(--mono); font-size: 13px; }
+input.input-error { border-color: var(--st-rot); }
+input.input-error:focus { border-color: var(--st-rot); box-shadow: 0 0 0 3px rgb(192 57 43 / 0.18); }
+.input-hinweis { font-size: 0.75rem; color: var(--st-rot); margin-top: 2px; }
 .inline-zahl { max-width: 110px; padding: 3px 6px; text-align: right; }
 button {
   padding: 7px 12px; border: 1px solid var(--rand); border-radius: var(--radius-klein);
@@ -252,9 +255,30 @@ details summary:hover { color: var(--akzent); }
 
 /* Druck (Handover-Export via window.print) */
 @media print {
+  @page { size: A4 portrait; margin: 18mm 15mm; }
   .no-print { display: none !important; }
-  body { background: #fff; font-size: 12px; }
-  .karte { border: none; box-shadow: none; padding: 0 0 12px; margin-bottom: 8px; break-inside: avoid; }
+  body { background: #fff; font-size: 11px; color: #000; }
+  .app { display: block; }
   .seite { padding: 0; animation: none; }
+  .drei-spalten { display: block; }
+  .karte {
+    border: 1px solid #ccc;
+    box-shadow: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    break-inside: avoid;
+  }
   .karten-reihe { display: block; }
+  h2 { font-size: 15pt; break-after: avoid; color: #000; }
+  h3 { font-size: 12pt; break-after: avoid; margin-top: 10pt; color: #000; }
+  h4 { font-size: 10pt; break-after: avoid; color: #000; }
+  .checkliste { margin: 4px 0 8px 18px; }
+  .checkliste li { padding: 1px 0; break-inside: avoid; }
+  .warnbox { background: #fff !important; border: 1px solid #999; color: #000 !important; padding: 6px; }
+  .hinweis { color: #555; }
+  /* Status-Ampeln farbtreu drucken */
+  .ampel { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  /* Seitenumbruch: zweite/dritte Karte in karten-reihe dürfen umbrechen */
+  .karten-reihe .karte { break-before: auto; }
+  .druckbereich > .karte:first-child { break-after: avoid; }
 }

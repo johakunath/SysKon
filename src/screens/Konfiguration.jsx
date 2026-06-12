@@ -5,6 +5,11 @@ import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
 import { euro, num, VARIANTEN_NAME } from './format.js'
 
 function Frage({ frage, wert, onChange, gesperrt }) {
+  const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
+    (frage.min !== undefined && wert < frage.min) ||
+    (frage.max !== undefined && wert > frage.max)
+  )
+
   return (
     <div className="frage">
       <label>
@@ -17,6 +22,9 @@ function Frage({ frage, wert, onChange, gesperrt }) {
           <input
             type="number"
             value={wert ?? ''}
+            min={frage.min}
+            max={frage.max}
+            className={invalide ? 'input-error' : undefined}
             onChange={e => onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
           />
         ) : (
@@ -28,6 +36,11 @@ function Frage({ frage, wert, onChange, gesperrt }) {
               </option>
             ))}
           </select>
+        )}
+        {invalide && (
+          <span className="input-hinweis">
+            Plausibilitätsbereich: {frage.min}–{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Demo-Annahme)
+          </span>
         )}
       </label>
     </div>

@@ -3,6 +3,32 @@ import { LV_GRUPPEN } from '../data/katalog.js'
 import { STATUS_LABEL } from '../logic/engine.js'
 import { euro, num, prozent, VARIANTEN_NAME } from './format.js'
 
+function exportLvCsv(lv, annahmen) {
+  const kopf = ['Gruppe', 'Position', 'Menge', 'Einheit', 'Einzelpreis (€)', 'Betrag (€)', 'Förderfähig (%)', 'Prüfpflichtig']
+  const zeilen = lv.positionen.map(p => [
+    p.gruppe, p.text, p.menge, p.einheit,
+    p.einzel.toFixed(2), p.betrag.toFixed(2),
+    (p.foerderanteil * 100).toFixed(0),
+    p.pruefpflichtig ? 'ja' : ''
+  ])
+  const summen = [
+    ['', 'Zwischensumme', '', '', '', lv.zwischensumme.toFixed(2), '', ''],
+    ['', `Contingency (${Math.round(annahmen.contingency * 100)} %)`, '', '', '', lv.contingency.toFixed(2), '', ''],
+    ['', 'Brutto-LV-Kosten', '', '', '', lv.brutto.toFixed(2), '', ''],
+    ['', 'Förderung (Demo)', '', '', '', (-lv.foerderung).toFixed(2), '', ''],
+    ['', 'Netto-LV-Kosten', '', '', '', lv.netto.toFixed(2), '', ''],
+  ]
+  const escape = v => `"${String(v).replace(/"/g, '""')}"`
+  const csv = [kopf, ...zeilen, ...summen].map(r => r.map(escape).join(';')).join('\r\n')
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'richt-lv.csv'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
   const [tab, setTab] = useState('konfiguration')
   const d = ergebnis.derived
@@ -123,7 +149,10 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
               <tr className="summe"><td colSpan="4">Netto-LV-Kosten</td><td className="r">{euro(lv.netto)}</td><td colSpan="2" /></tr>
             </tbody>
           </table>
-          <p className="hinweis">Jede Position aufklappen für die Begründung. Keine Marge, kein Kundenangebot.</p>
+          <div className="lv-aktionen no-print">
+            <p className="hinweis">Jede Position aufklappen für die Begründung. Keine Marge, kein Kundenangebot.</p>
+            <button onClick={() => exportLvCsv(lv, annahmen)}>CSV herunterladen</button>
+          </div>
         </div>
       )}
 
