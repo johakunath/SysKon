@@ -144,6 +144,29 @@ describe('exclude > require', () => {
     expect(erg.konflikte.length).toBeGreaterThan(0)
   })
 
+  it('exclude entfernt auch require-Kontext vor dem LV-Aufbau', () => {
+    const regeln = [
+      { id: 'R-REQ', wenn: { feld: 'a', op: '=', wert: 'x' },
+        dann: { typ: 'require', modul: 'testmodul' }, begruendung: '' },
+      { id: 'R-EXC', wenn: { feld: 'b', op: '=', wert: 'y' },
+        dann: { typ: 'exclude', ziel: 'modul', wert: 'testmodul' }, begruendung: '' },
+    ]
+    const katalog = [
+      { id: 'testmodul', pakettyp: 'Test', gruppe: 'Test',
+        bedingung: { feld: 'require_testmodul', op: '=', wert: true },
+        positionen: [
+          { id: 'test_position', text: 'Konfliktposition', menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_install' }, foerder: 'f_install', tag: 'capex',
+            begruendung: 'Darf bei exclude-Konflikt nicht im LV landen.' },
+        ] },
+    ]
+
+    const erg = berechne({ a: 'x', b: 'y' }, { regeln, katalog })
+
+    expect(erg.required).not.toContain('testmodul')
+    expect(erg.lv.positionen.map(p => p.id)).not.toContain('test_position')
+  })
+
   it('require ohne exclude bleibt in required', () => {
     const regeln = [
       { id: 'R-REQ', wenn: { feld: 'a', op: '=', wert: 'x' },

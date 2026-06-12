@@ -61,7 +61,7 @@ export function pruefeBedingung(b, ctx, annahmen = ANNAHMEN) {
 const beantwortet = (w) => w !== undefined && w !== null && w !== '' && w !== 'unbekannt'
 
 // Datenqualität: gewichteter Anteil beantworteter sichtbarer Pflichtfragen.
-// 'unbekannt' zählt als beantwortet, liefert aber keine Punkte (HANDOVER §2.6).
+// 'unbekannt' gilt als unzureichende Antwort und liefert keine DQ-Punkte (HANDOVER §2.6).
 export function dqScore(eingaben, annahmen = ANNAHMEN) {
   let gesamt = 0, erreicht = 0
   for (const f of ALLE_FRAGEN) {
@@ -139,6 +139,7 @@ export function berechne(eingaben, opts = {}) {
   for (const modul of [...required]) {
     if (excluded.modul?.has(modul)) {
       required.delete(modul)
+      delete ctx['require_' + modul]
       konflikte.push(`Modul „${modul}" war erzwungen, ist aber gesperrt (exclude schlägt require).`)
     }
   }

@@ -1,7 +1,7 @@
 // Fragebogen Sektionen A–J (HANDOVER §8). Dynamisch: `sichtbar` nutzt dieselbe
 // Bedingungs-DSL wie regeln.js; unsichtbare Fragen zählen nicht für den DQ-Score.
 // `dq` = Gewicht im Datenqualitätsscore (0 = optionale Frage). Antworten mit
-// Wert 'unbekannt' gelten als beantwortet, liefern aber KEINE DQ-Punkte.
+// Wert 'unbekannt' gelten als unzureichend und liefern KEINE DQ-Punkte.
 
 const JN = [
   { wert: 'ja', label: 'ja' },
