@@ -161,6 +161,9 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgb(14 90 138 / 0.18);
 }
 input[type='number'] { font-family: var(--mono); font-size: 13px; }
+input.input-error { border-color: var(--st-rot); }
+input.input-error:focus { border-color: var(--st-rot); box-shadow: 0 0 0 3px rgb(192 57 43 / 0.18); }
+.input-hinweis { font-size: 0.75rem; color: var(--st-rot); margin-top: 2px; }
 .inline-zahl { max-width: 110px; padding: 3px 6px; text-align: right; }
 button {
   padding: 7px 12px; border: 1px solid var(--rand); border-radius: var(--radius-klein);

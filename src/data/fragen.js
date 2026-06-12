@@ -18,9 +18,9 @@ export const SEKTIONEN = [
         { wert: 'sonstig', label: 'sonstige Lage' },
       ],
       tooltip: 'Freistehende Gebäude sind der Standardfall; Innenstadtlage verschärft Schall- und Platzprüfung (R06).' },
-    { id: 'wohneinheiten', label: 'Wohneinheiten', typ: 'zahl', einheit: 'WE', dq: 2,
+    { id: 'wohneinheiten', label: 'Wohneinheiten', typ: 'zahl', einheit: 'WE', dq: 2, min: 1, max: 500,
       tooltip: 'Bezugsgröße für Kennzahlen (€/WE) und Heizlast-Notbehelf.' },
-    { id: 'flaeche', label: 'Beheizte Fläche', typ: 'zahl', einheit: 'm²', dq: 2,
+    { id: 'flaeche', label: 'Beheizte Fläche', typ: 'zahl', einheit: 'm²', dq: 2, min: 50, max: 50000,
       tooltip: 'Bezugsgröße für €/m² und Heizlast-Proxy, falls kein Verbrauch vorliegt.' },
     { id: 'baujahrklasse', label: 'Baujahrklasse', typ: 'select', dq: 1,
       optionen: [
@@ -44,7 +44,7 @@ export const SEKTIONEN = [
   ]},
 
   { id: 'B', titel: 'Wärmebedarf & Leistung', fragen: [
-    { id: 'jahresverbrauch', label: 'Jahreswärmeverbrauch', typ: 'zahl', einheit: 'MWh/a', dq: 3,
+    { id: 'jahresverbrauch', label: 'Jahreswärmeverbrauch', typ: 'zahl', einheit: 'MWh/a', dq: 3, min: 5, max: 10000,
       tooltip: 'Wichtigste Größe für Heizlast-Proxy und Energiekosten. Leer lassen, wenn unbekannt.' },
     { id: 'verbrauchsquelle', label: 'Quelle des Verbrauchswerts', typ: 'select', dq: 2,
       optionen: [
@@ -64,7 +64,7 @@ export const SEKTIONEN = [
       tooltip: 'Zentrale WW-Bereitung erzwingt das Speicher-/WW-Modul (R03).' },
     { id: 'heizlast_bekannt', label: 'Heizlast bekannt', typ: 'select', optionen: JN, dq: 2,
       tooltip: 'Liegt eine berechnete Heizlast vor? Sonst wird per Proxy geschätzt (Status mind. gelb, R14).' },
-    { id: 'heizlast_kw', label: 'Heizlast', typ: 'zahl', einheit: 'kW', dq: 0,
+    { id: 'heizlast_kw', label: 'Heizlast', typ: 'zahl', einheit: 'kW', dq: 0, min: 5, max: 5000,
       sichtbar: { feld: 'heizlast_bekannt', op: '=', wert: 'ja' },
       tooltip: 'Berechnete oder gemessene Gebäudeheizlast.' },
   ]},
@@ -92,7 +92,7 @@ export const SEKTIONEN = [
     { id: 'kessel_nutzbar', label: 'Bestandskessel weiter nutzbar', typ: 'select', optionen: JNU, dq: 2,
       sichtbar: { feld: 'gaskessel_vorhanden', op: '=', wert: 'ja' },
       tooltip: 'Grün-Kriterium: der Hybridpfad braucht einen nutzbaren Bestandskessel.' },
-    { id: 'anzahl_heizkreise', label: 'Anzahl Heizkreise', typ: 'zahl', einheit: 'Stk', dq: 3,
+    { id: 'anzahl_heizkreise', label: 'Anzahl Heizkreise', typ: 'zahl', einheit: 'Stk', dq: 3, min: 1, max: 10,
       tooltip: 'MVP unterstützt maximal zwei Heizkreise; mehr ist Ausschluss (R04).' },
     { id: 'pufferspeicher_vorhanden', label: 'Pufferspeicher vorhanden', typ: 'select', optionen: JNU, dq: 1,
       tooltip: 'Information für die Hydraulikplanung (WP speist zuerst in den Puffer).' },
@@ -132,7 +132,7 @@ export const SEKTIONEN = [
   ]},
 
   { id: 'F', titel: 'Aufstellung außen', fragen: [
-    { id: 'aussenflaeche_m2', label: 'Verfügbare Außenfläche (geschätzt)', typ: 'zahl', einheit: 'm²', dq: 2,
+    { id: 'aussenflaeche_m2', label: 'Verfügbare Außenfläche (geschätzt)', typ: 'zahl', einheit: 'm²', dq: 2, min: 10, max: 10000,
       sichtbar: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'ja' },
       tooltip: 'Unter 30 m² (Demo-Annahme) sind Container-Varianten gesperrt (R05).' },
     { id: 'aufstellvariante', label: 'Aufstellvariante', typ: 'select', dq: 2,
@@ -147,7 +147,7 @@ export const SEKTIONEN = [
     { id: 'schallhaube', label: 'Standard-Schallhaube vorsehen', typ: 'select', optionen: JN, dq: 0,
       sichtbar: { feld: 'aufstellvariante', op: '=', wert: 'fundament' },
       tooltip: 'Nur bei Fundamentaufstellung: −8 dB (Demo) gegen Aufpreis.' },
-    { id: 'entfernung_heizraum', label: 'Entfernung WP-Standort zum Heizraum', typ: 'zahl', einheit: 'm', dq: 1,
+    { id: 'entfernung_heizraum', label: 'Entfernung WP-Standort zum Heizraum', typ: 'zahl', einheit: 'm', dq: 1, min: 1, max: 500,
       sichtbar: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'ja' },
       tooltip: 'Lange Trassen erhöhen die Umfeldkosten (in v0.1 nur informativ).' },
     { id: 'kran_zugang', label: 'Kran-/Anlieferzugang möglich', typ: 'select', optionen: JNU, dq: 1,
@@ -156,7 +156,7 @@ export const SEKTIONEN = [
   ]},
 
   { id: 'G', titel: 'Schall', fragen: [
-    { id: 'abstand_fenster', label: 'Abstand zum nächsten Fenster/Immissionsort', typ: 'zahl', einheit: 'm', dq: 3,
+    { id: 'abstand_fenster', label: 'Abstand zum nächsten Fenster/Immissionsort', typ: 'zahl', einheit: 'm', dq: 3, min: 0, max: 100,
       tooltip: 'Geht direkt in die Pegelabschätzung ein: −20·log10(r) (R18, Demo-Formel).' },
     { id: 'gebietstyp', label: 'Gebietstyp (Nachtgrenzwert)', typ: 'select', dq: 2,
       optionen: [
