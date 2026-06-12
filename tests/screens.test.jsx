@@ -23,6 +23,25 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).not.toContain('Handover</button>')
   })
 
+
+  it('Konfiguration verknüpft Fragen per htmlFor/id und hält Tooltip neben dem Label', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Konfiguration
+        eingaben={eingaben}
+        setEingaben={noop}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+        setScreen={noop}
+      />
+    )
+    expect(html).toContain('for="gebaeudetyp"')
+    expect(html).toContain('id="gebaeudetyp"')
+    expect(html).toContain('aria-expanded="false"')
+    expect(html).toContain('class="frage-kopf"')
+  })
+
   for (const preset of PRESETS) {
     it(`alle 5 Screens rendern fehlerfrei: ${preset.id}`, () => {
       const eingaben = { ...preset.eingaben }

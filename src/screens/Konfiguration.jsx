@@ -25,6 +25,7 @@ function Tooltip({ text }) {
         aria-label="Hilfetext anzeigen"
         aria-expanded={offen}
         onClick={() => setOffen(v => !v)}
+        onFocus={() => setOffen(true)}
         onBlur={(event) => {
           if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) setOffen(false)
         }}
@@ -44,14 +45,17 @@ function Frage({ frage, wert, onChange, gesperrt }) {
 
   return (
     <div className="frage">
-      <label>
-        <span className="frage-label">
+      <div className="frage-kopf">
+        <label className="frage-label" htmlFor={frage.id}>
           {frage.label}
           {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
-          {frage.tooltip ? <Tooltip text={frage.tooltip} /> : null}
-        </span>
+        </label>
+        {frage.tooltip ? <Tooltip text={frage.tooltip} /> : null}
+      </div>
+      <div className="frage-feld">
         {frage.typ === 'zahl' ? (
           <input
+            id={frage.id}
             type="number"
             value={wert ?? ''}
             min={frage.min}
@@ -60,7 +64,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             onChange={e => onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
           />
         ) : (
-          <select value={wert ?? ''} onChange={e => onChange(e.target.value || undefined)}>
+          <select id={frage.id} value={wert ?? ''} onChange={e => onChange(e.target.value || undefined)}>
             <option value="">– bitte wählen –</option>
             {frage.optionen.map(o => (
               <option key={o.wert} value={o.wert} disabled={gesperrt?.includes(o.wert)}>
@@ -74,7 +78,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             Plausibilitätsbereich: {frage.min}–{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Demo-Annahme)
           </span>
         )}
-      </label>
+      </div>
     </div>
   )
 }

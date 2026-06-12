@@ -156,7 +156,8 @@ body {
 
 /* Fragen */
 .frage { margin-bottom: 12px; }
-.frage label { display: flex; flex-direction: column; gap: 4px; }
+.frage-kopf { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.frage-feld { display: flex; flex-direction: column; gap: 4px; }
 .frage-label { font-weight: 600; }
 .einheit { color: var(--muted); font-weight: 400; }
 .tooltip-wrap { position: relative; display: inline-flex; align-items: center; margin-left: 4px; }
