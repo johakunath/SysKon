@@ -62,7 +62,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                   <strong> {STATUS_LABEL[ergebnis.status]}</strong>
                 </td></tr>
                 <tr><td>Datenqualität</td><td>{ergebnis.dq} %</td></tr>
-                <tr><td>PE-/Planungsaufwand (intern)</td><td>Score {ergebnis.peScore} von 5 – keine LV-Kostenposition</td></tr>
+                <tr><td>Interne Prüfung (PE-Aufwand)</td><td>Score {ergebnis.peScore} von 5 – keine LV-Kostenposition</td></tr>
               </tbody>
             </table>
           </div>

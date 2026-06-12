@@ -5,7 +5,7 @@ import { euro } from './format.js'
 
 const EMPFEHLUNG = {
   gruen: 'Richt-LV versandfähig. Übergabe an PE zur Bestätigung der Aufstellvariante und Terminierung der Vor-Ort-Aufnahme.',
-  gelb: 'PE-Prüfung: offene Punkte klären (siehe Prüfliste), danach Richt-LV finalisieren. Kein Versand vor Klärung.',
+  gelb: 'Interne Prüfung: offene Punkte klären (siehe Prüfliste), danach Richt-LV finalisieren. Kein Versand vor Klärung.',
   orange: 'Engineering-Prüfung erforderlich, bevor ein belastbares Richt-LV möglich ist. Fall nicht im Standardprozess weiterführen.',
   rot: 'Nicht standardfähig im MVP. Als Engineering-Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
 }
@@ -38,7 +38,7 @@ export default function Handover({ ergebnis }) {
         <p>
           <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
           <strong> Status: {STATUS_LABEL[ergebnis.status]}</strong> · Datenqualität {ergebnis.dq} % ·
-          interner PE-Aufwandsscore {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
+          Interner Prüfaufwand: {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
           Netto-LV {euro(ergebnis.lv.netto)} (Demo)
         </p>
         <p className="warnbox">Empfehlung: {EMPFEHLUNG[ergebnis.status]}</p>
