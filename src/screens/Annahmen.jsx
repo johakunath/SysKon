@@ -8,6 +8,9 @@ export default function Annahmen({ annahmen, setAnnahmen, ergebnis }) {
 
   return (
     <div className="seite">
+      <div className="admin-banner no-print">
+        ⚙ Admin-Bereich · Änderungen wirken sofort auf alle Berechnungen. Nur für Demo-Administration.
+      </div>
       <div className="karte">
         <div className="druckkopf">
           <h2>Annahmen & Regeln</h2>
@@ -15,7 +18,7 @@ export default function Annahmen({ annahmen, setAnnahmen, ergebnis }) {
         </div>
         <p className="hinweis">
           Alle Werte sind editierbare <strong>Demo-Annahmen</strong> – Änderungen rechnen sofort live neu
-          (sichtbar in Kopfzeile und Live-Panel). Ein echter Admin-Bereich ist später nur ein Editor
+          (sichtbar im Live-Panel und Ergebnis). Ein echter Admin-Bereich ist später nur ein Editor
           über diese drei Datenebenen (Annahmen, Regeln, Katalog). Preisgleitformeln und BEG-Kostendeckel: Roadmap.
         </p>
       </div>
@@ -51,11 +54,11 @@ export default function Annahmen({ annahmen, setAnnahmen, ergebnis }) {
         <p className="hinweis">
           Jede Regel: WENN Bedingung DANN Wirkung (require / exclude / warn / status).
           Konfliktauflösung: exclude schlägt require; Status nimmt immer die schlechteste Stufe.
-          „Gefeuert" zeigt, welche Regeln bei der aktuellen Konfiguration auslösen.
+          „Ausgelöst" zeigt, welche Regeln bei der aktuellen Konfiguration feuern.
         </p>
         <table className="lv">
           <thead>
-            <tr><th>Nr</th><th>Wenn</th><th>Dann</th><th>Begründung</th><th>gefeuert</th></tr>
+            <tr><th>Nr</th><th>Wenn</th><th>Dann</th><th>Begründung</th><th>Ausgelöst</th></tr>
           </thead>
           <tbody>
             {REGELN.map(r => (

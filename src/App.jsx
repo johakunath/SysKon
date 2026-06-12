@@ -1,24 +1,26 @@
 import React, { useMemo, useState } from 'react'
 import { ANNAHMEN } from './data/annahmen.js'
 import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
-import { berechne, STATUS_LABEL } from './logic/engine.js'
-import { euro } from './screens/format.js'
+import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
 import Handover from './screens/Handover.jsx'
 import Annahmen from './screens/Annahmen.jsx'
 import Testfaelle from './screens/Testfaelle.jsx'
 
-const SCREENS = [
-  ['konfiguration', '1 · Konfiguration'],
-  ['ergebnis', '2 · Ergebnis'],
-  ['handover', '3 · Handover'],
-  ['annahmen', '4 · Annahmen & Regeln'],
-  ['testfaelle', '5 · Testfälle'],
+const MAIN_SCREENS = [
+  ['konfiguration', 'Konfiguration'],
+  ['ergebnis', 'Ergebnis'],
+  ['handover', 'Handover'],
+]
+const ADMIN_SCREENS = [
+  ['annahmen', 'Annahmen & Regeln'],
+  ['testfaelle', 'Testfälle'],
 ]
 
 export default function App() {
   const [screen, setScreen] = useState('konfiguration')
+  const [adminModus, setAdminModus] = useState(false)
   const [eingaben, setEingaben] = useState(
     () => ({ ...PRESETS.find(p => p.id === DEFAULT_PRESET_ID).eingaben })
   )
@@ -28,6 +30,8 @@ export default function App() {
 
   const props = { eingaben, setEingaben, annahmen, setAnnahmen, ergebnis, setScreen }
 
+  const visibleScreens = adminModus ? [...MAIN_SCREENS, ...ADMIN_SCREENS] : MAIN_SCREENS
+
   return (
     <div className="app">
       <header className="topbar no-print">
@@ -36,17 +40,22 @@ export default function App() {
           <span className="badge demo">Demo-Prototyp v0.1 · alle Werte sind Demo-Annahmen</span>
         </div>
         <nav className="tabs">
-          {SCREENS.map(([id, label]) => (
-            <button key={id} className={screen === id ? 'tab aktiv' : 'tab'} onClick={() => setScreen(id)}>
+          {visibleScreens.map(([id, label]) => (
+            <button key={id} className={`tab${screen === id ? ' aktiv' : ''}${ADMIN_SCREENS.some(s => s[0] === id) ? ' tab-admin' : ''}`} onClick={() => setScreen(id)}>
               {label}
             </button>
           ))}
         </nav>
-        <div className="kopf-status">
-          <span className={`ampel ${ergebnis.status ?? 'unbekannt'}`} />
-          <span>{STATUS_LABEL[ergebnis.status]}</span>
-          <span className="kopf-netto">{euro(ergebnis.lv.netto)} netto</span>
-        </div>
+        <button
+          className={`admin-toggle no-print${adminModus ? ' aktiv' : ''}`}
+          onClick={() => {
+            setAdminModus(m => !m)
+            if (adminModus && ADMIN_SCREENS.some(s => s[0] === screen)) setScreen('konfiguration')
+          }}
+          title="Admin-Bereich ein-/ausblenden"
+        >
+          ⚙
+        </button>
       </header>
 
       {screen === 'konfiguration' && <Konfiguration {...props} />}

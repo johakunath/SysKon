@@ -79,9 +79,16 @@ body {
   transition: color var(--t), background-color var(--t), border-color var(--t);
 }
 .tab:hover { background: rgb(255 255 255 / 0.07); color: #fff; }
-.tab.aktiv { color: #fff; font-weight: 600; border-bottom-color: var(--signal); }
-.kopf-status { display: flex; align-items: center; gap: 8px; font-size: 13px; padding-bottom: 10px; }
-.kopf-netto { font-weight: 600; margin-left: 8px; font-family: var(--mono); font-size: 13px; }
+.tab.aktiv { color: #fff; font-weight: 600; border-bottom-color: var(--akzent); }
+.tab.tab-admin { color: var(--topbar-text); opacity: 0.75; border-left: 1px solid rgb(255 255 255 / 0.12); margin-left: 8px; padding-left: 16px; }
+.tab.tab-admin.aktiv { opacity: 1; border-bottom-color: var(--signal); }
+.admin-toggle {
+  background: transparent; border: 1px solid rgb(255 255 255 / 0.2); border-radius: var(--radius-klein);
+  color: var(--topbar-text); padding: 5px 9px; cursor: pointer; font-size: 14px;
+  margin-bottom: 10px; transition: color var(--t), background-color var(--t), border-color var(--t);
+}
+.admin-toggle:hover { background: rgb(255 255 255 / 0.1); color: #fff; border-color: rgb(255 255 255 / 0.4); }
+.admin-toggle.aktiv { color: var(--signal-hell); border-color: var(--signal-hell); }
 
 /* Ampeln: Status als CSS-Klasse (gruen/gelb/orange/rot/unbekannt) */
 .ampel {
@@ -128,21 +135,23 @@ body {
   text-transform: uppercase; letter-spacing: 0.07em;
 }
 
-/* Sektionen links (Plankopf A–J) */
-.sektion {
-  display: flex; justify-content: space-between; width: 100%;
-  background: transparent; border: none; border-left: 3px solid transparent;
-  border-radius: var(--radius-klein);
-  padding: 8px 10px; cursor: pointer; font-size: 13px; text-align: left; color: var(--text);
-  font: inherit;
+/* Sektions-Anker-Navigation (Konfigurationsseite) */
+.sektion-nav { padding: 12px 14px; }
+.sektion-nav h4 { margin: 10px 0 6px; }
+.preset-zeile { margin-bottom: 8px; }
+.preset-zeile select { max-width: 100%; width: 100%; }
+.sektion-anker {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 8px; border-radius: var(--radius-klein);
+  text-decoration: none; color: var(--text); font-size: 13px;
+  border-left: 3px solid transparent;
   transition: background-color var(--t), color var(--t), border-color var(--t);
 }
-.sektion:hover { background: var(--hover-flaeche); }
-.sektion.aktiv {
-  background: var(--akzent-hell); color: var(--akzent);
-  font-weight: 600; border-left-color: var(--akzent);
-}
+.sektion-anker:hover { background: var(--hover-flaeche); color: var(--akzent); border-left-color: var(--rand-stark); }
+.sektion-anker.komplett { color: var(--st-gruen); border-left-color: var(--st-gruen); }
 .fortschritt { color: inherit; opacity: 0.7; font-family: var(--mono); font-size: 12px; }
+.fortschritt.ok { color: var(--st-gruen); opacity: 1; }
+.sek-block { scroll-margin-top: 72px; }
 
 /* Fragen */
 .frage { margin-bottom: 12px; }
@@ -232,6 +241,28 @@ details summary:hover { color: var(--akzent); }
 .kriterien .ok { color: var(--st-gruen); }
 .kriterien .fehlt { color: var(--st-rot); }
 
+/* Ergebnis-Zusammenfassungsleiste */
+.summary-strip {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 20px; margin-bottom: 14px;
+  background: var(--karte); border: 1px solid var(--rand);
+  border-left: 4px solid var(--akzent); border-radius: var(--radius);
+}
+.summary-strip.status-gruen { border-left-color: var(--st-gruen); }
+.summary-strip.status-gelb { border-left-color: var(--st-gelb); }
+.summary-strip.status-orange { border-left-color: var(--st-orange); }
+.summary-strip.status-rot { border-left-color: var(--st-rot); }
+.summary-mitte { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.summary-detail { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.summary-aktion { font-size: 13px; color: var(--muted); max-width: 340px; }
+.status-hierarchie { margin: 10px 0 4px; display: grid; gap: 4px; font-size: 13px; }
+.status-hierarchie > div { display: flex; align-items: center; gap: 8px; }
+.sh-label { color: var(--muted); min-width: 90px; font-size: 12px; }
+.sh-wert { font-family: var(--mono); font-size: 12px; }
+.regel-nachweis { margin-top: 10px; }
+.regel-nachweis > summary { cursor: pointer; font-size: 12px; color: var(--muted); font-weight: 600; }
+.regel-nachweis > summary:hover { color: var(--akzent); }
+
 /* Sekundäre Reiter (Ergebnis-Tabs): Unterstrich-Stil auf heller Fläche */
 .tabs-sekundaer { display: flex; gap: 2px; margin-bottom: 14px; border-bottom: 1px solid var(--rand); }
 .tabs-sekundaer .tab {
@@ -241,6 +272,22 @@ details summary:hover { color: var(--akzent); }
 }
 .tabs-sekundaer .tab:hover { background: transparent; color: var(--text); }
 .tabs-sekundaer .tab.aktiv { background: transparent; color: var(--akzent); border-bottom-color: var(--akzent); font-weight: 600; }
+
+.naechster-schritt {
+  display: flex; align-items: baseline; gap: 10px;
+  background: var(--akzent-hell); border: 1px solid var(--akzent); border-radius: var(--radius-klein);
+  padding: 8px 12px; font-size: 13px; font-weight: 500; margin-bottom: 8px;
+}
+.ns-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--akzent); white-space: nowrap; }
+.pruef-tabelle th { text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--rand-stark); padding: 6px; }
+.pruef-tabelle td { padding: 7px 6px; border-bottom: 1px solid var(--zeile); font-size: 13px; vertical-align: middle; }
+.pruef-tabelle tbody tr:hover td { background: var(--hover-flaeche); }
+
+.admin-banner {
+  background: var(--st-gelb-hell); border: 1px solid var(--st-gelb);
+  border-radius: var(--radius-klein); padding: 8px 16px;
+  font-size: 12px; color: var(--text); margin-bottom: 12px;
+}
 
 .druckkopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .zeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }

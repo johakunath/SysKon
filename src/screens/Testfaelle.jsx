@@ -73,6 +73,9 @@ export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, 
 
   return (
     <div className="seite">
+      <div className="admin-banner no-print">
+        ⚙ Admin-Bereich · Testfälle werden lokal im Browser gespeichert. Nur für Demo-Validierung.
+      </div>
       <div className="karte">
         <h2>Test- & Validierungsumgebung</h2>
         <p className="hinweis">

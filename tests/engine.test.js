@@ -107,6 +107,30 @@ describe('Status-Verschlechterung', () => {
   })
 })
 
+describe('Warnungen: Status-Annotation', () => {
+  it('warn+status in einer Regel → Warnung erhält den korrelierten Status', () => {
+    const regeln = [
+      { id: 'T-WARN-ST', wenn: { feld: 'a', op: '=', wert: 'x' },
+        dann: [
+          { typ: 'warn', kategorie: 'engineering', text: 'Engineering erforderlich.' },
+          { typ: 'status', wert: 'orange' },
+        ], begruendung: '' },
+    ]
+    const erg = berechne({ a: 'x' }, { regeln, katalog: [] })
+    expect(erg.warnungen).toHaveLength(1)
+    expect(erg.warnungen[0].status).toBe('orange')
+  })
+
+  it('warn ohne korrelierte status-Regel → status ist null', () => {
+    const regeln = [
+      { id: 'T-WARN-ONLY', wenn: { feld: 'a', op: '=', wert: 'x' },
+        dann: { typ: 'warn', kategorie: 'hinweis', text: 'Nur Hinweis.' }, begruendung: '' },
+    ]
+    const erg = berechne({ a: 'x' }, { regeln, katalog: [] })
+    expect(erg.warnungen[0].status).toBeNull()
+  })
+})
+
 describe('exclude > require', () => {
   it('exclude schlägt require beim selben Modul', () => {
     const regeln = [

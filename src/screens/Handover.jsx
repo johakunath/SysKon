@@ -5,7 +5,7 @@ import { euro } from './format.js'
 
 const EMPFEHLUNG = {
   gruen: 'Richt-LV versandfähig. Übergabe an PE zur Bestätigung der Aufstellvariante und Terminierung der Vor-Ort-Aufnahme.',
-  gelb: 'PE-Prüfung: offene Punkte klären (siehe Prüfliste), danach Richt-LV finalisieren. Kein Versand vor Klärung.',
+  gelb: 'Interne Prüfung: offene Punkte klären (siehe Prüfliste), danach Richt-LV finalisieren. Kein Versand vor Klärung.',
   orange: 'Engineering-Prüfung erforderlich, bevor ein belastbares Richt-LV möglich ist. Fall nicht im Standardprozess weiterführen.',
   rot: 'Nicht standardfähig im MVP. Als Engineering-Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
 }
@@ -19,13 +19,22 @@ const FOTOS_DOKUMENTE = [
   'Wartungsprotokolle Bestandskessel (falls vorhanden)',
 ]
 
+const KAT_OWNER = {
+  pe: 'PE / Technik',
+  engineering: 'Technik',
+  foerderung: 'Förderung / PE',
+  hinweis: '—',
+}
+
+const NAECHSTER_SCHRITT = {
+  gruen: 'Handover an PE freigeben und Vor-Ort-Aufnahme terminieren',
+  gelb: 'Offene Prüfpunkte klären (siehe Tabelle), dann Richt-LV finalisieren',
+  orange: 'Engineering-Prüfung einleiten – Fall nicht im Standardprozess',
+  rot: 'Als Engineering-Sonderfall behandeln oder zurückstellen',
+  unbekannt: 'Konfiguration vervollständigen bevor Handover möglich',
+}
+
 export default function Handover({ ergebnis }) {
-  const kategorien = [
-    ['pe', 'PE-Prüfpunkte'],
-    ['engineering', 'Engineering-Prüfpunkte'],
-    ['foerderung', 'Förderprüfung'],
-    ['hinweis', 'Sonstige Hinweise'],
-  ]
   const sektionsTitel = Object.fromEntries(SEKTIONEN.map(s => [s.id, s.titel]))
 
   return (
@@ -33,22 +42,26 @@ export default function Handover({ ergebnis }) {
       <div className="karte">
         <div className="druckkopf">
           <h2>Planungs-/Engineering-Handover</h2>
-          <button className="primaer no-print" onClick={() => window.print()}>Drucken / PDF</button>
+          <button className="primaer no-print" onClick={() => window.print()}>Handover exportieren</button>
         </div>
         <p>
           <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
           <strong> Status: {STATUS_LABEL[ergebnis.status]}</strong> · Datenqualität {ergebnis.dq} % ·
-          interner PE-Aufwandsscore {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
+          Interner Prüfaufwand: {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
           Netto-LV {euro(ergebnis.lv.netto)} (Demo)
         </p>
-        <p className="warnbox">Empfehlung: {EMPFEHLUNG[ergebnis.status]}</p>
+        <div className="naechster-schritt">
+          <span className="ns-label">Nächster Schritt</span>
+          {NAECHSTER_SCHRITT[ergebnis.status ?? 'unbekannt']}
+        </div>
+        <p className="hinweis">{EMPFEHLUNG[ergebnis.status]}</p>
       </div>
 
       <div className="karten-reihe">
         <div className="karte">
-          <h3>Fehlende Daten ({ergebnis.fehlendeDaten.length})</h3>
+          <h3>Pflichtdaten vollständig?</h3>
           {ergebnis.fehlendeDaten.length === 0
-            ? <p className="hinweis">Alle Pflichtfragen beantwortet.</p>
+            ? <p className="okbox">✓ Alle Pflichtfragen beantwortet.</p>
             : (
               <ul className="checkliste">
                 {ergebnis.fehlendeDaten.map((f, i) => (
@@ -67,19 +80,24 @@ export default function Handover({ ergebnis }) {
 
         <div className="karte">
           <h3>Prüfpunkte aus Regeln</h3>
-          {kategorien.map(([kat, titel]) => {
-            const eintraege = ergebnis.warnungen.filter(w => w.kategorie === kat)
-            if (!eintraege.length) return null
-            return (
-              <div key={kat}>
-                <h4>{titel}</h4>
-                <ul className="checkliste">
-                  {eintraege.map((w, i) => <li key={i}>☐ {w.text} <span className="hinweis">({w.regelId})</span></li>)}
-                </ul>
-              </div>
-            )
-          })}
-          {ergebnis.warnungen.length === 0 && <p className="hinweis">Keine Prüfpunkte ausgelöst.</p>}
+          {ergebnis.warnungen.length === 0
+            ? <p className="hinweis">Keine Prüfpunkte ausgelöst.</p>
+            : (
+              <table className="pruef-tabelle">
+                <thead>
+                  <tr><th>Prüfpunkt</th><th>Owner</th><th>Ergebnis</th></tr>
+                </thead>
+                <tbody>
+                  {ergebnis.warnungen.map((w, i) => (
+                    <tr key={i}>
+                      <td>{w.text}</td>
+                      <td>{KAT_OWNER[w.kategorie] ?? '—'}</td>
+                      <td><span className={`ampel klein ${w.status ?? 'gelb'}`} /> offen</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           {ergebnis.konflikte.map((k, i) => <p key={i} className="warnbox">{k}</p>)}
         </div>
       </div>

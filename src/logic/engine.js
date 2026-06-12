@@ -150,6 +150,15 @@ export function berechne(eingaben, opts = {}) {
       text: 'Die gewählte Aufstellvariante ist gesperrt (Schall oder Fläche) – Variante wechseln oder Engineering-Prüfung.' })
   }
 
+  // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.
+  // Regeln, die warn+status koppeln, tragen denselben regelId in beiden Arrays.
+  // SYS-EXCLUDE hat keinen statusQuellen-Eintrag, erhält status direkt.
+  const statusByRegel = Object.fromEntries(statusQuellen.map(s => [s.regelId, s.wert]))
+  statusByRegel['SYS'] = 'orange'
+  for (const w of warnungen) {
+    w.status = statusByRegel[w.regelId] ?? null
+  }
+
   // 3. LV bauen
   const lvPositionen = []
   const opexPositionen = []

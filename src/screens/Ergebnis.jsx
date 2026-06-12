@@ -29,6 +29,14 @@ function exportLvCsv(lv, annahmen) {
   URL.revokeObjectURL(url)
 }
 
+const NAECHSTE_AKTION = {
+  gruen: 'Richt-LV versandfähig – Handover an PE freigeben',
+  gelb: 'Offene Punkte im Handover klären, dann Richt-LV finalisieren',
+  orange: 'Engineering-Prüfung erforderlich – Fall nicht im Standardprozess',
+  rot: 'Engineering-Sonderfall – zurückstellen oder separat behandeln',
+  unbekannt: 'Konfiguration unvollständig – Pflichtfragen ausfüllen',
+}
+
 export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
   const [tab, setTab] = useState('konfiguration')
   const d = ergebnis.derived
@@ -38,8 +46,20 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
     .map(g => ({ name: g, positionen: lv.positionen.filter(p => p.gruppe === g) }))
     .filter(g => g.positionen.length > 0)
 
+  const blocker = ergebnis.warnungen.filter(w => w.status === 'rot' || w.status === 'orange')
+  const hinweise = ergebnis.warnungen.filter(w => w.status !== 'rot' && w.status !== 'orange')
+
   return (
     <div className="seite">
+      <div className={`summary-strip status-${ergebnis.status ?? 'unbekannt'} no-print`}>
+        <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
+        <div className="summary-mitte">
+          <strong>{STATUS_LABEL[ergebnis.status]}</strong>
+          <span className="summary-detail">{d.wp_module} × {annahmen.wp_modul_kw} kW · Netto-LV {euro(lv.netto)}</span>
+        </div>
+        <div className="summary-aktion">{NAECHSTE_AKTION[ergebnis.status ?? 'unbekannt']}</div>
+      </div>
+
       <div className="tabs-sekundaer no-print">
         {[['konfiguration', 'Konfigurationsergebnis'], ['lv', 'Leistungsverzeichnis'], ['kosten', 'Kostenübersicht']].map(([id, label]) => (
           <button key={id} className={tab === id ? 'tab aktiv' : 'tab'} onClick={() => setTab(id)}>{label}</button>
@@ -62,27 +82,32 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                   <strong> {STATUS_LABEL[ergebnis.status]}</strong>
                 </td></tr>
                 <tr><td>Datenqualität</td><td>{ergebnis.dq} %</td></tr>
-                <tr><td>PE-/Planungsaufwand (intern)</td><td>Score {ergebnis.peScore} von 5 – keine LV-Kostenposition</td></tr>
+                <tr><td>Interne Prüfung (PE-Aufwand)</td><td>Score {ergebnis.peScore} von 5 – keine LV-Kostenposition</td></tr>
               </tbody>
             </table>
           </div>
 
           <div className="karte">
-            <h3>Grün-Kriterien (R11)</h3>
+            <h3>Warum diese Lösung passt</h3>
             <ul className="kriterien">
               {ergebnis.gruenKriterien.map((k, i) => (
                 <li key={i} className={k.erfuellt ? 'ok' : 'fehlt'}>{k.erfuellt ? '✓' : '✗'} {k.text}</li>
               ))}
             </ul>
+            <div className="status-hierarchie">
+              <div><span className="sh-label">Gesamtstatus</span><span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} /> <strong>{STATUS_LABEL[ergebnis.status]}</strong></div>
+              {blocker.length > 0 && <div><span className="sh-label">Blocker</span><span className="sh-wert">{blocker.length} Prüfpunkte</span></div>}
+              {hinweise.length > 0 && <div><span className="sh-label">Hinweise</span><span className="sh-wert">{hinweise.length} Hinweise</span></div>}
+            </div>
             {ergebnis.statusQuellen.length > 0 && (
-              <>
-                <h4>Statusbegründung</h4>
+              <details className="regel-nachweis">
+                <summary>Regel-Nachweis ({ergebnis.statusQuellen.length})</summary>
                 <ul className="warnliste">
                   {ergebnis.statusQuellen.map((q, i) => (
                     <li key={i}><strong>{q.regelId} → {q.wert}</strong>: {q.begruendung}</li>
                   ))}
                 </ul>
-              </>
+              </details>
             )}
           </div>
 
