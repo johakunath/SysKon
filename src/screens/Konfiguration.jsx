@@ -1,8 +1,40 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SEKTIONEN } from '../data/fragen.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
 import { euro, num, VARIANTEN_NAME } from './format.js'
+
+function Tooltip({ text }) {
+  const [offen, setOffen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!offen) return undefined
+    const schliesseBeiAussenklick = (event) => {
+      if (!ref.current?.contains(event.target)) setOffen(false)
+    }
+    document.addEventListener('pointerdown', schliesseBeiAussenklick)
+    return () => document.removeEventListener('pointerdown', schliesseBeiAussenklick)
+  }, [offen])
+
+  return (
+    <span className="tooltip-wrap" ref={ref}>
+      <button
+        type="button"
+        className={`tooltip${offen ? ' offen' : ''}`}
+        aria-label="Hilfetext anzeigen"
+        aria-expanded={offen}
+        onClick={() => setOffen(v => !v)}
+        onBlur={(event) => {
+          if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) setOffen(false)
+        }}
+      >
+        ⓘ
+      </button>
+      <span className="tooltip-text" role="tooltip">{text}</span>
+    </span>
+  )
+}
 
 function Frage({ frage, wert, onChange, gesperrt }) {
   const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
@@ -16,7 +48,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
         <span className="frage-label">
           {frage.label}
           {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
-          {frage.tooltip ? <span className="tooltip" title={frage.tooltip}> ⓘ</span> : null}
+          {frage.tooltip ? <Tooltip text={frage.tooltip} /> : null}
         </span>
         {frage.typ === 'zahl' ? (
           <input
@@ -158,7 +190,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               <h4>Hinweise ({ergebnis.warnungen.length})</h4>
               <ul className="warnliste">
                 {ergebnis.warnungen.slice(0, 4).map((w, i) => <li key={i}>{w.regelId}: {w.text}</li>)}
-                {ergebnis.warnungen.length > 4 && <li>… alle im <a onClick={() => setScreen('handover')}>Handover</a></li>}
+                {ergebnis.warnungen.length > 4 && <li>… alle im <a onClick={() => setScreen('ergebnis')}>Ergebnis</a></li>}
               </ul>
             </>
           )}

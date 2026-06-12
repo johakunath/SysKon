@@ -19,8 +19,8 @@ const noop = () => {}
 describe('Screens rendern mit jedem Preset', () => {
   it('App-Shell rendert mit Referenzfall', () => {
     const html = renderToString(<App />)
-    expect(html).toContain('Projektentwicklungs-Konfigurator')
-    expect(html).toContain('Demo-Prototyp')
+    expect(html).toContain('Systempaket-Konfigurator')
+    expect(html).not.toContain('Handover</button>')
   })
 
   for (const preset of PRESETS) {
