@@ -1,35 +1,28 @@
-# Projektentwicklungs-Konfigurator (Demo-Prototyp, Stufe 1)
+# SysKon — Systempaket-Konfigurator
 
-Interner klickbarer Prototyp: aus Gebäudedaten wird per Regel-Engine ein strukturiertes
-Richt-Leistungsverzeichnis für Wärmepumpen-Contracting in Bestands-MFH abgeleitet.
-**Alle Zahlen sind Demo-Annahmen.** Kein Angebotstool, keine rechtsverbindliche Berechnung.
+Internal demo prototype. Not customer-facing; all numbers are demo assumptions.
 
-Fachliches Konzept: `HANDOVER.md` · Arbeitsvorrat: `BACKLOG.md` · Regeln für KI-Sessions: `CLAUDE.md`
+## Agent entry points
 
-## Starten
+- Active tasks: `BACKLOG.md`
+- Agent workflow/file map: `CLAUDE.md`
+- Product brief pointer: `HANDOVER.md`
+- Full archived product brief: `docs/HANDOVER_FULL.md`
+- Completed backlog archive: `docs/BACKLOG_ARCHIVE.md`
 
-```bash
-npm install     # einmalig
-npm run dev     # öffnet die App unter http://localhost:5173
-```
-
-## Prüfen
+## Run/check
 
 ```bash
-npm test        # rechnet die 4 Referenz-Testfälle durch die Engine
-npm run build   # prüft, ob die App fehlerfrei baut
+npm install
+npm run dev
+npm test
+npm run build
 ```
 
-## Die 5 Screens
+## Current visible app flow
 
-1. **Konfiguration** – Eingabesektionen A–J, dynamische Fragen, Live-Panel (Status, Datenqualität, Kosten)
-2. **Ergebnis** – Konfigurationsergebnis, Leistungsverzeichnis mit Begründung je Position, Kostenübersicht
-3. **Handover** – Prüfliste für PE/Engineering, fehlende Daten, Druck-Export
-4. **Annahmen & Regeln** – alle Demo-Werte inline editierbar, Regelliste als Wenn-Dann-Tabelle
-5. **Testfälle** – Konfigurationen speichern, neu rechnen, Diff gegen Referenzlauf
+1. `Konfiguration` — questions, live analysis preview.
+2. `Ergebnis` — solution analysis, LV, costs.
+3. Admin toggle — assumptions/rules and test cases.
 
-## Weiterentwicklung per Vibe Coding
-
-Dieses Repo ist für die Arbeit mit KI-Agenten eingerichtet:
-ein Task = ein Backlog-Item in `BACKLOG.md`. Einer neuen Claude-Session genügt z. B.:
-„Lies CLAUDE.md und BACKLOG.md und übernimm SK-17."
+`Handover` code still exists but is intentionally hidden from the main demo flow.

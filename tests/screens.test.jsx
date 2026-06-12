@@ -19,8 +19,27 @@ const noop = () => {}
 describe('Screens rendern mit jedem Preset', () => {
   it('App-Shell rendert mit Referenzfall', () => {
     const html = renderToString(<App />)
-    expect(html).toContain('Projektentwicklungs-Konfigurator')
-    expect(html).toContain('Demo-Prototyp')
+    expect(html).toContain('Systempaket-Konfigurator')
+    expect(html).not.toContain('Handover</button>')
+  })
+
+
+  it('Konfiguration verknüpft Fragen per htmlFor/id und hält Tooltip neben dem Label', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Konfiguration
+        eingaben={eingaben}
+        setEingaben={noop}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+        setScreen={noop}
+      />
+    )
+    expect(html).toContain('for="gebaeudetyp"')
+    expect(html).toContain('id="gebaeudetyp"')
+    expect(html).toContain('aria-expanded="false"')
+    expect(html).toContain('class="frage-kopf"')
   })
 
   for (const preset of PRESETS) {

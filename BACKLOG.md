@@ -1,62 +1,37 @@
-# Backlog
+# BACKLOG (agent quick index)
 
-Arbeitsvorrat für alle Agent-Sessions. Regeln: siehe `CLAUDE.md`.
-Status: `Offen` → `In Arbeit` → `Erledigt` (mit Datum). Ein Item = ein Commit.
-Neue Items unten in der passenden Sektion anlegen (nächste freie SK-Nummer).
+Use this file for active work only. Historical/completed items live in `docs/BACKLOG_ARCHIVE.md`. Full product brief lives in `HANDOVER.md` → `docs/HANDOVER_FULL.md`.
 
-## v0.1 Build
+## Rules
 
-| ID | Titel | Beschreibung | Dateien | Prio | Status |
-|---|---|---|---|---|---|
-| SK-01 | Projekt-Setup React+Vite | package.json, vite.config.js, index.html, main.jsx, Vitest | Root, `src/main.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-02 | Demo-Annahmen | Alle Annahmen aus HANDOVER §5 als editierbares Datenobjekt | `src/data/annahmen.js` | hoch | Erledigt 11.06.2026 |
-| SK-03 | Regelsatz R01–R18 | 18 Regeln aus HANDOVER §4 im Schema §2.2 (deklarativ) | `src/data/regeln.js` | hoch | Erledigt 11.06.2026 |
-| SK-04 | Komponentenkatalog | 6 Pakettypen mit Varianten + LV-Positionen (Kostenformel, Förderflag, CapEx/Opex) | `src/data/katalog.js` | hoch | Erledigt 11.06.2026 |
-| SK-05 | Fragebogen A–J | Dynamische Fragen mit Sichtbarkeitsbedingungen, Tooltips, DQ-Gewichten | `src/data/fragen.js` | hoch | Erledigt 11.06.2026 |
-| SK-06 | Presets/Testfälle | Referenzfall §3.3 + 4 Testfälle §17 mit Erwartungswerten | `src/data/presets.js` | hoch | Erledigt 11.06.2026 |
-| SK-07 | Berechnungen | Heizlast-Proxy, Kaskade, Schallformel R18, Kosten/Förderung/Energie | `src/logic/calc.js` | hoch | Erledigt 11.06.2026 |
-| SK-08 | Regel-Engine | Fixpunkt-Schleife, require/exclude/warn/status, DQ-Deckelung | `src/logic/engine.js` | hoch | Erledigt 11.06.2026 |
-| SK-09 | Preset-Validierung | Vitest: 4 Testfälle gegen Erwartungen aus HANDOVER §6 | `tests/presets.test.js` | hoch | Erledigt 11.06.2026 |
-| SK-10 | App-Shell + Styles | Navigation 5 Screens, globaler State, 3-Spalten-CSS | `src/App.jsx`, `src/styles.css` | hoch | Erledigt 11.06.2026 |
-| SK-11 | Screen 1 Konfiguration | Sektionen A–J links, dyn. Fragen Mitte, Live-Panel rechts | `src/screens/Konfiguration.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-12 | Screen 2 Ergebnis | Tabs Konfigurationsergebnis / LV mit Begründung / Kostenübersicht | `src/screens/Ergebnis.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-13 | Screen 3 Handover | Prüfliste, fehlende Daten, Prüfpunkte, Empfehlung, Druck | `src/screens/Handover.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-14 | Screen 4 Annahmen & Regeln | Inline-editierbare Annahmen, Regeltabelle, Live-Neuberechnung | `src/screens/Annahmen.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-15 | Screen 5 Testfälle | Speichern (localStorage), Rechenlauf, Diff-Tabelle | `src/screens/Testfaelle.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-21 | Render-Smoke-Test Screens | Alle 5 Screens rendern fehlerfrei mit jedem Preset (SSR, ohne Browser) | `tests/screens.test.jsx` | hoch | Erledigt 11.06.2026 |
-| SK-22 | Review-Fix: `!=` bei leerem Feld | PR-#1-Review: unbeantwortetes Feld darf keinen Negativ-Treffer auslösen (R17 machte leere Konfiguration rot) | `src/logic/engine.js`, `tests/presets.test.js` | hoch | Erledigt 11.06.2026 |
-| SK-23 | Schriften IBM Plex (self-hosted) | Neue Dependencies `@fontsource/ibm-plex-sans` + `@fontsource/ibm-plex-mono`. Begründung: eigenständiges Ingenieurs-Schriftbild, identisch auf allen Rechnern, Tabellenziffern für €/kW/dB-Spalten; lokal gebundelt statt Google-CDN (DSGVO) | `package.json`, `src/main.jsx` | mittel | Erledigt 11.06.2026 |
-| SK-24 | Redesign „Stahlblau & Signal" | Durchgängiges Erscheinungsbild: Design-Tokens, Stahlblau-Topbar, Haarlinien statt Schatten, Monospace-Ziffern, Status-Ampeln als CSS-Klassen, dezente 140-ms-Übergänge (mit `prefers-reduced-motion`) | `src/styles.css`, `src/App.jsx`, `src/screens/*.jsx`, `src/screens/format.js` | mittel | Erledigt 11.06.2026 |
+- One task = one small commit.
+- Keep rows short; add detail in code/PR, not here.
+- Allowed values: Type `Epic|Story|Bug|UX|Tech Debt|Question`; Priority `P0|P1|P2|P3`; Effort `XS|S|M|L|XL`; Status `Todo|In Progress|Blocked|Done|Deferred`.
 
-## v0.1 Verbesserungen (offen)
+## Current code findings
 
-| ID | Titel | Beschreibung | Dateien | Prio | Status |
-|---|---|---|---|---|---|
-| SK-16 | Druck-Stylesheet verfeinern | `window.print()`-Ausgabe des Handover-Screens sauber formatieren (Seitenumbrüche, keine Navigation) | `src/styles.css`, `src/screens/Handover.jsx` | mittel | Erledigt 12.06.2026 |
-| SK-17 | Tooltips vervollständigen | Jede Frage in A–J bekommt einen „Warum fragen wir das?"-Tooltip | `src/data/fragen.js` | mittel | Erledigt 12.06.2026 |
-| SK-18 | LV-Export CSV | LV-Tabelle als CSV herunterladen (ohne neue Dependency) | `src/screens/Ergebnis.jsx` | niedrig | Erledigt 12.06.2026 |
-| SK-19 | Engine-Unit-Tests | Einzeltests für exclude>require, Status-Verschlechterung, DQ-Deckelung | `tests/engine.test.js` (neu) | mittel | Erledigt 12.06.2026 |
-| SK-20 | Eingabevalidierung | Plausibilitätsgrenzen für Zahlenfelder (z. B. Fläche, MWh) mit Inline-Hinweis | `src/data/fragen.js`, `src/screens/Konfiguration.jsx` | mittel | Erledigt 12.06.2026 |
+- Gesamtstatus: `src/logic/engine.js` computes `ergebnis.status` from `src/data/regeln.js` status effects plus SYS selected-variant exclusion; displayed in `Konfiguration`, `Ergebnis`, hidden `Handover`.
+- Meaning: rule-derived, but unclear as user-facing lifecycle/readiness. Prefer clearer analysis indicators or explicit semantics before demos.
+- Datenqualität: `dqScore()` in `src/logic/engine.js`; weights visible questions from `src/data/fragen.js`; displayed in `Konfiguration`, `Ergebnis`, hidden `Handover`.
+- Component map: `Konfiguration.jsx` = sidebar/input/live preview/tooltips; `Ergebnis.jsx` = result/LV/costs; `Handover.jsx` = hidden handover; `src/data/fragen.js` = tooltip text.
 
-## v0.2 UI-Strukturbereinigung
+## Active structured backlog
 
-| ID | Titel | Beschreibung | Dateien | Prio | Status |
-|---|---|---|---|---|---|
-| SK-35 | Hauptnavigation auf 3 Schritte | Nur Konfiguration→Ergebnis→Handover im Hauptflow; Annahmen & Testfälle hinter Admin-Toggle | `src/App.jsx`, `src/styles.css` | hoch | Erledigt 12.06.2026 |
-| SK-36 | Header bereinigen + PE-Prüfung umbenennen | Preis/Status aus Header entfernen; PE-Prüfung → Interne Prüfung; gefeuert → Ausgelöst | `src/App.jsx`, `src/screens/*.jsx` | hoch | Erledigt 12.06.2026 |
-| SK-37 | Konfiguration: Durchgehende Formularansicht | Alle Fragen sichtbar, Sidebar als Anker-Navigation, Live-Panel auf KPIs reduziert | `src/screens/Konfiguration.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
-| SK-38 | Ergebnis: Summary-Strip + Regel-IDs verstecken | Entscheidungs-Strip über Tabs, Regel-IDs in aufklappbarem Nachweis | `src/screens/Ergebnis.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
-| SK-39 | Handover: Aktionsorientierte Tabelle | Prüfpunkte als Tabelle mit Owner/Status, kompakte Nächster-Schritt-Box | `src/screens/Handover.jsx`, `src/styles.css` | mittel | Erledigt 12.06.2026 |
-| SK-40 | Admin-Bereich kennzeichnen | Admin-Banner auf Annahmen & Testfälle-Seiten | `src/screens/Annahmen.jsx`, `src/screens/Testfaelle.jsx` | niedrig | Erledigt 12.06.2026 |
-
-| SK-41 | Engine: Warnungen mit Status annotieren | `warn`-Effekte enthalten kein `status`-Feld; Blocker-Filter in Ergebnis.jsx läuft immer leer. Engine soll nach dem Fixpunkt jede Warnung mit dem korrelierten Status aus `statusQuellen` anreichern. | `src/logic/engine.js`, `tests/engine.test.js` | hoch | Erledigt 12.06.2026 |
-
-## Roadmap (aus HANDOVER, nicht v0.1)
-
-| ID | Titel | Beschreibung | Prio | Status |
-|---|---|---|---|---|
-| SK-30 | Stufe 2: Grundpreis/Arbeitspreis | Laufzeiten 10/15/20 J., Ziel-IRR 13/15 %, Marge nur auf Arbeitspreis (HANDOVER §7/Stufe 2) | später | Offen |
-| SK-31 | Monoenergetischer Pfad | Aktuell nur Roadmap-Platzhalter im UI; echte Auslegung mit Heizstab | später | Offen |
-| SK-32 | Preisgleitformeln | Marktglied/Kostenglied, Indizes; aktuell nur Roadmap-Hinweis | später | Offen |
-| SK-33 | Admin-Backend | Echter Editor über die 3 Datenebenen (Annahmen/Regeln/Katalog) mit Versionierung | später | Offen |
-| SK-34 | BEG-Kostendeckel | Förderdeckel-Logik; aktuell nur Warnhinweis | später | Offen |
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-42 | Epic | App structure | Simplify app structure | Remove premature workflow signals. | Handover not demoed; status/DQ reviewed. | P0 | L | Todo |
+| SK-43 | UX | Handover | Remove/de-emphasize Handover | Hidden from nav; code kept for now. | Decide remove vs deferred reference. | P0 | S | In Progress |
+| SK-44 | Question | Status | Reconsider Gesamtstatus | Rule-derived but unclear to users. | Keep with semantics or replace. | P1 | M | Todo |
+| SK-45 | Question | Data quality | Reconsider Datenqualität | Percentage needs product meaning. | Define threshold/action or de-emphasize. | P2 | S | Todo |
+| SK-46 | Epic | Page model | Rework tab/page model | Align names with demo story. | Analysis/result split is clear. | P1 | L | Todo |
+| SK-47 | UX | Ergebnis | Rename/restructure Ergebnis | Current title implies final result. | Rename to Analyse or split. | P1 | M | Todo |
+| SK-48 | Story | Results | Merge LV + costs | Combine included scope then CAPEX. | One coherent result section. | P1 | M | Todo |
+| SK-49 | UX | Vorlösung | Elaborate Vorlösung | Add scope/assumptions/limits. | No customer-ready implication. | P2 | S | Todo |
+| SK-50 | Epic | Config layout | Improve configuration layout | Improve scanability only. | Desktop/tablet-wide easier to use. | P1 | L | Todo |
+| SK-51 | UX | Config layout | Fixed 3-column layout | Sidebars fixed, center scrolls. | Works on desktop/tablet-wide. | P1 | M | Todo |
+| SK-52 | Story | Preview | Full result preview | Preview shows solution, scope, CAPEX, assumptions. | Matches merged result content. | P1 | M | Todo |
+| SK-53 | UX | Sidebar | Left title cleanup | Title changed; subtitle removed. | Visible title is Systempaket-Konfigurator. | P0 | XS | Done |
+| SK-54 | Epic | Responsive | Mobile/tablet behavior | Avoid obvious breakage. | Header/tooltips/tablet usable. | P1 | M | Todo |
+| SK-55 | Bug | Header | Full-width header | Avoid clipped header. | Header spans visible width. | P0 | XS | Done |
+| SK-56 | Bug | Tooltips | Touch tooltips | Tap/focus/outside-close. | Works without invalid label markup. | P1 | S | Done |
+| SK-57 | UX | Tablet | Tablet-wide layout decent | No full phone optimization. | Tablet-wide avoids clipping. | P2 | M | Todo |

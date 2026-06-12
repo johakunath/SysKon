@@ -4,14 +4,12 @@ import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
 import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
-import Handover from './screens/Handover.jsx'
 import Annahmen from './screens/Annahmen.jsx'
 import Testfaelle from './screens/Testfaelle.jsx'
 
 const MAIN_SCREENS = [
   ['konfiguration', 'Konfiguration'],
   ['ergebnis', 'Ergebnis'],
-  ['handover', 'Handover'],
 ]
 const ADMIN_SCREENS = [
   ['annahmen', 'Annahmen & Regeln'],
@@ -36,8 +34,7 @@ export default function App() {
     <div className="app">
       <header className="topbar no-print">
         <div className="brand">
-          <strong>Projektentwicklungs-Konfigurator</strong>
-          <span className="badge demo">Demo-Prototyp v0.1 · alle Werte sind Demo-Annahmen</span>
+          <strong>Systempaket-Konfigurator</strong>
         </div>
         <nav className="tabs">
           {visibleScreens.map(([id, label]) => (
@@ -60,7 +57,6 @@ export default function App() {
 
       {screen === 'konfiguration' && <Konfiguration {...props} />}
       {screen === 'ergebnis' && <Ergebnis {...props} />}
-      {screen === 'handover' && <Handover {...props} />}
       {screen === 'annahmen' && <Annahmen {...props} />}
       {screen === 'testfaelle' && <Testfaelle {...props} />}
 
