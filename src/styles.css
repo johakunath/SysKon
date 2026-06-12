@@ -273,6 +273,16 @@ details summary:hover { color: var(--akzent); }
 .tabs-sekundaer .tab:hover { background: transparent; color: var(--text); }
 .tabs-sekundaer .tab.aktiv { background: transparent; color: var(--akzent); border-bottom-color: var(--akzent); font-weight: 600; }
 
+.naechster-schritt {
+  display: flex; align-items: baseline; gap: 10px;
+  background: var(--akzent-hell); border: 1px solid var(--akzent); border-radius: var(--radius-klein);
+  padding: 8px 12px; font-size: 13px; font-weight: 500; margin-bottom: 8px;
+}
+.ns-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--akzent); white-space: nowrap; }
+.pruef-tabelle th { text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--rand-stark); padding: 6px; }
+.pruef-tabelle td { padding: 7px 6px; border-bottom: 1px solid var(--zeile); font-size: 13px; vertical-align: middle; }
+.pruef-tabelle tbody tr:hover td { background: var(--hover-flaeche); }
+
 .druckkopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .zeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
 .zeile input { flex: 1; min-width: 220px; }
