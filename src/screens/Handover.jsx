@@ -4,9 +4,9 @@ import { STATUS_LABEL } from '../logic/engine.js'
 import { euro } from './format.js'
 
 const EMPFEHLUNG = {
-  gruen: 'Richt-LV versandfähig. Übergabe an PE zur Bestätigung der Aufstellvariante und Terminierung der Vor-Ort-Aufnahme.',
-  gelb: 'Interne Prüfung: offene Punkte klären (siehe Prüfliste), danach Richt-LV finalisieren. Kein Versand vor Klärung.',
-  orange: 'Engineering-Prüfung erforderlich, bevor ein belastbares Richt-LV möglich ist. Fall nicht im Standardprozess weiterführen.',
+  gruen: 'Analyse plausibel. PE kann Annahmen, Aufstellvariante und Vor-Ort-Aufnahme intern weiter prüfen.',
+  gelb: 'Interne Prüfung: offene Punkte klären (siehe Prüfliste), bevor Umfang oder CAPEX nach außen genutzt werden.',
+  orange: 'Engineering-Prüfung erforderlich, bevor ein belastbarer Richtumfang möglich ist. Fall nicht im Standardprozess weiterführen.',
   rot: 'Nicht standardfähig im MVP. Als Engineering-Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
 }
 
@@ -27,11 +27,11 @@ const KAT_OWNER = {
 }
 
 const NAECHSTER_SCHRITT = {
-  gruen: 'Handover an PE freigeben und Vor-Ort-Aufnahme terminieren',
-  gelb: 'Offene Prüfpunkte klären (siehe Tabelle), dann Richt-LV finalisieren',
+  gruen: 'Analyse intern mit PE prüfen und Vor-Ort-Aufnahme vorbereiten',
+  gelb: 'Offene Prüfpunkte klären und Annahmen schärfen',
   orange: 'Engineering-Prüfung einleiten – Fall nicht im Standardprozess',
   rot: 'Als Engineering-Sonderfall behandeln oder zurückstellen',
-  unbekannt: 'Konfiguration vervollständigen bevor Handover möglich',
+  unbekannt: 'Konfiguration vervollständigen, bevor die Analyse nutzbar ist',
 }
 
 export default function Handover({ ergebnis }) {
@@ -41,8 +41,8 @@ export default function Handover({ ergebnis }) {
     <div className="seite druckbereich">
       <div className="karte">
         <div className="druckkopf">
-          <h2>Planungs-/Engineering-Handover</h2>
-          <button className="primaer no-print" onClick={() => window.print()}>Handover exportieren</button>
+          <h2>Interne Planungs- und Engineering-Prüfliste</h2>
+          <button className="primaer no-print" onClick={() => window.print()}>Prüfliste exportieren</button>
         </div>
         <p>
           <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />

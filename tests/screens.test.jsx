@@ -42,6 +42,22 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('class="frage-kopf"')
   })
 
+  it('Konfiguration zeigt den gewählten Technologiepfad in der Live-Analyse', () => {
+    const eingaben = { ...PRESETS[0].eingaben, technologiepfad: 'monoenergetisch' }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Konfiguration
+        eingaben={eingaben}
+        setEingaben={noop}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+        setScreen={noop}
+      />
+    )
+    expect(html).toContain('monoenergetisch')
+    expect(html).toContain('außerhalb MVP v0.1')
+  })
+
   for (const preset of PRESETS) {
     it(`alle 5 Screens rendern fehlerfrei: ${preset.id}`, () => {
       const eingaben = { ...preset.eingaben }

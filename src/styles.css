@@ -66,7 +66,11 @@ body {
   padding: 10px 20px 0; background: var(--topbar); color: #fff;
   position: sticky; top: 0; z-index: 10;
 }
-.brand { display: flex; flex-direction: column; gap: 2px; padding-bottom: 10px; flex: none; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; flex: none; min-width: 0; }
+.brand-logo {
+  width: 32px; height: 32px; flex: none; border-radius: var(--radius-klein);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+}
 .brand strong { letter-spacing: 0.01em; }
 .badge.demo {
   font-size: 10.5px; color: var(--signal-hell);
@@ -112,11 +116,16 @@ body {
 
 /* Layout */
 .drei-spalten {
-  display: grid; grid-template-columns: 270px 1fr 360px;
+  display: grid; grid-template-columns: 270px minmax(0, 1fr) 360px;
   gap: 16px; padding: 16px 20px; flex: 1; align-items: start;
 }
 .seite { padding: 16px 20px; flex: 1; }
 .karten-reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+.spalte-links, .spalte-rechts {
+  position: sticky; top: 64px; align-self: start;
+  max-height: calc(100vh - 84px); overflow: auto; scrollbar-gutter: stable;
+}
+.spalte-mitte { min-width: 0; }
 
 /* Sanftes Einblenden beim Screen-Wechsel */
 @keyframes einblenden {
@@ -205,7 +214,7 @@ button.primaer:hover { background: var(--akzent-tief); border-color: var(--akzen
 button:disabled { opacity: 0.5; cursor: default; }
 
 /* Live-Panel */
-.live { position: sticky; top: 64px; }
+.live { margin-bottom: 0; }
 .status-zeile { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
 .dq-label { font-size: 13px; margin-bottom: 4px; }
 .dq-balken { height: 6px; background: var(--zeile); border-radius: 3px; overflow: hidden; }
@@ -214,6 +223,14 @@ button:disabled { opacity: 0.5; cursor: default; }
 .mini-fakten div { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 .mini-fakten span:first-child { color: var(--muted); }
 .mini-fakten strong { font-family: var(--mono); font-size: 12.5px; font-weight: 600; }
+.preview-block { border-top: 1px solid var(--zeile); padding-top: 10px; margin-top: 10px; }
+.preview-block h4 { margin-top: 0; }
+.preview-scope {
+  list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 5px;
+  font-size: 12.5px;
+}
+.preview-scope li { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); }
+.preview-scope span { font-family: var(--mono); color: var(--text); }
 
 /* Tabellen: Zahlen in Tabellenziffern, ruhige Haarlinien */
 table { border-collapse: collapse; width: 100%; }
@@ -282,6 +299,25 @@ details summary:hover { color: var(--akzent); }
 .regel-nachweis > summary { cursor: pointer; font-size: 12px; color: var(--muted); font-weight: 600; }
 .regel-nachweis > summary:hover { color: var(--akzent); }
 
+/* Analyse-Screen */
+.analyse-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+.analyse-umfang { display: grid; gap: 16px; }
+.analyse-hauptkarte { grid-column: span 2; }
+.analyse-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px; margin-bottom: 14px;
+}
+.analyse-kpi {
+  border: 1px solid var(--zeile); border-radius: var(--radius-klein);
+  padding: 10px 12px; background: var(--hover-flaeche); min-width: 0;
+}
+.analyse-kpi span, .analyse-kpi small {
+  display: block; color: var(--muted); font-size: 12px;
+}
+.analyse-kpi strong {
+  display: block; margin-top: 4px; font-size: 13px; line-height: 1.3;
+}
+
 /* Sekundäre Reiter (Ergebnis-Tabs): Unterstrich-Stil auf heller Fläche */
 .tabs-sekundaer { display: flex; gap: 2px; margin-bottom: 14px; border-bottom: 1px solid var(--rand); }
 .tabs-sekundaer .tab {
@@ -323,9 +359,16 @@ details summary:hover { color: var(--akzent); }
   .admin-toggle { margin-left: auto; }
   .drei-spalten { grid-template-columns: 1fr; padding: 12px; }
   .seite { padding: 12px; }
-  .live { position: static; }
+  .spalte-links, .spalte-rechts { position: static; max-height: none; overflow: visible; }
+  .analyse-hauptkarte { grid-column: auto; }
   .tooltip-text { left: auto; right: 0; transform: none; }
   .tooltip-text::after { left: auto; right: 8px; transform: none; }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  .drei-spalten { grid-template-columns: 220px minmax(0, 1fr) 300px; gap: 12px; padding: 12px; }
+  .karte { padding: 14px; }
+  .sektion-anker { font-size: 12px; }
 }
 
 /* Bewegung respektiert Systemeinstellung */
