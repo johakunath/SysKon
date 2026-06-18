@@ -45,6 +45,70 @@ Ziel: Tablet- und schmale Ansichten sollen nicht offensichtlich brechen. Kein vo
 |---|---|---|---|---|---|---|---|---|
 | SK-57 | UX | Tablet | Tablet-wide layout decent | No full phone optimization. | Tablet-wide avoids clipping. | P2 | M | Todo |
 
+## WP4 Sales Ownership & Role Semantics
+
+Ziel: Der Systempaket-Konfigurator wird als Werkzeug für erfahrene Sales- und Key-Account-Nutzer positioniert, die mit oder kurz nach dem Kundengespräch ein realistisches Wärmepumpen-Contracting-Angebot vorbereiten. PE, GE, Planung und Engineering sind nicht Hauptnutzer oder Product Owner der Default-Experience.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-66 | Epic | Product framing | Sales Ownership & Role Semantics | Produkt- und Backlog-Semantik so schärfen, dass erfahrene Sales/KAM-Nutzer den Systempaket-Konfigurator führen und der Kunde nicht selbst durch das Tool steuert. Interne Prüf-, Kosten- und Commercial-Informationen werden als interner Toggle für Sales nach dem Kundengespräch verstanden, nicht als sichtbare Kundensicht. | Future-Default-Texte nennen Sales/KAM als Hauptnutzer; PE/GE/Planung/Engineering erscheinen nicht als Ownership- oder Hauptnutzerrollen; das Tool wird nicht in einen kurzen Sales-Script- oder Self-Service-Flow umgedeutet; interner Toggle und Kundensicht sind als getrennte Nutzungssituationen beschrieben. | P0 | M | Todo |
+
+## WP5 Logisches Fragen- und Playbook-Modell
+
+Ziel: Der Fragenkatalog bleibt fachlich ausreichend vollständig, wird aber logisch, springbar und sales-tauglich strukturiert. Geschwindigkeit ist wichtig, aber nicht wichtiger als ein belastbares technisches und kommerzielles Ergebnis.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-67 | Epic | Questions | Logisches Fragen- und Playbook-Modell | Fragen werden in fachlicher Reihenfolge strukturiert, als echte Fragen formuliert und nur bei Relevanz angezeigt. Erfahrene Sales-Nutzer können zwischen Sektionen springen. Jede Frage erhält später admin-editierbaren Playbook-/Hilfetext mit ein bis zwei Absätzen dazu, warum die Frage wichtig ist, welche Warnsignale zu beachten sind und wie Sales die Antwort einordnet. | Notwendige technische und kommerzielle Fragen bleiben erhalten; Sektionen folgen einer nachvollziehbaren fachlichen Logik statt primär einem Sales Funnel; Fragen sind als vollständige Fragen formuliert; Bedingungen für Folgefragen sind dokumentiert; pro Frage ist ein admin-editierbares Playbook-/Hilfetextmodell vorgesehen. | P0 | L | Todo |
+
+## WP6 Aufstellvariante, Fläche & Placement-Logik
+
+Ziel: Eine praktikable MVP-Entscheidungslogik für Aufstellung und Platzprüfung definieren: günstige tragfähige Varianten zuerst, aber deutlich besser als eine einfache "genug Platz ja/nein"-Frage.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-68 | Epic | Placement | Aufstellvariante, Fläche & Placement-Logik | Der Systempaket-Konfigurator empfiehlt standardmäßig die günstigste viable Aufstellvariante und eskaliert zu Einhausung, Kompakt-Container oder Vollcontainer nur bei Blockern, Standortzwängen oder relevanten Kundenpräferenzen. Das MVP nutzt strukturierte Maße, grobe Außenflächentypen, Heizraumrestriktionen, Zugang/Logistik, Abstände zu Fenstern, Schallrisiken und Entscheidungsbaum-Logik. Parallel wird geprüft, ob Placement langfristig im Tool liegen soll oder besser über Energie-Kartografie, Site Survey, LiDAR oder 3D-Placement integriert wird. | Cheapest-first-Regel ist als Default dokumentiert; MVP-Inputs gehen über yes/no hinaus; Entscheidungsbaum für Blocker, Präferenzen und Eskalation ist beschrieben; North-Star mit Kartografie/LiDAR/3D bleibt als Zielbild sichtbar; Research-Entscheidung "inside SysKon vs. Tool-Integration" ist als Teil des Work Packages enthalten. | P0 | L | Todo |
+
+## WP7 Kundenfähiger Scope-/LV-Output
+
+Ziel: Die Kundensicht zeigt verständlich, welche Komponenten und Leistungen im Angebot enthalten sind, ohne interne Kalkulationsdetails offenzulegen.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-69 | Epic | Output | Kundenfähiger Scope-/LV-Output | Customer-/Sales-facing Output im Stil einer verständlichen LV- oder Handwerkerangebotsliste definieren. Enthalten sind Komponenten und Services mit Hersteller, Produktname, Größe/Leistungsklasse, Menge und Leistungsumfang, soweit verfügbar. Annahmen, Ausschlüsse und offene Punkte bis zum final verbindlichen Angebot werden explizit ausgewiesen. | Gebäudeeigentümer können verstehen, was enthalten ist; Hersteller, Produktname, Leistungsklasse, Menge und Service Scope sind als Ziel-Felder definiert; Annahmen, Exclusions und offene Punkte sind Teil der Kundensicht; interne Kosten-, Margen- und Einkaufsinformationen bleiben aus dieser Sicht heraus. | P1 | L | Todo |
+
+## WP8 Contracting-Angebot & Pricing-Logik
+
+Ziel: Der Systempaket-Konfigurator bereitet später ein realistisches, konfigurierbares Contracting-Angebot mit GP, AP und Preisgleitformel vor, ohne interne Commercial-Logik in der Kundensicht zu zeigen.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-70 | Epic | Pricing | Contracting-Angebot & Pricing-Logik | Pricing-Logik so konzipieren, dass Kundenpreise realistisch genug für den nächsten Prozessschritt sind und spätere Enttäuschungen vermeiden. Kundensicht zeigt GP/Grundpreis, AP/Arbeitspreis, Preisgleitformel, enthaltene Services, Annahmen und offene Punkte. Interne Sicht zeigt Einkaufskosten, Kostenaufbau, interne Preisbildung, Marge, Förderannahmen, resultierenden CAPEX und später IRR-/Zielrendite-Logik. Alle relevanten Pricing-Annahmen sollen konfigurierbar werden. | GP, AP und Preisgleitformel sind als Kundenausgabe definiert; interne Commercial-Felder sind dem Sales-Internal-Toggle zugeordnet; konfigurierbare Annahmen sind als Produktanforderung beschrieben; keine interne Marge, Einkaufslogik oder IRR-Logik erscheint in der Kundensicht. | P1 | XL | Todo |
+
+## WP9 Angebotsvarianten, Speichern, PDF & Export
+
+Ziel: Sales kann ein Angebot vorbereiten, speichern, als PDF exportieren und mit wenigen Klicks eine zweite Variante erzeugen. Spätere Übergaben bleiben bewusst schlank und machen SysKon nicht zum CRM.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-71 | Epic | Offer workflow | Angebotsvarianten, Speichern, PDF & Export | Angebots-Workflow für eine erste Variante, Speichern, PDF-Export und schnelle Duplikation einer zweiten Angebotsvariante definieren. Später folgen Speichern/Export nach SharePoint sowie Vorschau oder Übergabe an CRM/WeClapp. Das Gesprächsergebnis bleibt minimal: Kommentarfeld plus Dropdown reichen; keine CRM-Funktionalität im Systempaket-Konfigurator nachbauen. | Angebotszustand und Varianten-Duplikation sind als Zielprozess beschrieben; PDF-Export ist Teil des Work Packages; SharePoint und CRM/WeClapp sind als spätere Integrationen markiert; Gesprächsergebnis ist auf Kommentar und Dropdown begrenzt; keine CRM-Ownership oder Pipeline-Logik wird eingeführt. | P1 | L | Todo |
+
+## WP10 Bestehende Tools & Learnings prüfen
+
+Ziel: Vor größerem Ausbau werden bestehende und historische Techem-Tools sowie ihre Learnings systematisch ausgewertet, damit SysKon nicht bekannte Fehler wiederholt.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-72 | Epic | Discovery | Bestehende Tools & Learnings prüfen | Richtpreis-Tool, einfaches Wärmepumpen-Planungstool, Solution Finder und weitere verwandte Versuche prüfen. Dokumentieren, was funktioniert hat, was gescheitert ist, welche Daten/Logiken/UX-Muster wiederverwendbar sind und was im Systempaket-Konfigurator bewusst vermieden werden soll. | Relevante historische Tools sind aufgelistet; Learnings zu Nutzen, Grenzen, Akzeptanz und Datenqualität sind dokumentiert; wiederverwendbare Bausteine und Anti-Patterns sind benannt; Ergebnisse fließen als Entscheidungsvorlage vor größerem Neubau ein. | P1 | M | Todo |
+
+## WP11 Admin-Konfiguration & Governance
+
+Ziel: Sales-facing Inhalte, Produktdaten und Commercial-Annahmen können später ohne Codeänderung gepflegt, versioniert und nach interner oder kundensichtbarer Nutzung getrennt werden.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-73 | Epic | Admin | Admin-Konfiguration & Governance | Admin-Konzept für editierbare Playbook-Texte, Komponenten-/Produktstammdaten, Herstellerdaten, Pricing-Annahmen, Regeln, Versionierung und Sichtbarkeitsflags definieren. Kundensicht und interne Sales-Sicht müssen pro Inhalt/Feld trennbar sein, damit Angebote konsistent gepflegt werden können, ohne interne Informationen offenzulegen. | Admin-editierbare Fragehilfen sind vorgesehen; Produkt-/Hersteller- und Pricing-Stammdaten sind als pflegbare Domänen beschrieben; Regeln und Annahmen haben Versionierungsbedarf; interne vs. kundensichtbare Felder können per Governance/Sichtbarkeitslogik unterschieden werden. | P2 | L | Todo |
+
 ## Erledigt
 
 Erledigte Tickets bleiben nicht in der aktiven Tabelle. Siehe `docs/BACKLOG_ARCHIVE.md`.
