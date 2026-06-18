@@ -5,7 +5,7 @@ Token-sparsame Orientierung für Agenten. Für Details nur die verlinkten Dateie
 ## Kurzüberblick
 
 - Stack: React 18 + Vite + Vitest, reine Client-App.
-- Domäne: interner Demo-Prototyp für Systempaket-Konfiguration. Alle Werte sind Demo-Annahmen, keine kundenfertigen oder rechtlichen Aussagen.
+- Domäne: Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp für Systempaket-Konfiguration. PE-/LV-/Engineering-Logik dient als interne Guardrail. Alle Werte sind Demo-Annahmen, keine kundenfertigen oder rechtlichen Aussagen.
 - Architektur: UI in `src/screens/`, Daten in `src/data/`, React-freie Logik in `src/logic/`.
 
 ## Wichtigste Dateien
@@ -25,6 +25,7 @@ Token-sparsame Orientierung für Agenten. Für Details nur die verlinkten Dateie
 - Status-Reihenfolge: `gruen < gelb < orange < rot`; die Engine behält immer den schlechtesten Status.
 - Datenqualität: `dqScore()` nutzt sichtbare Pflichtfragen aus `src/data/fragen.js`; `unbekannt` zählt nicht als beantwortet.
 - Handover: Code existiert in `src/screens/Handover.jsx`, ist aber im sichtbaren Demo-Fluss ausgeblendet.
+- Roadmap nach Produkt-Pivot: `docs/PRODUCT_ROADMAP.md`. Aktuelle Leitlinie: Sales Tool first, PE engine underneath.
 - Die größten Kontextdateien sind `src/styles.css`, `src/screens/Ergebnis.jsx`, `src/logic/engine.js`, `src/data/fragen.js`, `src/screens/Konfiguration.jsx` und `src/data/katalog.js`.
 
 ## Skalierungs- und Token-Effizienz-Vorschlag

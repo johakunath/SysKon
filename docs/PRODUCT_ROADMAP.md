@@ -1,0 +1,87 @@
+# Product Roadmap
+
+Kompakte Produktlinie nach dem Konzept-Pivot. Das alte Handover bleibt als Archiv und technische Quelle erhalten; diese Roadmap beschreibt die aktuelle strategische Richtung.
+
+## Produktfokus
+
+SysKon ist zuerst ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp für Wärmepumpen-Contracting-Gespräche, kein PE-Handover- oder Planungstool.
+
+- Sales Tool first, PE engine underneath.
+- Unterstützung im Kundengespräch, keine Customer-Self-Service-Bestellstrecke.
+- Frühe Konfiguration und Erklärung, kein finales Angebot und keine technische Ausführungsplanung.
+- Richtpreis, Lösungskorridor und nächster sinnvoller Schritt statt verbindlichem Angebot.
+- PE-/Engineering-Logik bleibt wichtig, aber als interne Guardrails unter der sichtbaren Sales-Experience.
+
+## Stage 0: Aktuelle Demo bereinigen
+
+Ziel: Der bestehende Prototyp soll keine Reife-, Übergabe- oder Angebotsversprechen senden, die er fachlich noch nicht tragen kann.
+
+- Handover- und Operational-Readiness-Signale entfernen oder deutlich de-emphasizen.
+- Ergebnis-Semantik so schärfen, dass Analyse, Vorlösung, Richtindikation und Prüfbedarf klar getrennt sind.
+- Ergebnis und Preview als Sales-Unterstützung und interne Vorprüfung darstellen, nicht als Kundenangebot.
+- Admin-, Annahmen-, Regeln- und Testbereiche hinter dem Admin-Modus halten.
+
+## Stage 1: Sales-Gesprächskonfigurator
+
+Primärer nächster Zielzustand.
+
+- Sales und Kunde gehen gemeinsam durch Gebäude-, Bestands- und Präferenzfragen.
+- Fragen sind geführt, kundennah gruppiert und zeigen nur relevante Folgefragen.
+- Die Live-Preview erklärt mögliche Lösungspfade, Ausschlüsse, Risiken und internen Prüfbedarf.
+- Die Anzeige bleibt ein Lösungskorridor, kein finaler technischer Plan.
+- CAPEX, O&M und Wärmekosten erscheinen nur als grobe Demo-/Richtindikation.
+- Der nächste Schritt ist klar: interne Prüfung möglich, weitere Daten nötig oder kein Standardfit.
+- Tooltips erklären, warum Fragen gestellt werden und wie Sales die Antwort einordnen kann.
+- PE-/Engineering-Prüfungen laufen als interne Guardrails mit, ersetzen aber keine Fachprüfung.
+
+Wichtig: Sales darf mit dem Tool kein verbindliches Angebot allein erzeugen. SysKon reduziert Reibung vor PE, ersetzt PE aber nicht.
+
+## Stage 2: CTO-/LV-Engine hinter dem Sales-Workflow
+
+Ziel: Die modulare Configure-to-Order-Logik bleibt als belastbarer Kern erhalten, tritt aber visuell hinter die Sales-Führung zurück.
+
+- Komponenten- und Paketlogik für Wärmepumpe, Hybrid-Einbindung, Hydraulik, Warmwasser, Aufstellvariante, Monitoring und Service.
+- Regeln, Ausschlüsse, Abhängigkeiten und Kostenannahmen.
+- Förderfähigkeitslogik als indikative interne Prüfung, ohne Förderzusage.
+- Internes LV und Scope-Generierung für PE-/Engineering-Review.
+- Review- und Prüfpunktlogik als Backend-Fähigkeit, nicht als dominanter Hauptscreen.
+
+## Stage 3: Contracting-Angebotslogik
+
+Späterer Ausbau, bewusst nicht MVP.
+
+- Vertragslaufzeiten 10, 15 und 20 Jahre.
+- Ziel-IRR 13 Prozent, Ambitionsszenario 15 Prozent.
+- Marge nur auf Arbeitspreis.
+- Keine Marge auf CapEx und keine Marge auf Grundpreis.
+- Grundpreis-/Arbeitspreis-Logik mit iterativer Arbeitspreismarge bis zur Ziel-IRR.
+- Opex, Finanzierung, Preisentwicklung und Erlöslogik.
+- AVBFernwärme-orientierte Preisgleitformeln mit Markt- und Kostenelementen.
+- Recherche zu Indizes wie Lohn, Strom, Gas und Inflation; rechtliche Prüfung bleibt nötig.
+
+## Parallel: Regressionstest-Umgebung
+
+Kein linearer Stage-Gate, sondern Produktqualitätsmechanismus.
+
+- Eine Konfiguration mit Ergebnis als Testfall speichern.
+- Repräsentative Testfall-Sets pflegen.
+- Nach Regel-, Preis- oder Produktänderungen alle Testfälle neu berechnen.
+- Neue Ausgabe gegen Referenzlauf vergleichen.
+- Unterschiede in Komponenten, Kosten, Förderlogik, Status und später GP/AP/IRR sichtbar machen.
+
+## Spätere Plattformthemen
+
+- Admin-Backend für Regeln, Annahmen, Komponentenkatalog und Versionierung.
+- CRM-Input und CRM-Output.
+- Import aus Gebäudedatenerfassung oder Customer-Intake.
+- Export zurück in CRM, internen Angebotsprozess und später Installation/Operations.
+- Skalierung auf weitere Technologien.
+- Governance: Product owns; PE, Engineering, Procurement, Finance und Legal unterstützen.
+
+## Dauerhafte Schutzplanken
+
+- Nur Demo-Annahmen, keine produktiven Kalkulationswerte.
+- Kein verbindliches Kundenangebot.
+- Keine Rechts-, Förder- oder Schallgarantie.
+- Keine echten Kundendaten.
+- Keine Kundenselbstbedienung ohne Sales-/interne Prüfung.

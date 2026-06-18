@@ -1,6 +1,6 @@
 # Agent guide (SysKon)
 
-Read order: `BACKLOG.md` → this file → only referenced source files. Full brief only if needed: `HANDOVER.md` → `docs/HANDOVER_FULL.md`.
+Read order: `BACKLOG.md` → this file → only referenced source files. Product roadmap if needed: `docs/PRODUCT_ROADMAP.md`. Full historical brief only if needed: `HANDOVER.md` → `docs/HANDOVER_FULL.md`.
 
 ## Workflow
 
@@ -31,6 +31,7 @@ Read order: `BACKLOG.md` → this file → only referenced source files. Full br
 
 - German UI text.
 - Demo assumptions only; no customer-ready/legal claims.
+- Product framing: Sales Tool first, PE engine underneath; customer conversation support, not self-service or binding offer.
 - `src/logic/` and `src/data/` stay React-free.
 - No new dependency without explicit backlog item.
 - Status order: `gruen < gelb < orange < rot`; engine keeps worst status.

@@ -2,13 +2,14 @@
 
 This root file is intentionally short for agent token efficiency.
 
+- Current product roadmap after pivot: `docs/PRODUCT_ROADMAP.md`
 - Full original handover/product brief: `docs/HANDOVER_FULL.md`
 - Active work queue: `BACKLOG.md`
 - Agent workflow/file map: `CLAUDE.md`
 
 ## Current product stance
 
-Prototype only: internal Systempaket-Konfigurator demo. Not ready for handover, operations, delivery, customer-facing use, pricing commitments, legal sound or subsidy calculations, or real offers.
+Prototype only: Sales-facing Co-Creation- und Vorqualifizierungsdemo für Wärmepumpen-Contracting-Gespräche. Sales Tool first, PE engine underneath. Supports customer conversations, solution corridors, rough Richtindikation and next-step recommendations; not a PE handover tool, not a planning tool, not customer self-service, not ready for operations, pricing commitments, legal sound or subsidy calculations, or real offers.
 
 ## Read only what you need
 
