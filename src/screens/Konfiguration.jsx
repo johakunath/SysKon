@@ -84,6 +84,12 @@ function Frage({ frage, wert, onChange, gesperrt }) {
   )
 }
 
+const TECHNOLOGIEPFAD_PREVIEW = {
+  hybrid: 'Hybrid',
+  monoenergetisch: 'monoenergetisch',
+  sonstig: 'anderer Pfad',
+}
+
 export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen }) {
   const sichtbar = (f) => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen)
   const beantwortet = (f) => {
@@ -107,6 +113,10 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
     .map(name => ({ name, count: ergebnis.lv.positionen.filter(p => p.gruppe === name).length }))
     .filter(g => g.count > 0)
   const wichtigsteHinweise = ergebnis.warnungen.slice(0, 5)
+  const technologiepfadPreview = TECHNOLOGIEPFAD_PREVIEW[eingaben.technologiepfad] ?? 'nicht gewählt'
+  const technologiepfadHinweis = eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
+    ? 'außerhalb MVP v0.1'
+    : null
 
   return (
     <div className="drei-spalten">
@@ -191,7 +201,8 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           <div className="preview-block">
             <h4>Vorlösung</h4>
             <div className="mini-fakten">
-              <div><span>Pfad</span><strong>Hybrid</strong></div>
+              <div><span>Pfad</span><strong>{technologiepfadPreview}</strong></div>
+              {technologiepfadHinweis ? <div><span>Einordnung</span><strong>{technologiepfadHinweis}</strong></div> : null}
               <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
               <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
               <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong></div>
