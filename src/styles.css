@@ -66,7 +66,11 @@ body {
   padding: 10px 20px 0; background: var(--topbar); color: #fff;
   position: sticky; top: 0; z-index: 10;
 }
-.brand { display: flex; flex-direction: column; gap: 2px; padding-bottom: 10px; flex: none; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; flex: none; min-width: 0; }
+.brand-logo {
+  width: 32px; height: 32px; flex: none; border-radius: var(--radius-klein);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+}
 .brand strong { letter-spacing: 0.01em; }
 .badge.demo {
   font-size: 10.5px; color: var(--signal-hell);

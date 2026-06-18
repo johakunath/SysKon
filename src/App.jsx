@@ -34,6 +34,7 @@ export default function App() {
     <div className="app">
       <header className="topbar no-print">
         <div className="brand">
+          <img className="brand-logo" src="/systempaket-logo.svg" alt="" aria-hidden="true" />
           <strong>Systempaket-Konfigurator</strong>
         </div>
         <nav className="tabs">
