@@ -1,37 +1,43 @@
-# BACKLOG (agent quick index)
+# BACKLOG
 
-Use this file for active work only. Historical/completed items live in `docs/BACKLOG_ARCHIVE.md`. Full product brief lives in `HANDOVER.md` → `docs/HANDOVER_FULL.md`.
+Mobiler Kurzindex für aktive Arbeit. Details stehen in den verlinkten Arbeitsdokumenten, damit neue Agent-Sessions wenig Kontext laden müssen.
 
-## Rules
+## Start hier
 
-- One task = one small commit.
-- Keep rows short; add detail in code/PR, not here.
-- Allowed values: Type `Epic|Story|Bug|UX|Tech Debt|Question`; Priority `P0|P1|P2|P3`; Effort `XS|S|M|L|XL`; Status `Todo|In Progress|Blocked|Done|Deferred`.
+1. Lies `AGENTS.md`.
+2. Wenn der Nutzer "next epic" sagt: nimm die erste nicht erledigte Zeile aus `Next Epic Queue`.
+3. Bearbeite innerhalb dieses Epics genau das angegebene nächste Child-Ticket.
+4. Öffne nur die im Ticket genannten Dateien und bei Bedarf die verlinkten Detaildokumente.
+5. Nach Änderungen: `npm test`; bei UI/App-Änderungen zusätzlich `npm run build`.
+6. Ein Child-Ticket = ein kleiner Commit.
 
-## Current code findings
+## Detaildokumente
 
-- Gesamtstatus: `src/logic/engine.js` computes `ergebnis.status` from `src/data/regeln.js` status effects plus SYS selected-variant exclusion; displayed in `Konfiguration`, `Ergebnis`, hidden `Handover`.
-- Meaning: rule-derived, but unclear as user-facing lifecycle/readiness. Prefer clearer analysis indicators or explicit semantics before demos.
-- Datenqualität: `dqScore()` in `src/logic/engine.js`; weights visible questions from `src/data/fragen.js`; displayed in `Konfiguration`, `Ergebnis`, hidden `Handover`.
-- Component map: `Konfiguration.jsx` = sidebar/input/live preview/tooltips; `Ergebnis.jsx` = result/LV/costs; `Handover.jsx` = hidden handover; `src/data/fragen.js` = tooltip text.
+- Arbeitsgruppen und Ticketdetails: `docs/BACKLOG_WORK_PACKAGES.md`
+- Code- und Produktkontext für Agenten: `docs/CODEBASE_NOTES.md`
+- Erledigte / historische Tickets: `docs/BACKLOG_ARCHIVE.md`
+- Produktbrief: `HANDOVER.md` -> `docs/HANDOVER_FULL.md`
 
-## Active structured backlog
+## Werte
 
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-42 | Epic | App structure | Simplify app structure | Remove premature workflow signals. | Handover not demoed; status/DQ reviewed. | P0 | L | Todo |
-| SK-43 | UX | Handover | Remove/de-emphasize Handover | Hidden from nav; code kept for now. | Decide remove vs deferred reference. | P0 | S | In Progress |
-| SK-44 | Question | Status | Reconsider Gesamtstatus | Rule-derived but unclear to users. | Keep with semantics or replace. | P1 | M | Todo |
-| SK-45 | Question | Data quality | Reconsider Datenqualität | Percentage needs product meaning. | Define threshold/action or de-emphasize. | P2 | S | Todo |
-| SK-46 | Epic | Page model | Rework tab/page model | Align names with demo story. | Analysis/result split is clear. | P1 | L | Todo |
-| SK-47 | UX | Ergebnis | Rename/restructure Ergebnis | Current title implies final result. | Rename to Analyse or split. | P1 | M | Todo |
-| SK-48 | Story | Results | Merge LV + costs | Combine included scope then CAPEX. | One coherent result section. | P1 | M | Todo |
-| SK-49 | UX | Vorlösung | Elaborate Vorlösung | Add scope/assumptions/limits. | No customer-ready implication. | P2 | S | Todo |
-| SK-50 | Epic | Config layout | Improve configuration layout | Improve scanability only. | Desktop/tablet-wide easier to use. | P1 | L | Todo |
-| SK-51 | UX | Config layout | Fixed 3-column layout | Sidebars fixed, center scrolls. | Works on desktop/tablet-wide. | P1 | M | Todo |
-| SK-52 | Story | Preview | Full result preview | Preview shows solution, scope, CAPEX, assumptions. | Matches merged result content. | P1 | M | Todo |
-| SK-53 | UX | Sidebar | Left title cleanup | Title changed; subtitle removed. | Visible title is Systempaket-Konfigurator. | P0 | XS | Done |
-| SK-54 | Epic | Responsive | Mobile/tablet behavior | Avoid obvious breakage. | Header/tooltips/tablet usable. | P1 | M | Todo |
-| SK-55 | Bug | Header | Full-width header | Avoid clipped header. | Header spans visible width. | P0 | XS | Done |
-| SK-56 | Bug | Tooltips | Touch tooltips | Tap/focus/outside-close. | Works without invalid label markup. | P1 | S | Done |
-| SK-57 | UX | Tablet | Tablet-wide layout decent | No full phone optimization. | Tablet-wide avoids clipping. | P2 | M | Todo |
+- Type: `Epic|Story|Bug|UX|Tech Debt|Question`
+- Priority: `P0|P1|P2|P3`
+- Effort: `XS|S|M|L|XL`
+- Status: `Todo|In Progress|Blocked|Done|Deferred`
+
+## Next Epic Queue
+
+| Order | Epic | Work Package | Outcome | Next Child | Priority | Status |
+|---:|---|---|---|---|---|---|
+| 1 | SK-42 | WP0 Demo-Fluss | Demo ohne verfrühte Übergabe-/Reifegrad-Signale | SK-43 | P0 | Todo |
+| 2 | SK-46 | WP1 Ergebnis-Modell | Ergebnis wirkt wie Analyse/Vorlösung, nicht wie Kundenangebot | SK-47 | P1 | Todo |
+| 3 | SK-50 | WP2 Konfiguration | Konfiguration und Preview schneller scanbar machen | SK-51 | P1 | Todo |
+| 4 | SK-54 | WP3 Responsive | Tablet- und schmale Ansichten ohne offensichtliche Brüche | SK-57 | P1 | Todo |
+
+## Aktueller Fokus
+
+`SK-42` ist das nächste Epic. Starte mit `SK-43`, weil es bereits `In Progress` ist. Danach innerhalb von WP0 weiter mit `SK-44`, dann `SK-45`.
+
+## Child-Tickets
+
+Die vollständigen Child-Tickets stehen in `docs/BACKLOG_WORK_PACKAGES.md`. Dort ist jedes Epic so sortiert, dass das nächste offene Child oben steht.
