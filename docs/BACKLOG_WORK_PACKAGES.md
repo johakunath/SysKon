@@ -4,6 +4,8 @@ Dieses Dokument enthält die Detailansicht. `BACKLOG.md` bleibt der mobile Einst
 
 Regel für "next epic": Wähle das erste nicht erledigte Epic aus `BACKLOG.md`, dann hier das erste Child mit `In Progress`; falls keines existiert, das erste Child mit `Todo`.
 
+Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden Scope freigibt, dürfen mehrere Child-Tickets in einem PR umgesetzt werden. Dabei gilt: mutig bündeln, aber keine fachfremden Änderungen einschleppen.
+
 ## WP0 Demo-Fluss und Semantik
 
 Ziel: Der erste Demo-Durchlauf soll keine Reifegrad- oder Übergabeversprechen suggerieren, die fachlich noch nicht entschieden sind.
@@ -20,9 +22,9 @@ Ziel: Die Ergebnis-Ansicht soll klar zeigen, ob sie Analyse, Vorlösung, Richt-L
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-47 | UX | Ergebnis | Rename/restructure Ergebnis | Current title implies final result. | Rename to Analyse or split. | P1 | M | Todo |
-| SK-48 | Story | Results | Merge LV + costs | Combine included scope then CAPEX. | One coherent result section. | P1 | M | Todo |
-| SK-49 | UX | Vorlösung | Elaborate Vorlösung | Add scope/assumptions/limits. | No customer-ready implication. | P2 | S | Todo |
+| SK-47 | UX | Ergebnis | Rename/restructure Ergebnis | Current title implies final result. | Rename to Analyse or split. | P1 | M | Done |
+| SK-48 | Story | Results | Merge LV + costs | Combine included scope then CAPEX. | One coherent result section. | P1 | M | Done |
+| SK-49 | UX | Vorlösung | Elaborate Vorlösung | Add scope/assumptions/limits. | No customer-ready implication. | P2 | S | Done |
 
 ## WP2 Konfiguration und Preview
 
@@ -30,8 +32,8 @@ Ziel: Die Konfiguration soll schneller scanbar werden, ohne die Demo fachlich um
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-51 | UX | Config layout | Fixed 3-column layout | Sidebars fixed, center scrolls. | Works on desktop/tablet-wide. | P1 | M | Todo |
-| SK-52 | Story | Preview | Full result preview | Preview shows solution, scope, CAPEX, assumptions. | Matches merged result content. | P1 | M | Todo |
+| SK-51 | UX | Config layout | Fixed 3-column layout | Sidebars fixed, center scrolls. | Works on desktop/tablet-wide. | P1 | M | Done |
+| SK-52 | Story | Preview | Full result preview | Preview shows solution, scope, CAPEX, assumptions. | Matches merged result content. | P1 | M | Done |
 
 ## WP3 Responsive Verhalten
 

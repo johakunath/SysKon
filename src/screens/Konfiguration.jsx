@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { SEKTIONEN } from '../data/fragen.js'
+import { LV_GRUPPEN } from '../data/katalog.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
 import { euro, num, VARIANTEN_NAME } from './format.js'
@@ -102,6 +103,10 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
   const gesperrteVarianten = ergebnis.excluded.aufstellvariante ?? []
   const d = ergebnis.derived
+  const previewGruppen = LV_GRUPPEN
+    .map(name => ({ name, count: ergebnis.lv.positionen.filter(p => p.gruppe === name).length }))
+    .filter(g => g.count > 0)
+  const wichtigsteHinweise = ergebnis.warnungen.slice(0, 5)
 
   return (
     <div className="drei-spalten">
@@ -167,7 +172,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
       <aside className="spalte-rechts">
         <div className="karte live">
-          <h3>Live-Ergebnis</h3>
+          <h3>Live-Analyse</h3>
           <div className="status-zeile">
             <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
             <div>
@@ -179,26 +184,48 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           </div>
 
           <div className="dq">
-            <div className="dq-label">Datenqualität: <strong>{ergebnis.dq} %</strong>{ergebnis.dq < annahmen.dq_schwelle ? ' – kein belastbares Richt-LV' : ''}</div>
+            <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong>{ergebnis.dq < annahmen.dq_schwelle ? ' – Annahmen schärfen' : ''}</div>
             <div className="dq-balken"><div style={{ width: `${ergebnis.dq}%` }} /></div>
           </div>
 
-          <div className="mini-fakten">
-            <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
-            <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
-            <div><span>Netto-LV</span><strong>{euro(ergebnis.lv.netto)}</strong></div>
+          <div className="preview-block">
+            <h4>Vorlösung</h4>
+            <div className="mini-fakten">
+              <div><span>Pfad</span><strong>Hybrid</strong></div>
+              <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
+              <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
+              <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong></div>
+            </div>
           </div>
 
-          {ergebnis.warnungen.length > 0 && (
-            <>
-              <h4>Hinweise ({ergebnis.warnungen.length})</h4>
+          <div className="preview-block">
+            <h4>Umfang & CAPEX</h4>
+            <div className="mini-fakten">
+              <div><span>Brutto-LV</span><strong>{euro(ergebnis.lv.brutto)}</strong></div>
+              <div><span>Förderung (Demo)</span><strong>−{euro(ergebnis.lv.foerderung)}</strong></div>
+              <div><span>Netto-CAPEX</span><strong>{euro(ergebnis.lv.netto)}</strong></div>
+            </div>
+            <ul className="preview-scope">
+              {previewGruppen.slice(0, 5).map(g => <li key={g.name}>{g.name} <span>{g.count}</span></li>)}
+              {previewGruppen.length > 5 && <li>Weitere Gruppen <span>{previewGruppen.length - 5}</span></li>}
+            </ul>
+          </div>
+
+          <div className="preview-block">
+            <h4>Annahmen & Grenzen</h4>
+            <p className="hinweis">Interne Demo-Annahme. Kein Kundenangebot, keine Marge, keine rechtsverbindliche Schall- oder Förderberechnung.</p>
+          </div>
+
+          {wichtigsteHinweise.length > 0 && (
+            <div className="preview-block">
+              <h4>Prüfpunkte ({ergebnis.warnungen.length})</h4>
               <ul className="warnliste">
-                {ergebnis.warnungen.slice(0, 4).map((w, i) => <li key={i}>{w.regelId}: {w.text}</li>)}
-                {ergebnis.warnungen.length > 4 && <li>… alle im <a onClick={() => setScreen('ergebnis')}>Ergebnis</a></li>}
+                {wichtigsteHinweise.map((w, i) => <li key={i}>{w.regelId}: {w.text}</li>)}
+                {ergebnis.warnungen.length > wichtigsteHinweise.length && <li>… alle in der <a onClick={() => setScreen('ergebnis')}>Analyse</a></li>}
               </ul>
-            </>
+            </div>
           )}
-          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zum Ergebnis →</button>
+          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zur Analyse →</button>
         </div>
       </aside>
     </div>

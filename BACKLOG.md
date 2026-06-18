@@ -6,10 +6,10 @@ Mobiler Kurzindex für aktive Arbeit. Details stehen in den verlinkten Arbeitsdo
 
 1. Lies `AGENTS.md`.
 2. Wenn der Nutzer "next epic" sagt: nimm die erste nicht erledigte Zeile aus `Next Epic Queue`.
-3. Bearbeite innerhalb dieses Epics genau das angegebene nächste Child-Ticket.
-4. Öffne nur die im Ticket genannten Dateien und bei Bedarf die verlinkten Detaildokumente.
-5. Nach Änderungen: `npm test`; bei UI/App-Änderungen zusätzlich `npm run build`.
-6. Ein Child-Ticket = ein kleiner Commit.
+3. Plane zuerst konkret, dann bearbeite den vom Nutzer freigegebenen Umfang.
+4. Wenn zusammenhängende Child-Tickets klar in einen PR gehören: mutig bündeln, aber den Diff fokussiert halten.
+5. Öffne nur die für den Umfang nötigen Dateien und bei Bedarf die verlinkten Detaildokumente.
+6. Nach Änderungen: `npm test`; bei UI/App-Änderungen zusätzlich `npm run build`.
 
 ## Detaildokumente
 
@@ -30,13 +30,13 @@ Mobiler Kurzindex für aktive Arbeit. Details stehen in den verlinkten Arbeitsdo
 | Order | Epic | Work Package | Outcome | Next Child | Priority | Status |
 |---:|---|---|---|---|---|---|
 | 1 | SK-42 | WP0 Demo-Fluss | Demo ohne verfrühte Übergabe-/Reifegrad-Signale | SK-43 | P0 | Todo |
-| 2 | SK-46 | WP1 Ergebnis-Modell | Ergebnis wirkt wie Analyse/Vorlösung, nicht wie Kundenangebot | SK-47 | P1 | Todo |
-| 3 | SK-50 | WP2 Konfiguration | Konfiguration und Preview schneller scanbar machen | SK-51 | P1 | Todo |
+| 2 | SK-46 | WP1 Ergebnis-Modell | Ergebnis wirkt wie Analyse/Vorlösung, nicht wie Kundenangebot | – | P1 | Done |
+| 3 | SK-50 | WP2 Konfiguration | Konfiguration und Preview schneller scanbar machen | – | P1 | Done |
 | 4 | SK-54 | WP3 Responsive | Tablet- und schmale Ansichten ohne offensichtliche Brüche | SK-57 | P1 | Todo |
 
 ## Aktueller Fokus
 
-`SK-42` ist das nächste Epic. Starte mit `SK-43`, weil es bereits `In Progress` ist. Danach innerhalb von WP0 weiter mit `SK-44`, dann `SK-45`.
+WP1 + WP2 wurden gemeinsam umgesetzt. Nächster offener Queue-Punkt bleibt nach Nutzerpriorität WP0 oder WP3 prüfen.
 
 ## Child-Tickets
 

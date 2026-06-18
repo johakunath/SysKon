@@ -9,7 +9,7 @@ import Testfaelle from './screens/Testfaelle.jsx'
 
 const MAIN_SCREENS = [
   ['konfiguration', 'Konfiguration'],
-  ['ergebnis', 'Ergebnis'],
+  ['ergebnis', 'Analyse'],
 ]
 const ADMIN_SCREENS = [
   ['annahmen', 'Annahmen & Regeln'],
