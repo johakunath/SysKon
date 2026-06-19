@@ -9,6 +9,119 @@ const JN = [
 ]
 const JNU = [...JN, { wert: 'unbekannt', label: 'unbekannt' }]
 
+const OPTION_FALLBACKS = {
+  ja: 'Trifft nach aktuellem Gesprächsstand zu.',
+  nein: 'Trifft nach aktuellem Gesprächsstand nicht zu.',
+  unbekannt: 'Noch offen; gezielt nachfassen.',
+}
+
+const OPTION_HINTS = {
+  gebaeudetyp: {
+    freistehend: 'Typischer MVP-Standardfall mit besser prüfbarer Aufstellung.',
+    innenstadt: 'Mehr Schall-, Platz- und Nachbarschaftsrisiko.',
+    sonstig: 'Sonderlage; Annahmen im Gespräch sichtbar halten.',
+  },
+  baujahrklasse: {
+    vor1960: 'Oft höherer Wärmebedarf; Sanierung besonders prüfen.',
+    '1960-1979': 'Häufig mittlerer bis hoher Bedarf; Zustand klären.',
+    '1980-1994': 'Meist moderater Bedarf; Modernisierung abfragen.',
+    ab1995: 'Tendenziell besserer Standard; Werte trotzdem prüfen.',
+  },
+  sanierungsstand: {
+    unsaniert: 'Hoher Bedarf und höhere Vorlauftemperatur wahrscheinlicher.',
+    teilsaniert: 'Mittlerer Korridor; Maßnahmen konkret nachfragen.',
+    vollsaniert: 'Besserer Fit, wenn Verbrauch und Temperaturen passen.',
+  },
+  verbrauchsquelle: {
+    abrechnung: 'Beste schnelle Datenbasis für die Richtindikation.',
+    schaetzung: 'Nur Annahme; vor externer Nutzung schärfen.',
+    unbekannt: 'Verbrauchsdaten nachfordern.',
+  },
+  ww_bereitung: {
+    zentral: 'Speicher-/Warmwassermodul wird relevant.',
+    dezentral: 'Warmwasser bleibt meist außerhalb des WP-Scopes.',
+    unbekannt: 'Vor Scope-Aussage klären.',
+  },
+  technologiepfad: {
+    hybrid: 'Unterstützter MVP-Standardpfad.',
+    monoenergetisch: 'Roadmap-Platzhalter, kein Standardfit.',
+    sonstig: 'Außerhalb des aktuellen MVP.',
+  },
+  kessel_zustand: {
+    gut: 'Weiterbetrieb wirkt plausibel.',
+    mittel: 'Nutzbarkeit ansprechen, aber nicht blockierend.',
+    schlecht: 'Restlaufzeit und Einbindung kritisch prüfen.',
+    unbekannt: 'Kesselprüfung als offenen Punkt markieren.',
+  },
+  vorlauftemp_klasse: {
+    '<=45': 'Sehr guter Temperaturkorridor.',
+    '46-50': 'Guter Korridor für WP-Betrieb.',
+    '51-55': 'Noch gut besprechbar.',
+    '56-60': 'Grenznaher, aber typischer Hybridkorridor.',
+    '61-65': 'Erhöhte Effizienz- und Prüfanforderung.',
+    '66-70': 'Nur mit Fachprüfung weiterführen.',
+    '>70': 'Klarer Sonderfall im MVP.',
+    unbekannt: 'Temperaturniveau nachfassen.',
+  },
+  aussenflaeche_typ: {
+    hof: 'Befestigte Fläche stützt Standardaufstellung.',
+    stellplatz: 'Praktisch, aber Nutzung und Eigentum klären.',
+    garten: 'Untergrund und Wiederherstellung beachten.',
+    dach_garage: 'Statik und Genehmigung fachlich prüfen.',
+    unbekannt: 'Standortart vor Empfehlung klären.',
+  },
+  zugang_logistik: {
+    einfach: 'Anlieferung wirkt plausibel.',
+    eingeschraenkt: 'Montageaufwand im Gespräch markieren.',
+    schwierig: 'Kann Container und große Bauteile blockieren.',
+    unbekannt: 'Zufahrt und Kranstellung klären.',
+  },
+  platz_prioritaet: {
+    kosten_min: 'Empfehlung bleibt günstigste tragfähige Variante.',
+    schall_robust: 'Schallstabile Variante bevorzugen.',
+    heizraum_entlasten: 'Containeroptionen stärker gewichten.',
+    container_bevorzugt: 'Containerwunsch zeigen, Blocker bleiben gültig.',
+    offen: 'Keine Zusatzpräferenz setzen.',
+  },
+  aufstellvariante: {
+    fundament: 'Günstig, aber stärker vom Heizraum abhängig.',
+    einhausung: 'Mehr Schallschutz bei mittlerem Zusatz-CAPEX.',
+    kompakt_container: 'Entlastet Heizraum, braucht Logistik und Fläche.',
+    vollcontainer: 'Maximal integriert, teuer und flächenintensiv.',
+  },
+  gebietstyp: {
+    WR: 'Strengster Nachtgrenzwert im Demo-Modell.',
+    WA: 'Typischer Wohngebietskorridor.',
+    MI: 'Höherer Grenzwert, trotzdem nur Vorprüfung.',
+  },
+  schallsensibilitaet: {
+    hoch: 'Erwartungsmanagement und Schallprüfung früh setzen.',
+    mittel: 'Standardannahme für Wohnumfeld.',
+    niedrig: 'Weniger Gesprächsrisiko, aber kein Freibrief.',
+  },
+  kabelweg: {
+    einfach: 'Elektroaufwand wirkt überschaubar.',
+    mittel: 'Normale Klärung im weiteren Prozess.',
+    schwierig: 'Zusatzaufwand und Prüfung erwarten.',
+  },
+  foerderung_annahme: {
+    ja: 'Demo rechnet mit Förderannahme.',
+    nein: 'Konservativer Netto-Korridor ohne Förderung.',
+    unsicher: 'Förderprüfung als nächsten Schritt setzen.',
+  },
+  monitoring_variante: {
+    basic: 'Pflichtnaher Standardumfang.',
+    plus: 'Mehr Sensorik und Reportingbedarf.',
+  },
+  service_variante: {
+    basis: 'Schlanker OPEX-Standard.',
+    komfort: 'Mehr Betriebssicherheit, höhere OPEX-Indikation.',
+  },
+}
+
+const optionHinweis = (frage, option) =>
+  option.hinweis ?? OPTION_HINTS[frage.id]?.[option.wert] ?? OPTION_FALLBACKS[option.wert] ?? 'Im Gespräch konkretisieren.'
+
 const SEKTIONEN_ROH = [
   { id: 'A', titel: 'Gebäude & Gesprächsrahmen', fragen: [
     { id: 'gebaeudetyp', label: 'Welche Gebäudesituation liegt vor?', typ: 'select', dq: 2,
@@ -484,9 +597,64 @@ const PLAYBOOKS = {
   },
 }
 
+const p = (warum, warnsignale, einordnung) => ({ warum, warnsignale, einordnung })
+
+const PLAYBOOKS_KURZ = {
+  gebaeudetyp: p('Setzt den Rahmen für Platz, Schall und Standardfit.', 'Innenstadt, enge Höfe oder direkte Nachbarn.', 'Freistehend ist Standard; verdichtet braucht Prüfung.'),
+  wohneinheiten: p('Ordnet Objektgröße und Richtwerte pro WE ein.', 'Sehr kleine oder sehr große Objekte.', 'Erklärt Kennzahlen, ist allein kein Ausschluss.'),
+  flaeche: p('Stützt Heizlastproxy und Kosten pro m².', 'Fläche passt nicht zu WE oder Verbrauch.', 'Schätzwert klar als Annahme führen.'),
+  baujahrklasse: p('Gibt eine schnelle energetische Einordnung.', 'Modernisierung passt nicht zur Baujahrklasse.', 'Nur Gesprächsanker, keine Berechnung.'),
+  sanierungsstand: p('Beeinflusst den Heizlastproxy im Demo-Modell.', 'Unklare Dämmung, Fenster oder Dachzustand.', 'Besser saniert stärkt Temperatur- und Leistungsfit.'),
+  heizraum_vorhanden: p('Klärt Platz für Hydraulik, Speicher und Regelung.', 'Kein oder sehr knapper Heizraum.', 'Ja stützt Standard; nein lenkt zu Standortprüfung.'),
+  aussenflaeche_vorhanden: p('MVP braucht eine Außenaufstellung.', 'Keine belastbare Außenfläche.', 'Ja öffnet Standortfragen; nein blockiert Standardfit.'),
+  jahresverbrauch: p('Beste schnelle Basis für Bedarf und Energiekosten.', 'Schätzung, Leerwert oder klarer Ausreißer.', 'Gemessen stärkt die Richtindikation.'),
+  verbrauchsquelle: p('Bewertet die Belastbarkeit des Verbrauchs.', 'Schätzung oder unklare Abrechnungsgrenze.', 'Messung ist stark; unbekannt bleibt offen.'),
+  ww_enthalten: p('Steuert den Heizlastproxy über Vollbenutzungsstunden.', 'Warmwasseranteil unbekannt.', 'Bekannte Einordnung macht Annahmen erklärbar.'),
+  ww_bereitung: p('Entscheidet über Speicher-/WW-Scope.', 'Zentrale WW-Anlage mit unklarem Bestand.', 'Zentral erzwingt Scope; dezentral hält ihn schlanker.'),
+  heizlast_bekannt: p('Verbessert die Leistungsauswahl gegenüber Proxy.', 'Keine Heizlast als Auslegung verkaufen.', 'Ja nutzt Eingabe; nein bleibt Richtindikation.'),
+  heizlast_kw: p('Steuert WP-Modulanzahl und Leistungskorridor.', 'Wert passt nicht zu Fläche oder Verbrauch.', 'Hilft stark, ersetzt keine finale Auslegung.'),
+  technologiepfad: p('Grenzt den unterstützten MVP-Pfad ab.', 'Alles außerhalb Hybrid ist Sonderfall.', 'Hybrid ist Standard; andere Pfade blockieren MVP-Fit.'),
+  gaskessel_vorhanden: p('Hybrid braucht den Kessel als Spitzenlast.', 'Kein oder ungeklärter Bestandskessel.', 'Ja stützt Hybrid; nein ist Sonderfall.'),
+  kessel_zustand: p('Prüft, ob der Bestand glaubwürdig weiterläuft.', 'Schlecht, alt oder Zustand unbekannt.', 'Gut/mittel ist besprechbar; unbekannt klären.'),
+  kessel_nutzbar: p('Kernkriterium für den Hybrid-Standardpfad.', 'Nein oder unklar verändert Scope und Fit.', 'Ja stützt Vorschlag; unbekannt bleibt Prüfpunkt.'),
+  anzahl_heizkreise: p('Zeigt hydraulische Komplexität früh.', 'Mehr als zwei Heizkreise.', 'Bis zwei Standard; darüber MVP-Sonderfall.'),
+  pufferspeicher_vorhanden: p('Hilft bei der späteren Hydraulikbewertung.', 'Größe oder Zustand unbekannt.', 'Informativ; Demo bleibt vorsichtig.'),
+  vorlauftemp_klasse: p('Treiber für Effizienz und Machbarkeit.', 'Über 65 °C oder unbekannt.', 'Niedrig stärkt Fit; hoch braucht Prüfung.'),
+  heizkoerper_ausreichend: p('Zeigt, ob niedrige Temperaturen plausibel sind.', 'Zu kleine Heizflächen.', 'Ja stützt Fit; nein bleibt Annahme.'),
+  hydraulischer_abgleich: p('Relevant für Effizienz und Hydraulik-Scope.', 'Fehlend oder unbekannt.', 'Im Paket mitdenken, im Gespräch benennen.'),
+  heizraum_groesse_ok: p('Klärt Platz für Speicher und Hydraulik.', 'Zu klein oder schwer nutzbar.', 'Ja stützt Standard; nein macht Standort kritisch.'),
+  zugang_ok: p('Klärt, ob Komponenten eingebracht werden können.', 'Enge Türen, Treppen oder verwinkelte Keller.', 'Nein nicht übergehen; Fachprüfung einplanen.'),
+  platz_speicher: p('Wichtig bei zentralem Warmwasser.', 'Unklarer Platz oder konkurrierende Nutzung.', 'Ja stabilisiert Scope; unbekannt vor Ort klären.'),
+  rueckbau_noetig: p('Zeigt möglichen Zusatzaufwand im Bestand.', 'Altlasten, enge Räume oder Sonderrückbau.', 'Informativ, als offenen Punkt führen.'),
+  aussenflaeche_m2: p('Begrenzt Standort- und Containeroptionen.', 'Kleine Flächen, Fluchtwege, Grenzen.', 'Mehr Fläche öffnet Varianten.'),
+  aussenflaeche_typ: p('Unterscheidet Standardfläche und Sonderstandort.', 'Dach, Garage, Garten oder Eigentumsgrenzen.', 'Befestigt stützt; Dach/Garage prüfpflichtig.'),
+  aussenflaeche_laenge_m: p('Macht Fläche als Rechteck plausibel.', 'Zu kurz, verwinkelt oder nur Restfläche.', 'Container brauchen längere zusammenhängende Fläche.'),
+  aussenflaeche_breite_m: p('Sichert Wartungs- und Aufstellkorridore ab.', 'Zu schmal, Durchgang oder Fluchtweg.', 'Ergänzt m² und verhindert Scheinsicherheit.'),
+  zugang_logistik: p('Bewertet Anlieferung und Montage.', 'Enge Zufahrt, Innenhof oder fehlender Kran.', 'Einfach stützt; schwierig blockiert Container eher.'),
+  platz_prioritaet: p('Macht die Sales-Gewichtung transparent.', 'Präferenz darf Blocker nicht überstimmen.', 'Kostenminimum bleibt Default.'),
+  aufstellvariante: p('Verbindet Kosten, Schall, Platz und Heizraum.', 'Variante bei offenen Blockern nicht verkaufen.', 'Auswahl ist Vergleichspunkt, keine Freigabe.'),
+  schallhaube: p('Einfache Schallmaßnahme bei Fundament.', 'Ersetzt keine Schallprüfung.', 'Erhöht Scope, kann Korridor stabilisieren.'),
+  entfernung_heizraum: p('Zeigt Trassen- und Umfeldaufwand.', 'Lange Wege oder schwierige Durchbrüche.', 'Kurze Wege stützen Standard; lange als Annahme.'),
+  kran_zugang: p('Container brauchen Anlieferung und Kranstellung.', 'Kein Zugang, enge Straße oder Innenhof.', 'Ja stützt Container; unbekannt vorher klären.'),
+  abstand_fenster: p('Wichtigster Schnellinput für Schall.', 'Kleine Abstände oder mehrere Immissionsorte.', 'Mehr Abstand entspannt den Korridor.'),
+  gebietstyp: p('Setzt den Demo-Nachtgrenzwert.', 'Gebietseinstufung unklar.', 'Vorprüfung, keine Rechtsaussage.'),
+  schallsensibilitaet: p('Erfasst Gesprächsrisiko im Umfeld.', 'Beschwerden, Innenhöfe, sensible Nachbarn.', 'Weiches Kriterium für Erwartungsmanagement.'),
+  netzanschluss_bekannt: p('Früher Elektro-Blocker oder Prüfpunkt.', 'Anschlussleistung unbekannt.', 'Ja stützt; nein löst Elektroklärung aus.'),
+  zaehlerschrank_ok: p('Zeigt Aufwand für Tarif und Messkonzept.', 'Altanlage, Platzmangel oder unklarer Zustand.', 'Ja senkt Unsicherheit; unbekannt vor Ort klären.'),
+  kabelweg: p('Beeinflusst Elektroaufwand und Umsetzung.', 'Lange Wege oder Brandschutzabschnitte.', 'Schwierig als Risiko benennen.'),
+  foerderung_annahme: p('Verändert die Netto-Richtindikation.', 'Nicht als Förderberatung darstellen.', 'Ja ist Demo; unsicher braucht Förderprüfung.'),
+  monitoring_variante: p('Setzt den Betriebsdaten-Umfang.', 'Reportingwünsche über Basic hinaus.', 'Basic ist Standard; Plus bei höherem Bedarf.'),
+  service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
+  fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
+}
+
 const mitPlaybook = (frage) => ({
   ...frage,
-  playbook: PLAYBOOKS[frage.id],
+  optionen: frage.optionen?.map(option => ({
+    ...option,
+    hinweis: optionHinweis(frage, option),
+  })),
+  playbook: PLAYBOOKS_KURZ[frage.id] ?? PLAYBOOKS[frage.id],
 })
 
 export const SEKTIONEN = SEKTIONEN_ROH.map(sektion => ({

@@ -45,18 +45,87 @@ function AnalyseKpi({ label, value, note }) {
   )
 }
 
+function KundenScope({ scope }) {
+  return (
+    <div className="kundenumfang">
+      <div className="karte analyse-hauptkarte">
+        <h3>Kundenumfang</h3>
+        <p className="hinweis">
+          Verständliche Komponenten- und Leistungsübersicht für das Kundengespräch. Ohne Preise, ohne interne Kalkulation und ohne verbindlichen Angebotscharakter.
+        </p>
+        <div className="kunden-gruppen">
+          {scope.gruppen.map(gruppe => (
+            <section key={gruppe.name} className="kunden-gruppe">
+              <h4>{gruppe.name}</h4>
+              <div className="kunden-positionen">
+                {gruppe.positionen.map(pos => (
+                  <article key={pos.id} className="kunden-position">
+                    <div className="kunden-position-kopf">
+                      <strong>{pos.titel}</strong>
+                      {pos.pruefpflichtig ? <span className="kunden-badge warn">prüfen</span> : <span className="kunden-badge">enthalten</span>}
+                    </div>
+                    <dl>
+                      <div><dt>Hersteller</dt><dd>{pos.hersteller}</dd></div>
+                      <div><dt>Produkt</dt><dd>{pos.produkt}</dd></div>
+                      <div><dt>Größe / Leistung</dt><dd>{pos.leistungsklasse}</dd></div>
+                      <div><dt>Menge</dt><dd>{num(pos.menge)} {pos.einheit}</dd></div>
+                    </dl>
+                    <p>{pos.leistungsumfang}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <div className="karten-reihe">
+        <div className="karte">
+          <h3>Annahmen</h3>
+          <ul className="kunden-liste">
+            {scope.annahmen.map((text, i) => <li key={i}>{text}</li>)}
+          </ul>
+        </div>
+
+        <div className="karte">
+          <h3>Ausschlüsse</h3>
+          {scope.ausschluesse.length > 0 ? (
+            <ul className="kunden-liste">
+              {scope.ausschluesse.map((item, i) => <li key={i}><strong>{item.titel}:</strong> {item.text}</li>)}
+            </ul>
+          ) : <p className="okbox">Keine kundenseitigen Ausschlüsse im aktuellen Demo-Korridor.</p>}
+        </div>
+
+        <div className="karte">
+          <h3>Offene Punkte</h3>
+          {scope.offenePunkte.length > 0 ? (
+            <ul className="kunden-liste">
+              {scope.offenePunkte.map((item, i) => <li key={i}><strong>{item.titel}:</strong> {item.text}</li>)}
+            </ul>
+          ) : <p className="okbox">Keine priorisierten offenen Punkte für diese Kundensicht.</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
-  const [tab, setTab] = useState('vorloesung')
+  const [tab, setTab] = useState('kundenumfang')
   const d = ergebnis.derived
   const lv = ergebnis.lv
+  const kundenScope = ergebnis.kundenScope
 
-  const gruppen = LV_GRUPPEN
+  const gruppenNamen = [...new Set([...LV_GRUPPEN, ...lv.positionen.map(p => p.gruppe)])]
+  const gruppen = gruppenNamen
     .map(g => ({ name: g, positionen: lv.positionen.filter(p => p.gruppe === g) }))
     .filter(g => g.positionen.length > 0)
 
   const blocker = ergebnis.warnungen.filter(w => w.status === 'rot' || w.status === 'orange')
   const hinweise = ergebnis.warnungen.filter(w => w.status !== 'rot' && w.status !== 'orange')
   const scopeKurz = gruppen.slice(0, 5).map(g => g.name).join(', ')
+  const summaryAktion = tab === 'kundenumfang'
+    ? 'Offene Pflichtdaten und Regelhinweise priorisieren, bevor der Kundenumfang weitergegeben wird.'
+    : ergebnis.statusKorridor?.aktion
 
   return (
     <div className="seite">
@@ -64,16 +133,18 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
         <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
         <div className="summary-mitte">
           <strong>Gesprächskorridor: {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
-          <span className="summary-detail">{d.wp_module} × {annahmen.wp_modul_kw} kW · CAPEX-Indikation netto {euro(lv.netto)}</span>
+          <span className="summary-detail">{d.wp_module} × {annahmen.wp_modul_kw} kW · {kundenScope.gruppen.length} Umfangsgruppen · keine Preisansicht</span>
         </div>
-        <div className="summary-aktion">{ergebnis.statusKorridor?.aktion}</div>
+        <div className="summary-aktion">{summaryAktion}</div>
       </div>
 
       <div className="tabs-sekundaer no-print">
-        {[['vorloesung', 'Vorlösung'], ['umfang', 'Umfang & CAPEX'], ['pruefpunkte', 'Prüfpunkte']].map(([id, label]) => (
+        {[['kundenumfang', 'Kundenumfang'], ['vorloesung', 'Vorlösung'], ['umfang', 'Interner Umfang'], ['pruefpunkte', 'Prüfpunkte']].map(([id, label]) => (
           <button key={id} className={tab === id ? 'tab aktiv' : 'tab'} onClick={() => setTab(id)}>{label}</button>
         ))}
       </div>
+
+      {tab === 'kundenumfang' && <KundenScope scope={kundenScope} />}
 
       {tab === 'vorloesung' && (
         <div className="analyse-grid">

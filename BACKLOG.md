@@ -40,15 +40,14 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 
 | Order | Epic | Work Package | Outcome | Next Child | Priority | Effort | Status |
 |---:|---|---|---|---|---|---|---|
-| 1 | SK-69 | WP7 Kundenfähiger Scope-/LV-Output | Verständliche Komponenten- und Leistungsübersicht für Gebäudeeigentümer definieren | SK-69 | P1 | L | Todo |
+| 1 | SK-74 | WP12 Technical System Package Logic | Technisches Systempaketmodell für MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting schärfen | SK-74 | P1 | XL | Todo |
 | 2 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | P1 | XL | Todo |
 | 3 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | P1 | L | Todo |
 | 4 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten | SK-72 | P1 | M | Todo |
-| 5 | SK-73 | WP11 Admin-Konfiguration & Governance | Inhalte, Produktdaten, Pricing und Sichtbarkeit ohne Codeänderungen pflegbar machen | SK-73 | P2 | L | Todo |
 
 ## Aktueller Fokus
 
-WP0 bis WP6 sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP7/SK-69.
+WP0 bis WP7 sowie das UX-Prerequisite vor SK-70 sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP12/SK-74 als technische Grundlage vor WP8/SK-70.
 
 ## Child-Tickets
 

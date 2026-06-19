@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { ANNAHMEN } from './data/annahmen.js'
+import { applyAdminConfig, loadAdminConfig, makeDefaultAdminConfig, saveAdminConfig, touchAdminConfig } from './data/adminConfig.js'
 import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
 import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
@@ -22,11 +22,47 @@ export default function App() {
   const [eingaben, setEingaben] = useState(
     () => ({ ...PRESETS.find(p => p.id === DEFAULT_PRESET_ID).eingaben })
   )
-  const [annahmen, setAnnahmen] = useState({ ...ANNAHMEN })
+  const [adminConfig, setAdminConfigState] = useState(loadAdminConfig)
+  const effectiveConfig = useMemo(() => applyAdminConfig(adminConfig), [adminConfig])
+  const annahmen = effectiveConfig.annahmen
 
-  const ergebnis = useMemo(() => berechne(eingaben, { annahmen }), [eingaben, annahmen])
+  const setAdminConfig = (next) => {
+    setAdminConfigState(prev => {
+      const resolved = typeof next === 'function' ? next(prev) : next
+      const touched = touchAdminConfig(resolved)
+      saveAdminConfig(touched)
+      return touched
+    })
+  }
 
-  const props = { eingaben, setEingaben, annahmen, setAnnahmen, ergebnis, setScreen }
+  const setAnnahmen = (next) => {
+    setAdminConfig(prev => ({
+      ...prev,
+      annahmen: typeof next === 'function' ? next(prev.annahmen) : next,
+    }))
+  }
+
+  const resetAdminConfig = () => {
+    const defaults = makeDefaultAdminConfig()
+    saveAdminConfig(defaults)
+    setAdminConfigState(defaults)
+  }
+
+  const ergebnis = useMemo(() => berechne(eingaben, {
+    annahmen,
+    katalog: effectiveConfig.katalog,
+    fragen: effectiveConfig.alleFragen,
+  }), [eingaben, annahmen, effectiveConfig.katalog, effectiveConfig.alleFragen])
+
+  const props = {
+    eingaben, setEingaben, annahmen, setAnnahmen, ergebnis, setScreen,
+    sektionen: effectiveConfig.sektionen,
+    katalog: effectiveConfig.katalog,
+    adminConfig,
+    setAdminConfig,
+    resetAdminConfig,
+    governance: effectiveConfig.governance,
+  }
 
   const visibleScreens = adminModus ? [...MAIN_SCREENS, ...ADMIN_SCREENS] : MAIN_SCREENS
 

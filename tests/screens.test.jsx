@@ -5,6 +5,7 @@ import { describe, it, expect } from 'vitest'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { ANNAHMEN } from '../src/data/annahmen.js'
+import { applyAdminConfig, makeDefaultAdminConfig } from '../src/data/adminConfig.js'
 import { PRESETS } from '../src/data/presets.js'
 import { berechne } from '../src/logic/engine.js'
 import App from '../src/App.jsx'
@@ -23,8 +24,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).not.toContain('Handover</button>')
   })
 
-
-  it('Konfiguration verknüpft Fragen per htmlFor/id und hält Tooltip neben dem Label', () => {
+  it('Konfiguration rendert Auswahlfragen als erklärte Radio-Liste mit kompaktem Gesprächshinweis', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -36,13 +36,17 @@ describe('Screens rendern mit jedem Preset', () => {
         setScreen={noop}
       />
     )
-    expect(html).toContain('for="gebaeudetyp"')
-    expect(html).toContain('id="gebaeudetyp"')
-    expect(html).toContain('aria-expanded="false"')
+    expect(html).toContain('role="radiogroup"')
+    expect(html).toContain('id="gebaeudetyp-freistehend"')
+    expect(html).toContain('class="antwort-hinweis"')
+    expect(html).toContain('class="gespraechshinweis"')
+    expect(html).not.toMatch(/<aside class="gespraechshinweis"[^>]*>\s*<strong>/)
+    expect(html).not.toContain('aria-expanded=')
+    expect(html).not.toContain('Hilfetext anzeigen')
     expect(html).toContain('class="frage-kopf"')
   })
 
-  it('Konfiguration zeigt den gewählten Technologiepfad in der Live-Analyse', () => {
+  it('Konfiguration zeigt den gewählten Technologiepfad in der kundenfähigen Umfangs-Vorschau', () => {
     const eingaben = { ...PRESETS[0].eingaben, technologiepfad: 'monoenergetisch' }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -54,8 +58,91 @@ describe('Screens rendern mit jedem Preset', () => {
         setScreen={noop}
       />
     )
+    const rechteVorschau = html.slice(html.indexOf('<aside class="spalte-rechts">'))
     expect(html).toContain('monoenergetisch')
     expect(html).toContain('außerhalb MVP v0.1')
+    expect(rechteVorschau).toContain('Umfangs-Vorschau')
+    expect(rechteVorschau).toContain('Luft-Wasser-Wärmepumpen-Kaskade')
+    expect(rechteVorschau).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+  })
+
+  it('Analyse startet mit einem kundenfaehigen Umfang ohne Preise', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Ergebnis
+        eingaben={eingaben}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+      />
+    )
+
+    expect(html).toContain('Kundenumfang')
+    expect(html).toContain('Hersteller')
+    expect(html).toContain('Produkt')
+    expect(html).toContain('Größe / Leistung')
+    expect(html).toContain('Annahmen')
+    expect(html).toContain('Ausschlüsse')
+    expect(html).toContain('Offene Punkte')
+    expect(html).toContain('Interner Umfang')
+    expect(html).not.toContain('Enthaltener Umfang und CAPEX-Indikation')
+    expect(html).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+  })
+
+  it('Admin-Konfiguration rendert Tabs, Import/Export und read-only Regeln', () => {
+    const adminConfig = makeDefaultAdminConfig()
+    const effective = applyAdminConfig(adminConfig)
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben, {
+      annahmen: effective.annahmen,
+      katalog: effective.katalog,
+      fragen: effective.alleFragen,
+    })
+    const html = renderToString(
+      <Annahmen
+        adminConfig={adminConfig}
+        setAdminConfig={noop}
+        resetAdminConfig={noop}
+        ergebnis={ergebnis}
+        sektionen={effective.sektionen}
+        katalog={effective.katalog}
+      />
+    )
+
+    expect(html).toContain('Admin-Konfiguration &amp; Governance')
+    expect(html).toContain('Annahmen')
+    expect(html).toContain('Fragen')
+    expect(html).toContain('Katalog')
+    expect(html).toContain('Governance')
+    expect(html).toContain('Import/Export')
+    expect(html).toContain('Demo-Defaults')
+    expect(html).not.toContain('contenteditable')
+  })
+
+  it('Admin-Overrides wirken auf Konfiguration und Kundenumfang', () => {
+    const adminConfig = makeDefaultAdminConfig()
+    adminConfig.fragen.gebaeudetyp.label = 'Welche Gebäudelage kommt aus Admin?'
+    adminConfig.katalog.wp.positionen.wp_modul.kunde.titel = 'Admin-Wärmepumpenpaket'
+    const effective = applyAdminConfig(adminConfig)
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben, {
+      annahmen: effective.annahmen,
+      katalog: effective.katalog,
+      fragen: effective.alleFragen,
+    })
+    const html = renderToString(
+      <Konfiguration
+        eingaben={eingaben}
+        setEingaben={noop}
+        annahmen={effective.annahmen}
+        ergebnis={ergebnis}
+        setScreen={noop}
+        sektionen={effective.sektionen}
+      />
+    )
+
+    expect(html).toContain('Welche Gebäudelage kommt aus Admin?')
+    expect(html).toContain('Admin-Wärmepumpenpaket')
   })
 
   for (const preset of PRESETS) {
