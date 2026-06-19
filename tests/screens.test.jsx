@@ -59,6 +59,29 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('außerhalb MVP v0.1')
   })
 
+  it('Analyse startet mit einem kundenfaehigen Umfang ohne Preise', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Ergebnis
+        eingaben={eingaben}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+      />
+    )
+
+    expect(html).toContain('Kundenumfang')
+    expect(html).toContain('Hersteller')
+    expect(html).toContain('Produkt')
+    expect(html).toContain('Größe / Leistung')
+    expect(html).toContain('Annahmen')
+    expect(html).toContain('Ausschlüsse')
+    expect(html).toContain('Offene Punkte')
+    expect(html).toContain('Interner Umfang')
+    expect(html).not.toContain('Enthaltener Umfang und CAPEX-Indikation')
+    expect(html).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+  })
+
   for (const preset of PRESETS) {
     it(`alle 5 Screens rendern fehlerfrei: ${preset.id}`, () => {
       const eingaben = { ...preset.eingaben }

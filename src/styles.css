@@ -343,6 +343,62 @@ details summary:hover { color: var(--akzent); }
 .analyse-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px; align-items: start; min-width: 0; }
 .analyse-umfang { display: grid; gap: 16px; }
 .analyse-hauptkarte { grid-column: span 2; }
+.kundenumfang { display: grid; gap: 16px; }
+.kunden-gruppen { display: grid; gap: 14px; margin-top: 12px; }
+.kunden-gruppe {
+  border-top: 1px solid var(--zeile);
+  padding-top: 10px;
+}
+.kunden-gruppe h4 { margin-top: 0; }
+.kunden-positionen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 10px;
+}
+.kunden-position {
+  border: 1px solid var(--zeile);
+  border-radius: var(--radius-klein);
+  background: var(--hover-flaeche);
+  padding: 10px 12px;
+  min-width: 0;
+}
+.kunden-position-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.kunden-badge {
+  flex: none;
+  border: 1px solid var(--ok-rand);
+  border-radius: 999px;
+  color: var(--st-gruen);
+  background: var(--ok-bg);
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.kunden-badge.warn {
+  border-color: var(--warn-rand);
+  color: var(--st-orange);
+  background: var(--warn-bg);
+}
+.kunden-position dl {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 8px;
+}
+.kunden-position dl > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 8px;
+}
+.kunden-position dt { color: var(--muted); font-size: 12px; }
+.kunden-position dd { margin: 0; font-size: 13px; }
+.kunden-position p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.kunden-liste { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
+.kunden-liste li { margin-bottom: 6px; }
 .analyse-kpis {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 10px; margin-bottom: 14px;

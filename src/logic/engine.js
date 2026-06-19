@@ -13,7 +13,7 @@
 
 import { ANNAHMEN } from '../data/annahmen.js'
 import { REGELN } from '../data/regeln.js'
-import { KATALOG } from '../data/katalog.js'
+import { KATALOG, LV_GRUPPEN } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
 import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
 
@@ -147,6 +147,91 @@ function datenlageEinordnung(dq, fehlendeDaten, schwelle) {
   }
 }
 
+function kundenEinheit(pos) {
+  return pos.tag === 'opex' ? 'p.a.' : pos.einheit
+}
+
+function kundenLeistungsklasse(pos, ctx, annahmen) {
+  if (pos.kunde?.leistungsklasse) return pos.kunde.leistungsklasse
+  if (pos.id === 'wp_modul') return `${ctx.wp_module} × ${annahmen.wp_modul_kw} kW, ca. ${ctx.wp_kw} kW`
+  if (pos.id.startsWith('aufst_')) return pos.variante ?? 'Aufstellvariante'
+  if (pos.tag === 'opex') return 'laufende Serviceleistung'
+  return 'projektbezogener Leistungsumfang'
+}
+
+function kundenLeistungsumfang(pos) {
+  if (pos.kunde?.leistungsumfang) return pos.kunde.leistungsumfang
+  if (pos.pruefpflichtig) return 'Im Kundengespräch als Prüfpunkt aufnehmen und intern bestätigen lassen.'
+  return 'Im aktuellen Demo-Scope als Leistungsbaustein enthalten.'
+}
+
+function kundenWarntext(warnung) {
+  if (warnung.kategorie === 'foerderung') return 'Interne Förderprüfung klären, bevor Aussagen nach außen genutzt werden.'
+  if (warnung.status === 'rot') return 'Aktueller MVP-Standardfit passt nicht; Alternativpfad oder Sonderfall prüfen.'
+  if (warnung.status === 'orange') return 'Fachprüfung einplanen, bevor der Umfang belastbar genutzt wird.'
+  return warnung.text
+}
+
+function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded }) {
+  const allePositionen = [...lvPositionen, ...opexPositionen]
+  const gruppenNamen = [...LV_GRUPPEN, 'Service / Betrieb (p.a.)']
+  const gruppen = gruppenNamen
+    .map(name => ({
+      name,
+      positionen: allePositionen
+        .filter(pos => pos.gruppe === name)
+        .map(pos => {
+          const kunde = pos.kunde ?? {}
+          return {
+            id: pos.id,
+            titel: kunde.titel ?? pos.text,
+            hersteller: kunde.hersteller ?? 'herstellerneutral',
+            produkt: kunde.produkt ?? 'Produkt wird später festgelegt',
+            leistungsklasse: kundenLeistungsklasse(pos, derived, annahmen),
+            menge: pos.menge,
+            einheit: kundenEinheit(pos),
+            leistungsumfang: kundenLeistungsumfang(pos),
+            pruefpflichtig: !!pos.pruefpflichtig,
+          }
+        }),
+    }))
+    .filter(gruppe => gruppe.positionen.length > 0)
+
+  const annahmenTexte = [
+    'Vorläufiger Kundenumfang für das Sales-Gespräch; kein Angebot und keine Ausführungsplanung.',
+    `Technologiepfad: ${eingaben.technologiepfad === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen MVP-Standards'}.`,
+    derived.aufstellung_begruendung,
+    `Datenlage: ${annahmen.dq_schwelle}%-Schwelle intern, aktuell ${derived.heizlast_geschaetzt ? 'mit Heizlast-Annahme' : 'mit angegebener Heizlast'}.`,
+  ].filter(Boolean)
+
+  const ausgeschlosseneVarianten = [...(excluded.aufstellvariante ?? [])]
+  const ausschluesse = [
+    ...ausgeschlosseneVarianten.map(v => ({
+      titel: 'Aufstellvariante ausgeschlossen',
+      text: `${v}: aktuell nicht tragfähig im Demo-Korridor.`,
+    })),
+    ...(eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
+      ? [{ titel: 'Technologiepfad außerhalb MVP', text: 'Der gewählte Pfad ist noch nicht als Standardumfang abbildbar.' }]
+      : []),
+  ]
+
+  const fehlende = fehlendeDaten.slice(0, 5).map(f => ({
+    titel: 'Offene Kundendaten',
+    text: `${f.sektion}: ${f.label}`,
+  }))
+  const pruefpunkte = warnungen.slice(0, 6).map(w => ({
+    titel: w.status === 'rot' || w.status === 'orange' ? 'Prüfung vor Weitergabe' : 'Klärpunkt',
+    text: kundenWarntext(w),
+  }))
+
+  return {
+    gruppen,
+    annahmen: annahmenTexte,
+    ausschluesse,
+    offenePunkte: [...pruefpunkte, ...fehlende].slice(0, 10),
+  }
+}
+
 export function berechne(eingaben, opts = {}) {
   const annahmen = opts.annahmen ?? ANNAHMEN
   const regeln = opts.regeln ?? REGELN
@@ -250,6 +335,7 @@ export function berechne(eingaben, opts = {}) {
         einzel, betrag: einzel * menge,
         foerderanteil: annahmen[pos.foerder] ?? 0, tag: pos.tag,
         begruendung: pos.begruendung, pruefpflichtig: !!pos.pruefpflichtig,
+        kunde: pos.kunde, variante: varianteName,
         erzwungen: paket.bedingung?.feld?.startsWith?.('require_') ? 'R03' : null,
       }
       if (pos.tag === 'opex') opexPositionen.push({ ...eintrag, prozent: pos.kosten.typ === 'prozent_lv' ? annahmen[pos.kosten.annahme] : null })
@@ -296,10 +382,13 @@ export function berechne(eingaben, opts = {}) {
     .map(f => ({ id: f.id, sektion: f.sektion, label: f.label, dq: f.dq }))
   const datenlage = datenlageEinordnung(dq, fehlendeDaten, annahmen.dq_schwelle)
   const statusKorridor = STATUS_KORRIDOR[status] ?? STATUS_KORRIDOR.unbekannt
+  const kundenScope = kundenScopeBauen({
+    eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded,
+  })
 
   return {
     derived, dq, status, statusLabel: STATUS_LABEL[status], statusQuellen,
-    statusKorridor, datenlage,
+    statusKorridor, datenlage, kundenScope,
     warnungen, gefeuert, konflikte,
     required: [...required],
     excluded: Object.fromEntries(Object.entries(excluded).map(([k, v]) => [k, [...v]])),

@@ -3,6 +3,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { berechne, dqScore, pruefeBedingung, STATUS_ORDER } from '../src/logic/engine.js'
+import { PRESETS } from '../src/data/presets.js'
 
 describe('pruefeBedingung', () => {
   it('!= trifft nicht bei undefiniert, null oder leerem Feld', () => {
@@ -284,5 +285,42 @@ describe('Aufstellungs-Empfehlung', () => {
       gewaehlt_viable: false,
     })
     expect(erg.lv.positionen.map(p => p.id)).not.toContain('aufst_voll')
+  })
+})
+
+describe('KundenScope', () => {
+  it('liefert einen kundenfähigen Umfang ohne interne Preisfelder', () => {
+    const erg = berechne(PRESETS.find(p => p.id === 'referenz').eingaben)
+    const scope = erg.kundenScope
+    const positionen = scope.gruppen.flatMap(g => g.positionen)
+
+    expect(scope.gruppen.length).toBeGreaterThan(0)
+    expect(positionen.length).toBeGreaterThan(0)
+    expect(positionen[0]).toEqual(expect.objectContaining({
+      titel: expect.any(String),
+      hersteller: expect.any(String),
+      produkt: expect.any(String),
+      leistungsklasse: expect.any(String),
+      leistungsumfang: expect.any(String),
+    }))
+    for (const position of positionen) {
+      expect(Object.keys(position)).not.toEqual(expect.arrayContaining(['einzel', 'betrag', 'foerderanteil']))
+    }
+    expect(JSON.stringify(scope)).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+  })
+
+  it('führt Annahmen, Ausschlüsse und offene Punkte als Kundensicht-Struktur', () => {
+    const erg = berechne({
+      ...PRESETS.find(p => p.id === 'tf3').eingaben,
+      aussenflaeche_m2: 20,
+    })
+
+    expect(erg.kundenScope.annahmen.length).toBeGreaterThan(0)
+    expect(erg.kundenScope.ausschluesse.length).toBeGreaterThan(0)
+    expect(erg.kundenScope.offenePunkte.length).toBeGreaterThan(0)
+    expect(erg.kundenScope.ausschluesse[0]).toEqual(expect.objectContaining({
+      titel: expect.any(String),
+      text: expect.any(String),
+    }))
   })
 })

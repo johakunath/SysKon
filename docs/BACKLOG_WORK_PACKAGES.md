@@ -10,14 +10,6 @@ Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden S
 
 Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht dauerhaft in diesem aktiven Detaildokument. Nach Abschluss werden sie nach `docs/BACKLOG_ARCHIVE.md` verschoben oder dort zusammengefasst.
 
-## WP7 Kundenfähiger Scope-/LV-Output
-
-Ziel: Die Kundensicht zeigt verständlich, welche Komponenten und Leistungen im Angebot enthalten sind, ohne interne Kalkulationsdetails offenzulegen.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-69 | Epic | Output | Kundenfähiger Scope-/LV-Output | Customer-/Sales-facing Output im Stil einer verständlichen LV- oder Handwerkerangebotsliste definieren. Enthalten sind Komponenten und Services mit Hersteller, Produktname, Größe/Leistungsklasse, Menge und Leistungsumfang, soweit verfügbar. Annahmen, Ausschlüsse und offene Punkte bis zum final verbindlichen Angebot werden explizit ausgewiesen. | Gebäudeeigentümer können verstehen, was enthalten ist; Hersteller, Produktname, Leistungsklasse, Menge und Service Scope sind als Ziel-Felder definiert; Annahmen, Exclusions und offene Punkte sind Teil der Kundensicht; interne Kosten-, Margen- und Einkaufsinformationen bleiben aus dieser Sicht heraus. | P1 | L | Todo |
-
 ## WP8 Contracting-Angebot & Pricing-Logik
 
 Ziel: Der Systempaket-Konfigurator bereitet später ein realistisches, konfigurierbares Contracting-Angebot mit GP, AP und Preisgleitformel vor, ohne interne Commercial-Logik in der Kundensicht zu zeigen.
