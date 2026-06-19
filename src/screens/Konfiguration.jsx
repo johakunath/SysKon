@@ -1,52 +1,80 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { SEKTIONEN } from '../data/fragen.js'
-import { LV_GRUPPEN } from '../data/katalog.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
-import { euro, num, VARIANTEN_NAME } from './format.js'
+import { num, VARIANTEN_NAME } from './format.js'
 
-function Tooltip({ text }) {
-  const [offen, setOffen] = useState(false)
-  const ref = useRef(null)
+const TECHNOLOGIEPFAD_PREVIEW = {
+  hybrid: 'Hybrid',
+  monoenergetisch: 'monoenergetisch',
+  sonstig: 'anderer Pfad',
+}
 
-  useEffect(() => {
-    if (!offen) return undefined
-    const schliesseBeiAussenklick = (event) => {
-      if (!ref.current?.contains(event.target)) setOffen(false)
-    }
-    document.addEventListener('pointerdown', schliesseBeiAussenklick)
-    return () => document.removeEventListener('pointerdown', schliesseBeiAussenklick)
-  }, [offen])
+const SEKTION_KURZ = {
+  A: 'Gebäude',
+  B: 'Wärme',
+  C: 'Bestand',
+  D: 'Temperatur',
+  E: 'Heizraum',
+  F: 'Aufstellung',
+  G: 'Schall',
+  H: 'Elektro',
+  I: 'Commercial',
+  J: 'Service',
+}
 
+function Gespraechshinweis({ frage }) {
+  const playbook = frage.playbook
+  if (!playbook && !frage.tooltip) return null
+  const text = kurzerHinweis(frage)
   return (
-    <span className="tooltip-wrap" ref={ref}>
-      <button
-        type="button"
-        className={`tooltip${offen ? ' offen' : ''}`}
-        aria-label="Hilfetext anzeigen"
-        aria-expanded={offen}
-        onClick={() => setOffen(v => !v)}
-        onFocus={() => setOffen(true)}
-        onBlur={(event) => {
-          if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) setOffen(false)
-        }}
-      >
-        ⓘ
-      </button>
-      <span className="tooltip-text" role="tooltip">{text}</span>
-    </span>
+    <aside className="gespraechshinweis">
+      <strong>Gesprächshinweis</strong>
+      <span>{text}</span>
+    </aside>
   )
 }
 
-function Playbook({ playbook }) {
-  if (!playbook) return null
-  return (
-    <div className="playbook">
-      <div><strong>Warum?</strong> {playbook.warum}</div>
-      <div><strong>Warnsignale:</strong> {playbook.warnsignale}</div>
-      <div><strong>Sales-Einordnung:</strong> {playbook.einordnung}</div>
-    </div>
-  )
+function kurzerHinweis(frage) {
+  const playbook = frage.playbook ?? {}
+  const text = [
+    frage.tooltip,
+    playbook.warum,
+    playbook.warnsignale,
+    playbook.einordnung,
+  ].filter(Boolean).join(' ')
+  return kuerzen(kundenPreviewText(text), 280)
+}
+
+function kuerzen(text, max) {
+  if (text.length <= max) return text
+  const gekuerzt = text.slice(0, max - 1)
+  const letzterSatz = Math.max(gekuerzt.lastIndexOf('.'), gekuerzt.lastIndexOf(';'))
+  if (letzterSatz > 140) return `${gekuerzt.slice(0, letzterSatz + 1)}`
+  return `${gekuerzt.trim()}...`
+}
+
+function formatMenge(menge, einheit) {
+  const wert = typeof menge === 'number' ? num(menge) : menge
+  return [wert, einheit].filter(Boolean).join(' ')
+}
+
+function kundenPreviewText(text) {
+  return String(text ?? '')
+    .replace(/€\/WE/g, 'pro WE')
+    .replace(/€\/m²/g, 'pro m²')
+    .replace(/€\/m2/g, 'pro m²')
+    .replace(/€/g, '')
+    .replace(/Interne Förderprüfung klären/g, 'Interne Prüfung klären')
+    .replace(/Förderprüfung/g, 'interne Prüfung')
+    .replace(/Förderlogik/g, 'interne Prüflogik')
+    .replace(/Förderberatung/g, 'Beratung zu externen Programmen')
+    .replace(/Förderannahme/g, 'interne Annahme')
+    .replace(/förderfähig/g, 'intern prüfpflichtig')
+    .replace(/Förderung/g, 'interne Prüfung')
+    .replace(/CAPEX/g, 'interne Kalkulation')
+    .replace(/OPEX/g, 'Betrieb')
+    .replace(/Netto|Brutto|Marge/g, '')
 }
 
 function Frage({ frage, wert, onChange, gesperrt }) {
@@ -70,59 +98,89 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
           </label>
         )}
-        {frage.tooltip ? <Tooltip text={frage.tooltip} /> : null}
       </div>
-      <div className="frage-feld">
-        {frage.typ === 'zahl' ? (
-          <input
-            id={frage.id}
-            type="number"
-            value={wert ?? ''}
-            min={frage.min}
-            max={frage.max}
-            className={invalide ? 'input-error' : undefined}
-            onChange={e => onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
-          />
-        ) : (
-          <div className="antwort-liste" role="radiogroup" aria-labelledby={`${frage.id}-label`}>
-            {frage.optionen.map(o => (
-              <label
-                key={o.wert}
-                className={`antwort-option${wert === o.wert ? ' aktiv' : ''}${gesperrt?.includes(o.wert) ? ' gesperrt' : ''}`}
-                htmlFor={`${frage.id}-${o.wert}`}
-              >
-                <input
-                  id={`${frage.id}-${o.wert}`}
-                  name={frage.id}
-                  type="radio"
-                  value={o.wert}
-                  checked={wert === o.wert}
-                  disabled={gesperrt?.includes(o.wert)}
-                  onChange={() => onChange(o.wert)}
-                />
-                <span className="antwort-text">
-                  <span className="antwort-label">{o.label}{gesperrt?.includes(o.wert) ? ' · gesperrt' : ''}</span>
-                  <span className="antwort-hinweis">{o.hinweis}</span>
-                </span>
-              </label>
-            ))}
-          </div>
-        )}
-        {invalide && (
-          <span className="input-hinweis">
-            Plausibilitätsbereich: {frage.min}–{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Demo-Annahme)
-          </span>
-        )}
-        <Playbook playbook={frage.playbook} />
+      <div className="frage-inhalt">
+        <div className="frage-feld">
+          {frage.typ === 'zahl' ? (
+            <input
+              id={frage.id}
+              type="number"
+              value={wert ?? ''}
+              min={frage.min}
+              max={frage.max}
+              className={invalide ? 'input-error' : undefined}
+              onChange={e => onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
+            />
+          ) : (
+            <div className="antwort-liste" role="radiogroup" aria-labelledby={`${frage.id}-label`}>
+              {frage.optionen.map(o => (
+                <label
+                  key={o.wert}
+                  className={`antwort-option${wert === o.wert ? ' aktiv' : ''}${gesperrt?.includes(o.wert) ? ' gesperrt' : ''}`}
+                  htmlFor={`${frage.id}-${o.wert}`}
+                >
+                  <input
+                    id={`${frage.id}-${o.wert}`}
+                    name={frage.id}
+                    type="radio"
+                    value={o.wert}
+                    checked={wert === o.wert}
+                    disabled={gesperrt?.includes(o.wert)}
+                    onChange={() => onChange(o.wert)}
+                  />
+                  <span className="antwort-text">
+                    <span className="antwort-label">{o.label}{gesperrt?.includes(o.wert) ? ' · gesperrt' : ''}</span>
+                    <span className="antwort-hinweis">{o.hinweis}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+          {invalide && (
+            <span className="input-hinweis">
+              Plausibilitätsbereich: {frage.min}-{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Demo-Annahme)
+            </span>
+          )}
+        </div>
+        <Gespraechshinweis frage={frage} />
       </div>
     </div>
   )
 }
 
-const TECHNOLOGIEPFAD_PREVIEW = {
-  hybrid: 'Hybrid',
-  monoenergetisch: 'monoenergetisch',
-  sonstig: 'anderer Pfad',
+function UmfangsVorschau({ scope }) {
+  const positionen = scope.gruppen.flatMap(gruppe => gruppe.positionen.map(pos => ({ ...pos, gruppe: gruppe.name })))
+  return (
+    <div className="preview-block umfang-vorschau">
+      <h4>Umfangs-Vorschau</h4>
+      <ul className="preview-positionen">
+        {positionen.slice(0, 10).map(pos => (
+          <li key={`${pos.gruppe}-${pos.id}`}>
+            <span>
+              <strong>{pos.titel}</strong>
+              <small>{pos.produkt} · {pos.leistungsklasse}</small>
+            </span>
+            <em>{formatMenge(pos.menge, pos.einheit)}</em>
+          </li>
+        ))}
+        {positionen.length > 10 ? <li className="preview-mehr">Weitere Leistungen <em>{positionen.length - 10}</em></li> : null}
+      </ul>
+    </div>
+  )
+}
+
+function KundenHinweise({ titel, eintraege }) {
+  if (!eintraege.length) return null
+  return (
+    <div className="preview-block">
+      <h4>{titel}</h4>
+      <ul className="preview-scope">
+        {eintraege.slice(0, 3).map((item, i) => (
+          <li key={i}>{kundenPreviewText(typeof item === 'string' ? item : `${item.titel}: ${item.text}`)}</li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen }) {
@@ -144,10 +202,8 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
   const gesperrteVarianten = ergebnis.excluded.aufstellvariante ?? []
   const d = ergebnis.derived
-  const previewGruppen = LV_GRUPPEN
-    .map(name => ({ name, count: ergebnis.lv.positionen.filter(p => p.gruppe === name).length }))
-    .filter(g => g.count > 0)
-  const wichtigsteHinweise = ergebnis.warnungen.slice(0, 5)
+  const scope = ergebnis.kundenScope
+  const wichtigsteOffenePunkte = scope.offenePunkte.slice(0, 3)
   const technologiepfadPreview = TECHNOLOGIEPFAD_PREVIEW[eingaben.technologiepfad] ?? 'nicht gewählt'
   const technologiepfadHinweis = eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
     ? 'außerhalb MVP v0.1'
@@ -159,7 +215,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
         <div className="karte sektion-nav">
           <div className="preset-zeile">
             <select onChange={e => e.target.value && ladePreset(e.target.value)} defaultValue="">
-              <option value="" disabled>Preset laden …</option>
+              <option value="" disabled>Preset laden ...</option>
               {PRESETS.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </div>
@@ -176,7 +232,10 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   document.getElementById(`sek-${s.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 }}
               >
-                <span>{s.id} · {s.titel}</span>
+                <span className="sektion-text">
+                  <span className="sektion-code">{s.id}</span>
+                  <span className="sektion-titel">{SEKTION_KURZ[s.id] ?? s.titel}</span>
+                </span>
                 <span className={`fortschritt${fp.komplett ? ' ok' : ''}`}>
                   {fp.komplett ? '✓' : `${fp.fertig}/${fp.gesamt}`}
                 </span>
@@ -213,7 +272,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   {d.aufstellung_abweichung ? (
                     <div className="hinweis">
                       Gewählt ist {d.aufstellung_abweichung.gewaehlt_label}; empfohlen ist {d.aufstellung_abweichung.empfohlen_label}
-                      {d.aufstellung_abweichung.kosten_delta > 0 ? ` (${euro(d.aufstellung_abweichung.kosten_delta)} mehr Zusatz-CAPEX).` : '.'}
+                      {d.aufstellung_abweichung.kosten_delta > 0 ? ' (mehr interner Zusatzaufwand).' : '.'}
                     </div>
                   ) : null}
                 </div>
@@ -227,22 +286,21 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
       </main>
 
       <aside className="spalte-rechts">
-        <div className="karte live">
-          <h3>Live-Analyse</h3>
-          <div className="status-zeile">
+        <div className="karte live kunden-preview">
+          <h3>Umfangs-Vorschau</h3>
+          <p className="hinweis">Kundensicht ohne Preise. Interne Kalkulation bleibt in der Analyse getrennt.</p>
+
+          <div className="status-zeile kompakt">
             <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
             <div>
               <strong>{ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
-              <div className="hinweis">{ergebnis.statusQuellen.length
-                ? `Gesprächskorridor aus ${[...new Set(ergebnis.statusQuellen.filter(q => q.wert === ergebnis.status).map(q => q.regelId))].join(', ')}`
-                : 'keine Regel verschlechtert den Gesprächskorridor'}</div>
+              <div className="hinweis">{kundenPreviewText(ergebnis.statusKorridor?.aktion)}</div>
             </div>
           </div>
 
           <div className="dq">
             <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong> · {ergebnis.datenlage?.titel}</div>
             <div className="dq-balken"><div style={{ width: `${ergebnis.dq}%` }} /></div>
-            <div className="hinweis">{ergebnis.datenlage?.aktion}</div>
           </div>
 
           <div className="preview-block">
@@ -252,46 +310,18 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               {technologiepfadHinweis ? <div><span>Einordnung</span><strong>{technologiepfadHinweis}</strong></div> : null}
               <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
               <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
-              <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong></div>
-              <div><span>Empfohlen</span><strong>{d.aufstellung_empfohlen_label ?? '–'}</strong></div>
+              <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '-'}</strong></div>
+              <div><span>Empfohlen</span><strong>{d.aufstellung_empfohlen_label ?? '-'}</strong></div>
             </div>
             {d.aufstellung_abweichung ? (
-              <p className="hinweis">Gewählte Variante weicht von der günstigsten tragfähigen Empfehlung ab.</p>
+              <p className="hinweis">Gewählte Variante weicht von der tragfähigen Empfehlung ab.</p>
             ) : null}
           </div>
 
-          <div className="preview-block">
-            <h4>Umfang & CAPEX</h4>
-            <div className="mini-fakten">
-              <div><span>Brutto-LV</span><strong>{euro(ergebnis.lv.brutto)}</strong></div>
-              <div><span>Förderung (Demo)</span><strong>−{euro(ergebnis.lv.foerderung)}</strong></div>
-              <div><span>Netto-CAPEX</span><strong>{euro(ergebnis.lv.netto)}</strong></div>
-            </div>
-            <ul className="preview-scope">
-              {previewGruppen.slice(0, 5).map(g => <li key={g.name}>{g.name} <span>{g.count}</span></li>)}
-              {previewGruppen.length > 5 && <li>Weitere Gruppen <span>{previewGruppen.length - 5}</span></li>}
-            </ul>
-          </div>
+          <UmfangsVorschau scope={scope} />
+          <KundenHinweise titel="Annahmen" eintraege={scope.annahmen} />
+          <KundenHinweise titel="Offene Punkte" eintraege={wichtigsteOffenePunkte} />
 
-          <div className="preview-block">
-            <h4>Annahmen & Grenzen</h4>
-            <p className="hinweis">Sales-/KAM-Gesprächshilfe mit internen Demo-Annahmen. Kein Kundenangebot, keine Marge, keine rechtsverbindliche Schall- oder Förderberechnung.</p>
-            {ergebnis.datenlage?.fehlendeFokusDaten?.length > 0 ? (
-              <ul className="preview-scope">
-                {ergebnis.datenlage.fehlendeFokusDaten.slice(0, 3).map(f => <li key={f.id}>{f.sektion}: {f.label}</li>)}
-              </ul>
-            ) : null}
-          </div>
-
-          {wichtigsteHinweise.length > 0 && (
-            <div className="preview-block">
-              <h4>Prüfpunkte ({ergebnis.warnungen.length})</h4>
-              <ul className="warnliste">
-                {wichtigsteHinweise.map((w, i) => <li key={i}>{w.regelId}: {w.text}</li>)}
-                {ergebnis.warnungen.length > wichtigsteHinweise.length && <li>… alle in der <a onClick={() => setScreen('ergebnis')}>Analyse</a></li>}
-              </ul>
-            </div>
-          )}
           <button className="primaer" onClick={() => setScreen('ergebnis')}>Zur Analyse →</button>
         </div>
       </aside>

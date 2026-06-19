@@ -47,7 +47,7 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 
 ## Aktueller Fokus
 
-WP0 bis WP7 sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP8/SK-70.
+WP0 bis WP7 sowie das UX-Prerequisite vor SK-70 sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP8/SK-70.
 
 ## Child-Tickets
 

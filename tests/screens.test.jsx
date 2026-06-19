@@ -23,8 +23,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).not.toContain('Handover</button>')
   })
 
-
-  it('Konfiguration rendert Auswahlfragen als erklärte Radio-Liste mit Tooltip am Label', () => {
+  it('Konfiguration rendert Auswahlfragen als erklärte Radio-Liste mit kompaktem Gesprächshinweis', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -39,11 +38,13 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('role="radiogroup"')
     expect(html).toContain('id="gebaeudetyp-freistehend"')
     expect(html).toContain('class="antwort-hinweis"')
-    expect(html).toContain('aria-expanded="false"')
+    expect(html).toContain('class="gespraechshinweis"')
+    expect(html).not.toContain('aria-expanded=')
+    expect(html).not.toContain('Hilfetext anzeigen')
     expect(html).toContain('class="frage-kopf"')
   })
 
-  it('Konfiguration zeigt den gewählten Technologiepfad in der Live-Analyse', () => {
+  it('Konfiguration zeigt den gewählten Technologiepfad in der kundenfähigen Umfangs-Vorschau', () => {
     const eingaben = { ...PRESETS[0].eingaben, technologiepfad: 'monoenergetisch' }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -55,8 +56,12 @@ describe('Screens rendern mit jedem Preset', () => {
         setScreen={noop}
       />
     )
+    const rechteVorschau = html.slice(html.indexOf('<aside class="spalte-rechts">'))
     expect(html).toContain('monoenergetisch')
     expect(html).toContain('außerhalb MVP v0.1')
+    expect(rechteVorschau).toContain('Umfangs-Vorschau')
+    expect(rechteVorschau).toContain('Luft-Wasser-Wärmepumpen-Kaskade')
+    expect(rechteVorschau).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
   })
 
   it('Analyse startet mit einem kundenfaehigen Umfang ohne Preise', () => {
