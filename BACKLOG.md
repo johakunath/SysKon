@@ -40,20 +40,19 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 
 | Order | Epic | Work Package | Outcome | Next Child | Priority | Status |
 |---:|---|---|---|---|---|---|
-| 1 | SK-42 | WP0 Demo-Fluss | Demo ohne verfrühte PE-Handover-/Operational-Readiness-Signale | SK-43 | P0 | Todo |
-| 2 | SK-54 | WP3 Responsive | Tablet- und schmale Ansichten ohne offensichtliche Brüche | SK-57 | P1 | Todo |
-| 3 | SK-66 | WP4 Sales Ownership & Role Semantics | Systempaket-Konfigurator als Tool für erfahrene Sales/KAM-Angebotsvorbereitung schärfen | SK-66 | P0 | Todo |
-| 4 | SK-67 | WP5 Logisches Fragen- und Playbook-Modell | Vollständige fachliche Fragenstruktur mit admin-editierbarer Sales-Hilfe definieren | SK-67 | P0 | Todo |
-| 5 | SK-68 | WP6 Aufstellvariante, Fläche & Placement-Logik | Günstigste tragfähige Aufstellvariante und praktikable MVP-Flächenprüfung definieren | SK-68 | P0 | Todo |
-| 6 | SK-69 | WP7 Kundenfähiger Scope-/LV-Output | Verständliche Komponenten- und Leistungsübersicht für Gebäudeeigentümer definieren | SK-69 | P1 | Todo |
-| 7 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | P1 | Todo |
-| 8 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | P1 | Todo |
-| 9 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten | SK-72 | P1 | Todo |
-| 10 | SK-73 | WP11 Admin-Konfiguration & Governance | Inhalte, Produktdaten, Pricing und Sichtbarkeit ohne Codeänderungen pflegbar machen | SK-73 | P2 | Todo |
+| 1 | SK-42 | WP0 Demo-Fluss | Demo ohne verfrühte PE-Handover-/Operational-Readiness-Signale | SK-44 | P0 | Todo |
+| 2 | SK-66 | WP4 Sales Ownership & Role Semantics | Systempaket-Konfigurator als Tool für erfahrene Sales/KAM-Angebotsvorbereitung schärfen | SK-66 | P0 | Todo |
+| 3 | SK-67 | WP5 Logisches Fragen- und Playbook-Modell | Vollständige fachliche Fragenstruktur mit admin-editierbarer Sales-Hilfe definieren | SK-67 | P0 | Todo |
+| 4 | SK-68 | WP6 Aufstellvariante, Fläche & Placement-Logik | Günstigste tragfähige Aufstellvariante und praktikable MVP-Flächenprüfung definieren | SK-68 | P0 | Todo |
+| 5 | SK-69 | WP7 Kundenfähiger Scope-/LV-Output | Verständliche Komponenten- und Leistungsübersicht für Gebäudeeigentümer definieren | SK-69 | P1 | Todo |
+| 6 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | P1 | Todo |
+| 7 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | P1 | Todo |
+| 8 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten | SK-72 | P1 | Todo |
+| 9 | SK-73 | WP11 Admin-Konfiguration & Governance | Inhalte, Produktdaten, Pricing und Sichtbarkeit ohne Codeänderungen pflegbar machen | SK-73 | P2 | Todo |
 
 ## Aktueller Fokus
 
-WP1 + WP2 sind umgesetzt und im Archiv. Nächster offener Queue-Punkt bleibt nach Nutzerpriorität WP0 oder WP3 prüfen.
+WP1, WP2 und WP3 sind umgesetzt und im Archiv. In WP0 ist SK-43 erledigt; nächster offener Queue-Punkt ist SK-44.
 
 ## Child-Tickets
 

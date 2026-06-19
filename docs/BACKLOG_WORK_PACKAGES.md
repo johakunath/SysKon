@@ -16,17 +16,8 @@ Ziel: Der erste Demo-Durchlauf soll keine Reifegrad-, PE-Handover- oder Operatio
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-43 | UX | Handover | Remove/de-emphasize Handover | Hidden from nav; code kept for now. | Decide remove vs deferred reference. | P0 | S | In Progress |
 | SK-44 | Question | Status | Reconsider Gesamtstatus | Rule-derived but unclear to users. | Keep with semantics or replace. | P1 | M | Todo |
 | SK-45 | Question | Data quality | Reconsider Datenqualität | Percentage needs product meaning. | Define threshold/action or de-emphasize. | P2 | S | Todo |
-
-## WP3 Responsive Verhalten
-
-Ziel: Tablet- und schmale Ansichten sollen nicht offensichtlich brechen. Kein vollständiger Mobile-Produktumbau.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-57 | UX | Tablet | Tablet-wide layout decent | No full phone optimization. | Tablet-wide avoids clipping. | P2 | M | Todo |
 
 ## WP4 Sales Ownership & Role Semantics
 

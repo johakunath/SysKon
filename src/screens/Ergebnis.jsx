@@ -31,8 +31,8 @@ function exportLvCsv(lv, annahmen) {
 
 const NAECHSTE_AKTION = {
   gruen: 'Analyse plausibel: intern mit Annahmen und Prüfpunkten weiterbearbeiten',
-  gelb: 'PE-Prüfpunkte klären und Annahmen vor der nächsten Runde schärfen',
-  orange: 'Engineering-Prüfung einplanen, bevor Umfang oder Kosten kommuniziert werden',
+  gelb: 'Interne Prüfpunkte klären und Annahmen vor der nächsten Runde schärfen',
+  orange: 'Fachprüfung einplanen, bevor Umfang oder Kosten kommuniziert werden',
   rot: 'Nicht als Standardfall behandeln; separaten Lösungsweg prüfen',
   unbekannt: 'Pflichtfragen ergänzen, damit die Analyse belastbarer wird',
 }
@@ -40,7 +40,7 @@ const NAECHSTE_AKTION = {
 const LIMITS = [
   'Interne Demo-Annahme, kein Kundenangebot und keine Marge.',
   'Keine rechtsverbindliche Schall-, Förder- oder Ausführungsplanung.',
-  'Kosten dienen als CAPEX-Indikation für die Projektentwicklung.',
+  'Kosten dienen nur als interne Richtindikation für den nächsten Prüf- und Gesprächsschritt.',
 ]
 
 function AnalyseKpi({ label, value, note }) {
@@ -93,18 +93,20 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
               <AnalyseKpi label="Aufstellung" value={VARIANTEN_NAME[eingaben.aufstellvariante] ?? 'nicht gewählt'} />
               <AnalyseKpi label="Netto-CAPEX" value={euro(lv.netto)} note="Richtwert, Demo" />
             </div>
-            <table className="fakten">
-              <tbody>
-                <tr><td>Heizlast</td><td>{num(d.heizlast_effektiv)} kW {d.heizlast_geschaetzt ? '(geschätzt, R14)' : '(Eingabe)'}</td></tr>
-                <tr><td>WP-Deckungsanteil</td><td>{prozent(annahmen.wp_deckungsanteil)} der Wärmemenge, Rest Gas-Bestandskessel</td></tr>
-                <tr><td>Analyse-Status</td><td>
-                  <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
-                  <strong> {STATUS_LABEL[ergebnis.status]}</strong>
-                </td></tr>
-                <tr><td>Datenlage</td><td>{ergebnis.dq} % · interne Orientierung, kein Freigabekriterium</td></tr>
-                <tr><td>Prüfaufwand</td><td>Score {ergebnis.peScore} von 5 · keine LV-Kostenposition</td></tr>
-              </tbody>
-            </table>
+            <div className="table-scroll">
+              <table className="fakten">
+                <tbody>
+                  <tr><td>Heizlast</td><td>{num(d.heizlast_effektiv)} kW {d.heizlast_geschaetzt ? '(geschätzt, R14)' : '(Eingabe)'}</td></tr>
+                  <tr><td>WP-Deckungsanteil</td><td>{prozent(annahmen.wp_deckungsanteil)} der Wärmemenge, Rest Gas-Bestandskessel</td></tr>
+                  <tr><td>Analyse-Status</td><td>
+                    <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
+                    <strong> {STATUS_LABEL[ergebnis.status]}</strong>
+                  </td></tr>
+                  <tr><td>Datenlage</td><td>{ergebnis.dq} % · interne Orientierung, kein Freigabekriterium</td></tr>
+                  <tr><td>Prüfaufwand</td><td>Score {ergebnis.peScore} von 5 · keine LV-Kostenposition</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="karte">
@@ -135,39 +137,41 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
         <div className="analyse-umfang">
           <div className="karte">
             <h3>Enthaltener Umfang und CAPEX-Indikation</h3>
-            <table className="lv">
-              <thead>
-                <tr><th>Position</th><th>Menge</th><th>Einheit</th><th>Einzel</th><th>Betrag</th><th>förderfähig</th><th>prüfpflichtig</th></tr>
-              </thead>
-              <tbody>
-                {gruppen.map(g => (
-                  <React.Fragment key={g.name}>
-                    <tr className="gruppe"><td colSpan="7">{g.name}</td></tr>
-                    {g.positionen.map(p => (
-                      <tr key={p.id}>
-                        <td>
-                          <details>
-                            <summary>{p.text}</summary>
-                            <div className="begruendung">Begründung: {p.begruendung}{p.erzwungen ? ` · erzwungen durch ${p.erzwungen}` : ''} · {p.tag.toUpperCase()}</div>
-                          </details>
-                        </td>
-                        <td className="r">{num(p.menge)}</td>
-                        <td>{p.einheit}</td>
-                        <td className="r">{euro(p.einzel)}</td>
-                        <td className="r">{euro(p.betrag)}</td>
-                        <td className="r">{prozent(p.foerderanteil)}</td>
-                        <td>{p.pruefpflichtig ? 'ja' : '–'}</td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-                <tr className="summe"><td colSpan="4">Zwischensumme</td><td className="r">{euro(lv.zwischensumme)}</td><td colSpan="2" /></tr>
-                <tr><td colSpan="4">Contingency ({Math.round(annahmen.contingency * 100)} %)</td><td className="r">{euro(lv.contingency)}</td><td colSpan="2" /></tr>
-                <tr className="summe"><td colSpan="4">Brutto-LV-Kosten</td><td className="r">{euro(lv.brutto)}</td><td colSpan="2" /></tr>
-                <tr><td colSpan="4">Förderung ({prozent(annahmen.foerderquote)} auf förderfähigen Anteil, Demo)</td><td className="r">−{euro(lv.foerderung)}</td><td colSpan="2" /></tr>
-                <tr className="summe"><td colSpan="4">Netto-CAPEX-Indikation</td><td className="r">{euro(lv.netto)}</td><td colSpan="2" /></tr>
-              </tbody>
-            </table>
+            <div className="table-scroll">
+              <table className="lv">
+                <thead>
+                  <tr><th>Position</th><th>Menge</th><th>Einheit</th><th>Einzel</th><th>Betrag</th><th>förderfähig</th><th>prüfpflichtig</th></tr>
+                </thead>
+                <tbody>
+                  {gruppen.map(g => (
+                    <React.Fragment key={g.name}>
+                      <tr className="gruppe"><td colSpan="7">{g.name}</td></tr>
+                      {g.positionen.map(p => (
+                        <tr key={p.id}>
+                          <td>
+                            <details>
+                              <summary>{p.text}</summary>
+                              <div className="begruendung">Begründung: {p.begruendung}{p.erzwungen ? ` · erzwungen durch ${p.erzwungen}` : ''} · {p.tag.toUpperCase()}</div>
+                            </details>
+                          </td>
+                          <td className="r">{num(p.menge)}</td>
+                          <td>{p.einheit}</td>
+                          <td className="r">{euro(p.einzel)}</td>
+                          <td className="r">{euro(p.betrag)}</td>
+                          <td className="r">{prozent(p.foerderanteil)}</td>
+                          <td>{p.pruefpflichtig ? 'ja' : '–'}</td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                  <tr className="summe"><td colSpan="4">Zwischensumme</td><td className="r">{euro(lv.zwischensumme)}</td><td colSpan="2" /></tr>
+                  <tr><td colSpan="4">Contingency ({Math.round(annahmen.contingency * 100)} %)</td><td className="r">{euro(lv.contingency)}</td><td colSpan="2" /></tr>
+                  <tr className="summe"><td colSpan="4">Brutto-LV-Kosten</td><td className="r">{euro(lv.brutto)}</td><td colSpan="2" /></tr>
+                  <tr><td colSpan="4">Förderung ({prozent(annahmen.foerderquote)} auf förderfähigen Anteil, Demo)</td><td className="r">−{euro(lv.foerderung)}</td><td colSpan="2" /></tr>
+                  <tr className="summe"><td colSpan="4">Netto-CAPEX-Indikation</td><td className="r">{euro(lv.netto)}</td><td colSpan="2" /></tr>
+                </tbody>
+              </table>
+            </div>
             <div className="lv-aktionen no-print">
               <p className="hinweis">Positionen aufklappen für Begründung. Interner Richtumfang ohne Marge und ohne Kundenangebots-Charakter.</p>
               <button onClick={() => exportLvCsv(lv, annahmen)}>CSV herunterladen</button>
@@ -247,24 +251,26 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
           <div className="karte">
             <h3>Schall-Vorprüfung (Demo-Abschätzung)</h3>
             <p className="hinweis">Lp = LW<sub>Kaskade</sub> − 20·log₁₀(r) − 8 − Abschlag · keine rechtsverbindliche Schallberechnung.</p>
-            <table className="fakten">
-              <tbody>
-                <tr><td>LW Kaskade ({d.wp_module} Module)</td><td>{num(d.schall_lw_kaskade, 1)} dB(A)</td></tr>
-                <tr><td>Nachtgrenzwert ({eingaben.gebietstyp ?? '–'})</td><td>{d.schall_grenzwert ?? '–'} dB(A)</td></tr>
-              </tbody>
-            </table>
-            <table className="lv">
-              <thead><tr><th>Variante</th><th>Pegel am Immissionsort</th><th>Ampel</th></tr></thead>
-              <tbody>
-                {Object.entries(d.schall_je_variante).map(([v, s]) => (
-                  <tr key={v} className={v === eingaben.aufstellvariante ? 'gewaehlt' : ''}>
-                    <td>{VARIANTEN_NAME[v]}{v === eingaben.aufstellvariante ? ' (gewählt)' : ''}</td>
-                    <td>{num(s.lp, 1)} dB(A) (−{s.abschlag} dB)</td>
-                    <td><span className={`ampel klein ${s.ampel ?? 'unbekannt'}`} /> {s.ampel}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="table-scroll">
+              <table className="fakten">
+                <tbody>
+                  <tr><td>LW Kaskade ({d.wp_module} Module)</td><td>{num(d.schall_lw_kaskade, 1)} dB(A)</td></tr>
+                  <tr><td>Nachtgrenzwert ({eingaben.gebietstyp ?? '–'})</td><td>{d.schall_grenzwert ?? '–'} dB(A)</td></tr>
+                </tbody>
+              </table>
+              <table className="lv">
+                <thead><tr><th>Variante</th><th>Pegel am Immissionsort</th><th>Ampel</th></tr></thead>
+                <tbody>
+                  {Object.entries(d.schall_je_variante).map(([v, s]) => (
+                    <tr key={v} className={v === eingaben.aufstellvariante ? 'gewaehlt' : ''}>
+                      <td>{VARIANTEN_NAME[v]}{v === eingaben.aufstellvariante ? ' (gewählt)' : ''}</td>
+                      <td>{num(s.lp, 1)} dB(A) (−{s.abschlag} dB)</td>
+                      <td><span className={`ampel klein ${s.ampel ?? 'unbekannt'}`} /> {s.ampel}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="karte">

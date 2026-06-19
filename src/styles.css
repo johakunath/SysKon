@@ -57,7 +57,7 @@ body {
   font-size: 14px;
 }
 
-.app { min-height: 100vh; display: flex; flex-direction: column; width: 100%; min-width: 0; }
+.app { min-height: 100vh; display: flex; flex-direction: column; width: 100%; min-width: 0; overflow-x: clip; }
 
 /* Kopfzeile: dunkles Stahlblau, aktive Reiter mit Signal-Unterstrich */
 .topbar {
@@ -120,7 +120,7 @@ body {
   gap: 16px; padding: 16px 20px; flex: 1; align-items: start;
 }
 .seite { padding: 16px 20px; flex: 1; }
-.karten-reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+.karten-reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 16px; min-width: 0; }
 .spalte-links, .spalte-rechts {
   position: sticky; top: 64px; align-self: start;
   max-height: calc(100vh - 84px); overflow: auto; scrollbar-gutter: stable;
@@ -137,6 +137,7 @@ body {
 .karte {
   background: var(--karte); border: 1px solid var(--rand); border-radius: var(--radius);
   padding: 16px 18px; margin-bottom: 16px; box-shadow: var(--schatten);
+  min-width: 0;
 }
 .karte h2 { margin: 0 0 12px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
 .karte h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
@@ -234,6 +235,15 @@ button:disabled { opacity: 0.5; cursor: default; }
 
 /* Tabellen: Zahlen in Tabellenziffern, ruhige Haarlinien */
 table { border-collapse: collapse; width: 100%; }
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+}
+.table-scroll > table { min-width: 100%; }
+.table-scroll > table.lv { min-width: 760px; }
+.table-scroll > table.pruef-tabelle { min-width: 620px; }
 table.stack td, table.fakten td { padding: 5px 6px; border-bottom: 1px solid var(--zeile); font-size: 13px; }
 td.r, th.r { text-align: right; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 th.r { font-family: inherit; }
@@ -279,7 +289,7 @@ details summary:hover { color: var(--akzent); }
 
 /* Ergebnis-Zusammenfassungsleiste */
 .summary-strip {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
   padding: 12px 20px; margin-bottom: 14px;
   background: var(--karte); border: 1px solid var(--rand);
   border-left: 4px solid var(--akzent); border-radius: var(--radius);
@@ -288,9 +298,9 @@ details summary:hover { color: var(--akzent); }
 .summary-strip.status-gelb { border-left-color: var(--st-gelb); }
 .summary-strip.status-orange { border-left-color: var(--st-orange); }
 .summary-strip.status-rot { border-left-color: var(--st-rot); }
-.summary-mitte { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.summary-mitte { flex: 1 1 260px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .summary-detail { font-size: 12px; color: var(--muted); font-family: var(--mono); }
-.summary-aktion { font-size: 13px; color: var(--muted); max-width: 340px; }
+.summary-aktion { font-size: 13px; color: var(--muted); max-width: 340px; min-width: 220px; }
 .status-hierarchie { margin: 10px 0 4px; display: grid; gap: 4px; font-size: 13px; }
 .status-hierarchie > div { display: flex; align-items: center; gap: 8px; }
 .sh-label { color: var(--muted); min-width: 90px; font-size: 12px; }
@@ -300,7 +310,7 @@ details summary:hover { color: var(--akzent); }
 .regel-nachweis > summary:hover { color: var(--akzent); }
 
 /* Analyse-Screen */
-.analyse-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+.analyse-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px; align-items: start; min-width: 0; }
 .analyse-umfang { display: grid; gap: 16px; }
 .analyse-hauptkarte { grid-column: span 2; }
 .analyse-kpis {
@@ -319,7 +329,7 @@ details summary:hover { color: var(--akzent); }
 }
 
 /* Sekundäre Reiter (Ergebnis-Tabs): Unterstrich-Stil auf heller Fläche */
-.tabs-sekundaer { display: flex; gap: 2px; margin-bottom: 14px; border-bottom: 1px solid var(--rand); }
+.tabs-sekundaer { display: flex; gap: 2px; margin-bottom: 14px; border-bottom: 1px solid var(--rand); overflow-x: auto; }
 .tabs-sekundaer .tab {
   background: transparent; color: var(--muted); border: none;
   border-bottom: 2px solid transparent; margin-bottom: -1px;
@@ -361,12 +371,28 @@ details summary:hover { color: var(--akzent); }
   .seite { padding: 12px; }
   .spalte-links, .spalte-rechts { position: static; max-height: none; overflow: visible; }
   .analyse-hauptkarte { grid-column: auto; }
+  .summary-strip { align-items: flex-start; padding: 12px 14px; }
+  .summary-aktion { flex-basis: 100%; max-width: none; min-width: 0; }
   .tooltip-text { left: auto; right: 0; transform: none; }
   .tooltip-text::after { left: auto; right: 8px; transform: none; }
 }
 
 @media (min-width: 901px) and (max-width: 1180px) {
-  .drei-spalten { grid-template-columns: 220px minmax(0, 1fr) 300px; gap: 12px; padding: 12px; }
+  .drei-spalten { grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; padding: 12px; }
+  .spalte-links {
+    grid-column: 1 / -1;
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+  .sektion-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 6px;
+    align-items: center;
+  }
+  .preset-zeile, .sektion-nav h4 { margin: 0; }
+  .sektion-nav h4 { align-self: center; }
   .karte { padding: 14px; }
   .sektion-anker { font-size: 12px; }
 }

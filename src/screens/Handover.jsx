@@ -3,11 +3,13 @@ import { SEKTIONEN } from '../data/fragen.js'
 import { STATUS_LABEL } from '../logic/engine.js'
 import { euro } from './format.js'
 
+// Hidden reference surface: kept for deferred internal print/checklist reuse,
+// but intentionally not routed in the visible demo flow.
 const EMPFEHLUNG = {
-  gruen: 'Analyse plausibel. PE kann Annahmen, Aufstellvariante und Vor-Ort-Aufnahme intern weiter prüfen.',
+  gruen: 'Analyse plausibel. Annahmen, Aufstellvariante und Vor-Ort-Aufnahme intern weiter prüfen.',
   gelb: 'Interne Prüfung: offene Punkte klären (siehe Prüfliste), bevor Umfang oder CAPEX nach außen genutzt werden.',
-  orange: 'Engineering-Prüfung erforderlich, bevor ein belastbarer Richtumfang möglich ist. Fall nicht im Standardprozess weiterführen.',
-  rot: 'Nicht standardfähig im MVP. Als Engineering-Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
+  orange: 'Fachprüfung erforderlich, bevor ein belastbarer Richtumfang möglich ist. Fall nicht im Standardprozess weiterführen.',
+  rot: 'Nicht standardfähig im MVP. Als Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
 }
 
 const FOTOS_DOKUMENTE = [
@@ -20,17 +22,17 @@ const FOTOS_DOKUMENTE = [
 ]
 
 const KAT_OWNER = {
-  pe: 'PE / Technik',
+  pe: 'Interne Fachprüfung',
   engineering: 'Technik',
-  foerderung: 'Förderung / PE',
+  foerderung: 'Förderprüfung',
   hinweis: '—',
 }
 
 const NAECHSTER_SCHRITT = {
-  gruen: 'Analyse intern mit PE prüfen und Vor-Ort-Aufnahme vorbereiten',
+  gruen: 'Analyse intern prüfen und Vor-Ort-Aufnahme vorbereiten',
   gelb: 'Offene Prüfpunkte klären und Annahmen schärfen',
-  orange: 'Engineering-Prüfung einleiten – Fall nicht im Standardprozess',
-  rot: 'Als Engineering-Sonderfall behandeln oder zurückstellen',
+  orange: 'Fachprüfung einleiten – Fall nicht im Standardprozess',
+  rot: 'Als Sonderfall behandeln oder zurückstellen',
   unbekannt: 'Konfiguration vervollständigen, bevor die Analyse nutzbar ist',
 }
 
@@ -41,7 +43,7 @@ export default function Handover({ ergebnis }) {
     <div className="seite druckbereich">
       <div className="karte">
         <div className="druckkopf">
-          <h2>Interne Planungs- und Engineering-Prüfliste</h2>
+          <h2>Interne Prüfnotiz (nicht im Demo-Fluss)</h2>
           <button className="primaer no-print" onClick={() => window.print()}>Prüfliste exportieren</button>
         </div>
         <p>
@@ -83,20 +85,22 @@ export default function Handover({ ergebnis }) {
           {ergebnis.warnungen.length === 0
             ? <p className="hinweis">Keine Prüfpunkte ausgelöst.</p>
             : (
-              <table className="pruef-tabelle">
-                <thead>
-                  <tr><th>Prüfpunkt</th><th>Owner</th><th>Ergebnis</th></tr>
-                </thead>
-                <tbody>
-                  {ergebnis.warnungen.map((w, i) => (
-                    <tr key={i}>
-                      <td>{w.text}</td>
-                      <td>{KAT_OWNER[w.kategorie] ?? '—'}</td>
-                      <td><span className={`ampel klein ${w.status ?? 'gelb'}`} /> offen</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="table-scroll">
+                <table className="pruef-tabelle">
+                  <thead>
+                    <tr><th>Prüfpunkt</th><th>Owner</th><th>Ergebnis</th></tr>
+                  </thead>
+                  <tbody>
+                    {ergebnis.warnungen.map((w, i) => (
+                      <tr key={i}>
+                        <td>{w.text}</td>
+                        <td>{KAT_OWNER[w.kategorie] ?? '—'}</td>
+                        <td><span className={`ampel klein ${w.status ?? 'gelb'}`} /> offen</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           {ergebnis.konflikte.map((k, i) => <p key={i} className="warnbox">{k}</p>)}
         </div>
