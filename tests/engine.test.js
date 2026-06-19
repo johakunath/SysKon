@@ -73,6 +73,14 @@ describe('dqScore', () => {
     expect(dqScore({})).toBeGreaterThanOrEqual(0)
     expect(dqScore({ gebaeudetyp: 'freistehend', flaeche: 1000 })).toBeLessThanOrEqual(100)
   })
+
+  it('ordnet Datenlage als Sales-Check mit priorisierten fehlenden Daten ein', () => {
+    const erg = berechne({ gebaeudetyp: 'freistehend' })
+    expect(erg.datenlage.stufe).toBe('duenn')
+    expect(erg.datenlage.aktion).toContain('wichtigsten fehlenden Daten')
+    expect(erg.datenlage.fehlendeFokusDaten.length).toBeGreaterThan(0)
+    expect(erg.datenlage.fehlendeFokusDaten[0].dq).toBeGreaterThanOrEqual(erg.datenlage.fehlendeFokusDaten.at(-1).dq)
+  })
 })
 
 describe('Status-Verschlechterung', () => {
@@ -104,6 +112,13 @@ describe('Status-Verschlechterung', () => {
   it('ohne Regeln ist Status gruen', () => {
     const erg = berechne({}, { regeln: [], katalog: [] })
     expect(erg.status).toBe('gruen')
+  })
+
+  it('liefert eine Gesprächskorridor-Semantik zum Status', () => {
+    const erg = berechne({ anzahl_heizkreise: 4 })
+    expect(erg.status).toBe('rot')
+    expect(erg.statusKorridor.titel).toBe('Kein Standardfit im MVP')
+    expect(erg.statusKorridor.aktion).toContain('Sonderfall')
   })
 })
 

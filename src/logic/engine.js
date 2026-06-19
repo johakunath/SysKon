@@ -24,6 +24,34 @@ export const STATUS_LABEL = {
   rot: 'nicht standardfähig',
 }
 
+export const STATUS_KORRIDOR = {
+  gruen: {
+    titel: 'Gesprächsfähige Richtindikation',
+    bedeutung: 'Der Fall wirkt im Demo-Korridor plausibel; Annahmen und Prüfpunkte bleiben intern sichtbar.',
+    aktion: 'Mit Annahmen weiterarbeiten und die nächsten Standort- und Verbrauchsdaten gezielt schärfen.',
+  },
+  gelb: {
+    titel: 'Gespräch mit offenen Klärpunkten',
+    bedeutung: 'Der Fall bleibt besprechbar, braucht aber interne Klärung oder bessere Daten vor externer Nutzung.',
+    aktion: 'Offene Pflichtdaten und Regelhinweise priorisieren, bevor Umfang oder CAPEX weitergegeben werden.',
+  },
+  orange: {
+    titel: 'Nur mit Fachprüfung weiterführen',
+    bedeutung: 'Mindestens ein Thema liegt außerhalb des einfachen Standardkorridors.',
+    aktion: 'Fachprüfung einplanen und keine belastbare Richtindikation nach außen verwenden.',
+  },
+  rot: {
+    titel: 'Kein Standardfit im MVP',
+    bedeutung: 'Der aktuelle MVP-Standardpfad passt nicht; das ist kein Angebots- oder Umsetzungsurteil.',
+    aktion: 'Sonderfall markieren, Alternativpfad prüfen oder den Fall zurückstellen.',
+  },
+  unbekannt: {
+    titel: 'Noch kein Gesprächskorridor',
+    bedeutung: 'Es fehlen Pflichtdaten, bevor die Demo sinnvoll eingeordnet werden kann.',
+    aktion: 'Konfiguration vervollständigen und anschließend erneut einordnen.',
+  },
+}
+
 const schlechter = (a, b) =>
   STATUS_ORDER[Math.max(STATUS_ORDER.indexOf(a), STATUS_ORDER.indexOf(b))]
 
@@ -85,6 +113,37 @@ function kriteriumText(b) {
   const wert = Array.isArray(b.wert) ? b.wert.join('/') : String(b.wert)
   const op = { '=': '=', '!=': '≠', '<=': '≤', '>=': '≥', '<': '<', '>': '>', in: '∈', nicht_in: '∉' }[b.op] ?? b.op
   return `${label} ${op} ${wert}`
+}
+
+function datenlageEinordnung(dq, fehlendeDaten, schwelle) {
+  const stufe = dq >= 80 ? 'stark' : dq >= schwelle ? 'arbeitsfaehig' : 'duenn'
+  const texte = {
+    stark: {
+      titel: 'starke Gesprächsdaten',
+      bedeutung: 'Die wichtigsten sichtbaren Pflichtdaten sind weitgehend vorhanden.',
+      aktion: 'Annahmen sichtbar halten und nur die offenen Detailpunkte nachziehen.',
+    },
+    arbeitsfaehig: {
+      titel: 'arbeitsfähige Datenlage',
+      bedeutung: 'Die Demo ist als interne Orientierung nutzbar, enthält aber noch Annahmen.',
+      aktion: 'Die nächsten fehlenden Pflichtdaten vor externer Nutzung klären.',
+    },
+    duenn: {
+      titel: 'dünne Datenlage',
+      bedeutung: 'Der Prozentwert ist ein Sammelhinweis für fehlende Gesprächsdaten, kein Freigabekriterium.',
+      aktion: 'Erst die wichtigsten fehlenden Daten einsammeln; die Richtindikation nur als Gesprächsnotiz nutzen.',
+    },
+  }[stufe]
+
+  return {
+    prozent: dq,
+    stufe,
+    ...texte,
+    fehlendeFokusDaten: fehlendeDaten
+      .slice()
+      .sort((a, b) => b.dq - a.dq)
+      .slice(0, 5),
+  }
 }
 
 export function berechne(eingaben, opts = {}) {
@@ -228,15 +287,18 @@ export function berechne(eingaben, opts = {}) {
 
   const fehlendeDaten = sichtbareFragen(eingaben, annahmen)
     .filter(f => f.dq > 0 && !beantwortet(eingaben[f.id]))
-    .map(f => ({ sektion: f.sektion, label: f.label }))
+    .map(f => ({ id: f.id, sektion: f.sektion, label: f.label, dq: f.dq }))
+  const datenlage = datenlageEinordnung(dq, fehlendeDaten, annahmen.dq_schwelle)
+  const statusKorridor = STATUS_KORRIDOR[status] ?? STATUS_KORRIDOR.unbekannt
 
   return {
     derived, dq, status, statusLabel: STATUS_LABEL[status], statusQuellen,
+    statusKorridor, datenlage,
     warnungen, gefeuert, konflikte,
     required: [...required],
     excluded: Object.fromEntries(Object.entries(excluded).map(([k, v]) => [k, [...v]])),
     lv: { positionen: lvPositionen, zwischensumme, contingency, brutto, foerderfaehig, foerderung, netto },
     opex: { positionen: opexPositionen, summe_pa: opexSumme },
-    energie, kennzahlen, peScore, gruenKriterien, fehlendeDaten,
+    energie, kennzahlen, peScore, gruenKriterien, standardKriterien: gruenKriterien, fehlendeDaten,
   }
 }

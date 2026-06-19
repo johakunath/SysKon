@@ -209,16 +209,17 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           <div className="status-zeile">
             <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
             <div>
-              <strong>{STATUS_LABEL[ergebnis.status]}</strong>
+              <strong>{ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
               <div className="hinweis">{ergebnis.statusQuellen.length
-                ? `ausgelöst durch ${[...new Set(ergebnis.statusQuellen.filter(q => q.wert === ergebnis.status).map(q => q.regelId))].join(', ')}`
-                : 'keine Regel verschlechtert den Status'}</div>
+                ? `Gesprächskorridor aus ${[...new Set(ergebnis.statusQuellen.filter(q => q.wert === ergebnis.status).map(q => q.regelId))].join(', ')}`
+                : 'keine Regel verschlechtert den Gesprächskorridor'}</div>
             </div>
           </div>
 
           <div className="dq">
-            <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong>{ergebnis.dq < annahmen.dq_schwelle ? ' – Annahmen schärfen' : ''}</div>
+            <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong> · {ergebnis.datenlage?.titel}</div>
             <div className="dq-balken"><div style={{ width: `${ergebnis.dq}%` }} /></div>
+            <div className="hinweis">{ergebnis.datenlage?.aktion}</div>
           </div>
 
           <div className="preview-block">
@@ -252,6 +253,11 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           <div className="preview-block">
             <h4>Annahmen & Grenzen</h4>
             <p className="hinweis">Sales-/KAM-Gesprächshilfe mit internen Demo-Annahmen. Kein Kundenangebot, keine Marge, keine rechtsverbindliche Schall- oder Förderberechnung.</p>
+            {ergebnis.datenlage?.fehlendeFokusDaten?.length > 0 ? (
+              <ul className="preview-scope">
+                {ergebnis.datenlage.fehlendeFokusDaten.slice(0, 3).map(f => <li key={f.id}>{f.sektion}: {f.label}</li>)}
+              </ul>
+            ) : null}
           </div>
 
           {wichtigsteHinweise.length > 0 && (

@@ -29,14 +29,6 @@ function exportLvCsv(lv, annahmen) {
   URL.revokeObjectURL(url)
 }
 
-const NAECHSTE_AKTION = {
-  gruen: 'Analyse plausibel: intern mit Annahmen und Prüfpunkten weiterbearbeiten',
-  gelb: 'Interne Prüfpunkte klären und Annahmen vor der nächsten Runde schärfen',
-  orange: 'Fachprüfung einplanen, bevor Umfang oder Kosten kommuniziert werden',
-  rot: 'Nicht als Standardfall behandeln; separaten Lösungsweg prüfen',
-  unbekannt: 'Pflichtfragen ergänzen, damit die Analyse belastbarer wird',
-}
-
 const LIMITS = [
   'Sales-/KAM-Gesprächshilfe mit Demo-Annahmen, kein Kundenangebot und keine Marge.',
   'Keine rechtsverbindliche Schall-, Förder- oder Ausführungsplanung.',
@@ -71,10 +63,10 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
       <div className={`summary-strip status-${ergebnis.status ?? 'unbekannt'} no-print`}>
         <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
         <div className="summary-mitte">
-          <strong>Analyse: {STATUS_LABEL[ergebnis.status]}</strong>
+          <strong>Gesprächskorridor: {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
           <span className="summary-detail">{d.wp_module} × {annahmen.wp_modul_kw} kW · CAPEX-Indikation netto {euro(lv.netto)}</span>
         </div>
-        <div className="summary-aktion">{NAECHSTE_AKTION[ergebnis.status ?? 'unbekannt']}</div>
+        <div className="summary-aktion">{ergebnis.statusKorridor?.aktion}</div>
       </div>
 
       <div className="tabs-sekundaer no-print">
@@ -109,11 +101,12 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                       {d.aufstellung_abweichung.kosten_delta > 0 ? ` (${euro(d.aufstellung_abweichung.kosten_delta)} mehr Zusatz-CAPEX).` : '.'}
                     </td></tr>
                   ) : null}
-                  <tr><td>Analyse-Status</td><td>
+                  <tr><td>Gesprächskorridor</td><td>
                     <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
-                    <strong> {STATUS_LABEL[ergebnis.status]}</strong>
+                    <strong> {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
+                    <div className="hinweis">{ergebnis.statusKorridor?.bedeutung}</div>
                   </td></tr>
-                  <tr><td>Datenlage</td><td>{ergebnis.dq} % · interne Orientierung, kein Freigabekriterium</td></tr>
+                  <tr><td>Datenlage</td><td>{ergebnis.dq} % · {ergebnis.datenlage?.titel}<div className="hinweis">{ergebnis.datenlage?.aktion}</div></td></tr>
                   <tr><td>Prüfaufwand</td><td>Score {ergebnis.peScore} von 5 · keine LV-Kostenposition</td></tr>
                 </tbody>
               </table>
@@ -121,17 +114,29 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
           </div>
 
           <div className="karte">
-            <h3>Warum diese Vorlösung passt</h3>
+            <h3>Warum dieser Korridor entsteht</h3>
             <ul className="kriterien">
-              {ergebnis.gruenKriterien.map((k, i) => (
+              {ergebnis.standardKriterien.map((k, i) => (
                 <li key={i} className={k.erfuellt ? 'ok' : 'fehlt'}>{k.erfuellt ? '✓' : '×'} {k.text}</li>
               ))}
             </ul>
             <div className="status-hierarchie">
-              <div><span className="sh-label">Analyse-Status</span><span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} /> <strong>{STATUS_LABEL[ergebnis.status]}</strong></div>
+              <div><span className="sh-label">Korridor</span><span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} /> <strong>{ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong></div>
               {blocker.length > 0 && <div><span className="sh-label">Blocker</span><span className="sh-wert">{blocker.length} Prüfpunkte</span></div>}
               {hinweise.length > 0 && <div><span className="sh-label">Hinweise</span><span className="sh-wert">{hinweise.length} Hinweise</span></div>}
             </div>
+          </div>
+
+          <div className="karte">
+            <h3>Datenlage als Sales-Check</h3>
+            <p className="hinweis">{ergebnis.datenlage?.bedeutung}</p>
+            {ergebnis.datenlage?.fehlendeFokusDaten?.length > 0 ? (
+              <ul className="checkliste">
+                {ergebnis.datenlage.fehlendeFokusDaten.map(f => (
+                  <li key={f.id}><strong>{f.sektion}</strong>: {f.label}</li>
+                ))}
+              </ul>
+            ) : <p className="okbox">Keine gewichteten Pflichtdaten offen.</p>}
           </div>
 
           <div className="karte">

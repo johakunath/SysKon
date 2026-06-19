@@ -48,7 +48,7 @@ export default function Handover({ ergebnis }) {
         </div>
         <p>
           <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
-          <strong> Status: {STATUS_LABEL[ergebnis.status]}</strong> · Datenqualität {ergebnis.dq} % ·
+          <strong> Gesprächskorridor: {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong> · Datenlage {ergebnis.dq} % ·
           Interner Prüfaufwand: {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
           Netto-LV {euro(ergebnis.lv.netto)} (Demo)
         </p>
