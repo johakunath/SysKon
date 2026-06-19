@@ -260,4 +260,29 @@ describe('Aufstellungs-Empfehlung', () => {
       expect.arrayContaining(['durch Schall- oder Flächenregel gesperrt'])
     )
   })
+
+  it('eskaliert eine durch Placement-Maße blockierte gewählte Variante vor dem LV-Aufbau', () => {
+    const erg = berechne({
+      ...basis,
+      aussenflaeche_m2: 50,
+      aussenflaeche_laenge_m: 8,
+      aussenflaeche_breite_m: 4,
+      aufstellvariante: 'vollcontainer',
+    })
+
+    expect(STATUS_ORDER.indexOf(erg.status)).toBeGreaterThanOrEqual(STATUS_ORDER.indexOf('orange'))
+    expect(erg.excluded.aufstellvariante).toContain('vollcontainer')
+    expect(erg.warnungen).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        regelId: 'SYS',
+        status: 'orange',
+        text: expect.stringContaining('nutzbare Länge unter 10 m'),
+      }),
+    ]))
+    expect(erg.derived.aufstellung_abweichung).toMatchObject({
+      gewaehlt: 'vollcontainer',
+      gewaehlt_viable: false,
+    })
+    expect(erg.lv.positionen.map(p => p.id)).not.toContain('aufst_voll')
+  })
 })

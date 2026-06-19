@@ -5,8 +5,9 @@
 //   1. Zwischenergebnisse ableiten (calc.js) + DQ-Score
 //   2. Regeln in Schleife auswerten bis Fixpunkt (require/exclude/warn/status)
 //      Konflikt: exclude schlägt require; Status nimmt die schlechteste Stufe.
-//      Sonderfall (dokumentiert): ist die GEWÄHLTE Aufstellvariante gesperrt,
-//      ergänzt die Engine Warnung SYS-EXCLUDE und Status orange.
+//      Sonderfall (dokumentiert): ist die GEWÄHLTE Aufstellvariante gesperrt
+//      oder im Placement-Korridor blockiert, ergänzt die Engine Warnung SYS
+//      und Status orange.
 //   3. LV aus dem Katalog bauen, Kosten/Förderung/Energie/Kennzahlen rechnen
 //   4. Sales-/Prüfdaten (fehlende Daten, Prüfpunkte, Empfehlung) zusammenstellen
 
@@ -202,19 +203,22 @@ export function berechne(eingaben, opts = {}) {
       konflikte.push(`Modul „${modul}" war erzwungen, ist aber gesperrt (exclude schlägt require).`)
     }
   }
-  // Gewählte Aufstellvariante gesperrt → Fachprüfung (SYS-EXCLUDE)
-  const variantenSperre = excluded.aufstellvariante ?? new Set()
-  if (eingaben.aufstellvariante && variantenSperre.has(eingaben.aufstellvariante)) {
-    status = schlechter(status, 'orange')
-    warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
-      text: 'Die gewählte Aufstellvariante ist gesperrt (Schall oder Fläche) – Variante wechseln oder Fachprüfung einplanen.' })
-  }
+  Object.assign(derived, aufstellungEmpfehlung(eingaben, annahmen, derived, [...(excluded.aufstellvariante ?? [])]))
 
-  Object.assign(derived, aufstellungEmpfehlung(eingaben, annahmen, derived, [...variantenSperre]))
+  // Gewählte Aufstellvariante gesperrt oder im Placement-Korridor blockiert → Fachprüfung (SYS)
+  const variantenSperre = (excluded.aufstellvariante ??= new Set())
+  const placementBlocker = derived.aufstellung_blockierte_varianten?.[eingaben.aufstellvariante] ?? []
+  if (eingaben.aufstellvariante && (variantenSperre.has(eingaben.aufstellvariante) || placementBlocker.length > 0)) {
+    variantenSperre.add(eingaben.aufstellvariante)
+    status = schlechter(status, 'orange')
+    const blockerText = placementBlocker.length ? ` Gründe: ${placementBlocker.join('; ')}.` : ''
+    warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
+      text: `Die gewählte Aufstellvariante ist im aktuellen Demo-Korridor blockiert – Variante wechseln oder Fachprüfung einplanen.${blockerText}` })
+  }
 
   // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.
   // Regeln, die warn+status koppeln, tragen denselben regelId in beiden Arrays.
-  // SYS-EXCLUDE hat keinen statusQuellen-Eintrag, erhält status direkt.
+  // SYS hat keinen statusQuellen-Eintrag, erhält status direkt.
   const statusByRegel = Object.fromEntries(statusQuellen.map(s => [s.regelId, s.wert]))
   statusByRegel['SYS'] = 'orange'
   for (const w of warnungen) {
@@ -229,7 +233,9 @@ export function berechne(eingaben, opts = {}) {
     let positionen = paket.positionen
     let varianteName = null
     if (paket.varianten) {
-      const gewaehlt = paket.varianten.find(v => v.wert === eingaben[paket.variantenFeld]) ?? paket.varianten[0]
+      const gewaehlterWert = eingaben[paket.variantenFeld]
+      if (excluded[paket.variantenFeld]?.has(gewaehlterWert)) continue
+      const gewaehlt = paket.varianten.find(v => v.wert === gewaehlterWert) ?? paket.varianten[0]
       positionen = gewaehlt.positionen
       varianteName = gewaehlt.name
     }
