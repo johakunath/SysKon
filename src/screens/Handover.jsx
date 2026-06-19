@@ -1,5 +1,5 @@
 import React from 'react'
-import { SEKTIONEN } from '../data/fragen.js'
+import { SEKTIONEN as DEFAULT_SEKTIONEN } from '../data/fragen.js'
 import { STATUS_LABEL } from '../logic/engine.js'
 import { euro } from './format.js'
 
@@ -36,8 +36,8 @@ const NAECHSTER_SCHRITT = {
   unbekannt: 'Konfiguration vervollständigen, bevor die Analyse nutzbar ist',
 }
 
-export default function Handover({ ergebnis }) {
-  const sektionsTitel = Object.fromEntries(SEKTIONEN.map(s => [s.id, s.titel]))
+export default function Handover({ ergebnis, sektionen = DEFAULT_SEKTIONEN }) {
+  const sektionsTitel = Object.fromEntries(sektionen.map(s => [s.id, s.titel]))
 
   return (
     <div className="seite druckbereich">

@@ -115,7 +115,8 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
   const lv = ergebnis.lv
   const kundenScope = ergebnis.kundenScope
 
-  const gruppen = LV_GRUPPEN
+  const gruppenNamen = [...new Set([...LV_GRUPPEN, ...lv.positionen.map(p => p.gruppe)])]
+  const gruppen = gruppenNamen
     .map(g => ({ name: g, positionen: lv.positionen.filter(p => p.gruppe === g) }))
     .filter(g => g.positionen.length > 0)
 

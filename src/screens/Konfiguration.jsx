@@ -1,5 +1,5 @@
 import React from 'react'
-import { SEKTIONEN } from '../data/fragen.js'
+import { applyAdminConfig, makeDefaultAdminConfig } from '../data/adminConfig.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
 import { num, VARIANTEN_NAME } from './format.js'
@@ -23,34 +23,7 @@ const SEKTION_KURZ = {
   J: 'Service',
 }
 
-const KURZE_GESPRAECHSHINWEISE = {
-  gebaeudetyp: 'Innenstadt oder Blockrand verschärft Schall- und Platzprüfung.',
-  aussenflaeche_vorhanden: 'Ohne belastbare Außenfläche entsteht im MVP kein Standardfit.',
-  verbrauchsquelle: 'Nur Abrechnung oder Messung macht den Verbrauch belastbar.',
-  ww_bereitung: 'Zentrale Warmwasserbereitung zieht Speicher-/WW-Scope nach sich.',
-  heizlast_bekannt: 'Ohne Heizlast bleibt die Leistung nur eine Richtindikation.',
-  technologiepfad: 'Nur Hybrid ist im MVP standardfähig; andere Pfade sind Sonderfall.',
-  kessel_zustand: 'Schlecht oder unbekannt heißt: Restlaufzeit und Einbindung klären.',
-  kessel_nutzbar: 'Hybrid setzt einen weiter nutzbaren Kessel voraus.',
-  anzahl_heizkreise: 'Mehr als zwei Heizkreise ist im MVP ein Sonderfall.',
-  vorlauftemp_klasse: 'Über 65 °C braucht der Standard-Hybrid fachliche Prüfung.',
-  heizraum_groesse_ok: 'Zu wenig Raum verschiebt den Fokus auf Außenaufstellung oder Container.',
-  zugang_ok: 'Enge Türen oder Treppen können Speicher und Hydraulik praktisch blockieren.',
-  aussenflaeche_m2: 'Fluchtwege, Grenzen und Stellplätze zählen nicht als frei nutzbare Fläche.',
-  aussenflaeche_typ: 'Dach, Garage oder Garten nicht als Standardfläche zusagen.',
-  aussenflaeche_laenge_m: 'Entscheidend ist ein zusammenhängendes Rechteck, nicht nur die m².',
-  aussenflaeche_breite_m: 'Wartungs- und Fluchtwege dürfen die nutzbare Breite nicht aufzehren.',
-  zugang_logistik: 'Schwierige Zufahrt oder fehlender Kran spricht gegen Container.',
-  platz_prioritaet: 'Priorität erklärt die Empfehlung, darf Blocker aber nicht überstimmen.',
-  aufstellvariante: 'Auswahl bleibt Vergleichspunkt; gesperrte Varianten nicht als Empfehlung verkaufen.',
-  schallhaube: 'Hilft nur bei Fundament und ersetzt keine Schallprüfung.',
-  kran_zugang: 'Container sind nur mit belastbarer Anlieferung und Kranstellung plausibel.',
-  abstand_fenster: 'Kleine Abstände dominieren die Schallrisiko-Einschätzung.',
-  gebietstyp: 'Demo-Grenzwert, keine rechtsverbindliche Schallbewertung.',
-  netzanschluss_bekannt: 'Unbekannte Anschlussleistung bleibt Elektro-Klärpunkt.',
-  foerderung_annahme: 'Nur Demo-Annahme, keine Förderberatung oder Zusage.',
-  service_variante: 'Service ist laufender Betrieb, nicht Teil des einmaligen LV.',
-}
+const DEFAULT_EFFECTIVE_SEKTIONEN = applyAdminConfig(makeDefaultAdminConfig()).sektionen
 
 function Gespraechshinweis({ text }) {
   if (!text) return null
@@ -62,7 +35,7 @@ function Gespraechshinweis({ text }) {
 }
 
 function kurzerHinweis(frage) {
-  return kuerzen(kundenPreviewText(KURZE_GESPRAECHSHINWEISE[frage.id] ?? ''), 150)
+  return kuerzen(kundenPreviewText(frage.hinweisKurz ?? ''), 150)
 }
 
 function kuerzen(text, max) {
@@ -203,7 +176,7 @@ function KundenHinweise({ titel, eintraege }) {
   )
 }
 
-export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen }) {
+export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen, sektionen = DEFAULT_EFFECTIVE_SEKTIONEN }) {
   const sichtbar = (f) => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen)
   const beantwortet = (f) => {
     const w = eingaben[f.id]
@@ -240,7 +213,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             </select>
           </div>
           <h4>Abschnitte</h4>
-          {SEKTIONEN.map(s => {
+          {sektionen.map(s => {
             const fp = fortschritt(s)
             return (
               <a
@@ -266,7 +239,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
       </aside>
 
       <main className="spalte-mitte">
-        {SEKTIONEN.map(s => {
+        {sektionen.map(s => {
           const fragenSichtbar = s.fragen.filter(sichtbar)
           if (fragenSichtbar.length === 0) return null
           return (

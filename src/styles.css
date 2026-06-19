@@ -490,6 +490,64 @@ details summary:hover { color: var(--akzent); }
   border-radius: var(--radius-klein); padding: 8px 16px;
   font-size: 12px; color: var(--text); margin-bottom: 12px;
 }
+.admin-tabs { margin-bottom: 0; }
+.admin-stack { display: grid; gap: 14px; }
+.admin-grid { align-items: start; }
+.admin-list { display: grid; gap: 12px; }
+.admin-edit-card {
+  border: 1px solid var(--zeile);
+  border-radius: var(--radius-klein);
+  background: var(--hover-flaeche);
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.admin-edit-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.admin-edit-head span { color: var(--muted); font-size: 12px; }
+.admin-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+.admin-field { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.admin-field input, .admin-field textarea {
+  max-width: none;
+  width: 100%;
+  color: var(--text);
+  font-size: 13px;
+}
+.admin-field textarea, .admin-json {
+  resize: vertical;
+  min-height: 70px;
+}
+.admin-optionen { display: grid; gap: 6px; margin-top: 10px; }
+.admin-option-row {
+  display: grid;
+  grid-template-columns: 150px minmax(160px, 0.7fr) minmax(240px, 1.3fr);
+  gap: 8px;
+  align-items: center;
+}
+.admin-option-row input { max-width: none; width: 100%; }
+.admin-variant {
+  border-top: 1px solid var(--zeile);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+.admin-json {
+  width: 100%;
+  min-height: 360px;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  border: 1px solid var(--rand);
+  border-radius: var(--radius-klein);
+  padding: 10px;
+}
 
 .druckkopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .zeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }

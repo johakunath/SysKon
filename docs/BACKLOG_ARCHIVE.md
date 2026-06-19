@@ -27,6 +27,7 @@ Diese Einträge wurden aus `BACKLOG.md` und `docs/BACKLOG_WORK_PACKAGES.md` entf
 | SK-45 | Question | WP0 Demo-Fluss | Datenqualität bleibt regelkompatibel, wird aber de-emphasized: Prozentwert ist ein Sales-Hinweis für fehlende Gesprächsdaten; UI zeigt Bedeutung, Aktion und die wichtigsten fehlenden Felder. | Done |
 | SK-69 | Epic | WP7 Kundenfähiger Scope-/LV-Output | Kundenfähiger No-Price-Umfang ergänzt: Analyse startet mit separatem Kundenumfang, Komponenten/Services zeigen Hersteller-/Produkt-/Leistungsklasse-Platzhalter, Annahmen, Ausschlüsse und offene Punkte; interne LV-/CAPEX-Ansichten bleiben getrennt. | Done |
 | UX-SK70-PRE | UX | Prerequisite vor SK-70 | Konfiguration kompakter an Referenzlayout angelehnt: linke Abschnittsleiste verdichtet, Fragehilfen als kurze Gesprächshinweise neben der Antwortbox gerendert und rechte Standardvorschau auf kundenfähige Komponenten/Services ohne Preise umgestellt. SK-70 bleibt nächster Queue-Punkt. | Done |
+| SK-73 | Epic | WP11 Admin-Konfiguration & Governance | Frontend-only Admin-Konfiguration umgesetzt: lokale versionierte Overrides per localStorage, JSON Import/Export, editierbare Annahmen, Fragen-/Playbook-/Optionshinweise, Katalog-/Kundendaten und Governance-Texte. Regeln bleiben read-only mit Governance-Hinweisen; WP12/SK-74 bleibt nächster aktiver Queue-Punkt. | Done |
 
 ## v0.1 Build
 

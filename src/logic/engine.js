@@ -91,9 +91,9 @@ const beantwortet = (w) => w !== undefined && w !== null && w !== '' && w !== 'u
 
 // Datenqualität: gewichteter Anteil beantworteter sichtbarer Pflichtfragen.
 // 'unbekannt' gilt als unzureichende Antwort und liefert keine DQ-Punkte (HANDOVER §2.6).
-export function dqScore(eingaben, annahmen = ANNAHMEN) {
+export function dqScore(eingaben, annahmen = ANNAHMEN, fragen = ALLE_FRAGEN) {
   let gesamt = 0, erreicht = 0
-  for (const f of ALLE_FRAGEN) {
+  for (const f of fragen) {
     if (!f.dq) continue
     if (f.sichtbar && !pruefeBedingung(f.sichtbar, eingaben, annahmen)) continue
     gesamt += f.dq
@@ -102,15 +102,19 @@ export function dqScore(eingaben, annahmen = ANNAHMEN) {
   return gesamt ? Math.round((100 * erreicht) / gesamt) : 0
 }
 
-export function sichtbareFragen(eingaben, annahmen = ANNAHMEN) {
-  return ALLE_FRAGEN.filter(f => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen))
+export function sichtbareFragen(eingaben, annahmen = ANNAHMEN, fragen = ALLE_FRAGEN) {
+  return fragen.filter(f => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen))
 }
 
-const FELD_LABEL = Object.fromEntries(ALLE_FRAGEN.map(f => [f.id, f.label]))
-FELD_LABEL.schall_ampel_aktiv = 'Schall-Ampel'
+function feldLabels(fragen) {
+  return {
+    ...Object.fromEntries(fragen.map(f => [f.id, f.label])),
+    schall_ampel_aktiv: 'Schall-Ampel',
+  }
+}
 
-function kriteriumText(b) {
-  const label = FELD_LABEL[b.feld] ?? b.feld
+function kriteriumText(b, labels) {
+  const label = labels[b.feld] ?? b.feld
   const wert = Array.isArray(b.wert) ? b.wert.join('/') : String(b.wert)
   const op = { '=': '=', '!=': '≠', '<=': '≤', '>=': '≥', '<': '<', '>': '>', in: '∈', nicht_in: '∉' }[b.op] ?? b.op
   return `${label} ${op} ${wert}`
@@ -174,7 +178,7 @@ function kundenWarntext(warnung) {
 
 function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded }) {
   const allePositionen = [...lvPositionen, ...opexPositionen]
-  const gruppenNamen = [...LV_GRUPPEN, 'Service / Betrieb (p.a.)']
+  const gruppenNamen = [...new Set([...LV_GRUPPEN, ...allePositionen.map(pos => pos.gruppe), 'Service / Betrieb (p.a.)'])]
   const gruppen = gruppenNamen
     .map(name => ({
       name,
@@ -236,10 +240,11 @@ export function berechne(eingaben, opts = {}) {
   const annahmen = opts.annahmen ?? ANNAHMEN
   const regeln = opts.regeln ?? REGELN
   const katalog = opts.katalog ?? KATALOG
+  const fragen = opts.fragen ?? ALLE_FRAGEN
 
   // 1. Zwischenergebnisse + DQ
   const derived = ableiten(eingaben, annahmen)
-  const dq = dqScore(eingaben, annahmen)
+  const dq = dqScore(eingaben, annahmen, fragen)
   const ctx = { ...derived, ...eingaben, dq_score: dq }
 
   // 2. Regel-Fixpunkt
@@ -373,11 +378,12 @@ export function berechne(eingaben, opts = {}) {
   const peScore = Math.min(5, statusLevel + (warnungen.length >= 3 ? 1 : 0))
 
   const r11 = regeln.find(r => r.id === 'R11')
+  const labels = feldLabels(fragen)
   const gruenKriterien = (r11?.wenn?.und ?? []).map(b => ({
-    text: kriteriumText(b), erfuellt: pruefeBedingung(b, ctx, annahmen),
+    text: kriteriumText(b, labels), erfuellt: pruefeBedingung(b, ctx, annahmen),
   }))
 
-  const fehlendeDaten = sichtbareFragen(eingaben, annahmen)
+  const fehlendeDaten = sichtbareFragen(eingaben, annahmen, fragen)
     .filter(f => f.dq > 0 && !beantwortet(eingaben[f.id]))
     .map(f => ({ id: f.id, sektion: f.sektion, label: f.label, dq: f.dq }))
   const datenlage = datenlageEinordnung(dq, fehlendeDaten, annahmen.dq_schwelle)
