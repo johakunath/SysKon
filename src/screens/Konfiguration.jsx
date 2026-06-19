@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { applyAdminConfig, makeDefaultAdminConfig } from '../data/adminConfig.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
@@ -193,6 +193,32 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
     if (p) setEingaben({ ...p.eingaben })
   }
 
+  const [aktiveSektionId, setAktiveSektionId] = useState(null)
+  const sektionenRef = useRef(sektionen)
+  sektionenRef.current = sektionen
+
+  useEffect(() => {
+    const ids = sektionenRef.current.map(s => s.id)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const sichtbareEintraege = entries.filter(e => e.isIntersecting)
+        if (sichtbareEintraege.length > 0) {
+          const oberste = sichtbareEintraege.reduce((a, b) =>
+            a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+          )
+          const id = oberste.target.id.replace('sek-', '')
+          if (ids.includes(id)) setAktiveSektionId(id)
+        }
+      },
+      { rootMargin: '-10% 0px -60% 0px', threshold: 0 }
+    )
+    ids.forEach(id => {
+      const el = document.getElementById(`sek-${id}`)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
+
   const gesperrteVarianten = ergebnis.excluded.aufstellvariante ?? []
   const d = ergebnis.derived
   const scope = ergebnis.kundenScope
@@ -218,7 +244,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             return (
               <a
                 key={s.id}
-                className={`sektion-anker${fp.komplett ? ' komplett' : ''}`}
+                className={`sektion-anker${fp.komplett ? ' komplett' : ''}${aktiveSektionId === s.id ? ' aktiv' : ''}`}
                 href={`#sek-${s.id}`}
                 onClick={e => {
                   e.preventDefault()

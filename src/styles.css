@@ -21,6 +21,8 @@
   --akzent: #0e5a8a;         /* Stahlblau */
   --akzent-tief: #0b486e;
   --akzent-hell: #e7f0f7;
+  --akzent-wahl: #2c79bd;          /* Auswahl-Akzent für aktive Radiokarten */
+  --akzent-wahl-flaeche: #e9f2fb;  /* Auswahlfläche */
   --signal: #e8590c;         /* Signal-Orange, sparsam */
   --signal-hell: #f0935c;    /* lesbar auf dunklem Grund */
   --topbar: #122a3c;         /* dunkles Stahlblau */
@@ -84,7 +86,7 @@ body {
   transition: color var(--t), background-color var(--t), border-color var(--t);
 }
 .tab:hover { background: rgb(255 255 255 / 0.07); color: #fff; }
-.tab.aktiv { color: #fff; font-weight: 600; border-bottom-color: var(--akzent); }
+.tab.aktiv { color: #fff; font-weight: 600; border-bottom-color: var(--akzent-wahl); }
 .tab.tab-admin { color: var(--topbar-text); opacity: 0.75; border-left: 1px solid rgb(255 255 255 / 0.12); margin-left: 8px; padding-left: 16px; }
 .tab.tab-admin.aktiv { opacity: 1; border-bottom-color: var(--signal); }
 .admin-toggle {
@@ -116,8 +118,8 @@ body {
 
 /* Layout */
 .drei-spalten {
-  display: grid; grid-template-columns: 176px minmax(0, 1fr) 360px;
-  gap: 14px; padding: 14px 18px; flex: 1; align-items: start;
+  display: grid; grid-template-columns: 200px minmax(0, 1fr) 372px;
+  gap: 16px; padding: 14px 18px; flex: 1; align-items: start;
 }
 .seite { padding: 16px 20px; flex: 1; }
 .karten-reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 16px; min-width: 0; }
@@ -139,7 +141,7 @@ body {
   padding: 16px 18px; margin-bottom: 16px; box-shadow: var(--schatten);
   min-width: 0;
 }
-.karte h2 { margin: 0 0 12px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.karte h2 { margin: 0 0 12px; font-size: 18px; font-weight: 600; letter-spacing: -0.005em; }
 .karte h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
 .karte h4 {
   margin: 16px 0 6px; font-size: 11px; font-weight: 600; color: var(--muted);
@@ -153,13 +155,15 @@ body {
 .preset-zeile select { max-width: 100%; width: 100%; }
 .sektion-anker {
   display: flex; justify-content: space-between; align-items: center;
-  gap: 8px; padding: 6px 7px; border-radius: var(--radius-klein);
-  text-decoration: none; color: var(--text); font-size: 12px;
+  gap: 8px; padding: 7px 9px; border-radius: var(--radius-klein);
+  text-decoration: none; color: var(--text); font-size: 13px;
   border-left: 2px solid transparent;
   transition: background-color var(--t), color var(--t), border-color var(--t);
 }
 .sektion-anker:hover { background: var(--hover-flaeche); color: var(--akzent); border-left-color: var(--rand-stark); }
 .sektion-anker.komplett { color: var(--st-gruen); border-left-color: var(--st-gruen); }
+.sektion-anker.aktiv { background: var(--akzent-wahl-flaeche); border-left-color: var(--akzent); }
+.sektion-anker.aktiv .sektion-code { color: var(--akzent); }
 .sektion-text { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; align-items: center; min-width: 0; }
 .sektion-code { font-family: var(--mono); font-size: 11px; color: var(--muted); }
 .sektion-titel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -183,7 +187,7 @@ body {
 }
 .frage-inhalt.ohne-hinweis { grid-template-columns: minmax(260px, 1fr); }
 .frage-feld { display: flex; flex-direction: column; gap: 4px; }
-.frage-label { font-weight: 600; }
+.frage-label { font-weight: 600; font-size: 14.5px; }
 .einheit { color: var(--muted); font-weight: 400; }
 .tooltip-wrap { position: relative; display: inline-flex; align-items: center; margin-left: 4px; }
 .tooltip {
@@ -221,21 +225,26 @@ input.input-error:focus { border-color: var(--st-rot); box-shadow: 0 0 0 3px rgb
   display: grid; gap: 6px; max-width: none;
 }
 .antwort-option {
-  display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: start;
-  padding: 7px 9px; border: 1px solid var(--rand); border-radius: var(--radius-klein);
+  display: grid; grid-template-columns: 17px minmax(0, 1fr); gap: 10px; align-items: start;
+  padding: 10px 12px; border: 1px solid var(--rand); border-radius: var(--radius-klein);
   background: #fff; cursor: pointer;
   transition: border-color var(--t), background-color var(--t), box-shadow var(--t);
 }
 .antwort-option:hover { border-color: var(--rand-stark); background: var(--hover-flaeche); }
-.antwort-option.aktiv { border-color: var(--akzent); background: var(--akzent-hell); }
+.antwort-option.aktiv {
+  border-color: var(--akzent-wahl);
+  background: var(--akzent-wahl-flaeche);
+  box-shadow: inset 0 0 0 1px var(--akzent-wahl);
+}
+.antwort-option.aktiv .antwort-label { color: var(--akzent-tief); }
 .antwort-option.gesperrt { opacity: 0.56; cursor: default; }
 .antwort-option input {
-  width: 14px; height: 14px; margin: 2px 0 0; accent-color: var(--akzent);
+  width: 16px; height: 16px; margin-top: 1px; accent-color: var(--akzent);
 }
 .antwort-option:focus-within { box-shadow: 0 0 0 3px rgb(14 90 138 / 0.18); }
 .antwort-text { display: grid; gap: 2px; min-width: 0; }
 .antwort-label { font-weight: 600; line-height: 1.25; }
-.antwort-hinweis { color: var(--muted); font-size: 12px; line-height: 1.3; }
+.antwort-hinweis { color: var(--muted); font-size: 12.5px; line-height: 1.4; }
 .playbook {
   display: grid; gap: 3px; max-width: 720px; margin-top: 3px;
   padding: 7px 9px; border-left: 3px solid var(--akzent);
@@ -273,6 +282,7 @@ button:disabled { opacity: 0.5; cursor: default; }
 .mini-fakten div { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 .mini-fakten span:first-child { color: var(--muted); }
 .mini-fakten strong { font-family: var(--mono); font-size: 12.5px; font-weight: 600; }
+.summary-mitte strong { font-size: 14.5px; }
 .preview-block { border-top: 1px solid var(--zeile); padding-top: 10px; margin-top: 10px; }
 .preview-block h4 { margin-top: 0; }
 .preview-scope {
@@ -306,6 +316,7 @@ button:disabled { opacity: 0.5; cursor: default; }
   color: var(--text);
   font-size: 11.5px;
   white-space: nowrap;
+  font-weight: 500;
 }
 .preview-positionen .preview-mehr { color: var(--muted); }
 
@@ -400,19 +411,21 @@ details summary:hover { color: var(--akzent); }
   border-top: 1px solid var(--zeile);
   padding-top: 10px;
 }
-.kunden-gruppe h4 { margin-top: 0; }
+.kunden-gruppe h4 { margin-top: 0; letter-spacing: 0.09em; }
 .kunden-positionen {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 10px;
 }
 .kunden-position {
-  border: 1px solid var(--zeile);
+  border: 1px solid var(--rand);
   border-radius: var(--radius-klein);
-  background: var(--hover-flaeche);
+  background: var(--karte);
   padding: 10px 12px;
   min-width: 0;
+  transition: border-color var(--t), box-shadow var(--t);
 }
+.kunden-position:hover { border-color: var(--rand-stark); box-shadow: var(--schatten); }
 .kunden-position-kopf {
   display: flex;
   justify-content: space-between;
@@ -420,6 +433,7 @@ details summary:hover { color: var(--akzent); }
   gap: 10px;
   margin-bottom: 8px;
 }
+.kunden-position-kopf strong { font-size: 14px; line-height: 1.25; }
 .kunden-badge {
   flex: none;
   border: 1px solid var(--ok-rand);
@@ -429,6 +443,8 @@ details summary:hover { color: var(--akzent); }
   padding: 2px 7px;
   font-size: 11px;
   font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
 }
 .kunden-badge.warn {
   border-color: var(--warn-rand);
@@ -455,14 +471,14 @@ details summary:hover { color: var(--akzent); }
   gap: 10px; margin-bottom: 14px;
 }
 .analyse-kpi {
-  border: 1px solid var(--zeile); border-radius: var(--radius-klein);
-  padding: 10px 12px; background: var(--hover-flaeche); min-width: 0;
+  border: 1px solid var(--rand); border-radius: var(--radius-klein);
+  padding: 10px 12px; background: var(--karte); min-width: 0;
 }
 .analyse-kpi span, .analyse-kpi small {
   display: block; color: var(--muted); font-size: 12px;
 }
 .analyse-kpi strong {
-  display: block; margin-top: 4px; font-size: 13px; line-height: 1.3;
+  display: block; margin-top: 4px; font-size: 13.5px; line-height: 1.3;
 }
 
 /* Sekundäre Reiter (Ergebnis-Tabs): Unterstrich-Stil auf heller Fläche */
@@ -473,7 +489,7 @@ details summary:hover { color: var(--akzent); }
   padding: 8px 14px 10px;
 }
 .tabs-sekundaer .tab:hover { background: transparent; color: var(--text); }
-.tabs-sekundaer .tab.aktiv { background: transparent; color: var(--akzent); border-bottom-color: var(--akzent); font-weight: 600; }
+.tabs-sekundaer .tab.aktiv { background: transparent; color: var(--akzent); border-bottom-color: var(--akzent-wahl); font-weight: 600; }
 
 .naechster-schritt {
   display: flex; align-items: baseline; gap: 10px;
