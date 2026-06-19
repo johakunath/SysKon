@@ -280,6 +280,11 @@ details summary:hover { color: var(--akzent); }
   background: var(--warn-bg); border: 1px solid var(--warn-rand);
   border-radius: var(--radius-klein); padding: 8px 10px; font-size: 13px;
 }
+.empfehlungsbox {
+  background: var(--akzent-hell); border: 1px solid var(--akzent);
+  border-radius: var(--radius-klein); padding: 8px 10px; font-size: 13px;
+}
+.empfehlungsbox strong { color: var(--akzent-tief); }
 .okbox {
   background: var(--ok-bg); border: 1px solid var(--ok-rand);
   border-radius: var(--radius-klein); padding: 8px 10px; font-size: 13px;

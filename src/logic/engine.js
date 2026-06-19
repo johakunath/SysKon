@@ -5,8 +5,9 @@
 //   1. Zwischenergebnisse ableiten (calc.js) + DQ-Score
 //   2. Regeln in Schleife auswerten bis Fixpunkt (require/exclude/warn/status)
 //      Konflikt: exclude schlägt require; Status nimmt die schlechteste Stufe.
-//      Sonderfall (dokumentiert): ist die GEWÄHLTE Aufstellvariante gesperrt,
-//      ergänzt die Engine Warnung SYS-EXCLUDE und Status orange.
+//      Sonderfall (dokumentiert): ist die GEWÄHLTE Aufstellvariante gesperrt
+//      oder im Placement-Korridor blockiert, ergänzt die Engine Warnung SYS
+//      und Status orange.
 //   3. LV aus dem Katalog bauen, Kosten/Förderung/Energie/Kennzahlen rechnen
 //   4. Sales-/Prüfdaten (fehlende Daten, Prüfpunkte, Empfehlung) zusammenstellen
 
@@ -14,7 +15,7 @@ import { ANNAHMEN } from '../data/annahmen.js'
 import { REGELN } from '../data/regeln.js'
 import { KATALOG } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
-import { ableiten, zahl } from './calc.js'
+import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
 export const STATUS_LABEL = {
@@ -22,6 +23,34 @@ export const STATUS_LABEL = {
   gelb: 'interne Klärung nötig',
   orange: 'Fachprüfung nötig',
   rot: 'nicht standardfähig',
+}
+
+export const STATUS_KORRIDOR = {
+  gruen: {
+    titel: 'Gesprächsfähige Richtindikation',
+    bedeutung: 'Der Fall wirkt im Demo-Korridor plausibel; Annahmen und Prüfpunkte bleiben intern sichtbar.',
+    aktion: 'Mit Annahmen weiterarbeiten und die nächsten Standort- und Verbrauchsdaten gezielt schärfen.',
+  },
+  gelb: {
+    titel: 'Gespräch mit offenen Klärpunkten',
+    bedeutung: 'Der Fall bleibt besprechbar, braucht aber interne Klärung oder bessere Daten vor externer Nutzung.',
+    aktion: 'Offene Pflichtdaten und Regelhinweise priorisieren, bevor Umfang oder CAPEX weitergegeben werden.',
+  },
+  orange: {
+    titel: 'Nur mit Fachprüfung weiterführen',
+    bedeutung: 'Mindestens ein Thema liegt außerhalb des einfachen Standardkorridors.',
+    aktion: 'Fachprüfung einplanen und keine belastbare Richtindikation nach außen verwenden.',
+  },
+  rot: {
+    titel: 'Kein Standardfit im MVP',
+    bedeutung: 'Der aktuelle MVP-Standardpfad passt nicht; das ist kein Angebots- oder Umsetzungsurteil.',
+    aktion: 'Sonderfall markieren, Alternativpfad prüfen oder den Fall zurückstellen.',
+  },
+  unbekannt: {
+    titel: 'Noch kein Gesprächskorridor',
+    bedeutung: 'Es fehlen Pflichtdaten, bevor die Demo sinnvoll eingeordnet werden kann.',
+    aktion: 'Konfiguration vervollständigen und anschließend erneut einordnen.',
+  },
 }
 
 const schlechter = (a, b) =>
@@ -87,6 +116,37 @@ function kriteriumText(b) {
   return `${label} ${op} ${wert}`
 }
 
+function datenlageEinordnung(dq, fehlendeDaten, schwelle) {
+  const stufe = dq >= 80 ? 'stark' : dq >= schwelle ? 'arbeitsfaehig' : 'duenn'
+  const texte = {
+    stark: {
+      titel: 'starke Gesprächsdaten',
+      bedeutung: 'Die wichtigsten sichtbaren Pflichtdaten sind weitgehend vorhanden.',
+      aktion: 'Annahmen sichtbar halten und nur die offenen Detailpunkte nachziehen.',
+    },
+    arbeitsfaehig: {
+      titel: 'arbeitsfähige Datenlage',
+      bedeutung: 'Die Demo ist als interne Orientierung nutzbar, enthält aber noch Annahmen.',
+      aktion: 'Die nächsten fehlenden Pflichtdaten vor externer Nutzung klären.',
+    },
+    duenn: {
+      titel: 'dünne Datenlage',
+      bedeutung: 'Der Prozentwert ist ein Sammelhinweis für fehlende Gesprächsdaten, kein Freigabekriterium.',
+      aktion: 'Erst die wichtigsten fehlenden Daten einsammeln; die Richtindikation nur als Gesprächsnotiz nutzen.',
+    },
+  }[stufe]
+
+  return {
+    prozent: dq,
+    stufe,
+    ...texte,
+    fehlendeFokusDaten: fehlendeDaten
+      .slice()
+      .sort((a, b) => b.dq - a.dq)
+      .slice(0, 5),
+  }
+}
+
 export function berechne(eingaben, opts = {}) {
   const annahmen = opts.annahmen ?? ANNAHMEN
   const regeln = opts.regeln ?? REGELN
@@ -143,17 +203,22 @@ export function berechne(eingaben, opts = {}) {
       konflikte.push(`Modul „${modul}" war erzwungen, ist aber gesperrt (exclude schlägt require).`)
     }
   }
-  // Gewählte Aufstellvariante gesperrt → Fachprüfung (SYS-EXCLUDE)
-  const variantenSperre = excluded.aufstellvariante ?? new Set()
-  if (eingaben.aufstellvariante && variantenSperre.has(eingaben.aufstellvariante)) {
+  Object.assign(derived, aufstellungEmpfehlung(eingaben, annahmen, derived, [...(excluded.aufstellvariante ?? [])]))
+
+  // Gewählte Aufstellvariante gesperrt oder im Placement-Korridor blockiert → Fachprüfung (SYS)
+  const variantenSperre = (excluded.aufstellvariante ??= new Set())
+  const placementBlocker = derived.aufstellung_blockierte_varianten?.[eingaben.aufstellvariante] ?? []
+  if (eingaben.aufstellvariante && (variantenSperre.has(eingaben.aufstellvariante) || placementBlocker.length > 0)) {
+    variantenSperre.add(eingaben.aufstellvariante)
     status = schlechter(status, 'orange')
+    const blockerText = placementBlocker.length ? ` Gründe: ${placementBlocker.join('; ')}.` : ''
     warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
-      text: 'Die gewählte Aufstellvariante ist gesperrt (Schall oder Fläche) – Variante wechseln oder Fachprüfung einplanen.' })
+      text: `Die gewählte Aufstellvariante ist im aktuellen Demo-Korridor blockiert – Variante wechseln oder Fachprüfung einplanen.${blockerText}` })
   }
 
   // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.
   // Regeln, die warn+status koppeln, tragen denselben regelId in beiden Arrays.
-  // SYS-EXCLUDE hat keinen statusQuellen-Eintrag, erhält status direkt.
+  // SYS hat keinen statusQuellen-Eintrag, erhält status direkt.
   const statusByRegel = Object.fromEntries(statusQuellen.map(s => [s.regelId, s.wert]))
   statusByRegel['SYS'] = 'orange'
   for (const w of warnungen) {
@@ -168,7 +233,9 @@ export function berechne(eingaben, opts = {}) {
     let positionen = paket.positionen
     let varianteName = null
     if (paket.varianten) {
-      const gewaehlt = paket.varianten.find(v => v.wert === eingaben[paket.variantenFeld]) ?? paket.varianten[0]
+      const gewaehlterWert = eingaben[paket.variantenFeld]
+      if (excluded[paket.variantenFeld]?.has(gewaehlterWert)) continue
+      const gewaehlt = paket.varianten.find(v => v.wert === gewaehlterWert) ?? paket.varianten[0]
       positionen = gewaehlt.positionen
       varianteName = gewaehlt.name
     }
@@ -226,15 +293,18 @@ export function berechne(eingaben, opts = {}) {
 
   const fehlendeDaten = sichtbareFragen(eingaben, annahmen)
     .filter(f => f.dq > 0 && !beantwortet(eingaben[f.id]))
-    .map(f => ({ sektion: f.sektion, label: f.label }))
+    .map(f => ({ id: f.id, sektion: f.sektion, label: f.label, dq: f.dq }))
+  const datenlage = datenlageEinordnung(dq, fehlendeDaten, annahmen.dq_schwelle)
+  const statusKorridor = STATUS_KORRIDOR[status] ?? STATUS_KORRIDOR.unbekannt
 
   return {
     derived, dq, status, statusLabel: STATUS_LABEL[status], statusQuellen,
+    statusKorridor, datenlage,
     warnungen, gefeuert, konflikte,
     required: [...required],
     excluded: Object.fromEntries(Object.entries(excluded).map(([k, v]) => [k, [...v]])),
     lv: { positionen: lvPositionen, zwischensumme, contingency, brutto, foerderfaehig, foerderung, netto },
     opex: { positionen: opexPositionen, summe_pa: opexSumme },
-    energie, kennzahlen, peScore, gruenKriterien, fehlendeDaten,
+    energie, kennzahlen, peScore, gruenKriterien, standardKriterien: gruenKriterien, fehlendeDaten,
   }
 }

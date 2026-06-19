@@ -10,23 +10,6 @@ Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden S
 
 Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht dauerhaft in diesem aktiven Detaildokument. Nach Abschluss werden sie nach `docs/BACKLOG_ARCHIVE.md` verschoben oder dort zusammengefasst.
 
-## WP0 Demo-Fluss und Semantik
-
-Ziel: Der erste Demo-Durchlauf soll keine Reifegrad-, PE-Handover- oder Operational-Readiness-Versprechen suggerieren, die fachlich noch nicht entschieden sind. Die Demo soll als Sales-Gespräch mit Vorqualifizierung, Lösungskorridor und internem Prüfbedarf lesbar sein.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-44 | Question | Status | Reconsider Gesamtstatus | Rule-derived but unclear to users. | Keep with semantics or replace. | P1 | M | Todo |
-| SK-45 | Question | Data quality | Reconsider Datenqualität | Percentage needs product meaning. | Define threshold/action or de-emphasize. | P2 | S | Todo |
-
-## WP6 Aufstellvariante, Fläche & Placement-Logik
-
-Ziel: Eine praktikable MVP-Entscheidungslogik für Aufstellung und Platzprüfung definieren: günstige tragfähige Varianten zuerst, aber deutlich besser als eine einfache "genug Platz ja/nein"-Frage.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-68 | Epic | Placement | Aufstellvariante, Fläche & Placement-Logik | Der Systempaket-Konfigurator empfiehlt standardmäßig die günstigste viable Aufstellvariante und eskaliert zu Einhausung, Kompakt-Container oder Vollcontainer nur bei Blockern, Standortzwängen oder relevanten Kundenpräferenzen. Das MVP nutzt strukturierte Maße, grobe Außenflächentypen, Heizraumrestriktionen, Zugang/Logistik, Abstände zu Fenstern, Schallrisiken und Entscheidungsbaum-Logik. Parallel wird geprüft, ob Placement langfristig im Tool liegen soll oder besser über Energie-Kartografie, Site Survey, LiDAR oder 3D-Placement integriert wird. | Cheapest-first-Regel ist als Default dokumentiert; MVP-Inputs gehen über yes/no hinaus; Entscheidungsbaum für Blocker, Präferenzen und Eskalation ist beschrieben; North-Star mit Kartografie/LiDAR/3D bleibt als Zielbild sichtbar; Research-Entscheidung "inside SysKon vs. Tool-Integration" ist als Teil des Work Packages enthalten. | P0 | L | Todo |
-
 ## WP7 Kundenfähiger Scope-/LV-Output
 
 Ziel: Die Kundensicht zeigt verständlich, welche Komponenten und Leistungen im Angebot enthalten sind, ohne interne Kalkulationsdetails offenzulegen.
