@@ -37,3 +37,4 @@ Read order: `BACKLOG.md` → this file → only referenced source files. Product
 - Status order: `gruen < gelb < orange < rot`; engine keeps worst status.
 - Prefer short docs with links over duplicated explanations.
 - Keep active backlog docs token-light: move completed Work Packages and completed child tickets out of `BACKLOG.md` / `docs/BACKLOG_WORK_PACKAGES.md` into `docs/BACKLOG_ARCHIVE.md`.
+- After each completed Work Package implementation, update `BACKLOG.md`, `docs/BACKLOG_WORK_PACKAGES.md`, and `docs/BACKLOG_ARCHIVE.md` as appropriate before committing.

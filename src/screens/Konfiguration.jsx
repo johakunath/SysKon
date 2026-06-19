@@ -224,7 +224,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
           <div className="preview-block">
             <h4>Annahmen & Grenzen</h4>
-            <p className="hinweis">Interne Demo-Annahme. Kein Kundenangebot, keine Marge, keine rechtsverbindliche Schall- oder Förderberechnung.</p>
+            <p className="hinweis">Sales-/KAM-Gesprächshilfe mit internen Demo-Annahmen. Kein Kundenangebot, keine Marge, keine rechtsverbindliche Schall- oder Förderberechnung.</p>
           </div>
 
           {wichtigsteHinweise.length > 0 && (

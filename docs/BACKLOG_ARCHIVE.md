@@ -19,6 +19,7 @@ Diese Einträge wurden aus `BACKLOG.md` und `docs/BACKLOG_WORK_PACKAGES.md` entf
 | SK-43 | UX | WP0 Demo-Fluss | Handover bleibt aus Navigation und sichtbarem Demo-Fluss entfernt; der vorhandene Screen ist als versteckte interne Referenz/Prüfnotiz markiert und wording-seitig de-emphasized. | Done |
 | SK-54 | Epic | WP3 Responsive | Tablet- und schmale Ansichten ohne offensichtliche Brüche; Child-Ticket SK-57 umgesetzt. | Done |
 | SK-57 | UX | WP3 Responsive | Tablet-weite Konfiguration nutzt eine kompaktere Layout-Struktur; breite Tabellen scrollen in Karten statt die Seite horizontal zu sprengen. | Done |
+| SK-66 | Epic | WP4 Sales Ownership & Role Semantics | App- und Docs-Semantik auf erfahrene Sales-/KAM-Nutzer geschärft; interne Prüf-/Techniklogik bleibt Guardrail statt sichtbare Ownership. Neue Agentenregel: nach jedem Work Package aktive Backlogs aktualisieren und Erledigtes archivieren. | Done |
 
 ## v0.1 Build
 

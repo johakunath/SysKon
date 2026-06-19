@@ -1,6 +1,6 @@
 # SysKon — Sales-Konfigurator für Systempakete
 
-Internal demo prototype. SysKon is now framed as a sales-facing co-creation and pre-qualification tool for heat pump contracting conversations: Sales Tool first, PE engine underneath. It supports customer conversations, solution corridors, rough Richtindikation and next-step recommendations; it is not customer self-service, not a planning tool and not a binding offer generator. All numbers are demo assumptions.
+Internal demo prototype. SysKon is framed as a sales-facing co-creation and pre-qualification tool for experienced Sales/KAM users in heat pump contracting conversations. It supports customer conversations, solution corridors, rough Richtindikation and next-step recommendations; it is not customer self-service, not a planning tool and not a binding offer generator. All numbers are demo assumptions.
 
 ## Agent entry points
 
@@ -22,7 +22,7 @@ npm run build
 
 ## Current visible app flow
 
-1. `Konfiguration` — guided building/customer questions, live solution preview.
+1. `Konfiguration` — guided building/customer questions for Sales/KAM, live solution preview.
 2. `Ergebnis` — solution analysis, Richtindikation, Prüfbedarf and internal scope details.
 3. Admin toggle — assumptions/rules and test cases.
 

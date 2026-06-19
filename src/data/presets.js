@@ -105,7 +105,7 @@ export const PRESETS = [
     },
     erwartung: {
       status: 'orange',
-      hinweis: 'Engineering-Prüfung: Innenstadt + Schall (R06), Heizraum (R15), Container gesperrt (R05), DQ niedrig (R10) – kein belastbares Richt-LV.',
+      hinweis: 'Fachprüfung: Innenstadt + Schall (R06), Heizraum (R15), Container gesperrt (R05), Datenlage niedrig (R10) – Richtindikation nur als Gesprächsnotiz.',
     },
   },
   {
@@ -131,7 +131,7 @@ export const PRESETS = [
     },
     erwartung: {
       status: 'rot',
-      hinweis: 'Mehr als zwei Heizkreise: nicht standardfähig im MVP (R04), Engineering-Sonderfall.',
+      hinweis: 'Mehr als zwei Heizkreise: nicht standardfähig im MVP (R04), technischer Sonderfall.',
     },
   },
 ]

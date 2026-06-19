@@ -8,7 +8,7 @@
 //      Sonderfall (dokumentiert): ist die GEWÄHLTE Aufstellvariante gesperrt,
 //      ergänzt die Engine Warnung SYS-EXCLUDE und Status orange.
 //   3. LV aus dem Katalog bauen, Kosten/Förderung/Energie/Kennzahlen rechnen
-//   4. Handover-Daten (fehlende Daten, Prüfpunkte, Empfehlung) zusammenstellen
+//   4. Sales-/Prüfdaten (fehlende Daten, Prüfpunkte, Empfehlung) zusammenstellen
 
 import { ANNAHMEN } from '../data/annahmen.js'
 import { REGELN } from '../data/regeln.js'
@@ -18,9 +18,9 @@ import { ableiten, zahl } from './calc.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
 export const STATUS_LABEL = {
-  gruen: 'Richt-LV-fähig',
-  gelb: 'PE-Prüfung',
-  orange: 'Engineering-Prüfung',
+  gruen: 'Richtindikation möglich',
+  gelb: 'interne Klärung nötig',
+  orange: 'Fachprüfung nötig',
   rot: 'nicht standardfähig',
 }
 
@@ -143,12 +143,12 @@ export function berechne(eingaben, opts = {}) {
       konflikte.push(`Modul „${modul}" war erzwungen, ist aber gesperrt (exclude schlägt require).`)
     }
   }
-  // Gewählte Aufstellvariante gesperrt → Engineering (SYS-EXCLUDE)
+  // Gewählte Aufstellvariante gesperrt → Fachprüfung (SYS-EXCLUDE)
   const variantenSperre = excluded.aufstellvariante ?? new Set()
   if (eingaben.aufstellvariante && variantenSperre.has(eingaben.aufstellvariante)) {
     status = schlechter(status, 'orange')
     warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
-      text: 'Die gewählte Aufstellvariante ist gesperrt (Schall oder Fläche) – Variante wechseln oder Engineering-Prüfung.' })
+      text: 'Die gewählte Aufstellvariante ist gesperrt (Schall oder Fläche) – Variante wechseln oder Fachprüfung einplanen.' })
   }
 
   // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.
@@ -204,7 +204,7 @@ export function berechne(eingaben, opts = {}) {
   }
   const opexSumme = opexPositionen.reduce((s, p) => s + p.betrag, 0)
 
-  // 4. Kennzahlen, Energie, Handover
+  // 4. Kennzahlen, Energie, Sales-/Prüfdaten
   const we = zahl(eingaben.wohneinheiten)
   const flaeche = zahl(eingaben.flaeche)
   const energie = derived.energie

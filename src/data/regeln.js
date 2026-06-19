@@ -7,7 +7,7 @@
 //   { oder: [bedingung, ...] }    mindestens eine trifft zu
 //   `feld` greift auf Eingaben UND Zwischenergebnisse (calc.ableiten) zu.
 //
-// Wirkungen (`dann`, einzeln oder als Liste – manche Handover-Regeln koppeln warn+status):
+// Wirkungen (`dann`, einzeln oder als Liste – manche Prüfregeln koppeln warn+status):
 //   { typ:'require', modul }                          Modul/LV-Position erzwingen
 //   { typ:'exclude', ziel, wert }                     Option(en) sperren; wert: String, Liste
 //                                                     oder '@feld' (Liste aus Zwischenergebnis)
@@ -39,7 +39,7 @@ export const REGELN = [
     id: 'R04',
     wenn: { feld: 'anzahl_heizkreise', op: '>', wert: 2 },
     dann: { typ: 'status', wert: 'rot' },
-    begruendung: 'MVP unterstützt maximal zwei Heizkreise – Engineering-Sonderfall.',
+    begruendung: 'MVP unterstützt maximal zwei Heizkreise – technischer Sonderfall.',
   },
   {
     id: 'R05',
@@ -58,7 +58,7 @@ export const REGELN = [
     ]},
     dann: [
       { typ: 'status', wert: 'orange' },
-      { typ: 'warn', kategorie: 'engineering', text: 'Innenstadtlage mit kritischer Schallsituation – Engineering-Prüfung.' },
+      { typ: 'warn', kategorie: 'engineering', text: 'Innenstadtlage mit kritischer Schallsituation – Fachprüfung erforderlich.' },
     ],
     begruendung: 'Verdichtete Lage plus Schallrisiko ist kein Standardfall.',
   },
@@ -81,7 +81,7 @@ export const REGELN = [
     id: 'R09',
     wenn: { feld: 'vorlauftemp_klasse', op: 'in', wert: ['66-70', '>70'] },
     dann: [
-      { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur über 65 °C – Standard-Hybrid nur nach Engineering-Prüfung.' },
+      { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur über 65 °C – Standard-Hybrid nur nach Fachprüfung.' },
       { typ: 'status', wert: 'orange' },
     ],
     begruendung: 'Hohe Vorlauftemperatur gefährdet WP-Effizienz und Auslegung.',
@@ -91,7 +91,7 @@ export const REGELN = [
     wenn: { feld: 'dq_score', op: '<', wert: '@dq_schwelle' },
     dann: [
       { typ: 'status', wert: 'gelb' },
-      { typ: 'warn', kategorie: 'pe', text: 'Datenqualität unter 60 % – kein belastbares Richt-LV.' },
+      { typ: 'warn', kategorie: 'pe', text: 'Datenlage unter 60 % – Richtindikation nur als Gesprächsnotiz nutzbar.' },
     ],
     begruendung: 'Status wird bei niedriger Datenqualität mindestens auf gelb gedeckelt.',
   },
@@ -108,7 +108,7 @@ export const REGELN = [
       { feld: 'netzanschluss_bekannt', op: '=', wert: 'ja' },
     ]},
     dann: { typ: 'status', wert: 'gruen' },
-    begruendung: 'Alle Grün-Kriterien erfüllt: Richt-LV-fähig (sofern keine andere Regel verschlechtert).',
+    begruendung: 'Alle Grün-Kriterien erfüllt: Richtindikation möglich (sofern keine andere Regel verschlechtert).',
   },
   {
     id: 'R12',
@@ -117,13 +117,13 @@ export const REGELN = [
       { feld: 'kessel_nutzbar', op: '=', wert: 'unbekannt' },
     ]},
     dann: { typ: 'status', wert: 'gelb' },
-    begruendung: 'Bestandskesselzustand unbekannt – PE-Prüfung nötig.',
+    begruendung: 'Bestandskesselzustand unbekannt – interne Klärung nötig.',
   },
   {
     id: 'R13',
     wenn: { feld: 'foerderung_annahme', op: '=', wert: 'unsicher' },
     dann: [
-      { typ: 'warn', kategorie: 'foerderung', text: 'Förderfähigkeit unsicher – Förderprüfung vor Richt-LV-Versand.' },
+      { typ: 'warn', kategorie: 'foerderung', text: 'Förderfähigkeit unsicher – Förderprüfung vor externer Nutzung der Richtindikation.' },
       { typ: 'status', wert: 'gelb' },
     ],
     begruendung: 'Unsichere Förderung verändert das Netto-LV erheblich.',
@@ -145,7 +145,7 @@ export const REGELN = [
     ]},
     dann: [
       { typ: 'status', wert: 'orange' },
-      { typ: 'warn', kategorie: 'engineering', text: 'Heizraumgröße oder Zugang problematisch – Container-Variante prüfen oder Engineering.' },
+      { typ: 'warn', kategorie: 'engineering', text: 'Heizraumgröße oder Zugang problematisch – Container-Variante prüfen oder Fachprüfung einplanen.' },
     ],
     begruendung: 'Fundament/Einhausung hängen stark vom Heizraum ab; Container entlasten ihn.',
   },
@@ -165,6 +165,6 @@ export const REGELN = [
     id: 'R18',
     wenn: { feld: 'schall_ampel_aktiv', op: 'in', wert: ['gelb', 'orange'] },
     dann: { typ: 'status', wert: '@schall_status' },
-    begruendung: 'Schall-Ampel: Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag; gelb = prüfpflichtig, orange = Engineering. Demo-Abschätzung, keine rechtsverbindliche Schallberechnung.',
+    begruendung: 'Schall-Ampel: Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag; gelb = prüfpflichtig, orange = Fachprüfung. Demo-Abschätzung, keine rechtsverbindliche Schallberechnung.',
   },
 ]

@@ -19,14 +19,6 @@ Ziel: Der erste Demo-Durchlauf soll keine Reifegrad-, PE-Handover- oder Operatio
 | SK-44 | Question | Status | Reconsider Gesamtstatus | Rule-derived but unclear to users. | Keep with semantics or replace. | P1 | M | Todo |
 | SK-45 | Question | Data quality | Reconsider Datenqualität | Percentage needs product meaning. | Define threshold/action or de-emphasize. | P2 | S | Todo |
 
-## WP4 Sales Ownership & Role Semantics
-
-Ziel: Der Systempaket-Konfigurator wird als Werkzeug für erfahrene Sales- und Key-Account-Nutzer positioniert, die mit oder kurz nach dem Kundengespräch ein realistisches Wärmepumpen-Contracting-Angebot vorbereiten. PE, GE, Planung und Engineering sind nicht Hauptnutzer oder Product Owner der Default-Experience.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-66 | Epic | Product framing | Sales Ownership & Role Semantics | Produkt- und Backlog-Semantik so schärfen, dass erfahrene Sales/KAM-Nutzer den Systempaket-Konfigurator führen und der Kunde nicht selbst durch das Tool steuert. Interne Prüf-, Kosten- und Commercial-Informationen werden als interner Toggle für Sales nach dem Kundengespräch verstanden, nicht als sichtbare Kundensicht. | Future-Default-Texte nennen Sales/KAM als Hauptnutzer; PE/GE/Planung/Engineering erscheinen nicht als Ownership- oder Hauptnutzerrollen; das Tool wird nicht in einen kurzen Sales-Script- oder Self-Service-Flow umgedeutet; interner Toggle und Kundensicht sind als getrennte Nutzungssituationen beschrieben. | P0 | M | Todo |
-
 ## WP5 Logisches Fragen- und Playbook-Modell
 
 Ziel: Der Fragenkatalog bleibt fachlich ausreichend vollständig, wird aber logisch, springbar und sales-tauglich strukturiert. Geschwindigkeit ist wichtig, aber nicht wichtiger als ein belastbares technisches und kommerzielles Ergebnis.

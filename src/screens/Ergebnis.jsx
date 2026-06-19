@@ -38,7 +38,7 @@ const NAECHSTE_AKTION = {
 }
 
 const LIMITS = [
-  'Interne Demo-Annahme, kein Kundenangebot und keine Marge.',
+  'Sales-/KAM-Gesprächshilfe mit Demo-Annahmen, kein Kundenangebot und keine Marge.',
   'Keine rechtsverbindliche Schall-, Förder- oder Ausführungsplanung.',
   'Kosten dienen nur als interne Richtindikation für den nächsten Prüf- und Gesprächsschritt.',
 ]
@@ -86,7 +86,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
       {tab === 'vorloesung' && (
         <div className="analyse-grid">
           <div className="karte analyse-hauptkarte">
-            <h3>Vorlösung für die interne Analyse</h3>
+            <h3>Vorlösung für Sales/KAM</h3>
             <div className="analyse-kpis">
               <AnalyseKpi label="Technologiepfad" value="Hybrid: Luft-Wasser-WP + Gas-Bestandskessel" />
               <AnalyseKpi label="WP-Kaskade" value={`${d.wp_module} × ${annahmen.wp_modul_kw} kW = ${d.wp_kw} kW`} note={d.heizlast_methode} />
@@ -173,7 +173,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
               </table>
             </div>
             <div className="lv-aktionen no-print">
-              <p className="hinweis">Positionen aufklappen für Begründung. Interner Richtumfang ohne Marge und ohne Kundenangebots-Charakter.</p>
+              <p className="hinweis">Positionen aufklappen für Begründung. Sales-interner Richtumfang ohne Marge und ohne Kundenangebots-Charakter.</p>
               <button onClick={() => exportLvCsv(lv, annahmen)}>CSV herunterladen</button>
             </div>
           </div>

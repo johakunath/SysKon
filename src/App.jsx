@@ -62,8 +62,8 @@ export default function App() {
       {screen === 'testfaelle' && <Testfaelle {...props} />}
 
       <footer className="fussnote no-print">
-        Interner Demo-Prototyp (Configure-to-Order, Stufe 1). Keine Marge, kein Kundenangebot,
-        keine rechtsverbindliche Schall- oder Förderberechnung. Roadmap: Stufe 2
+        Interner Demo-Prototyp für erfahrene Sales-/KAM-Nutzer (Configure-to-Order, Stufe 1).
+        Keine Marge, kein Kundenangebot, keine rechtsverbindliche Schall- oder Förderberechnung. Roadmap: Stufe 2
         (Grundpreis/Arbeitspreis, Ziel-IRR), monoenergetischer Pfad, Preisgleitformeln, BEG-Kostendeckel.
       </footer>
     </div>
