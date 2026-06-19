@@ -51,6 +51,45 @@ export function waermebedarf(e, a, heizlast) {
 
 export const AUFSTELLVARIANTEN = ['fundament', 'einhausung', 'kompakt_container', 'vollcontainer']
 
+export const AUFSTELLVARIANTEN_META = {
+  fundament: {
+    label: 'Standard-Fundament',
+    kostenKey: 'k_fundament',
+    flaecheMin: 8,
+    laengeMin: 3,
+    breiteMin: 2,
+    container: false,
+    heizraumAbhaengig: true,
+  },
+  einhausung: {
+    label: 'Schutz-/Schall-Einhausung',
+    kostenKey: 'k_einhausung',
+    flaecheMin: 10,
+    laengeMin: 3.5,
+    breiteMin: 2.5,
+    container: false,
+    heizraumAbhaengig: true,
+  },
+  kompakt_container: {
+    label: 'Kompakt-Container',
+    kostenKey: 'k_kompakt_container',
+    flaecheMin: 30,
+    laengeMin: 6,
+    breiteMin: 3,
+    container: true,
+    heizraumAbhaengig: false,
+  },
+  vollcontainer: {
+    label: 'Vollcontainer',
+    kostenKey: 'k_vollcontainer',
+    flaecheMin: 45,
+    laengeMin: 10,
+    breiteMin: 3.5,
+    container: true,
+    heizraumAbhaengig: false,
+  },
+}
+
 // Schall-Demo-Abschätzung (R18): Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag.
 // Keine rechtsverbindliche Schallberechnung.
 export function schallBewertung(e, module, a) {
@@ -81,6 +120,97 @@ export function schallBewertung(e, module, a) {
     grenzwert, lw_kaskade: Math.round(lw_kaskade * 10) / 10, je_variante,
     lp_aktiv: aktiv.lp, ampel_aktiv: aktiv.ampel, gesperrte,
     status: aktiv.ampel === 'orange' ? 'orange' : aktiv.ampel === 'gelb' ? 'gelb' : 'gruen',
+  }
+}
+
+export function aufstellungEmpfehlung(e, a, derived, gesperrteVarianten = []) {
+  if (e.aussenflaeche_vorhanden !== 'ja') {
+    return {
+      aufstellung_viable: [],
+      aufstellung_empfohlen: null,
+      aufstellung_empfohlen_label: null,
+      aufstellung_begruendung: 'Keine Außenfläche erfasst; im MVP entsteht keine Standard-Aufstellungsempfehlung.',
+      aufstellung_abweichung: null,
+      aufstellung_blockierte_varianten: Object.fromEntries(AUFSTELLVARIANTEN.map(v => [v, ['keine Außenfläche erfasst']])),
+    }
+  }
+
+  const flaeche = zahl(e.aussenflaeche_m2)
+  const laenge = zahl(e.aussenflaeche_laenge_m)
+  const breite = zahl(e.aussenflaeche_breite_m)
+  const heizraumBlockiert = e.heizraum_vorhanden === 'nein' || e.heizraum_groesse_ok === 'nein' || e.zugang_ok === 'nein'
+  const containerLogistikBlockiert = e.zugang_logistik === 'schwierig' || e.kran_zugang === 'nein'
+  const dachSonderfall = e.aussenflaeche_typ === 'dach_garage'
+  const gesperrt = new Set(gesperrteVarianten)
+  const blockierte = {}
+
+  const pruefe = (variante) => {
+    const meta = AUFSTELLVARIANTEN_META[variante]
+    const gruende = []
+    if (gesperrt.has(variante)) gruende.push('durch Schall- oder Flächenregel gesperrt')
+    if (flaeche !== null && flaeche < meta.flaecheMin) gruende.push(`mindestens ${meta.flaecheMin} m² zusammenhängende Fläche ansetzen`)
+    if (laenge !== null && laenge < meta.laengeMin) gruende.push(`nutzbare Länge unter ${meta.laengeMin} m`)
+    if (breite !== null && breite < meta.breiteMin) gruende.push(`nutzbare Breite unter ${meta.breiteMin} m`)
+    if (dachSonderfall) gruende.push('Dach/Garage braucht Fachprüfung statt MVP-Placement')
+    if (meta.container && containerLogistikBlockiert) gruende.push('Container braucht realistische Anlieferung und Kranstellung')
+    if (meta.heizraumAbhaengig && heizraumBlockiert) gruende.push('Heizraum oder Zugang spricht gegen heizraumabhängige Varianten')
+    return gruende
+  }
+
+  const alle = AUFSTELLVARIANTEN.map(variante => {
+    const meta = AUFSTELLVARIANTEN_META[variante]
+    const gruende = pruefe(variante)
+    if (gruende.length > 0) blockierte[variante] = gruende
+    return {
+      variante,
+      label: meta.label,
+      kosten: a[meta.kostenKey],
+      schall: derived.schall_je_variante[variante]?.ampel ?? 'unbekannt',
+      container: meta.container,
+      gruende,
+      viable: gruende.length === 0,
+    }
+  })
+
+  let kandidaten = alle.filter(v => v.viable)
+  if ((e.platz_prioritaet === 'schall_robust' || e.schallsensibilitaet === 'hoch') && kandidaten.some(v => v.schall === 'gruen')) {
+    kandidaten = kandidaten.filter(v => v.schall === 'gruen')
+  }
+  if (['heizraum_entlasten', 'container_bevorzugt'].includes(e.platz_prioritaet) && kandidaten.some(v => v.container)) {
+    kandidaten = kandidaten.filter(v => v.container)
+  }
+
+  kandidaten.sort((aVar, bVar) => aVar.kosten - bVar.kosten)
+  const empfohlen = kandidaten[0] ?? null
+  const gewaehlt = alle.find(v => v.variante === e.aufstellvariante) ?? null
+  const abweichung = empfohlen && gewaehlt && empfohlen.variante !== gewaehlt.variante
+    ? {
+      gewaehlt: gewaehlt.variante,
+      gewaehlt_label: gewaehlt.label,
+      empfohlen: empfohlen.variante,
+      empfohlen_label: empfohlen.label,
+      kosten_delta: (gewaehlt.kosten ?? 0) - (empfohlen.kosten ?? 0),
+      gewaehlt_viable: gewaehlt.viable,
+    }
+    : null
+
+  const prioritaetText = {
+    kosten_min: 'Kostenminimum',
+    schall_robust: 'robuster Schallkorridor',
+    heizraum_entlasten: 'Heizraumentlastung',
+    container_bevorzugt: 'Containerpräferenz',
+    offen: 'keine besondere Priorität',
+  }[e.platz_prioritaet] ?? 'Kostenminimum'
+
+  return {
+    aufstellung_viable: alle.filter(v => v.viable).map(({ variante, label, kosten, schall }) => ({ variante, label, kosten, schall })),
+    aufstellung_empfohlen: empfohlen?.variante ?? null,
+    aufstellung_empfohlen_label: empfohlen?.label ?? null,
+    aufstellung_begruendung: empfohlen
+      ? `${empfohlen.label} ist die günstigste tragfähige Variante im aktuellen Demo-Korridor (${prioritaetText}).`
+      : 'Keine Aufstellvariante ist im aktuellen Demo-Korridor tragfähig; Standortdaten schärfen oder Fachprüfung einplanen.',
+    aufstellung_abweichung: abweichung,
+    aufstellung_blockierte_varianten: blockierte,
   }
 }
 

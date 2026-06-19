@@ -184,6 +184,17 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   Gesperrte Aufstellvarianten: {gesperrteVarianten.map(v => VARIANTEN_NAME[v]).join(', ')} (Schall oder Fläche, R05/R07).
                 </p>
               )}
+              {s.id === 'F' && d.aufstellung_begruendung && (
+                <div className={d.aufstellung_empfohlen ? 'empfehlungsbox' : 'warnbox'}>
+                  <strong>Placement-Empfehlung:</strong> {d.aufstellung_begruendung}
+                  {d.aufstellung_abweichung ? (
+                    <div className="hinweis">
+                      Gewählt ist {d.aufstellung_abweichung.gewaehlt_label}; empfohlen ist {d.aufstellung_abweichung.empfohlen_label}
+                      {d.aufstellung_abweichung.kosten_delta > 0 ? ` (${euro(d.aufstellung_abweichung.kosten_delta)} mehr Zusatz-CAPEX).` : '.'}
+                    </div>
+                  ) : null}
+                </div>
+              )}
               {s.id === 'C' && eingaben.technologiepfad === 'monoenergetisch' && (
                 <p className="warnbox">Monoenergetischer Pfad ist in v0.1 nur ein Roadmap-Platzhalter (Status rot, R17).</p>
               )}
@@ -218,7 +229,11 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
               <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
               <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong></div>
+              <div><span>Empfohlen</span><strong>{d.aufstellung_empfohlen_label ?? '–'}</strong></div>
             </div>
+            {d.aufstellung_abweichung ? (
+              <p className="hinweis">Gewählte Variante weicht von der günstigsten tragfähigen Empfehlung ab.</p>
+            ) : null}
           </div>
 
           <div className="preview-block">

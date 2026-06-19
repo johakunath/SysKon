@@ -14,7 +14,7 @@ import { ANNAHMEN } from '../data/annahmen.js'
 import { REGELN } from '../data/regeln.js'
 import { KATALOG } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
-import { ableiten, zahl } from './calc.js'
+import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
 export const STATUS_LABEL = {
@@ -150,6 +150,8 @@ export function berechne(eingaben, opts = {}) {
     warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
       text: 'Die gewählte Aufstellvariante ist gesperrt (Schall oder Fläche) – Variante wechseln oder Fachprüfung einplanen.' })
   }
+
+  Object.assign(derived, aufstellungEmpfehlung(eingaben, annahmen, derived, [...variantenSperre]))
 
   // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.
   // Regeln, die warn+status koppeln, tragen denselben regelId in beiden Arrays.

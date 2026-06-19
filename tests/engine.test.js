@@ -177,3 +177,72 @@ describe('exclude > require', () => {
     expect(erg.konflikte).toHaveLength(0)
   })
 })
+
+describe('Aufstellungs-Empfehlung', () => {
+  const basis = {
+    gebaeudetyp: 'freistehend',
+    heizraum_vorhanden: 'ja',
+    heizraum_groesse_ok: 'ja',
+    zugang_ok: 'ja',
+    aussenflaeche_vorhanden: 'ja',
+    aussenflaeche_m2: 80,
+    aussenflaeche_typ: 'hof',
+    aussenflaeche_laenge_m: 12,
+    aussenflaeche_breite_m: 5,
+    zugang_logistik: 'einfach',
+    platz_prioritaet: 'kosten_min',
+    heizlast_bekannt: 'ja',
+    heizlast_kw: 100,
+    aufstellvariante: 'einhausung',
+    abstand_fenster: 25,
+    gebietstyp: 'WA',
+  }
+
+  it('empfiehlt standardmäßig die günstigste tragfähige Variante, ohne die Auswahl zu überschreiben', () => {
+    const erg = berechne(basis)
+    expect(erg.derived.aufstellung_empfohlen).toBe('fundament')
+    expect(erg.derived.aufstellung_abweichung).toMatchObject({
+      gewaehlt: 'einhausung',
+      empfohlen: 'fundament',
+      gewaehlt_viable: true,
+    })
+  })
+
+  it('eskaliert bei Heizraumrestriktion auf die günstigste tragfähige Container-Variante', () => {
+    const erg = berechne({
+      ...basis,
+      heizraum_groesse_ok: 'nein',
+      platz_prioritaet: 'heizraum_entlasten',
+      aufstellvariante: 'kompakt_container',
+      kran_zugang: 'ja',
+    })
+    expect(erg.derived.aufstellung_empfohlen).toBe('kompakt_container')
+    expect(erg.derived.aufstellung_viable.map(v => v.variante)).not.toContain('fundament')
+  })
+
+  it('berücksichtigt strukturierte Maße bei der Variantenempfehlung', () => {
+    const erg = berechne({
+      ...basis,
+      aussenflaeche_m2: 20,
+      aussenflaeche_laenge_m: 4,
+      aussenflaeche_breite_m: 2.2,
+      aufstellvariante: 'fundament',
+    })
+    expect(erg.derived.aufstellung_empfohlen).toBe('fundament')
+    expect(erg.derived.aufstellung_viable.map(v => v.variante)).toEqual(['fundament'])
+  })
+
+  it('übernimmt Schall- und Flächensperren in den Placement-Korridor', () => {
+    const erg = berechne({
+      ...basis,
+      aussenflaeche_m2: 20,
+      aussenflaeche_laenge_m: 8,
+      aussenflaeche_breite_m: 4,
+    })
+    expect(erg.excluded.aufstellvariante).toContain('kompakt_container')
+    expect(erg.derived.aufstellung_viable.map(v => v.variante)).not.toContain('kompakt_container')
+    expect(erg.derived.aufstellung_blockierte_varianten.kompakt_container).toEqual(
+      expect.arrayContaining(['durch Schall- oder Flächenregel gesperrt'])
+    )
+  })
+})

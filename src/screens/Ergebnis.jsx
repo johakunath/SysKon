@@ -90,7 +90,11 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
             <div className="analyse-kpis">
               <AnalyseKpi label="Technologiepfad" value="Hybrid: Luft-Wasser-WP + Gas-Bestandskessel" />
               <AnalyseKpi label="WP-Kaskade" value={`${d.wp_module} × ${annahmen.wp_modul_kw} kW = ${d.wp_kw} kW`} note={d.heizlast_methode} />
-              <AnalyseKpi label="Aufstellung" value={VARIANTEN_NAME[eingaben.aufstellvariante] ?? 'nicht gewählt'} />
+              <AnalyseKpi
+                label="Aufstellung"
+                value={VARIANTEN_NAME[eingaben.aufstellvariante] ?? 'nicht gewählt'}
+                note={d.aufstellung_empfohlen_label ? `Empfohlen: ${d.aufstellung_empfohlen_label}` : null}
+              />
               <AnalyseKpi label="Netto-CAPEX" value={euro(lv.netto)} note="Richtwert, Demo" />
             </div>
             <div className="table-scroll">
@@ -98,6 +102,13 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                 <tbody>
                   <tr><td>Heizlast</td><td>{num(d.heizlast_effektiv)} kW {d.heizlast_geschaetzt ? '(geschätzt, R14)' : '(Eingabe)'}</td></tr>
                   <tr><td>WP-Deckungsanteil</td><td>{prozent(annahmen.wp_deckungsanteil)} der Wärmemenge, Rest Gas-Bestandskessel</td></tr>
+                  <tr><td>Placement-Empfehlung</td><td>{d.aufstellung_begruendung ?? 'noch nicht ableitbar'}</td></tr>
+                  {d.aufstellung_abweichung ? (
+                    <tr><td>Aufstell-Abweichung</td><td>
+                      Gewählt: {d.aufstellung_abweichung.gewaehlt_label}; empfohlen: {d.aufstellung_abweichung.empfohlen_label}
+                      {d.aufstellung_abweichung.kosten_delta > 0 ? ` (${euro(d.aufstellung_abweichung.kosten_delta)} mehr Zusatz-CAPEX).` : '.'}
+                    </td></tr>
+                  ) : null}
                   <tr><td>Analyse-Status</td><td>
                     <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
                     <strong> {STATUS_LABEL[ergebnis.status]}</strong>
@@ -271,6 +282,18 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <div className="karte">
+            <h3>Placement-Korridor</h3>
+            <p className="hinweis">{d.aufstellung_begruendung}</p>
+            {d.aufstellung_viable?.length > 0 ? (
+              <ul className="checkliste">
+                {d.aufstellung_viable.map(v => (
+                  <li key={v.variante}>{v.label}: {euro(v.kosten)} Zusatz-CAPEX · Schall {v.schall}</li>
+                ))}
+              </ul>
+            ) : <p className="warnbox">Keine tragfähige Aufstellvariante im aktuellen Demo-Korridor.</p>}
           </div>
 
           <div className="karte">
