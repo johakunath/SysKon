@@ -39,6 +39,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('id="gebaeudetyp-freistehend"')
     expect(html).toContain('class="antwort-hinweis"')
     expect(html).toContain('class="gespraechshinweis"')
+    expect(html).not.toMatch(/<aside class="gespraechshinweis"[^>]*>\s*<strong>/)
     expect(html).not.toContain('aria-expanded=')
     expect(html).not.toContain('Hilfetext anzeigen')
     expect(html).toContain('class="frage-kopf"')

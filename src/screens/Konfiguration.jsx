@@ -23,27 +23,46 @@ const SEKTION_KURZ = {
   J: 'Service',
 }
 
-function Gespraechshinweis({ frage }) {
-  const playbook = frage.playbook
-  if (!playbook && !frage.tooltip) return null
-  const text = kurzerHinweis(frage)
+const KURZE_GESPRAECHSHINWEISE = {
+  gebaeudetyp: 'Innenstadt oder Blockrand verschärft Schall- und Platzprüfung.',
+  aussenflaeche_vorhanden: 'Ohne belastbare Außenfläche entsteht im MVP kein Standardfit.',
+  verbrauchsquelle: 'Nur Abrechnung oder Messung macht den Verbrauch belastbar.',
+  ww_bereitung: 'Zentrale Warmwasserbereitung zieht Speicher-/WW-Scope nach sich.',
+  heizlast_bekannt: 'Ohne Heizlast bleibt die Leistung nur eine Richtindikation.',
+  technologiepfad: 'Nur Hybrid ist im MVP standardfähig; andere Pfade sind Sonderfall.',
+  kessel_zustand: 'Schlecht oder unbekannt heißt: Restlaufzeit und Einbindung klären.',
+  kessel_nutzbar: 'Hybrid setzt einen weiter nutzbaren Kessel voraus.',
+  anzahl_heizkreise: 'Mehr als zwei Heizkreise ist im MVP ein Sonderfall.',
+  vorlauftemp_klasse: 'Über 65 °C braucht der Standard-Hybrid fachliche Prüfung.',
+  heizraum_groesse_ok: 'Zu wenig Raum verschiebt den Fokus auf Außenaufstellung oder Container.',
+  zugang_ok: 'Enge Türen oder Treppen können Speicher und Hydraulik praktisch blockieren.',
+  aussenflaeche_m2: 'Fluchtwege, Grenzen und Stellplätze zählen nicht als frei nutzbare Fläche.',
+  aussenflaeche_typ: 'Dach, Garage oder Garten nicht als Standardfläche zusagen.',
+  aussenflaeche_laenge_m: 'Entscheidend ist ein zusammenhängendes Rechteck, nicht nur die m².',
+  aussenflaeche_breite_m: 'Wartungs- und Fluchtwege dürfen die nutzbare Breite nicht aufzehren.',
+  zugang_logistik: 'Schwierige Zufahrt oder fehlender Kran spricht gegen Container.',
+  platz_prioritaet: 'Priorität erklärt die Empfehlung, darf Blocker aber nicht überstimmen.',
+  aufstellvariante: 'Auswahl bleibt Vergleichspunkt; gesperrte Varianten nicht als Empfehlung verkaufen.',
+  schallhaube: 'Hilft nur bei Fundament und ersetzt keine Schallprüfung.',
+  kran_zugang: 'Container sind nur mit belastbarer Anlieferung und Kranstellung plausibel.',
+  abstand_fenster: 'Kleine Abstände dominieren die Schallrisiko-Einschätzung.',
+  gebietstyp: 'Demo-Grenzwert, keine rechtsverbindliche Schallbewertung.',
+  netzanschluss_bekannt: 'Unbekannte Anschlussleistung bleibt Elektro-Klärpunkt.',
+  foerderung_annahme: 'Nur Demo-Annahme, keine Förderberatung oder Zusage.',
+  service_variante: 'Service ist laufender Betrieb, nicht Teil des einmaligen LV.',
+}
+
+function Gespraechshinweis({ text }) {
+  if (!text) return null
   return (
-    <aside className="gespraechshinweis">
-      <strong>Gesprächshinweis</strong>
-      <span>{text}</span>
+    <aside className="gespraechshinweis" aria-label="Gesprächshinweis">
+      {text}
     </aside>
   )
 }
 
 function kurzerHinweis(frage) {
-  const playbook = frage.playbook ?? {}
-  const text = [
-    frage.tooltip,
-    playbook.warum,
-    playbook.warnsignale,
-    playbook.einordnung,
-  ].filter(Boolean).join(' ')
-  return kuerzen(kundenPreviewText(text), 280)
+  return kuerzen(kundenPreviewText(KURZE_GESPRAECHSHINWEISE[frage.id] ?? ''), 150)
 }
 
 function kuerzen(text, max) {
@@ -79,6 +98,7 @@ function kundenPreviewText(text) {
 
 function Frage({ frage, wert, onChange, gesperrt }) {
   const istSelect = frage.typ === 'select'
+  const gespraechshinweis = kurzerHinweis(frage)
   const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
     (frage.min !== undefined && wert < frage.min) ||
     (frage.max !== undefined && wert > frage.max)
@@ -99,7 +119,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
           </label>
         )}
       </div>
-      <div className="frage-inhalt">
+      <div className={`frage-inhalt${gespraechshinweis ? '' : ' ohne-hinweis'}`}>
         <div className="frage-feld">
           {frage.typ === 'zahl' ? (
             <input
@@ -142,7 +162,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             </span>
           )}
         </div>
-        <Gespraechshinweis frage={frage} />
+        <Gespraechshinweis text={gespraechshinweis} />
       </div>
     </div>
   )
