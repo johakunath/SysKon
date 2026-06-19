@@ -24,6 +24,17 @@ describe('Fragenmodell', () => {
       for (const field of REQUIRED_PLAYBOOK_FIELDS) {
         expect(frage.playbook[field], `${frage.id}.${field}`).toEqual(expect.any(String))
         expect(frage.playbook[field].trim().length, `${frage.id}.${field}`).toBeGreaterThan(20)
+        expect(frage.playbook[field].trim().length, `${frage.id}.${field}`).toBeLessThanOrEqual(90)
+      }
+    }
+  })
+
+  it('ergÃ¤nzt jede Auswahloption um eine kurze ErklÃ¤rung', () => {
+    for (const frage of ALLE_FRAGEN.filter(f => f.typ === 'select')) {
+      for (const option of frage.optionen) {
+        expect(option.hinweis, `${frage.id}.${option.wert}.hinweis`).toEqual(expect.any(String))
+        expect(option.hinweis.trim().length, `${frage.id}.${option.wert}.hinweis`).toBeGreaterThan(10)
+        expect(option.hinweis.trim().length, `${frage.id}.${option.wert}.hinweis`).toBeLessThanOrEqual(90)
       }
     }
   })

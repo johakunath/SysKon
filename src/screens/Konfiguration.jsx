@@ -50,6 +50,7 @@ function Playbook({ playbook }) {
 }
 
 function Frage({ frage, wert, onChange, gesperrt }) {
+  const istSelect = frage.typ === 'select'
   const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
     (frage.min !== undefined && wert < frage.min) ||
     (frage.max !== undefined && wert > frage.max)
@@ -58,10 +59,17 @@ function Frage({ frage, wert, onChange, gesperrt }) {
   return (
     <div className="frage">
       <div className="frage-kopf">
-        <label className="frage-label" htmlFor={frage.id}>
-          {frage.label}
-          {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
-        </label>
+        {istSelect ? (
+          <span className="frage-label" id={`${frage.id}-label`}>
+            {frage.label}
+            {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
+          </span>
+        ) : (
+          <label className="frage-label" htmlFor={frage.id}>
+            {frage.label}
+            {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
+          </label>
+        )}
         {frage.tooltip ? <Tooltip text={frage.tooltip} /> : null}
       </div>
       <div className="frage-feld">
@@ -76,14 +84,29 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             onChange={e => onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
           />
         ) : (
-          <select id={frage.id} value={wert ?? ''} onChange={e => onChange(e.target.value || undefined)}>
-            <option value="">– bitte wählen –</option>
+          <div className="antwort-liste" role="radiogroup" aria-labelledby={`${frage.id}-label`}>
             {frage.optionen.map(o => (
-              <option key={o.wert} value={o.wert} disabled={gesperrt?.includes(o.wert)}>
-                {o.label}{gesperrt?.includes(o.wert) ? ' · gesperrt' : ''}
-              </option>
+              <label
+                key={o.wert}
+                className={`antwort-option${wert === o.wert ? ' aktiv' : ''}${gesperrt?.includes(o.wert) ? ' gesperrt' : ''}`}
+                htmlFor={`${frage.id}-${o.wert}`}
+              >
+                <input
+                  id={`${frage.id}-${o.wert}`}
+                  name={frage.id}
+                  type="radio"
+                  value={o.wert}
+                  checked={wert === o.wert}
+                  disabled={gesperrt?.includes(o.wert)}
+                  onChange={() => onChange(o.wert)}
+                />
+                <span className="antwort-text">
+                  <span className="antwort-label">{o.label}{gesperrt?.includes(o.wert) ? ' · gesperrt' : ''}</span>
+                  <span className="antwort-hinweis">{o.hinweis}</span>
+                </span>
+              </label>
             ))}
-          </select>
+          </div>
         )}
         {invalide && (
           <span className="input-hinweis">

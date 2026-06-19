@@ -24,7 +24,7 @@ describe('Screens rendern mit jedem Preset', () => {
   })
 
 
-  it('Konfiguration verknüpft Fragen per htmlFor/id und hält Tooltip neben dem Label', () => {
+  it('Konfiguration rendert Auswahlfragen als erklärte Radio-Liste mit Tooltip am Label', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -36,8 +36,9 @@ describe('Screens rendern mit jedem Preset', () => {
         setScreen={noop}
       />
     )
-    expect(html).toContain('for="gebaeudetyp"')
-    expect(html).toContain('id="gebaeudetyp"')
+    expect(html).toContain('role="radiogroup"')
+    expect(html).toContain('id="gebaeudetyp-freistehend"')
+    expect(html).toContain('class="antwort-hinweis"')
     expect(html).toContain('aria-expanded="false"')
     expect(html).toContain('class="frage-kopf"')
   })
