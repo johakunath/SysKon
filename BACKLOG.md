@@ -40,18 +40,17 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 
 | Order | Epic | Work Package | Outcome | Next Child | Priority | Status |
 |---:|---|---|---|---|---|---|
-| 1 | SK-42 | WP0 Demo-Fluss | Demo ohne verfrühte PE-Handover-/Operational-Readiness-Signale | SK-44 | P0 | Todo |
-| 2 | SK-67 | WP5 Logisches Fragen- und Playbook-Modell | Vollständige fachliche Fragenstruktur mit admin-editierbarer Sales-Hilfe definieren | SK-67 | P0 | Todo |
-| 3 | SK-68 | WP6 Aufstellvariante, Fläche & Placement-Logik | Günstigste tragfähige Aufstellvariante und praktikable MVP-Flächenprüfung definieren | SK-68 | P0 | Todo |
-| 4 | SK-69 | WP7 Kundenfähiger Scope-/LV-Output | Verständliche Komponenten- und Leistungsübersicht für Gebäudeeigentümer definieren | SK-69 | P1 | Todo |
-| 5 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | P1 | Todo |
-| 6 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | P1 | Todo |
-| 7 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten | SK-72 | P1 | Todo |
-| 8 | SK-73 | WP11 Admin-Konfiguration & Governance | Inhalte, Produktdaten, Pricing und Sichtbarkeit ohne Codeänderungen pflegbar machen | SK-73 | P2 | Todo |
+| 1 | SK-68 | WP6 Aufstellvariante, Fläche & Placement-Logik | Günstigste tragfähige Aufstellvariante und praktikable MVP-Flächenprüfung definieren | SK-68 | P0 | Todo |
+| 2 | SK-42 | WP0 Demo-Fluss | Demo ohne verfrühte PE-Handover-/Operational-Readiness-Signale | SK-44 | P0 | Todo |
+| 3 | SK-69 | WP7 Kundenfähiger Scope-/LV-Output | Verständliche Komponenten- und Leistungsübersicht für Gebäudeeigentümer definieren | SK-69 | P1 | Todo |
+| 4 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | P1 | Todo |
+| 5 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | P1 | Todo |
+| 6 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten | SK-72 | P1 | Todo |
+| 7 | SK-73 | WP11 Admin-Konfiguration & Governance | Inhalte, Produktdaten, Pricing und Sichtbarkeit ohne Codeänderungen pflegbar machen | SK-73 | P2 | Todo |
 
 ## Aktueller Fokus
 
-WP1, WP2, WP3 und WP4 sind umgesetzt und im Archiv. Nutzerfreigegebener nächster Arbeitsumfang ist WP5/SK-67; WP0 bleibt mit SK-44/SK-45 offen.
+WP1 bis WP5 sind umgesetzt und im Archiv. Nächster Queue-Punkt nach Nutzerpriorität ist WP6/SK-68; WP0 bleibt mit SK-44/SK-45 offen.
 
 ## Child-Tickets
 

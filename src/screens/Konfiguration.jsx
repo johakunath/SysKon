@@ -38,6 +38,17 @@ function Tooltip({ text }) {
   )
 }
 
+function Playbook({ playbook }) {
+  if (!playbook) return null
+  return (
+    <div className="playbook">
+      <div><strong>Warum?</strong> {playbook.warum}</div>
+      <div><strong>Warnsignale:</strong> {playbook.warnsignale}</div>
+      <div><strong>Sales-Einordnung:</strong> {playbook.einordnung}</div>
+    </div>
+  )
+}
+
 function Frage({ frage, wert, onChange, gesperrt }) {
   const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
     (frage.min !== undefined && wert < frage.min) ||
@@ -79,6 +90,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             Plausibilitätsbereich: {frage.min}–{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Demo-Annahme)
           </span>
         )}
+        <Playbook playbook={frage.playbook} />
       </div>
     </div>
   )

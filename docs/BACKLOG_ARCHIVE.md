@@ -20,6 +20,7 @@ Diese Einträge wurden aus `BACKLOG.md` und `docs/BACKLOG_WORK_PACKAGES.md` entf
 | SK-54 | Epic | WP3 Responsive | Tablet- und schmale Ansichten ohne offensichtliche Brüche; Child-Ticket SK-57 umgesetzt. | Done |
 | SK-57 | UX | WP3 Responsive | Tablet-weite Konfiguration nutzt eine kompaktere Layout-Struktur; breite Tabellen scrollen in Karten statt die Seite horizontal zu sprengen. | Done |
 | SK-66 | Epic | WP4 Sales Ownership & Role Semantics | App- und Docs-Semantik auf erfahrene Sales-/KAM-Nutzer geschärft; interne Prüf-/Techniklogik bleibt Guardrail statt sichtbare Ownership. Neue Agentenregel: nach jedem Work Package aktive Backlogs aktualisieren und Erledigtes archivieren. | Done |
+| SK-67 | Epic | WP5 Logisches Fragen- und Playbook-Modell | Fragen als vollständige fachliche Fragen formuliert, Sektionen sales-tauglich geschärft, pro Frage ein strukturiertes Sales-Playbook-Modell ergänzt und inline gerendert; Tests sichern Playbook-Vollständigkeit und Sichtbarkeitsreferenzen. | Done |
 
 ## v0.1 Build
 

@@ -19,14 +19,6 @@ Ziel: Der erste Demo-Durchlauf soll keine Reifegrad-, PE-Handover- oder Operatio
 | SK-44 | Question | Status | Reconsider Gesamtstatus | Rule-derived but unclear to users. | Keep with semantics or replace. | P1 | M | Todo |
 | SK-45 | Question | Data quality | Reconsider Datenqualität | Percentage needs product meaning. | Define threshold/action or de-emphasize. | P2 | S | Todo |
 
-## WP5 Logisches Fragen- und Playbook-Modell
-
-Ziel: Der Fragenkatalog bleibt fachlich ausreichend vollständig, wird aber logisch, springbar und sales-tauglich strukturiert. Geschwindigkeit ist wichtig, aber nicht wichtiger als ein belastbares technisches und kommerzielles Ergebnis.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-67 | Epic | Questions | Logisches Fragen- und Playbook-Modell | Fragen werden in fachlicher Reihenfolge strukturiert, als echte Fragen formuliert und nur bei Relevanz angezeigt. Erfahrene Sales-Nutzer können zwischen Sektionen springen. Jede Frage erhält später admin-editierbaren Playbook-/Hilfetext mit ein bis zwei Absätzen dazu, warum die Frage wichtig ist, welche Warnsignale zu beachten sind und wie Sales die Antwort einordnet. | Notwendige technische und kommerzielle Fragen bleiben erhalten; Sektionen folgen einer nachvollziehbaren fachlichen Logik statt primär einem Sales Funnel; Fragen sind als vollständige Fragen formuliert; Bedingungen für Folgefragen sind dokumentiert; pro Frage ist ein admin-editierbares Playbook-/Hilfetextmodell vorgesehen. | P0 | L | Todo |
-
 ## WP6 Aufstellvariante, Fläche & Placement-Logik
 
 Ziel: Eine praktikable MVP-Entscheidungslogik für Aufstellung und Platzprüfung definieren: günstige tragfähige Varianten zuerst, aber deutlich besser als eine einfache "genug Platz ja/nein"-Frage.
