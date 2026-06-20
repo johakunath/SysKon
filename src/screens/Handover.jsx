@@ -1,7 +1,8 @@
 import React from 'react'
 import { SEKTIONEN as DEFAULT_SEKTIONEN } from '../data/fragen.js'
-import { STATUS_LABEL } from '../logic/engine.js'
-import { euro } from './format.js'
+import { HANDOVER_FOOTNOTE } from '../data/texte.js'
+import { euro, korridorTitel } from './format.js'
+import Ampel from '../components/Ampel.jsx'
 
 // Hidden reference surface: kept for deferred internal print/checklist reuse,
 // but intentionally not routed in the visible demo flow.
@@ -47,8 +48,8 @@ export default function Handover({ ergebnis, sektionen = DEFAULT_SEKTIONEN }) {
           <button className="primaer no-print" onClick={() => window.print()}>Prüfliste exportieren</button>
         </div>
         <p>
-          <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
-          <strong> Gesprächskorridor: {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong> · Datenlage {ergebnis.dq} % ·
+          <Ampel status={ergebnis.status} groesse="klein" />
+          <strong> Gesprächskorridor: {korridorTitel(ergebnis)}</strong> · Datenlage {ergebnis.dq} % ·
           Interner Prüfaufwand: {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
           Netto-LV {euro(ergebnis.lv.netto)} (Demo)
         </p>
@@ -95,7 +96,7 @@ export default function Handover({ ergebnis, sektionen = DEFAULT_SEKTIONEN }) {
                       <tr key={i}>
                         <td>{w.text}</td>
                         <td>{KAT_OWNER[w.kategorie] ?? '—'}</td>
-                        <td><span className={`ampel klein ${w.status ?? 'gelb'}`} /> offen</td>
+                        <td><Ampel status={w.status ?? 'gelb'} groesse="klein" /> offen</td>
                       </tr>
                     ))}
                   </tbody>
@@ -106,10 +107,7 @@ export default function Handover({ ergebnis, sektionen = DEFAULT_SEKTIONEN }) {
         </div>
       </div>
 
-      <p className="fussnote">
-        Demo-Prototyp: alle Werte sind Demo-Annahmen, Schallwerte sind eine Demo-Abschätzung,
-        Förderlogik ist Demo-Logik (keine Förderberatung).
-      </p>
+      <p className="fussnote">{HANDOVER_FOOTNOTE}</p>
     </div>
   )
 }

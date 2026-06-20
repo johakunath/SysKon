@@ -1,5 +1,7 @@
 // Anzeige-Helfer für die Screens (kein Fachwissen hier hinein!)
 
+import { STATUS_LABEL } from '../logic/engine.js'
+
 export const euro = (n) => n == null ? '–'
   : new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
 
@@ -13,6 +15,30 @@ export const VARIANTEN_NAME = {
   einhausung: 'Schutz-/Schall-Einhausung',
   kompakt_container: 'Kompakt-Container',
   vollcontainer: 'Vollcontainer',
+}
+
+// Titel des Gesprächskorridors mit Fallback auf das Status-Label – einheitlich
+// für alle Screens, statt den Ausdruck mehrfach inline zu wiederholen.
+export const korridorTitel = (ergebnis) =>
+  ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]
+
+// Interne Begriffe für die Kundensicht entschärfen (Preise, Förder-/CAPEX-Wording).
+export function kundenPreviewText(text) {
+  return String(text ?? '')
+    .replace(/€\/WE/g, 'pro WE')
+    .replace(/€\/m²/g, 'pro m²')
+    .replace(/€\/m2/g, 'pro m²')
+    .replace(/€/g, '')
+    .replace(/Interne Förderprüfung klären/g, 'Interne Prüfung klären')
+    .replace(/Förderprüfung/g, 'interne Prüfung')
+    .replace(/Förderlogik/g, 'interne Prüflogik')
+    .replace(/Förderberatung/g, 'Beratung zu externen Programmen')
+    .replace(/Förderannahme/g, 'interne Annahme')
+    .replace(/förderfähig/g, 'intern prüfpflichtig')
+    .replace(/Förderung/g, 'interne Prüfung')
+    .replace(/CAPEX/g, 'interne Kalkulation')
+    .replace(/OPEX/g, 'Betrieb')
+    .replace(/Netto|Brutto|Marge/g, '')
 }
 
 // Bedingung der Regel-DSL lesbar machen (für Screen 4)

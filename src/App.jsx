@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { applyAdminConfig, loadAdminConfig, makeDefaultAdminConfig, saveAdminConfig, touchAdminConfig } from './data/adminConfig.js'
 import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
+import { DEMO_FOOTER } from './data/texte.js'
 import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
@@ -115,11 +116,7 @@ export default function App() {
       {screen === 'annahmen' && <Annahmen {...props} />}
       {screen === 'testfaelle' && <Testfaelle {...props} />}
 
-      <footer className="fussnote no-print">
-        Interner Demo-Prototyp für erfahrene Sales-/KAM-Nutzer (Configure-to-Order, Stufe 1).
-        Keine Marge, kein Kundenangebot, keine rechtsverbindliche Schall- oder Förderberechnung. Roadmap: Stufe 2
-        (Grundpreis/Arbeitspreis, Ziel-IRR), monoenergetischer Pfad, Preisgleitformeln, BEG-Kostendeckel.
-      </footer>
+      <footer className="fussnote no-print">{DEMO_FOOTER}</footer>
     </div>
   )
 }

@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { LV_GRUPPEN } from '../data/katalog.js'
-import { STATUS_LABEL } from '../logic/engine.js'
-import { euro, num, prozent, VARIANTEN_NAME } from './format.js'
+import { ANALYSE_LIMITS } from '../data/texte.js'
+import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
+import Ampel from '../components/Ampel.jsx'
+import ScopeListe from '../components/ScopeListe.jsx'
 
 function exportLvCsv(lv, annahmen) {
   const kopf = ['Gruppe', 'Position', 'Menge', 'Einheit', 'Einzelpreis (€)', 'Betrag (€)', 'Förderfähig (%)', 'Prüfpflichtig']
@@ -28,12 +30,6 @@ function exportLvCsv(lv, annahmen) {
   a.click()
   URL.revokeObjectURL(url)
 }
-
-const LIMITS = [
-  'Sales-/KAM-Gesprächshilfe mit Demo-Annahmen, kein Kundenangebot und keine Marge.',
-  'Keine rechtsverbindliche Schall-, Förder- oder Ausführungsplanung.',
-  'Kosten dienen nur als interne Richtindikation für den nächsten Prüf- und Gesprächsschritt.',
-]
 
 function AnalyseKpi({ label, value, note }) {
   return (
@@ -82,27 +78,17 @@ function KundenScope({ scope }) {
       <div className="karten-reihe">
         <div className="karte">
           <h3>Annahmen</h3>
-          <ul className="kunden-liste">
-            {scope.annahmen.map((text, i) => <li key={i}>{text}</li>)}
-          </ul>
+          <ScopeListe eintraege={scope.annahmen} preview />
         </div>
 
         <div className="karte">
           <h3>Ausschlüsse</h3>
-          {scope.ausschluesse.length > 0 ? (
-            <ul className="kunden-liste">
-              {scope.ausschluesse.map((item, i) => <li key={i}><strong>{item.titel}:</strong> {item.text}</li>)}
-            </ul>
-          ) : <p className="okbox">Keine kundenseitigen Ausschlüsse im aktuellen Demo-Korridor.</p>}
+          <ScopeListe eintraege={scope.ausschluesse} preview leer="Keine kundenseitigen Ausschlüsse im aktuellen Demo-Korridor." />
         </div>
 
         <div className="karte">
           <h3>Offene Punkte</h3>
-          {scope.offenePunkte.length > 0 ? (
-            <ul className="kunden-liste">
-              {scope.offenePunkte.map((item, i) => <li key={i}><strong>{item.titel}:</strong> {item.text}</li>)}
-            </ul>
-          ) : <p className="okbox">Keine priorisierten offenen Punkte für diese Kundensicht.</p>}
+          <ScopeListe eintraege={scope.offenePunkte} preview leer="Keine priorisierten offenen Punkte für diese Kundensicht." />
         </div>
       </div>
     </div>
@@ -134,9 +120,9 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
   return (
     <div className="seite">
       <div className={`summary-strip status-${ergebnis.status ?? 'unbekannt'} no-print`}>
-        <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
+        <Ampel status={ergebnis.status} groesse="gross" />
         <div className="summary-mitte">
-          <strong>Gesprächskorridor: {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
+          <strong>Gesprächskorridor: {korridorTitel(ergebnis)}</strong>
           <span className="summary-detail">{summaryDetail}</span>
         </div>
         <div className="summary-aktion">{summaryAktion}</div>
@@ -179,8 +165,8 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
                     </td></tr>
                   ) : null}
                   <tr><td>Gesprächskorridor</td><td>
-                    <span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} />
-                    <strong> {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
+                    <Ampel status={ergebnis.status} groesse="klein" />
+                    <strong> {korridorTitel(ergebnis)}</strong>
                     <div className="hinweis">{ergebnis.statusKorridor?.bedeutung}</div>
                   </td></tr>
                   <tr><td>Datenlage</td><td>{ergebnis.dq} % · {ergebnis.datenlage?.titel}<div className="hinweis">{ergebnis.datenlage?.aktion}</div></td></tr>
@@ -198,7 +184,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
               ))}
             </ul>
             <div className="status-hierarchie">
-              <div><span className="sh-label">Korridor</span><span className={`ampel klein ${ergebnis.status ?? 'unbekannt'}`} /> <strong>{ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong></div>
+              <div><span className="sh-label">Gesprächskorridor</span><Ampel status={ergebnis.status} groesse="klein" /> <strong>{korridorTitel(ergebnis)}</strong></div>
               {blocker.length > 0 && <div><span className="sh-label">Blocker</span><span className="sh-wert">{blocker.length} Prüfpunkte</span></div>}
               {hinweise.length > 0 && <div><span className="sh-label">Hinweise</span><span className="sh-wert">{hinweise.length} Hinweise</span></div>}
             </div>
@@ -353,7 +339,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
                     <tr key={v} className={v === eingaben.aufstellvariante ? 'gewaehlt' : ''}>
                       <td>{VARIANTEN_NAME[v]}{v === eingaben.aufstellvariante ? ' (gewählt)' : ''}</td>
                       <td>{num(s.lp, 1)} dB(A) (−{s.abschlag} dB)</td>
-                      <td><span className={`ampel klein ${s.ampel ?? 'unbekannt'}`} /> {s.ampel}</td>
+                      <td><Ampel status={s.ampel} groesse="klein" /> {s.ampel}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -377,10 +363,10 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
       )}
 
       {!istKunde && (
-        <div className="karte disclaimer-karte no-print">
+        <div className="karte no-print">
           <h3>Nicht als Zusage lesen</h3>
           <ul className="checkliste">
-            {LIMITS.map(limit => <li key={limit}>{limit}</li>)}
+            {ANALYSE_LIMITS.map(limit => <li key={limit}>{limit}</li>)}
           </ul>
         </div>
       )}

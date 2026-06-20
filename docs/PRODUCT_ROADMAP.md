@@ -84,7 +84,7 @@ Lücken, die kein Feature-Ticket besitzt, aber die Produktqualität und -sicherh
 
 - **CI / Merge-Gate (aktiv als SK-83):** Bis Juni 2026 gab es keinen automatischen Testlauf vor dem Merge; PRs wurden Sekunden nach Erstellung gemergt. SK-83 führt `npm test` + `npm run build` als GitHub-Actions-Gate ein.
 - **Tech-Debt-Pflege:** `src/screens/Handover.jsx` (≈115 Zeilen) ist nach dem Sales-Pivot verwaist und nicht mehr von `App.jsx` referenziert — entfernen oder bewusst als Referenz markieren. Außerdem die Datenschicht-Grenze nachschärfen: `src/data/adminConfig.js` greift inzwischen auf `window`/`localStorage` zu, was die „src/data bleibt React-/Browser-frei"-Intention aufweicht.
-- **Disclaimer- und Wording-Governance:** Demo-Sicherheitstexte stehen heute verstreut in `engine.js`, `calc.js`, `katalog.js` und mehreren Screens. Ziel: eine zentrale Quelle, damit kein PR versehentlich verbindlich klingende Kundenaussagen einführt.
+- **Disclaimer- und Wording-Governance (teilweise adressiert, WP15):** Die screen-übergreifenden Demo-Sicherheitstexte (App-Footer, Analyse-Limits, Handover-Fußnote) liegen seit WP15 zentral in `src/data/texte.js`; die kundensichere Wortwahl (`kundenPreviewText`) ist ein gemeinsamer Helfer in `src/screens/format.js`. Offen bleibt, fachliche Demo-Texte aus `engine.js`, `calc.js` und `katalog.js` schrittweise an dieselbe Quelle anzubinden, damit kein PR versehentlich verbindlich klingende Kundenaussagen einführt.
 - **Planungstool-Stop-line:** SysKon bleibt Sales-/Vorqualifizierungstool. Standort-, Sizing- und Placement-Logik nicht weiter in die Engine ziehen; Kartografie/LiDAR/3D bleiben Integrations-/Recherchethemen (siehe WP12-Notiz).
 
 ## Dauerhafte Schutzplanken
