@@ -28,6 +28,11 @@ Diese Einträge wurden aus `BACKLOG.md` und `docs/BACKLOG_WORK_PACKAGES.md` entf
 | SK-69 | Epic | WP7 Kundenfähiger Scope-/LV-Output | Kundenfähiger No-Price-Umfang ergänzt: Analyse startet mit separatem Kundenumfang, Komponenten/Services zeigen Hersteller-/Produkt-/Leistungsklasse-Platzhalter, Annahmen, Ausschlüsse und offene Punkte; interne LV-/CAPEX-Ansichten bleiben getrennt. | Done |
 | UX-SK70-PRE | UX | Prerequisite vor SK-70 | Konfiguration kompakter an Referenzlayout angelehnt: linke Abschnittsleiste verdichtet, Fragehilfen als kurze Gesprächshinweise neben der Antwortbox gerendert und rechte Standardvorschau auf kundenfähige Komponenten/Services ohne Preise umgestellt. SK-70 bleibt nächster Queue-Punkt. | Done |
 | SK-73 | Epic | WP11 Admin-Konfiguration & Governance | Frontend-only Admin-Konfiguration umgesetzt: lokale versionierte Overrides per localStorage, JSON Import/Export, editierbare Annahmen, Fragen-/Playbook-/Optionshinweise, Katalog-/Kundendaten und Governance-Texte. Regeln bleiben read-only mit Governance-Hinweisen; WP12/SK-74 bleibt nächster aktiver Queue-Punkt. | Done |
+| SK-83 | Tech | CI / Merge-Gate | `.github/workflows/ci.yml` führt `npm ci`, `npm test` und `npm run build` auf PR und Push aus. Schließt die Lücke, dass PRs ohne grünen Testlauf gemergt wurden. | Done |
+| SK-84 | Epic | WP13 Sales-Output-First Analyse + Kunden-/Internsicht-Modus | Analyse-Seite nach dem Pivot (Output statt Gesprächsführung) konsolidiert. Child-Tickets: SK-85 Sichtmodus, SK-86 Tab-Konsolidierung, SK-87 Text-Redundanz. | Done |
+| SK-85 | Story | WP13 View mode | `sichtModus` (`kunde`/`intern`) als App-State getrennt vom Admin-Toggle; Topbar-Umschalter. Kundensicht zeigt nur den preisfreien Kundenumfang, blendet LV/CAPEX/OPEX vollständig aus. Test sichert, dass die Kundensicht keine Preise/CAPEX exponiert. Voraussetzung für WP8. | Done |
+| SK-86 | Story | WP13 Consolidation | Vier Analyse-Tabs auf einen fokussierten Output reduziert: Kundensicht = ein Kundenumfang; Internsicht = zwei Tabs (Lösung & Umfang, Prüfpunkte) mit zusammengeführter Vorlösung/LV. | Done |
+| SK-87 | UX | WP13 Copy | Annahmen-/Disclaimer-Redundanz entfernt: „Nicht als Zusage lesen" erscheint in der Internsicht genau einmal statt mehrfach pro Tab. | Done |
 
 ## v0.1 Build
 

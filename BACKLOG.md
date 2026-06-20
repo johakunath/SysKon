@@ -38,16 +38,19 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 
 ## Next Epic Queue
 
-| Order | Epic | Work Package | Outcome | Next Child | Priority | Effort | Status |
-|---:|---|---|---|---|---|---|---|
-| 1 | SK-74 | WP12 Technical System Package Logic | Technisches Systempaketmodell für MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting schärfen | SK-74 | P1 | XL | Todo |
-| 2 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | P1 | XL | Todo |
-| 3 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | P1 | L | Todo |
-| 4 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten | SK-72 | P1 | M | Todo |
+Reihenfolge nach dem Sales-Output-First-Pivot (Juni 2026). Abhängigkeiten stehen in der Spalte „Hängt ab von". Begründung der Umsortierung: `docs/BACKLOG_WORK_PACKAGES.md` (WP13) und `docs/PRODUCT_ROADMAP.md`.
+
+| Order | Epic | Work Package | Outcome | Next Child | Hängt ab von | Priority | Effort | Status |
+|---:|---|---|---|---|---|---|---|---|
+| 1 | SK-88 | WP14 Konfiguration declutter | Rechte Vorschau verschlanken, Playbook-UI de-emphasizen, SK-59 deferren | SK-88 | WP13 (erledigt) | P1 | M | Todo |
+| 2 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten (Input für WP12/WP8) | SK-72 | – | P1 | M | Todo |
+| 3 | SK-74 | WP12 Technical System Package Logic | Technisches Systempaketmodell für MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting schärfen | SK-74 | SK-72 | P1 | XL | Todo |
+| 4 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | SK-85 (erledigt), SK-74 | P1 | XL | Todo |
+| 5 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | SK-70 | P1 | L | Todo |
 
 ## Aktueller Fokus
 
-WP0 bis WP7 sowie das UX-Prerequisite vor SK-70 sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP12/SK-74 als technische Grundlage vor WP8/SK-70.
+WP0 bis WP7, WP11, das UX-Prerequisite vor SK-70 sowie der Sales-Output-First-Block (SK-83 CI-Gate und WP13/SK-84 Kunden-/Internsicht-Modus) sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP14/SK-88 (Konfiguration declutter). WP10/SK-72 bleibt vor WP12/WP8 gezogen, weil seine Learnings Input für das technische und das Pricing-Modell sind; WP8 setzt zusätzlich auf dem in WP13 gebauten Sichtmodus auf.
 
 ## Child-Tickets
 
