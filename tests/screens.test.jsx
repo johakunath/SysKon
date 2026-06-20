@@ -66,7 +66,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(rechteVorschau).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
   })
 
-  it('Analyse startet mit einem kundenfaehigen Umfang ohne Preise', () => {
+  it('Analyse-Kundensicht zeigt nur den preisfreien Umfang ohne interne Flächen', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -74,6 +74,7 @@ describe('Screens rendern mit jedem Preset', () => {
         eingaben={eingaben}
         annahmen={{ ...ANNAHMEN }}
         ergebnis={ergebnis}
+        sichtModus="kunde"
       />
     )
 
@@ -84,9 +85,34 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Annahmen')
     expect(html).toContain('Ausschlüsse')
     expect(html).toContain('Offene Punkte')
-    expect(html).toContain('Interner Umfang')
-    expect(html).not.toContain('Enthaltener Umfang und CAPEX-Indikation')
+    // SK-85: Kundensicht blendet interne Flächen vollständig aus (kein Tab, keine Preise)
+    expect(html).not.toContain('Interner Umfang')
+    expect(html).not.toContain('Lösung &amp; Umfang')
+    expect(html).not.toContain('Prüfpunkte')
+    expect(html).not.toContain('CAPEX-Kennzahlen')
     expect(html).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+  })
+
+  it('Analyse-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte mit einem Disclaimer', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Ergebnis
+        eingaben={eingaben}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+        sichtModus="intern"
+      />
+    )
+
+    // SK-86: zwei konsolidierte Tabs statt vier
+    expect(html).toContain('Lösung &amp; Umfang')
+    expect(html).toContain('Prüfpunkte')
+    // Internsicht zeigt CAPEX-Detail
+    expect(html).toContain('CAPEX-Kennzahlen')
+    expect(html).toMatch(/CAPEX|Netto/)
+    // SK-87: Disclaimer erscheint genau einmal (dedupliziert)
+    expect(html.match(/Nicht als Zusage lesen/g)?.length ?? 0).toBe(1)
   })
 
   it('Admin-Konfiguration rendert Tabs, Import/Export und read-only Regeln', () => {

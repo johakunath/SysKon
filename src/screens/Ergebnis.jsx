@@ -109,11 +109,12 @@ function KundenScope({ scope }) {
   )
 }
 
-export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
-  const [tab, setTab] = useState('kundenumfang')
+export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'kunde' }) {
+  const [internTab, setInternTab] = useState('loesung')
   const d = ergebnis.derived
   const lv = ergebnis.lv
   const kundenScope = ergebnis.kundenScope
+  const istKunde = sichtModus === 'kunde'
 
   const gruppenNamen = [...new Set([...LV_GRUPPEN, ...lv.positionen.map(p => p.gruppe)])]
   const gruppen = gruppenNamen
@@ -123,9 +124,12 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
   const blocker = ergebnis.warnungen.filter(w => w.status === 'rot' || w.status === 'orange')
   const hinweise = ergebnis.warnungen.filter(w => w.status !== 'rot' && w.status !== 'orange')
   const scopeKurz = gruppen.slice(0, 5).map(g => g.name).join(', ')
-  const summaryAktion = tab === 'kundenumfang'
+  const summaryAktion = istKunde
     ? 'Offene Pflichtdaten und Regelhinweise priorisieren, bevor der Kundenumfang weitergegeben wird.'
     : ergebnis.statusKorridor?.aktion
+  const summaryDetail = istKunde
+    ? `${kundenScope.gruppen.length} Umfangsgruppen · keine Preisansicht`
+    : `${d.wp_module} × ${annahmen.wp_modul_kw} kW · Netto-CAPEX ${euro(lv.netto)} (Demo)`
 
   return (
     <div className="seite">
@@ -133,20 +137,22 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
         <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
         <div className="summary-mitte">
           <strong>Gesprächskorridor: {ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
-          <span className="summary-detail">{d.wp_module} × {annahmen.wp_modul_kw} kW · {kundenScope.gruppen.length} Umfangsgruppen · keine Preisansicht</span>
+          <span className="summary-detail">{summaryDetail}</span>
         </div>
         <div className="summary-aktion">{summaryAktion}</div>
       </div>
 
-      <div className="tabs-sekundaer no-print">
-        {[['kundenumfang', 'Kundenumfang'], ['vorloesung', 'Vorlösung'], ['umfang', 'Interner Umfang'], ['pruefpunkte', 'Prüfpunkte']].map(([id, label]) => (
-          <button key={id} className={tab === id ? 'tab aktiv' : 'tab'} onClick={() => setTab(id)}>{label}</button>
-        ))}
-      </div>
+      {istKunde && <KundenScope scope={kundenScope} />}
 
-      {tab === 'kundenumfang' && <KundenScope scope={kundenScope} />}
+      {!istKunde && (
+        <div className="tabs-sekundaer no-print">
+          {[['loesung', 'Lösung & Umfang'], ['pruefpunkte', 'Prüfpunkte']].map(([id, label]) => (
+            <button key={id} className={internTab === id ? 'tab aktiv' : 'tab'} onClick={() => setInternTab(id)}>{label}</button>
+          ))}
+        </div>
+      )}
 
-      {tab === 'vorloesung' && (
+      {!istKunde && internTab === 'loesung' && (<>
         <div className="analyse-grid">
           <div className="karte analyse-hauptkarte">
             <h3>Vorlösung für Sales/KAM</h3>
@@ -211,16 +217,11 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
           </div>
 
           <div className="karte">
-            <h3>Annahmen & Grenzen</h3>
-            <ul className="checkliste">
-              {LIMITS.map(limit => <li key={limit}>{limit}</li>)}
-            </ul>
-            <p className="hinweis">Enthaltener Umfang: {scopeKurz}{gruppen.length > 5 ? ' …' : ''}</p>
+            <h3>Enthaltener Umfang (Kurz)</h3>
+            <p className="hinweis">{scopeKurz}{gruppen.length > 5 ? ' …' : ''}</p>
           </div>
         </div>
-      )}
 
-      {tab === 'umfang' && (
         <div className="analyse-umfang">
           <div className="karte">
             <h3>Enthaltener Umfang und CAPEX-Indikation</h3>
@@ -310,9 +311,9 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
             </div>
           </div>
         </div>
-      )}
+      </>)}
 
-      {tab === 'pruefpunkte' && (
+      {!istKunde && internTab === 'pruefpunkte' && (
         <div className="analyse-grid">
           <div className="karte">
             <h3>Prüfpunkte und Hinweise</h3>
@@ -372,12 +373,15 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis }) {
             ) : <p className="warnbox">Keine tragfähige Aufstellvariante im aktuellen Demo-Korridor.</p>}
           </div>
 
-          <div className="karte">
-            <h3>Nicht als Zusage lesen</h3>
-            <ul className="checkliste">
-              {LIMITS.map(limit => <li key={limit}>{limit}</li>)}
-            </ul>
-          </div>
+        </div>
+      )}
+
+      {!istKunde && (
+        <div className="karte disclaimer-karte no-print">
+          <h3>Nicht als Zusage lesen</h3>
+          <ul className="checkliste">
+            {LIMITS.map(limit => <li key={limit}>{limit}</li>)}
+          </ul>
         </div>
       )}
     </div>

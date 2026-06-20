@@ -78,6 +78,15 @@ Kein linearer Stage-Gate, sondern Produktqualitätsmechanismus.
 - Skalierung auf weitere Technologien.
 - Governance: Product owns; PE, Engineering, Procurement, Finance und Legal unterstützen.
 
+## Qualitäts- und Hygienethemen (aus PR-Review Juni 2026)
+
+Lücken, die kein Feature-Ticket besitzt, aber die Produktqualität und -sicherheit betreffen. Dokumentiert nach dem Review der letzten ~7 PRs.
+
+- **CI / Merge-Gate (aktiv als SK-83):** Bis Juni 2026 gab es keinen automatischen Testlauf vor dem Merge; PRs wurden Sekunden nach Erstellung gemergt. SK-83 führt `npm test` + `npm run build` als GitHub-Actions-Gate ein.
+- **Tech-Debt-Pflege:** `src/screens/Handover.jsx` (≈115 Zeilen) ist nach dem Sales-Pivot verwaist und nicht mehr von `App.jsx` referenziert — entfernen oder bewusst als Referenz markieren. Außerdem die Datenschicht-Grenze nachschärfen: `src/data/adminConfig.js` greift inzwischen auf `window`/`localStorage` zu, was die „src/data bleibt React-/Browser-frei"-Intention aufweicht.
+- **Disclaimer- und Wording-Governance:** Demo-Sicherheitstexte stehen heute verstreut in `engine.js`, `calc.js`, `katalog.js` und mehreren Screens. Ziel: eine zentrale Quelle, damit kein PR versehentlich verbindlich klingende Kundenaussagen einführt.
+- **Planungstool-Stop-line:** SysKon bleibt Sales-/Vorqualifizierungstool. Standort-, Sizing- und Placement-Logik nicht weiter in die Engine ziehen; Kartografie/LiDAR/3D bleiben Integrations-/Recherchethemen (siehe WP12-Notiz).
+
 ## Dauerhafte Schutzplanken
 
 - Nur Demo-Annahmen, keine produktiven Kalkulationswerte.
@@ -85,3 +94,4 @@ Kein linearer Stage-Gate, sondern Produktqualitätsmechanismus.
 - Keine Rechts-, Förder- oder Schallgarantie.
 - Keine echten Kundendaten.
 - Keine Kundenselbstbedienung ohne Sales-/interne Prüfung.
+- Kein Planungstool: keine eigene Standort-/LiDAR-/3D-Placement-Berechnung in der Engine.

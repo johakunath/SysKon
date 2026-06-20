@@ -97,6 +97,20 @@ body {
 .admin-toggle:hover { background: rgb(255 255 255 / 0.1); color: #fff; border-color: rgb(255 255 255 / 0.4); }
 .admin-toggle.aktiv { color: var(--signal-hell); border-color: var(--signal-hell); }
 
+/* Sichtmodus-Umschalter Kunden-/Internsicht (SK-85), getrennt vom Admin-Toggle */
+.sicht-toggle {
+  display: flex; flex: none; margin-bottom: 10px;
+  border: 1px solid rgb(255 255 255 / 0.2); border-radius: var(--radius-klein); overflow: hidden;
+}
+.sicht-toggle button {
+  background: transparent; border: none; color: var(--topbar-text);
+  padding: 5px 12px; cursor: pointer; font: inherit; font-size: 13px;
+  transition: color var(--t), background-color var(--t);
+}
+.sicht-toggle button + button { border-left: 1px solid rgb(255 255 255 / 0.2); }
+.sicht-toggle button:hover { background: rgb(255 255 255 / 0.1); color: #fff; }
+.sicht-toggle button.aktiv { background: var(--akzent-wahl); color: #fff; font-weight: 600; }
+
 /* Ampeln: Status als CSS-Klasse (gruen/gelb/orange/rot/unbekannt) */
 .ampel {
   display: inline-block; width: 13px; height: 13px; border-radius: 50%;

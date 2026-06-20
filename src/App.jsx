@@ -19,6 +19,7 @@ const ADMIN_SCREENS = [
 export default function App() {
   const [screen, setScreen] = useState('konfiguration')
   const [adminModus, setAdminModus] = useState(false)
+  const [sichtModus, setSichtModus] = useState('kunde')
   const [eingaben, setEingaben] = useState(
     () => ({ ...PRESETS.find(p => p.id === DEFAULT_PRESET_ID).eingaben })
   )
@@ -56,6 +57,7 @@ export default function App() {
 
   const props = {
     eingaben, setEingaben, annahmen, setAnnahmen, ergebnis, setScreen,
+    sichtModus,
     sektionen: effectiveConfig.sektionen,
     katalog: effectiveConfig.katalog,
     adminConfig,
@@ -80,6 +82,22 @@ export default function App() {
             </button>
           ))}
         </nav>
+        <div className="sicht-toggle no-print" role="group" aria-label="Sichtmodus">
+          <button
+            className={sichtModus === 'kunde' ? 'aktiv' : ''}
+            onClick={() => setSichtModus('kunde')}
+            title="Kundensicht: nur der preisfreie Umfang"
+          >
+            Kundensicht
+          </button>
+          <button
+            className={sichtModus === 'intern' ? 'aktiv' : ''}
+            onClick={() => setSichtModus('intern')}
+            title="Internsicht: Vorlösung, LV/CAPEX und Prüfpunkte"
+          >
+            Internsicht
+          </button>
+        </div>
         <button
           className={`admin-toggle no-print${adminModus ? ' aktiv' : ''}`}
           onClick={() => {

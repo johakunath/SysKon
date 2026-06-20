@@ -10,9 +10,20 @@ Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden S
 
 Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht dauerhaft in diesem aktiven Detaildokument. Nach Abschluss werden sie nach `docs/BACKLOG_ARCHIVE.md` verschoben oder dort zusammengefasst.
 
+## WP14 Konfiguration declutter
+
+Ziel: Die Konfigurationsseite wird verschlankt und auf den Output ausgerichtet. Hängt an WP13, weil die rechte Vorschau das konsolidierte Output-Modell und den Sichtmodus wiederverwendet. Gleichzeitig wird die Konsequenz des Pivots gezogen: die Gesprächsführungs-Bausteine (SK-67 Playbook, SK-59 Guided Conversation) werden de-emphasized statt ausgebaut.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-88 | Story | Preview | Rechte Vorschau verschlanken | Rechte Vorschau in `src/screens/Konfiguration.jsx` an den konsolidierten Kundenoutput angleichen, Text kürzen, redundante Live-Snippets entfernen. | Vorschau spiegelt den konsolidierten Output; deutlich weniger Text; keine doppelten KPIs/Snippets. | P1 | M | Todo |
+| SK-89 | UX | Conversation | Playbook de-emphasizen, SK-59 deferren | SK-67 Playbook-UI pro Frage zurücknehmen (Daten behalten, Prominenz reduzieren); SK-59 (Guided Conversation Flow) auf `Deferred` setzen mit kurzer Pivot-Begründung. | Playbook-Hinweise sind dezent statt dominant; SK-59 ist in den Roadmap-Epics als `Deferred` markiert; SK-67-Daten bleiben im Code. | P1 | S | Todo |
+
 ## WP12 Technical System Package Logic
 
-Ziel: SysKon hat ein schärferes technisches Paketmodell für das MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting-Produkt. WP12 ist eine technische Grundlage vor WP8/SK-70: Erst Paketgrenzen, Blocker, Komponenten, Datenherkunft und interne vs. kundensichtbare Aussagen klären, dann Preise, GP/AP und Vertragsparameter darauf aufbauen. WP7 bleibt archiviert; kundenfähige Scope-Ausgabe wird später gegen dieses Modell nachgeschärft.
+Ziel: SysKon hat ein schärferes technisches Paketmodell für das MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting-Produkt. WP12 ist eine technische Grundlage vor WP8/SK-70: Erst Paketgrenzen, Blocker, Komponenten, Datenherkunft und interne vs. kundensichtbare Aussagen klären, dann Preise, GP/AP und Vertragsparameter darauf aufbauen. WP7 bleibt archiviert; kundenfähige Scope-Ausgabe wird später gegen dieses Modell nachgeschärft. Sequenz nach Pivot: WP13 (saubere Flächen + Sichtmodus) und WP10 (Tool-Learnings als Input) laufen vor WP12.
+
+Stop-line (Planungstool-Drift): WP12 darf die Engine nicht zu einem Standort-/Planungstool ausbauen. Site-Survey, Kartografie, LiDAR und 3D-Placement bleiben Integrations-/Recherchethemen (North Star aus SK-68), nicht eigene SysKon-Berechnung. Vor jeder Erweiterung von `src/logic/calc.js` um Standort-/Sizing-Logik prüfen, ob sie wirklich nötig ist oder extern zugekauft werden sollte.
 
 Do not do yet: keine finale juristische Vertragsgenerierung; keine Einkaufs-/Herstellkosten, interne Kundenpreisbildung, Marge, Subventionsinterna, internen Gesamt-CAPEX oder IRR in der Kundensicht zeigen; nicht auf einen möglichst kurzen Fragebogen optimieren, sondern auf einen validen Angebotskorridor; keine dynamische Stromtarif-Optimierung implementieren; keine Details aus der Kevin-W./Patrick-L.-Elektro-Notiz erfinden, bevor sie vorliegt.
 
@@ -48,6 +59,8 @@ Ziel: Sales kann ein Angebot vorbereiten, speichern, als PDF exportieren und mit
 
 Ziel: Vor größerem Ausbau werden bestehende und historische Techem-Tools sowie ihre Learnings systematisch ausgewertet, damit SysKon nicht bekannte Fehler wiederholt.
 
+Sequenz nach Pivot: WP10 wurde in der Queue vor WP12/WP8 gezogen. Begründung: die Learnings sind ein Input für das technische Paketmodell (WP12) und die Pricing-Logik (WP8). Sie erst nach dem Hardcoden dieser Modelle zu erheben, würde genau die bekannten Fehler wiederholen, vor denen dieses Work Package warnt.
+
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
 | SK-72 | Epic | Discovery | Bestehende Tools & Learnings prüfen | Richtpreis-Tool, einfaches Wärmepumpen-Planungstool, Solution Finder und weitere verwandte Versuche prüfen. Dokumentieren, was funktioniert hat, was gescheitert ist, welche Daten/Logiken/UX-Muster wiederverwendbar sind und was im Systempaket-Konfigurator bewusst vermieden werden soll. | Relevante historische Tools sind aufgelistet; Learnings zu Nutzen, Grenzen, Akzeptanz und Datenqualität sind dokumentiert; wiederverwendbare Bausteine und Anti-Patterns sind benannt; Ergebnisse fließen als Entscheidungsvorlage vor größerem Neubau ein. | P1 | M | Todo |
@@ -59,7 +72,7 @@ Diese Epics dokumentieren den Produkt-Pivot und spätere Ausbaustufen. Sie stör
 | ID | Type | Area | Title | Outcome | Possible Children | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
 | SK-58 | Epic | Product framing | Sales-first product framing | UI und Docs implizieren nicht mehr PE-Handover als primären Use Case; SysKon erklärt sich als Sales-Gesprächs-, Vorqualifizierungs- und Lösungskorridor-Tool. | Produktflächen weg von Handover/PE-Begriffen benennen; Sales-use-case Intro ergänzen; Kundengespräch-Modus narrativ klären; Non-Goals sichtbar machen: kein verbindliches Angebot, keine Ausführungsplanung, keine Self-Service-Bestellung. | P0 | M | Todo |
-| SK-59 | Epic | Conversation flow | Guided customer conversation flow | Konfigurationsfragen folgen einem Sales-Gespräch statt einer Engineering-Checkliste. | Fragen kundennah gruppieren; relevante Folgefragen zeigen; Tooltips "warum fragen wir das" erweitern; Sales-Erklärungssnippets ergänzen; "Kunde weiß es nicht"-Pfade mit nächsten Schritten ergänzen. | P1 | L | Todo |
+| SK-59 | Epic | Conversation flow | Guided customer conversation flow | Konfigurationsfragen folgen einem Sales-Gespräch statt einer Engineering-Checkliste. | Fragen kundennah gruppieren; relevante Folgefragen zeigen; Tooltips "warum fragen wir das" erweitern; Sales-Erklärungssnippets ergänzen; "Kunde weiß es nicht"-Pfade mit nächsten Schritten ergänzen. | P1 | L | Deferred (Pivot Juni 2026: SysKon führt nicht das Kundengespräch; Fokus liegt auf dem Output. Reaktivieren nur, wenn sich der Bedarf bestätigt.) |
 | SK-60 | Epic | Preview | Live solution corridor | Die rechte Preview zeigt eine live nutzbare Empfehlung für Kundengespräche. | Wahrscheinlichen Lösungspfad zeigen; Aufstelloptionen mit Trade-offs erklären; Risiko-Flags einfach formulieren; Preiskorridor statt exakt wirkendem Preis; nächster Schritt: interne Prüfung, Daten nötig oder kein Standardfit. | P1 | L | Todo |
 | SK-61 | Epic | Results | Sales-safe result semantics | Ergebnisse wirken nicht wie finales Angebot oder PE-freigegebenes LV. | Ergebnisbereiche bei Bedarf umbenennen; finale Labels durch Vorlösung, Richtindikation und Prüfbedarf ersetzen; Limitierungen sichtbar machen; Annahmen klar zeigen; Detail-LV nur in Admin-/Internmodus zeigen. | P1 | M | Todo |
 | SK-62 | Epic | Internal engine | Internal engine remains available | PE-/LV-/Regellogik bleibt erhalten, aber sekundär zur Sales-Experience. | LV im internen Detailmodus halten; Annahmen-/Regel-Editor unter Admin-Toggle halten; Testfälle unter Admin-Toggle halten; PE-Logik nicht löschen, wenn sie Sales-Empfehlungen stützt. | P1 | M | Todo |
