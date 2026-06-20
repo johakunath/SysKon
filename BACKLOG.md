@@ -42,7 +42,7 @@ Reihenfolge nach dem Sales-Output-First-Pivot (Juni 2026). Abhängigkeiten stehe
 
 | Order | Epic | Work Package | Outcome | Next Child | Hängt ab von | Priority | Effort | Status |
 |---:|---|---|---|---|---|---|---|---|
-| 1 | SK-88 | WP14 Konfiguration declutter | Rechte Vorschau verschlanken, Playbook-UI de-emphasizen, SK-59 deferren | SK-88 | WP13 (erledigt) | P1 | M | Todo |
+| 1 | SK-89 | WP14 Konfiguration declutter | Playbook-UI de-emphasizen, SK-59 deferren (SK-88 erledigt in WP15) | SK-89 | WP13 (erledigt) | P1 | S | Todo |
 | 2 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten (Input für WP12/WP8) | SK-72 | – | P1 | M | Todo |
 | 3 | SK-74 | WP12 Technical System Package Logic | Technisches Systempaketmodell für MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting schärfen | SK-74 | SK-72 | P1 | XL | Todo |
 | 4 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | SK-85 (erledigt), SK-74 | P1 | XL | Todo |
@@ -50,7 +50,7 @@ Reihenfolge nach dem Sales-Output-First-Pivot (Juni 2026). Abhängigkeiten stehe
 
 ## Aktueller Fokus
 
-WP0 bis WP7, WP11, das UX-Prerequisite vor SK-70 sowie der Sales-Output-First-Block (SK-83 CI-Gate und WP13/SK-84 Kunden-/Internsicht-Modus) sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP14/SK-88 (Konfiguration declutter). WP10/SK-72 bleibt vor WP12/WP8 gezogen, weil seine Learnings Input für das technische und das Pricing-Modell sind; WP8 setzt zusätzlich auf dem in WP13 gebauten Sichtmodus auf.
+WP0 bis WP7, WP11, das UX-Prerequisite vor SK-70, der Sales-Output-First-Block (SK-83 CI-Gate und WP13/SK-84 Kunden-/Internsicht-Modus), WP15 (Layout & Element QA: geteilte UI-Bausteine, zentrale Texte, Design-Tokens, SK-88 rechte Vorschau verschlankt) sowie WP16 (Navigation & Naming: Flow „Angebot erstellen → Angebot", ein Admin-Bereich, Richtpreis-Reframe ohne Binding-Offer-Disclaimer) sind umgesetzt und im Archiv. Mit WP16 ist das frühere „kein verbindliches Angebot"-Non-Goal aus SK-58 vom PO aufgehoben; SysKon ist jetzt als Richtpreis-Angebotstool (Demo) gerahmt. Nächster Queue-Punkt ist WP14/SK-89 (Playbook de-emphasizen, SK-59 deferren). WP10/SK-72 bleibt vor WP12/WP8 gezogen, weil seine Learnings Input für das technische und das Pricing-Modell sind; WP8 setzt zusätzlich auf dem in WP13 gebauten Sichtmodus auf.
 
 ## Child-Tickets
 

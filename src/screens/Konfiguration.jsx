@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { applyAdminConfig, makeDefaultAdminConfig } from '../data/adminConfig.js'
 import { PRESETS } from '../data/presets.js'
-import { pruefeBedingung, STATUS_LABEL } from '../logic/engine.js'
-import { num, VARIANTEN_NAME } from './format.js'
+import { pruefeBedingung } from '../logic/engine.js'
+import { num, VARIANTEN_NAME, korridorTitel, kundenPreviewText } from './format.js'
+import Ampel from '../components/Ampel.jsx'
+import ScopeListe from '../components/ScopeListe.jsx'
 
 const TECHNOLOGIEPFAD_PREVIEW = {
   hybrid: 'Hybrid',
@@ -49,24 +51,6 @@ function kuerzen(text, max) {
 function formatMenge(menge, einheit) {
   const wert = typeof menge === 'number' ? num(menge) : menge
   return [wert, einheit].filter(Boolean).join(' ')
-}
-
-function kundenPreviewText(text) {
-  return String(text ?? '')
-    .replace(/€\/WE/g, 'pro WE')
-    .replace(/€\/m²/g, 'pro m²')
-    .replace(/€\/m2/g, 'pro m²')
-    .replace(/€/g, '')
-    .replace(/Interne Förderprüfung klären/g, 'Interne Prüfung klären')
-    .replace(/Förderprüfung/g, 'interne Prüfung')
-    .replace(/Förderlogik/g, 'interne Prüflogik')
-    .replace(/Förderberatung/g, 'Beratung zu externen Programmen')
-    .replace(/Förderannahme/g, 'interne Annahme')
-    .replace(/förderfähig/g, 'intern prüfpflichtig')
-    .replace(/Förderung/g, 'interne Prüfung')
-    .replace(/CAPEX/g, 'interne Kalkulation')
-    .replace(/OPEX/g, 'Betrieb')
-    .replace(/Netto|Brutto|Marge/g, '')
 }
 
 function Frage({ frage, wert, onChange, gesperrt }) {
@@ -144,8 +128,8 @@ function Frage({ frage, wert, onChange, gesperrt }) {
 function UmfangsVorschau({ scope }) {
   const positionen = scope.gruppen.flatMap(gruppe => gruppe.positionen.map(pos => ({ ...pos, gruppe: gruppe.name })))
   return (
-    <div className="preview-block umfang-vorschau">
-      <h4>Umfangs-Vorschau</h4>
+    <div className="preview-block">
+      <h4>Leistungen</h4>
       <ul className="preview-positionen">
         {positionen.slice(0, 10).map(pos => (
           <li key={`${pos.gruppe}-${pos.id}`}>
@@ -162,16 +146,12 @@ function UmfangsVorschau({ scope }) {
   )
 }
 
-function KundenHinweise({ titel, eintraege }) {
+function PreviewScope({ titel, eintraege, max }) {
   if (!eintraege.length) return null
   return (
     <div className="preview-block">
       <h4>{titel}</h4>
-      <ul className="preview-scope">
-        {eintraege.slice(0, 3).map((item, i) => (
-          <li key={i}>{kundenPreviewText(typeof item === 'string' ? item : `${item.titel}: ${item.text}`)}</li>
-        ))}
-      </ul>
+      <ScopeListe eintraege={eintraege} preview max={max} listenklasse="preview-scope" strongTitel={false} />
     </div>
   )
 }
@@ -307,12 +287,12 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
       <aside className="spalte-rechts">
         <div className="karte live kunden-preview">
           <h3>Umfangs-Vorschau</h3>
-          <p className="hinweis">Kundensicht ohne Preise. Interne Kalkulation bleibt in der Analyse getrennt.</p>
+          <p className="hinweis">Kundensicht ohne Preise. Interne Kalkulation bleibt im Angebot (Internsicht) getrennt.</p>
 
           <div className="status-zeile kompakt">
-            <span className={`ampel gross ${ergebnis.status ?? 'unbekannt'}`} />
+            <Ampel status={ergebnis.status} groesse="gross" />
             <div>
-              <strong>{ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]}</strong>
+              <strong>{korridorTitel(ergebnis)}</strong>
               <div className="hinweis">{kundenPreviewText(ergebnis.statusKorridor?.aktion)}</div>
             </div>
           </div>
@@ -328,9 +308,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               <div><span>Pfad</span><strong>{technologiepfadPreview}</strong></div>
               {technologiepfadHinweis ? <div><span>Einordnung</span><strong>{technologiepfadHinweis}</strong></div> : null}
               <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
-              <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div>
               <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '-'}</strong></div>
-              <div><span>Empfohlen</span><strong>{d.aufstellung_empfohlen_label ?? '-'}</strong></div>
             </div>
             {d.aufstellung_abweichung ? (
               <p className="hinweis">Gewählte Variante weicht von der tragfähigen Empfehlung ab.</p>
@@ -338,10 +316,10 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           </div>
 
           <UmfangsVorschau scope={scope} />
-          <KundenHinweise titel="Annahmen" eintraege={scope.annahmen} />
-          <KundenHinweise titel="Offene Punkte" eintraege={wichtigsteOffenePunkte} />
+          <PreviewScope titel="Annahmen" eintraege={scope.annahmen} max={3} />
+          <PreviewScope titel="Offene Punkte" eintraege={wichtigsteOffenePunkte} max={3} />
 
-          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zur Analyse →</button>
+          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zum Angebot →</button>
         </div>
       </aside>
     </div>

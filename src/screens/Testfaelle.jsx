@@ -73,10 +73,7 @@ export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, 
     : 0
 
   return (
-    <div className="seite">
-      <div className="admin-banner no-print">
-        ⚙ Admin-Bereich · Testfälle werden lokal im Browser gespeichert. Nur für Demo-Validierung.
-      </div>
+    <>
       <div className="karte">
         <h2>Test- & Validierungsumgebung</h2>
         <p className="hinweis">
@@ -105,7 +102,7 @@ export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, 
 
       {faelle.length === 0 ? (
         <div className="karte"><p className="hinweis">
-          Noch keine Testfälle gespeichert. Auf Screen 1 ein Preset laden, ggf. anpassen, dann hier speichern.
+          Noch keine Testfälle gespeichert. Auf der Seite „Angebot erstellen" ein Preset laden, ggf. anpassen, dann hier speichern.
         </p></div>
       ) : faelle.map(f => {
         const akt = lauf?.ergebnisse[f.id]
@@ -139,6 +136,6 @@ export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, 
           </div>
         )
       })}
-    </div>
+    </>
   )
 }

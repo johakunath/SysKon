@@ -14,9 +14,10 @@ Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht da
 
 Ziel: Die Konfigurationsseite wird verschlankt und auf den Output ausgerichtet. Hängt an WP13, weil die rechte Vorschau das konsolidierte Output-Modell und den Sichtmodus wiederverwendet. Gleichzeitig wird die Konsequenz des Pivots gezogen: die Gesprächsführungs-Bausteine (SK-67 Playbook, SK-59 Guided Conversation) werden de-emphasized statt ausgebaut.
 
+Hinweis: SK-88 (rechte Vorschau verschlanken) wurde im Zuge von WP15 (Layout & Element QA) erledigt und ist dort archiviert. WP14 fokussiert jetzt auf SK-89.
+
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-88 | Story | Preview | Rechte Vorschau verschlanken | Rechte Vorschau in `src/screens/Konfiguration.jsx` an den konsolidierten Kundenoutput angleichen, Text kürzen, redundante Live-Snippets entfernen. | Vorschau spiegelt den konsolidierten Output; deutlich weniger Text; keine doppelten KPIs/Snippets. | P1 | M | Todo |
 | SK-89 | UX | Conversation | Playbook de-emphasizen, SK-59 deferren | SK-67 Playbook-UI pro Frage zurücknehmen (Daten behalten, Prominenz reduzieren); SK-59 (Guided Conversation Flow) auf `Deferred` setzen mit kurzer Pivot-Begründung. | Playbook-Hinweise sind dezent statt dominant; SK-59 ist in den Roadmap-Epics als `Deferred` markiert; SK-67-Daten bleiben im Code. | P1 | S | Todo |
 
 ## WP12 Technical System Package Logic

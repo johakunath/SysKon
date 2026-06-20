@@ -93,7 +93,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
   })
 
-  it('Analyse-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte mit einem Disclaimer', () => {
+  it('Angebot-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte ohne Binding-Offer-Disclaimer', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -111,8 +111,9 @@ describe('Screens rendern mit jedem Preset', () => {
     // Internsicht zeigt CAPEX-Detail
     expect(html).toContain('CAPEX-Kennzahlen')
     expect(html).toMatch(/CAPEX|Netto/)
-    // SK-87: Disclaimer erscheint genau einmal (dedupliziert)
-    expect(html.match(/Nicht als Zusage lesen/g)?.length ?? 0).toBe(1)
+    // WP16: Richtpreis-Reframe – kein „kein Angebot/keine Zusage"-Disclaimer mehr
+    expect(html).not.toContain('Nicht als Zusage lesen')
+    expect(html).not.toMatch(/kein Angebot|Angebotscharakter|kein Kundenangebot/)
   })
 
   it('Admin-Konfiguration rendert Tabs, Import/Export und read-only Regeln', () => {
@@ -141,6 +142,8 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Katalog')
     expect(html).toContain('Governance')
     expect(html).toContain('Import/Export')
+    // WP16: Admin ist ein Bereich – Testfälle als eigener Tab eingegliedert
+    expect(html).toContain('Testfälle')
     expect(html).toContain('Demo-Defaults')
     expect(html).not.toContain('contenteditable')
   })

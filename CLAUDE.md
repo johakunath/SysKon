@@ -30,8 +30,8 @@ Read order: `BACKLOG.md` → this file → only referenced source files. Product
 ## Hard rules
 
 - German UI text.
-- Demo assumptions only; no customer-ready/legal claims.
-- Product framing: Sales Tool first, PE engine underneath; customer conversation support, not self-service or binding offer.
+- Demo assumptions only; values are Richtpreise/Demo-Annahmen (no legal/funding/sound guarantees).
+- Product framing: Sales Tool first, PE engine underneath; a Richtpreis-Angebot (Demo) that supports the customer conversation and internal concept alignment, not a self-service order path. (Updated Jun 2026, WP16: the earlier "no binding offer" non-goal was retired by the PO.)
 - `src/logic/` and `src/data/` stay React-free.
 - No new dependency without explicit backlog item.
 - Status order: `gruen < gelb < orange < rot`; engine keeps worst status.
