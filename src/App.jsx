@@ -6,15 +6,13 @@ import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
 import Annahmen from './screens/Annahmen.jsx'
-import Testfaelle from './screens/Testfaelle.jsx'
 
 const MAIN_SCREENS = [
-  ['konfiguration', 'Konfiguration'],
-  ['ergebnis', 'Analyse'],
+  ['konfiguration', 'Angebot erstellen'],
+  ['ergebnis', 'Angebot'],
 ]
 const ADMIN_SCREENS = [
-  ['annahmen', 'Annahmen & Regeln'],
-  ['testfaelle', 'Testfälle'],
+  ['annahmen', 'Admin'],
 ]
 
 export default function App() {
@@ -114,7 +112,6 @@ export default function App() {
       {screen === 'konfiguration' && <Konfiguration {...props} />}
       {screen === 'ergebnis' && <Ergebnis {...props} />}
       {screen === 'annahmen' && <Annahmen {...props} />}
-      {screen === 'testfaelle' && <Testfaelle {...props} />}
 
       <footer className="fussnote no-print">{DEMO_FOOTER}</footer>
     </div>

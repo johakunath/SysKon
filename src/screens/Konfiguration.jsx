@@ -287,7 +287,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
       <aside className="spalte-rechts">
         <div className="karte live kunden-preview">
           <h3>Umfangs-Vorschau</h3>
-          <p className="hinweis">Kundensicht ohne Preise. Interne Kalkulation bleibt in der Analyse getrennt.</p>
+          <p className="hinweis">Kundensicht ohne Preise. Interne Kalkulation bleibt im Angebot (Internsicht) getrennt.</p>
 
           <div className="status-zeile kompakt">
             <Ampel status={ergebnis.status} groesse="gross" />
@@ -319,7 +319,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           <PreviewScope titel="Annahmen" eintraege={scope.annahmen} max={3} />
           <PreviewScope titel="Offene Punkte" eintraege={wichtigsteOffenePunkte} max={3} />
 
-          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zur Analyse →</button>
+          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zum Angebot →</button>
         </div>
       </aside>
     </div>

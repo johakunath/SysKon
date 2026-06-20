@@ -90,7 +90,7 @@ Lücken, die kein Feature-Ticket besitzt, aber die Produktqualität und -sicherh
 ## Dauerhafte Schutzplanken
 
 - Nur Demo-Annahmen, keine produktiven Kalkulationswerte.
-- Kein verbindliches Kundenangebot.
+- Richtpreis-Angebot (Demo) zur internen Konzeptabstimmung – Werte sind Richtwerte, kein freigegebenes Festpreisangebot. (WP16, Juni 2026: das frühere „kein verbindliches Kundenangebot"-Non-Goal wurde vom PO aufgehoben.)
 - Keine Rechts-, Förder- oder Schallgarantie.
 - Keine echten Kundendaten.
 - Keine Kundenselbstbedienung ohne Sales-/interne Prüfung.

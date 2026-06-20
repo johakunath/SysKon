@@ -43,7 +43,7 @@ export const STATUS_KORRIDOR = {
   },
   rot: {
     titel: 'Kein Standardfit im MVP',
-    bedeutung: 'Der aktuelle MVP-Standardpfad passt nicht; das ist kein Angebots- oder Umsetzungsurteil.',
+    bedeutung: 'Der aktuelle MVP-Standardpfad passt nicht; das ist noch kein Umsetzungsurteil.',
     aktion: 'Sonderfall markieren, Alternativpfad prüfen oder den Fall zurückstellen.',
   },
   unbekannt: {
@@ -202,7 +202,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
     .filter(gruppe => gruppe.positionen.length > 0)
 
   const annahmenTexte = [
-    'Vorläufiger Kundenumfang für das Sales-Gespräch; kein Angebot und keine Ausführungsplanung.',
+    'Vorläufiger Kundenumfang mit Richtpreisen für das Sales-Gespräch.',
     `Technologiepfad: ${eingaben.technologiepfad === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen MVP-Standards'}.`,
     derived.aufstellung_begruendung,
     `Datenlage: ${annahmen.dq_schwelle}%-Schwelle intern, aktuell ${derived.heizlast_geschaetzt ? 'mit Heizlast-Annahme' : 'mit angegebener Heizlast'}.`,

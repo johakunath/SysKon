@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { LV_GRUPPEN } from '../data/katalog.js'
-import { ANALYSE_LIMITS } from '../data/texte.js'
 import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
 import Ampel from '../components/Ampel.jsx'
 import ScopeListe from '../components/ScopeListe.jsx'
@@ -47,7 +46,7 @@ function KundenScope({ scope }) {
       <div className="karte analyse-hauptkarte">
         <h3>Kundenumfang</h3>
         <p className="hinweis">
-          Verständliche Komponenten- und Leistungsübersicht für das Kundengespräch. Ohne Preise, ohne interne Kalkulation und ohne verbindlichen Angebotscharakter.
+          Verständliche Komponenten- und Leistungsübersicht für das Kundengespräch. Ohne Preise und ohne interne Kalkulation.
         </p>
         <div className="kunden-gruppen">
           {scope.gruppen.map(gruppe => (
@@ -247,7 +246,7 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
               </table>
             </div>
             <div className="lv-aktionen no-print">
-              <p className="hinweis">Positionen aufklappen für Begründung. Sales-interner Richtumfang ohne Marge und ohne Kundenangebots-Charakter.</p>
+              <p className="hinweis">Positionen aufklappen für Begründung. Sales-interner Richtumfang (Richtpreise, Demo).</p>
               <button onClick={() => exportLvCsv(lv, annahmen)}>CSV herunterladen</button>
             </div>
           </div>
@@ -359,15 +358,6 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
             ) : <p className="warnbox">Keine tragfähige Aufstellvariante im aktuellen Demo-Korridor.</p>}
           </div>
 
-        </div>
-      )}
-
-      {!istKunde && (
-        <div className="karte no-print">
-          <h3>Nicht als Zusage lesen</h3>
-          <ul className="checkliste">
-            {ANALYSE_LIMITS.map(limit => <li key={limit}>{limit}</li>)}
-          </ul>
         </div>
       )}
     </div>

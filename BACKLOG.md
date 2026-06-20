@@ -50,7 +50,7 @@ Reihenfolge nach dem Sales-Output-First-Pivot (Juni 2026). Abhängigkeiten stehe
 
 ## Aktueller Fokus
 
-WP0 bis WP7, WP11, das UX-Prerequisite vor SK-70, der Sales-Output-First-Block (SK-83 CI-Gate und WP13/SK-84 Kunden-/Internsicht-Modus) sowie WP15 (Layout & Element QA: geteilte UI-Bausteine, zentrale Disclaimer-Texte, Design-Tokens, SK-88 rechte Vorschau verschlankt) sind umgesetzt und im Archiv. Nächster Queue-Punkt ist WP14/SK-89 (Playbook de-emphasizen, SK-59 deferren). WP10/SK-72 bleibt vor WP12/WP8 gezogen, weil seine Learnings Input für das technische und das Pricing-Modell sind; WP8 setzt zusätzlich auf dem in WP13 gebauten Sichtmodus auf.
+WP0 bis WP7, WP11, das UX-Prerequisite vor SK-70, der Sales-Output-First-Block (SK-83 CI-Gate und WP13/SK-84 Kunden-/Internsicht-Modus), WP15 (Layout & Element QA: geteilte UI-Bausteine, zentrale Texte, Design-Tokens, SK-88 rechte Vorschau verschlankt) sowie WP16 (Navigation & Naming: Flow „Angebot erstellen → Angebot", ein Admin-Bereich, Richtpreis-Reframe ohne Binding-Offer-Disclaimer) sind umgesetzt und im Archiv. Mit WP16 ist das frühere „kein verbindliches Angebot"-Non-Goal aus SK-58 vom PO aufgehoben; SysKon ist jetzt als Richtpreis-Angebotstool (Demo) gerahmt. Nächster Queue-Punkt ist WP14/SK-89 (Playbook de-emphasizen, SK-59 deferren). WP10/SK-72 bleibt vor WP12/WP8 gezogen, weil seine Learnings Input für das technische und das Pricing-Modell sind; WP8 setzt zusätzlich auf dem in WP13 gebauten Sichtmodus auf.
 
 ## Child-Tickets
 

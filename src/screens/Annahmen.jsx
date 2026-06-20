@@ -3,12 +3,14 @@ import { ANNAHMEN_META } from '../data/annahmen.js'
 import { ADMIN_STORAGE_KEY, makeDefaultAdminConfig, validateAdminConfig } from '../data/adminConfig.js'
 import { REGELN } from '../data/regeln.js'
 import { bedingungText, wirkungText } from './format.js'
+import Testfaelle from './Testfaelle.jsx'
 
 const TABS = [
   ['annahmen', 'Annahmen'],
   ['fragen', 'Fragen'],
   ['katalog', 'Katalog'],
   ['governance', 'Governance'],
+  ['testfaelle', 'Testfälle'],
   ['import', 'Import/Export'],
 ]
 
@@ -319,6 +321,10 @@ export default function Annahmen({
   ergebnis,
   sektionen = [],
   katalog = [],
+  eingaben = {},
+  setEingaben = () => {},
+  annahmen = {},
+  setScreen = () => {},
 }) {
   const [tab, setTab] = useState('annahmen')
   const updated = adminConfig.updatedAt ? new Date(adminConfig.updatedAt).toLocaleString('de-DE') : 'noch nicht lokal geändert'
@@ -326,7 +332,7 @@ export default function Annahmen({
   return (
     <div className="seite">
       <div className="admin-banner no-print">
-        ⚙ Admin-Bereich · lokale Demo-Konfiguration · Änderungen wirken sofort auf Konfiguration, Analyse und Kundenumfang.
+        ⚙ Admin-Bereich · lokale Demo-Konfiguration · Änderungen wirken sofort auf Eingaben, Angebot und Kundenumfang.
       </div>
       <div className="karte">
         <div className="druckkopf">
@@ -347,6 +353,17 @@ export default function Annahmen({
       {tab === 'fragen' && <FragenTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} sektionen={sektionen} />}
       {tab === 'katalog' && <KatalogTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} katalog={katalog} />}
       {tab === 'governance' && <GovernanceTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} ergebnis={ergebnis} />}
+      {tab === 'testfaelle' && (
+        <Testfaelle
+          eingaben={eingaben}
+          setEingaben={setEingaben}
+          annahmen={annahmen}
+          ergebnis={ergebnis}
+          setScreen={setScreen}
+          katalog={katalog}
+          sektionen={sektionen}
+        />
+      )}
       {tab === 'import' && <ImportExportTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} resetAdminConfig={resetAdminConfig} />}
     </div>
   )
