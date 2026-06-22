@@ -277,12 +277,6 @@ input.input-error:focus { border-color: var(--st-rot); box-shadow: 0 0 0 3px rgb
 .antwort-text { display: grid; gap: 2px; min-width: 0; }
 .antwort-label { font-weight: 600; line-height: var(--lh-eng); }
 .antwort-hinweis { color: var(--muted); font-size: var(--fs-xs); line-height: 1.4; }
-.playbook {
-  display: grid; gap: 3px; max-width: 720px; margin-top: 3px;
-  padding: 7px 9px; border-left: 3px solid var(--akzent);
-  background: var(--hover-flaeche); color: var(--muted); font-size: var(--fs-xs); line-height: 1.35;
-}
-.playbook strong { color: var(--text); font-weight: 600; }
 .gespraechshinweis {
   padding: 2px 0 2px 9px;
   border-left: 2px solid var(--rand-stark);
