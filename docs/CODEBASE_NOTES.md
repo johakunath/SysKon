@@ -16,6 +16,7 @@ Token-sparsame Orientierung für Agenten. Für Details nur die verlinkten Dateie
 | Konfiguration | `src/screens/Konfiguration.jsx`, `src/data/fragen.js` | Fragen, Tooltips, Live-Preview, Eingabe-UX |
 | Ergebnis / LV / Kosten | `src/screens/Ergebnis.jsx`, `src/data/katalog.js` | Analyse, Leistungspositionen, Kostenanzeige, CSV |
 | Regeln und Status | `src/logic/engine.js`, `src/data/regeln.js` | Status, Warnungen, Excludes/Requires, DQ |
+| Technisches Paketmodell | `docs/SYSTEMPAKET_MODELL.md` | WP12-Domäne, Blocker/Korridore, Per-Child-Mapping |
 | Rechenlogik | `src/logic/calc.js`, `src/data/annahmen.js` | Heizlast, Schall, Energie, Demo-Parameter |
 | Tests | `tests/*.js`, `tests/*.jsx` | Statusregeln, Presets, Render-Smoke |
 

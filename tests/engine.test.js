@@ -324,3 +324,47 @@ describe('KundenScope', () => {
     }))
   })
 })
+
+describe('WP12: Mehr-Gebäude-Blocker (R19)', () => {
+  const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+
+  it('mehr als ein Gebäude ist rot mit Sales-sicherem Hinweis (R19)', () => {
+    const erg = berechne({ ...referenz, anzahl_gebaeude: 2 })
+    expect(erg.status).toBe('rot')
+    expect(erg.statusQuellen.some(q => q.regelId === 'R19' && q.wert === 'rot')).toBe(true)
+    expect(erg.warnungen.map(w => w.regelId)).toContain('R19')
+  })
+
+  it('ein Gebäude oder leeres Feld feuert R19 nicht', () => {
+    expect(berechne({ ...referenz, anzahl_gebaeude: 1 }).gefeuert).not.toContain('R19')
+    expect(berechne(referenz).gefeuert).not.toContain('R19')
+  })
+})
+
+describe('WP12: Vorlauftemperatur-Korridor (R09/R20/R21)', () => {
+  const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+
+  it('56–65 °C: Hinweis ohne Statusverschlechterung (R09)', () => {
+    const basis = berechne({ ...referenz, vorlauftemp_klasse: '51-55' })
+    const erg = berechne({ ...referenz, vorlauftemp_klasse: '61-65' })
+    expect(erg.status).toBe(basis.status)
+    const r09 = erg.warnungen.find(w => w.regelId === 'R09')
+    expect(r09).toBeTruthy()
+    expect(r09.status).toBeNull()
+    expect(erg.statusQuellen.some(q => q.regelId === 'R09')).toBe(false)
+  })
+
+  it('66–70 °C: gelb mit interner Klärung statt Fachprüfung (R20)', () => {
+    const erg = berechne({ ...referenz, vorlauftemp_klasse: '66-70' })
+    expect(erg.gefeuert).toContain('R20')
+    expect(erg.statusQuellen.some(q => q.regelId === 'R20' && q.wert === 'gelb')).toBe(true)
+    expect(STATUS_ORDER.indexOf(erg.status)).toBeGreaterThanOrEqual(STATUS_ORDER.indexOf('gelb'))
+  })
+
+  it('über 70 °C: orange Fachprüfung (R21)', () => {
+    const erg = berechne({ ...referenz, vorlauftemp_klasse: '>70' })
+    expect(erg.gefeuert).toContain('R21')
+    expect(erg.statusQuellen.some(q => q.regelId === 'R21' && q.wert === 'orange')).toBe(true)
+    expect(STATUS_ORDER.indexOf(erg.status)).toBeGreaterThanOrEqual(STATUS_ORDER.indexOf('orange'))
+  })
+})
