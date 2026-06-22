@@ -10,16 +10,6 @@ Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden S
 
 Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht dauerhaft in diesem aktiven Detaildokument. Nach Abschluss werden sie nach `docs/BACKLOG_ARCHIVE.md` verschoben oder dort zusammengefasst.
 
-## WP14 Konfiguration declutter
-
-Ziel: Die Konfigurationsseite wird verschlankt und auf den Output ausgerichtet. Hängt an WP13, weil die rechte Vorschau das konsolidierte Output-Modell und den Sichtmodus wiederverwendet. Gleichzeitig wird die Konsequenz des Pivots gezogen: die Gesprächsführungs-Bausteine (SK-67 Playbook, SK-59 Guided Conversation) werden de-emphasized statt ausgebaut.
-
-Hinweis: SK-88 (rechte Vorschau verschlanken) wurde im Zuge von WP15 (Layout & Element QA) erledigt und ist dort archiviert. WP14 fokussiert jetzt auf SK-89.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-89 | UX | Conversation | Playbook de-emphasizen, SK-59 deferren | SK-67 Playbook-UI pro Frage zurücknehmen (Daten behalten, Prominenz reduzieren); SK-59 (Guided Conversation Flow) auf `Deferred` setzen mit kurzer Pivot-Begründung. | Playbook-Hinweise sind dezent statt dominant; SK-59 ist in den Roadmap-Epics als `Deferred` markiert; SK-67-Daten bleiben im Code. | P1 | S | Todo |
-
 ## WP12 Technical System Package Logic
 
 Ziel: SysKon hat ein schärferes technisches Paketmodell für das MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting-Produkt. WP12 ist eine technische Grundlage vor WP8/SK-70: Erst Paketgrenzen, Blocker, Komponenten, Datenherkunft und interne vs. kundensichtbare Aussagen klären, dann Preise, GP/AP und Vertragsparameter darauf aufbauen. WP7 bleibt archiviert; kundenfähige Scope-Ausgabe wird später gegen dieses Modell nachgeschärft. Sequenz nach Pivot: WP13 (saubere Flächen + Sichtmodus) und WP10 (Tool-Learnings als Input) laufen vor WP12.
