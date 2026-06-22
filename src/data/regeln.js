@@ -79,9 +79,12 @@ export const REGELN = [
   },
   {
     id: 'R09',
-    wenn: { feld: 'vorlauftemp_klasse', op: 'in', wert: ['56-60', '61-65'] },
+    wenn: { und: [
+      { feld: 'vorlauftemp_klasse', op: 'in', wert: ['56-60', '61-65'] },
+      { feld: 'technologiepfad', op: '=', wert: 'hybrid' },
+    ]},
     dann: { typ: 'warn', kategorie: 'hinweis', text: 'Vorlauftemperatur 56–65 °C: WP-Effizienz sinkt im oberen Hybridkorridor; der Bestandskessel deckt die kältesten Spitzen. Als Annahme im Gespräch markieren.' },
-    begruendung: 'Oberer Hybridkorridor (56–65 °C) bleibt standardfähig, darf aber nicht stillschweigend angenommen werden – Hinweis ohne Statusverschlechterung.',
+    begruendung: 'Oberer Hybridkorridor (56–65 °C) bleibt standardfähig, darf aber nicht stillschweigend angenommen werden – Hinweis ohne Statusverschlechterung. Greift nur im Hybridpfad, da der Hinweis den Bestandskessel voraussetzt (R17 blockt Nicht-Hybrid ohnehin als rot).',
   },
   {
     id: 'R10',
