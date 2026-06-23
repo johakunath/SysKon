@@ -15,15 +15,15 @@ export const KATALOG = [
   {
     id: 'wp', pakettyp: 'Wärmepumpe', gruppe: 'Wärmepumpenpaket',
     positionen: [
-      { id: 'wp_modul', text: 'Luft-Wasser-WP-Modul 20 kW (herstellerneutral)',
+      { id: 'wp_modul', text: 'Luft-Wasser-WP-Modul 20 kW (Demo-Referenz: Buderus/Dreammaker)',
         menge: '@wp_module', einheit: 'Stk',
         kosten: { typ: 'je_modul', annahme: 'k_wp_je_kw' }, foerder: 'f_wp', tag: 'capex',
         begruendung: 'Kaskadenauslegung: WP-Leistung ≈ Leistungsanteil × Heizlast, gerundet auf 20-kW-Module (1–6).',
         kunde: {
           titel: 'Luft-Wasser-Wärmepumpen-Kaskade',
-          hersteller: 'herstellerneutral',
-          produkt: 'WP-Modul, Produkt wird später festgelegt',
-          leistungsumfang: 'Außengeräte als modularer Wärmepumpen-Verbund für den ermittelten Lösungskorridor.',
+          hersteller: 'Buderus / Dreammaker (Demo-Referenz)',
+          produkt: 'Logatherm WLW / Luft-Wasser-WP-Modul – finales Produkt im Angebot',
+          leistungsumfang: 'Außengeräte als modularer Wärmepumpen-Verbund (1–6 Module à 20 kW, max. 120 kW thermisch). Kältemittel R290, JAZ laut Betriebsannahme. Alternativhersteller nach technischer Prüfung möglich.',
         } },
     ],
   },
@@ -274,6 +274,7 @@ export const KATALOG = [
           { id: 'om_basis', text: 'Wartung & Instandhaltung (O&M)',
             menge: 1, einheit: '€/a',
             kosten: { typ: 'prozent_lv', annahme: 'om_prozent_pa' }, foerder: 'f_monitoring', tag: 'opex',
+            bereich: 'wartung_instandsetzung',
             begruendung: 'O&M als % der Brutto-LV-Kosten p.a. (Demo: Service Basis).',
             kunde: {
               titel: 'Service Basis',
@@ -287,6 +288,7 @@ export const KATALOG = [
           { id: 'om_komfort', text: 'Wartung, Instandhaltung & Störungsdienst (O&M Komfort)',
             menge: 1, einheit: '€/a',
             kosten: { typ: 'prozent_lv', annahme: 'om_prozent_komfort' }, foerder: 'f_monitoring', tag: 'opex',
+            bereich: 'wartung_instandsetzung',
             begruendung: 'Erweiterter Service inkl. Störungsdienst (Demo-Zuschlag).',
             kunde: {
               titel: 'Service Komfort',
@@ -303,6 +305,7 @@ export const KATALOG = [
       { id: 'mon_pa', text: 'Monitoring-Betrieb (Datendienst)',
         menge: 1, einheit: '€/a',
         kosten: { typ: 'fix', annahme: 'monitoring_pa' }, foerder: 'f_monitoring', tag: 'opex',
+        bereich: 'betriebsfuehrung',
         begruendung: 'Laufender Monitoring-Dienst (verpflichtend).',
         kunde: {
           titel: 'Monitoring-Betrieb',

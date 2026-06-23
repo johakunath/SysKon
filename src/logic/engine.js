@@ -355,6 +355,7 @@ export function berechne(eingaben, opts = {}) {
         variante: varianteName, text: pos.text, menge, einheit: pos.einheit,
         einzel, betrag: einzel * menge,
         foerderanteil: annahmen[pos.foerder] ?? 0, tag: pos.tag,
+        bereich: pos.bereich ?? null,
         begruendung: pos.begruendung, pruefpflichtig: !!pos.pruefpflichtig,
         kunde: pos.kunde, variante: varianteName,
         erzwungen: paket.bedingung?.feld?.startsWith?.('require_') ? 'R03' : null,
@@ -377,6 +378,19 @@ export function berechne(eingaben, opts = {}) {
     else p.betrag = p.einzel * p.menge
   }
   const opexSumme = opexPositionen.reduce((s, p) => s + p.betrag, 0)
+
+  // SK-81: Domänen-Summen für getrennte Berechnungsbereiche.
+  const summeBereich = (bereich) => opexPositionen
+    .filter(p => p.bereich === bereich).reduce((s, p) => s + p.betrag, 0)
+  const bereichsSummen = {
+    invest: netto,
+    cop_jaz: derived.energie
+      ? { strom_mwh: derived.energie.strom_mwh, gas_mwh: derived.energie.gas_mwh,
+          kosten_strom_pa: derived.energie.kosten_strom, kosten_gas_pa: derived.energie.kosten_gas }
+      : null,
+    betriebsfuehrung_pa: summeBereich('betriebsfuehrung'),
+    wartung_instandsetzung_pa: summeBereich('wartung_instandsetzung'),
+  }
 
   // 4. Kennzahlen, Energie, Sales-/Prüfdaten
   const we = zahl(eingaben.wohneinheiten)
@@ -426,6 +440,7 @@ export function berechne(eingaben, opts = {}) {
     excluded: Object.fromEntries(Object.entries(excluded).map(([k, v]) => [k, [...v]])),
     lv: { positionen: lvPositionen, zwischensumme, contingency, brutto, foerderfaehig, foerderung, netto },
     opex: { positionen: opexPositionen, summe_pa: opexSumme },
+    bereichsSummen,
     energie, kennzahlen, peScore, gruenKriterien, standardKriterien: gruenKriterien, fehlendeDaten,
     pricing: pricing.intern,
   }

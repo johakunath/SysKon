@@ -89,6 +89,28 @@ export const ANNAHMEN = {
   pg_basisjahr: 2026,
 }
 
+// SK-77: WP-Produktstamm Demo-Referenz (nicht editierbar).
+// Buderus/Dreammaker ist der aktuelle Referenzstand; Alternativhersteller sind nach
+// technischer Prüfung möglich. Felder dokumentieren die Zielstruktur für später
+// ergänzte Produktstammdaten.
+export const WP_PRODUKT_REFERENZ = {
+  hersteller: 'Buderus / Dreammaker',
+  produktfamilie: 'Logatherm WLW / Luft-Wasser-WP-Kaskade',
+  modell_hinweis: 'Demo-Referenzstand; finales Produkt wird im Angebot festgelegt',
+  kuehlmittel: 'R290',
+  leistungsklasse_je_modul_kw: 20,
+  kaskade_min: 1,
+  kaskade_max: 6,
+  cop_referenz_a2w35: 3.5,
+  jaz_quelle: 'ANNAHMEN.jaz',
+  vorlauf_max_standard_c: 65,
+  vorlauf_max_technisch_c: 70,
+  aussentemp_min_c: -20,
+  sizing_methode: 'Leistungsanteil × Heizlast-Proxy ÷ Modulleistung (Demo-Heuristik)',
+  sizing_korridor: '1–6 Module à 20 kW (20–120 kW thermisch)',
+  anmerkung: 'Demo-Referenzstand Buderus/Dreammaker; Alternativhersteller nach technischer Prüfung möglich.',
+}
+
 // Metadaten für die editierbare Annahmen-Seite (Screen 4)
 export const ANNAHMEN_META = [
   { gruppe: 'Energie & Effizienz', felder: [

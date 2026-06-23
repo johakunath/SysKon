@@ -4,6 +4,9 @@
 import { describe, it, expect } from 'vitest'
 import { berechne, dqScore, pruefeBedingung, STATUS_ORDER } from '../src/logic/engine.js'
 import { PRESETS } from '../src/data/presets.js'
+import { WP_PRODUKT_REFERENZ } from '../src/data/annahmen.js'
+import { KATALOG } from '../src/data/katalog.js'
+import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE } from '../src/logic/calc.js'
 
 describe('pruefeBedingung', () => {
   it('!= trifft nicht bei undefiniert, null oder leerem Feld', () => {
@@ -426,5 +429,93 @@ describe('WP12 SK-78: FWS/Speicher-Varianten und Puffer-Sizing', () => {
   it('puffer_empfehlung_liter > 0 in abgeleiteten Feldern', () => {
     const erg = berechne(basis)
     expect(erg.derived.puffer_empfehlung_liter).toBeGreaterThan(0)
+  })
+})
+
+describe('WP12 SK-77: WP-Produktstamm Referenz', () => {
+  it('WP_PRODUKT_REFERENZ hat alle Pflichtfelder', () => {
+    expect(WP_PRODUKT_REFERENZ).toBeDefined()
+    expect(typeof WP_PRODUKT_REFERENZ.hersteller).toBe('string')
+    expect(typeof WP_PRODUKT_REFERENZ.produktfamilie).toBe('string')
+    expect(typeof WP_PRODUKT_REFERENZ.leistungsklasse_je_modul_kw).toBe('number')
+    expect(WP_PRODUKT_REFERENZ.kaskade_min).toBeGreaterThanOrEqual(1)
+    expect(WP_PRODUKT_REFERENZ.kaskade_max).toBeGreaterThanOrEqual(WP_PRODUKT_REFERENZ.kaskade_min)
+    expect(typeof WP_PRODUKT_REFERENZ.cop_referenz_a2w35).toBe('number')
+    expect(typeof WP_PRODUKT_REFERENZ.vorlauf_max_technisch_c).toBe('number')
+    expect(typeof WP_PRODUKT_REFERENZ.aussentemp_min_c).toBe('number')
+    expect(typeof WP_PRODUKT_REFERENZ.sizing_korridor).toBe('string')
+  })
+
+  it('wp_modul Katalog-Position hat Buderus/Dreammaker-Referenz', () => {
+    const wp = KATALOG.find(p => p.id === 'wp')
+    const pos = wp?.positionen.find(p => p.id === 'wp_modul')
+    expect(pos).toBeDefined()
+    expect(pos.kunde.hersteller).toContain('Buderus')
+    expect(pos.kunde.produkt).toContain('Logatherm')
+    expect(pos.kunde.leistungsumfang).toContain('120 kW')
+  })
+
+  it('Leistungsklasse stimmt mit ANNAHMEN.wp_modul_kw überein', async () => {
+    const { ANNAHMEN } = await import('../src/data/annahmen.js')
+    expect(WP_PRODUKT_REFERENZ.leistungsklasse_je_modul_kw).toBe(ANNAHMEN.wp_modul_kw)
+    expect(WP_PRODUKT_REFERENZ.kaskade_max).toBe(ANNAHMEN.wp_module_max)
+  })
+})
+
+describe('WP12 SK-81: Berechnungs- und Output-Grenzen', () => {
+  const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+
+  it('BERECHNUNGS_DOMAENEN hat die vier Domänen', () => {
+    expect(BERECHNUNGS_DOMAENEN).toBeDefined()
+    expect(Object.keys(BERECHNUNGS_DOMAENEN)).toEqual(
+      expect.arrayContaining(['invest', 'cop_jaz', 'betriebsfuehrung', 'wartung_instandsetzung'])
+    )
+    for (const d of Object.values(BERECHNUNGS_DOMAENEN)) {
+      expect(typeof d.beschreibung).toBe('string')
+      expect(typeof d.quellen).toBe('string')
+    }
+  })
+
+  it('SERVICEGRENZE ist definiert und enthält vor_heizkreisverteiler', () => {
+    expect(SERVICEGRENZE).toBeDefined()
+    expect(SERVICEGRENZE.typ).toBe('vor_heizkreisverteiler')
+    expect(Array.isArray(SERVICEGRENZE.optionen)).toBe(true)
+    expect(SERVICEGRENZE.optionen).toContain('vor_heizkreisverteiler')
+  })
+
+  it('opex-Positionen haben bereich-Feld (betriebsfuehrung oder wartung_instandsetzung)', () => {
+    const erlaubte = new Set(['betriebsfuehrung', 'wartung_instandsetzung'])
+    for (const paket of KATALOG) {
+      const positionen = paket.positionen ?? paket.varianten?.flatMap(v => v.positionen) ?? []
+      for (const pos of positionen) {
+        if (pos.tag === 'opex') {
+          expect(erlaubte.has(pos.bereich),
+            `opex-Position "${pos.id}" hat kein gültiges bereich-Feld`).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('bereichsSummen in berechne()-Ergebnis', () => {
+    const erg = berechne(referenz)
+    expect(erg.bereichsSummen).toBeDefined()
+    expect(typeof erg.bereichsSummen.invest).toBe('number')
+    expect(typeof erg.bereichsSummen.betriebsfuehrung_pa).toBe('number')
+    expect(typeof erg.bereichsSummen.wartung_instandsetzung_pa).toBe('number')
+    expect(erg.bereichsSummen.invest).toBeGreaterThan(0)
+  })
+
+  it('bereichsSummen.betriebsfuehrung_pa + wartung_instandsetzung_pa ≈ opex.summe_pa', () => {
+    const erg = berechne(referenz)
+    const s = erg.bereichsSummen
+    expect(s.betriebsfuehrung_pa + s.wartung_instandsetzung_pa).toBeCloseTo(erg.opex.summe_pa, 2)
+  })
+
+  it('kundenScope enthält keine interne Marge/CAPEX/IRR-Felder', () => {
+    const erg = berechne(referenz)
+    const scope = JSON.stringify(erg.kundenScope)
+    expect(scope).not.toContain('marge')
+    expect(scope).not.toContain('irr')
+    expect(scope).not.toContain('brutto_lv')
   })
 })
