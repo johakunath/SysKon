@@ -11,6 +11,7 @@ export const num = (n, stellen = 0) => n == null ? '–'
 export const prozent = (n) => n == null ? '–' : `${Math.round(n * 100)} %`
 
 export const VARIANTEN_NAME = {
+  aussen_offen: 'Außenaufstellung offen',
   fundament: 'Standard-Fundament',
   einhausung: 'Schutz-/Schall-Einhausung',
   kompakt_container: 'Kompakt-Container',
