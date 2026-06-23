@@ -364,6 +364,16 @@ const SEKTIONEN_ROH = [
     { id: 'fernablesung', label: 'Ist Fernablesung erforderlich?', typ: 'select', optionen: JNU, dq: 0,
       tooltip: 'In Monitoring Basic enthalten (Demo).' },
   ]},
+
+  { id: 'K', titel: 'Vertrag & Angebot', fragen: [
+    { id: 'vertragslaufzeit', label: 'Welche Vertragslaufzeit soll angesetzt werden?', typ: 'select', dq: 0,
+      optionen: [
+        { wert: '10', label: '10 Jahre', hinweis: 'Höherer Grundpreis, schnellere Amortisation.' },
+        { wert: '15', label: '15 Jahre (Demo-Standard)', hinweis: 'Ausgewogener Demo-Standard.' },
+        { wert: '20', label: '20 Jahre', hinweis: 'Niedrigerer Grundpreis, längere Bindung.' },
+      ],
+      tooltip: 'Bestimmt die Grundpreis-Annuität (Demo). Leer = 15 Jahre Default.' },
+  ]},
 ]
 
 const PLAYBOOKS = {
@@ -649,6 +659,7 @@ const PLAYBOOKS_KURZ = {
   monitoring_variante: p('Setzt den Betriebsdaten-Umfang.', 'Reportingwünsche über Basic hinaus.', 'Basic ist Standard; Plus bei höherem Bedarf.'),
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
+  vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '15 Jahre ist Demo-Standard; 10 oder 20 Jahre verschieben den Grundpreis.'),
 }
 
 const mitPlaybook = (frage) => ({

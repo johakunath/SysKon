@@ -69,6 +69,20 @@ export const ANNAHMEN = {
   om_prozent_komfort: 2.2,   // % p.a. (Service Komfort inkl. Störungsdienst)
   contingency: 0.10,
   dq_schwelle: 60,           // % – darunter Status-Deckelung auf gelb (R10)
+
+  // Contracting & Pricing (Demo, WP8/SK-70). Roadmap Stufe 3:
+  // Marge NUR auf Arbeitspreis, keine Marge auf CAPEX/Grundpreis.
+  vertragslaufzeit_default: 15, // Jahre (10/15/20 wählbar)
+  kapitalkostensatz: 0.06,      // Zinssatz der Grundpreis-Annuität (keine Marge)
+  ap_marge: 0.15,               // Marge auf den Arbeitspreis
+  ziel_irr: 0.13,               // Ziel-IRR (Demo)
+  ziel_irr_ambition: 0.15,      // Ambitionsszenario
+  // Preisgleitformel-Gewichte (AVBFernwärme-orientiert, Summe = 1)
+  pg_lohn: 0.30,
+  pg_strom: 0.30,
+  pg_gas: 0.25,
+  pg_invest: 0.15,
+  pg_basisjahr: 2026,
 }
 
 // Metadaten für die editierbare Annahmen-Seite (Screen 4)
@@ -137,5 +151,17 @@ export const ANNAHMEN_META = [
     ['contingency', 'Contingency', '0–1'],
     ['dq_schwelle', 'DQ-Schwelle für Status-Deckelung', '%'],
     ['flaeche_min_container', 'Mindest-Außenfläche für Container', 'm²'],
+  ]},
+  { gruppe: 'Contracting & Pricing (Demo)', felder: [
+    ['vertragslaufzeit_default', 'Vertragslaufzeit (Default)', 'Jahre'],
+    ['kapitalkostensatz', 'Kapitalkostensatz Grundpreis-Annuität', '0–1'],
+    ['ap_marge', 'Marge auf Arbeitspreis', '0–1'],
+    ['ziel_irr', 'Ziel-IRR', '0–1'],
+    ['ziel_irr_ambition', 'Ziel-IRR Ambition', '0–1'],
+    ['pg_lohn', 'Preisgleit: Lohnindex-Gewicht', '0–1'],
+    ['pg_strom', 'Preisgleit: Strompreisindex-Gewicht', '0–1'],
+    ['pg_gas', 'Preisgleit: Gaspreisindex-Gewicht', '0–1'],
+    ['pg_invest', 'Preisgleit: Investitions-/Inflationsindex-Gewicht', '0–1'],
+    ['pg_basisjahr', 'Preisgleit: Basisjahr', 'Jahr'],
   ]},
 ]
