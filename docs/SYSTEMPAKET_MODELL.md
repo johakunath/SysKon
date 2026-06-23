@@ -6,8 +6,9 @@ Vertragsparameter darauf aufsetzt. Dieses Dokument beschreibt die Domäne und be
 keine vollständige Implementierungsspezifikation. Code-Quellen sind verlinkt, nicht dupliziert.
 
 Status: Grundlagendokument. Codeseitig umgesetzt: SK-76 (Mehr-Gebäude-Blocker), SK-78
-(Vorlauftemperatur-Korridor), SK-77 (WP-Produktstamm Referenz) und SK-81 (Berechnungs-/
-Output-Grenzen). Übrige Child-Tickets bleiben Konzept/Entscheidung bis zu freigegebenem Scope.
+(Vorlauftemperatur-Korridor), SK-77 (WP-Produktstamm Referenz), SK-81 (Berechnungs-/
+Output-Grenzen) und SK-79 (Aufstellung & Schallschutzkonzept). Übrige Child-Tickets bleiben
+Konzept/Entscheidung bis zu freigegebenem Scope.
 
 ## 1. Produkt-Scope & Stop-line
 
@@ -38,7 +39,7 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 | **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (§5). R04/R16/R17 mit Sales-sicheren Warn-Texten ergänzt (§9). Nicht-Luft/Wasser über R17 abgedeckt. |
 | **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition zeigt Buderus/Dreammaker-Referenz; Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
 | **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
-| **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | Mapping auf Robert's Entwurf; Entscheidung Containeranzahl; „außen ungeschützt" als Low-CAPEX-Variante prüfen; ATEC als Schallberechnungs-Service; Rockwool-Zaun als Scope-Line. Entscheidung offen (§7). |
+| **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | **Umgesetzt** (§13): 5. Variante `aussen_offen` ergänzt; `einhausung` als Rockwool-Referenz; Container-Entscheidung (2 Größen bleiben); ATEC + Rockwool-Zaun als Katalog-Scope-Lines. Schallformel bleibt Demo-Vorprüfung. |
 | **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | Messkonzept als eigener Scope-/Regelblock neben Monitoring; Strombeschaffung als Commercial/Betrieb-Annahme; Verknüpfung mit Preisgleitformel. Noch Konzept. |
 | **SK-81** Berechnungs-/Output-Grenzen | `ableiten()` mischt Sizing/Energie/Placement/Schall; Engine baut LV + interne Kennzahlen | **Umgesetzt** (§12): `BERECHNUNGS_DOMAENEN` + `SERVICEGRENZE` in `calc.js`; `bereich`-Tags auf opex-Katalogpositionen; `bereichsSummen` im Engine-Return. |
 | **SK-82** Elektroanschluss | `elektro_grundpaket`, `zaehlerschrank`, `kabelweg_*` (generisch) | Bleibt generisch bis zur Kevin-W./Patrick-L.-Notiz; danach Inputs/Blocker/Scope/Kundentexte ableiten. Keine erfundenen Anschlussdetails. Noch Konzept. |
@@ -87,11 +88,8 @@ Umgesetzt in `src/data/regeln.js` (R09 umgewidmet, R20/R21 ergänzt), Tooltip + 
 
 ## 7. Offene Produktentscheidungen
 
-- **SK-79 Aufstellung:** Containeranzahl (zwei Größen vs. ein Konzept), „außen ungeschützt" als
-  eigene Low-CAPEX-Variante, ATEC als Schallberechnungs-Service-Line, Rockwool-Zaun als Scope-Line.
-  Noch keine Katalogänderung – erst Produktentscheidung.
-- **SK-77 Produktstamm:** Buderus/Dreammaker als Referenz-Default, ohne Alternativen zu blockieren.
-- **SK-81 Servicegrenze:** ggf. vor Heizkreisverteiler – als strukturierter Parameter vorbereiten.
+- **SK-77 Produktstamm:** Buderus/Dreammaker als Referenz-Default, ohne Alternativen zu blockieren. (Umgesetzt §11)
+- **SK-81 Servicegrenze:** vor Heizkreisverteiler als strukturierter Parameter umgesetzt. (Umgesetzt §12)
 
 ## 8. Abhängigkeiten
 
@@ -196,3 +194,28 @@ Invariante: `betriebsfuehrung_pa + wartung_instandsetzung_pa ≈ opex.summe_pa`.
 Kundensicht-Garantie bleibt unverändert: `kundenScope` enthält weiterhin keine Marge/CAPEX/IRR.
 
 Tests in `tests/engine.test.js` (`WP12 SK-81: Berechnungs- und Output-Grenzen`).
+
+## 13. Umgesetzt: Aufstellung & Schallschutzkonzept (SK-79)
+
+Mapping Robert's-Draft-Kategorien auf SysKon-Varianten und getroffene Produktentscheidungen:
+
+| SysKon-Variante | Robert's Draft | Entscheidung |
+|---|---|---|
+| `aussen_offen` *(neu)* | outside unprotected | **Neu**: günstigste Low-CAPEX-Variante ohne Wetterschutz. Nur für standortgeeignete Mikrolage. |
+| `fundament` | Fundament | **Halten**: Standardaufstellung mit Fundament und Witterungsschutz; breitester Anwendungsbereich. |
+| `einhausung` | outside with fence / Schallschutzzaun | **Halten + Präzisieren**: entspricht Robert's "outside with fence". Demo-Referenzprodukt: Rockwool-Schallschutzzaun. Schall und Vandalismusschutz ohne Container. |
+| `kompakt_container` | in Container (compact) | **Halten**: vorkonfektionierte Kompakt-Container-Lösung (~30 m²). Zwei Container-Größen bleiben − Platzbedarf und Budget differieren signifikant. |
+| `vollcontainer` | in Container (full) | **Halten**: begehbarer Vollcontainer mit integrierter Technik (~45 m²). Höchste Standardisierung, minimale Heizraumabhängigkeit. |
+
+Codeumsetzung:
+
+- `src/logic/calc.js`: `AUFSTELLVARIANTEN` hat 5 Einträge; `AUFSTELLVARIANTEN_META` ergänzt um `aussen_offen`; `AUFSTELLUNG_VARIANTEN_MAPPING` dokumentiert Entscheidungen je Variante.
+- `src/data/katalog.js`: `aussen_offen`-Variante im Aufstellungspaket; `einhausung`-Beschreibung verweist auf Rockwool-Demo-Referenz; zwei neue Pakete:
+  - `schall_rockwool`: Rockwool-Schallschutzzaun (bei `schallsensibilitaet=hoch` + offener/Fundament-Variante)
+  - `schall_atec`: ATEC-Schallberechnungsservice (bei `schallsensibilitaet=hoch`)
+- `src/data/fragen.js`: `aufstellvariante`-Frage hat 5 Optionen; `schallhaube`-Frage sichtbar für `['fundament', 'aussen_offen']`.
+- `src/data/annahmen.js`: `k_aussen_offen`, `k_schallschutzzaun`, `k_atec_schallberechnung` als editierbare Demo-Annahmen.
+
+Schallformel-Einordnung: Die Demo-Vorprüfung (`schallBewertung()` in `calc.js`) bleibt **keine rechtsverbindliche Schallberechnung**. ATEC-Service ist der vorgesehene Anbieter für den rechtsverbindlichen Nachweis.
+
+Tests in `tests/engine.test.js` (`WP12 SK-79: Aufstellung & Schallschutzkonzept`).

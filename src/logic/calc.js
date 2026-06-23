@@ -78,9 +78,43 @@ export function waermebedarf(e, a, heizlast) {
   return (heizlast * vbh) / 1000
 }
 
-export const AUFSTELLVARIANTEN = ['fundament', 'einhausung', 'kompakt_container', 'vollcontainer']
+export const AUFSTELLVARIANTEN = ['aussen_offen', 'fundament', 'einhausung', 'kompakt_container', 'vollcontainer']
+
+// SK-79: Mapping Robert's-Draft → SysKon-Varianten + getroffene Produktentscheidungen.
+// Dient als Dokumentationskonstante; enthält keine Rechenlogik.
+export const AUFSTELLUNG_VARIANTEN_MAPPING = {
+  aussen_offen: {
+    roberts_draft: 'outside unprotected',
+    entscheidung: 'Neu: günstigste Low-CAPEX-Variante ohne Wetterschutz. Nur für standortgeeignete Mikrolage (Schall, Witterung, Sichtschutz vorab klären).',
+  },
+  fundament: {
+    roberts_draft: 'Fundament',
+    entscheidung: 'Halten: Standardaufstellung mit Fundament und Witterungsschutz; breitester Anwendungsbereich.',
+  },
+  einhausung: {
+    roberts_draft: 'outside with fence / Schallschutzzaun',
+    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". Rockwool-Schallschutzzaun als Demo-Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
+  },
+  kompakt_container: {
+    roberts_draft: 'in Container (kompakt)',
+    entscheidung: 'Halten: vorkonfektionierte Kompakt-Container-Lösung (ca. 30 m²). Zwei Containergrößen bleiben – Platzbedarf und Budget differieren signifikant.',
+  },
+  vollcontainer: {
+    roberts_draft: 'in Container (vollintegriert)',
+    entscheidung: 'Halten: begehbarer Vollcontainer mit integrierter Technik (ca. 45 m²). Höchste Standardisierung, minimale Heizraumabhängigkeit.',
+  },
+}
 
 export const AUFSTELLVARIANTEN_META = {
+  aussen_offen: {
+    label: 'Außenaufstellung offen',
+    kostenKey: 'k_aussen_offen',
+    flaecheMin: 6,
+    laengeMin: 2.5,
+    breiteMin: 1.5,
+    container: false,
+    heizraumAbhaengig: true,
+  },
   fundament: {
     label: 'Standard-Fundament',
     kostenKey: 'k_fundament',
