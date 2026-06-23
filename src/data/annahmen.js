@@ -52,6 +52,7 @@ export const ANNAHMEN = {
   k_hybrid: 25000,
   k_hydraulik: 40000,
   k_speicher_ww: 30000,
+  k_fws: 25000,             // €, Frischwasserstation + Puffer (Demo)
   k_elektro: 25000,
   k_monitoring_basic: 5000,
   k_monitoring_plus: 12000,
@@ -69,6 +70,7 @@ export const ANNAHMEN = {
   om_prozent_komfort: 2.2,   // % p.a. (Service Komfort inkl. Störungsdienst)
   contingency: 0.10,
   dq_schwelle: 60,           // % – darunter Status-Deckelung auf gelb (R10)
+  puffer_liter_je_kw: 30,    // L/kW kleinste WP in Kaskade (Demo-Anhaltswert)
 
   // Contracting & Pricing (Demo, WP8/SK-70). Roadmap Stufe 3:
   // Marge NUR auf Arbeitspreis, keine Marge auf CAPEX/Grundpreis.
@@ -134,7 +136,8 @@ export const ANNAHMEN_META = [
     ['k_wp_je_kw', 'WP-Paket', '€/kW'],
     ['k_hybrid', 'Hybrid-Einbindung', '€'],
     ['k_hydraulik', 'Hydraulikpaket', '€'],
-    ['k_speicher_ww', 'Speicher-/WW-Modul', '€'],
+    ['k_speicher_ww', 'Speicher-/WW-Modul (Brauchwasserspeicher)', '€'],
+    ['k_fws', 'Frischwasserstation + Puffer', '€'],
     ['k_elektro', 'Elektro/Netzanschluss', '€'],
     ['k_monitoring_basic', 'Monitoring Basic', '€'],
     ['k_monitoring_plus', 'Monitoring Plus (Aufpreis)', '€'],
@@ -153,6 +156,7 @@ export const ANNAHMEN_META = [
     ['contingency', 'Contingency', '0–1'],
     ['dq_schwelle', 'DQ-Schwelle für Status-Deckelung', '%'],
     ['flaeche_min_container', 'Mindest-Außenfläche für Container', 'm²'],
+    ['puffer_liter_je_kw', 'Puffer: L/kW kleinste WP (Demo-Anhaltswert)', 'L/kW'],
   ]},
   { gruppe: 'Contracting & Pricing (Demo)', felder: [
     ['vertragslaufzeit_default', 'Vertragslaufzeit (Default)', 'Jahre'],

@@ -71,17 +71,34 @@ export const KATALOG = [
   {
     id: 'speicher_ww', pakettyp: 'Hydraulik', gruppe: 'Speicher / Warmwasser',
     bedingung: { feld: 'require_speicher_ww', op: '=', wert: true },
-    positionen: [
-      { id: 'speicher_ww_modul', text: 'Speicher-/Warmwassermodul (Puffer + WW-Bereitung)',
-        menge: 1, einheit: 'pausch.',
-        kosten: { typ: 'fix', annahme: 'k_speicher_ww' }, foerder: 'f_speicher', tag: 'capex',
-        begruendung: 'Durch Regel erzwungen (R03: zentrale Warmwasserbereitung).',
-        kunde: {
-          titel: 'Speicher- und Warmwassermodul',
-          hersteller: 'herstellerneutral',
-          produkt: 'Puffer- und Warmwasserkomponenten',
-          leistungsumfang: 'Puffer- und Warmwasserintegration für zentrale Warmwasserbereitung im betrachteten Scope.',
-        } },
+    variantenFeld: 'ww_speicher_typ',
+    varianten: [
+      { wert: 'speicher', name: 'Brauchwasserspeicher',
+        positionen: [
+          { id: 'speicher_ww_modul', text: 'Brauchwasserspeicher + Puffer (zentrale WW-Bereitung)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_speicher_ww' }, foerder: 'f_speicher', tag: 'capex',
+            begruendung: 'Durch Regel erzwungen (R03: zentrale WW-Bereitung). Klassische Speicherlösung.',
+            kunde: {
+              titel: 'Brauchwasserspeicher',
+              hersteller: 'herstellerneutral',
+              produkt: 'Puffer- und Brauchwasserspeicher',
+              leistungsumfang: 'Zentrale Warmwasserbereitung und Pufferung über Brauchwasserspeicher im betrachteten Scope.',
+            } },
+        ]},
+      { wert: 'fws', name: 'Frischwasserstation',
+        positionen: [
+          { id: 'fws_modul', text: 'Frischwasserstation + Puffer (hygienische Durchfluss-WW)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_fws' }, foerder: 'f_speicher', tag: 'capex',
+            begruendung: 'Frischwasserstation für hygienisch einwandfreie WW-Bereitung ohne stehende Speicherinhalte.',
+            kunde: {
+              titel: 'Frischwasserstation',
+              hersteller: 'herstellerneutral',
+              produkt: 'Frischwasserstation und Pufferspeicher',
+              leistungsumfang: 'Zentrale Warmwasserbereitung im Durchflussbetrieb mit Puffer; hygienisch geprüfte Lösung ohne stehenden Warmwasserinhalt.',
+            } },
+        ]},
     ],
   },
   {

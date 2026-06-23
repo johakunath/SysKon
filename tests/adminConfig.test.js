@@ -66,4 +66,12 @@ describe('Admin-Konfiguration', () => {
     expect(merged.governance.versionLabel).toBe('Import')
     expect(merged.fragen.gebaeudetyp.label).toEqual(expect.any(String))
   })
+
+  it('importieren-Pfad: alte Konfig ohne neue Frage wird durch Merge migriert', () => {
+    const old = makeDefaultAdminConfig()
+    delete old.fragen.ww_speicher_typ
+    const merged = mergeWithDefaults(old)
+    expect(validateAdminConfig(merged)).toEqual([])
+    expect(merged.fragen.ww_speicher_typ).toBeDefined()
+  })
 })

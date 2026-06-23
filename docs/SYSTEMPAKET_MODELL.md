@@ -35,9 +35,9 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 | Ticket | Ist-Stand im Code | Lücke / Ziel |
 |---|---|---|
 | **SK-75** Datenherkunft & Provenienz | Proto-Signale: `dq`-Gewichte (`fragen.js`), `verbrauchsquelle`, `heizlast_geschaetzt` (`calc.js`), `*_bekannt`/`unbekannt`-Muster | Formales Provenienzmodell je Feld (Quelle, Erfassungsweg, Aktualität, Confidence, kundensichtbare Annahme); Asset-Manager-/Stammdaten als Quellen; manuell vs. skalierbar trennen. Noch Konzept. |
-| **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (siehe §5). Nicht-Luft/Wasser bleibt über R17 abgedeckt. |
+| **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (§5). R04/R16/R17 mit Sales-sicheren Warn-Texten ergänzt (§9). Nicht-Luft/Wasser über R17 abgedeckt. |
 | **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | Produktstamm-Zielfelder (Hersteller/Familie/Modell, Leistungsklasse, COP/JAZ, Kaskadenlimits, Einsatzgrenzen); Buderus/Dreammaker als Referenz dokumentieren, nicht hart codieren. Noch Konzept. |
-| **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | Explizites Schema „2 Raumheizkreise + 1 TWW-Kreis"; Puffer nach kleinster Kaskaden-WP; FWS vs. Speicher als Zielvarianten. **Teilweise umgesetzt:** Vorlauftemperatur-Korridor (siehe §6). Rest Konzept. |
+| **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
 | **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | Mapping auf Robert's Entwurf; Entscheidung Containeranzahl; „außen ungeschützt" als Low-CAPEX-Variante prüfen; ATEC als Schallberechnungs-Service; Rockwool-Zaun als Scope-Line. Entscheidung offen (§7). |
 | **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | Messkonzept als eigener Scope-/Regelblock neben Monitoring; Strombeschaffung als Commercial/Betrieb-Annahme; Verknüpfung mit Preisgleitformel. Noch Konzept. |
 | **SK-81** Berechnungs-/Output-Grenzen | `ableiten()` mischt Sizing/Energie/Placement/Schall; Engine baut LV + interne Kennzahlen | Getrennte Domänen Invest / COP-JAZ / Betriebsführung / Instandsetzung; kundenfähiger Scope ohne interne Kosten/Marge/IRR; Servicegrenze als Parameter. Noch Konzept (vgl. CODEBASE_NOTES Split-Vorschlag). |
@@ -101,3 +101,40 @@ Umgesetzt in `src/data/regeln.js` (R09 umgewidmet, R20/R21 ergänzt), Tooltip + 
   setzen auf diesem Modell auf.
 
 Roadmap-Kontext: `docs/PRODUCT_ROADMAP.md`. Ticketdetails: `docs/BACKLOG_WORK_PACKAGES.md` (WP12).
+
+## 9. Umgesetzt: Hard-Blocker-Warnungen (SK-76)
+
+Alle drei verbleibenden Hard-Blocker-Regeln haben jetzt sowohl `status: rot` als auch eine begleitende
+`warn`-Wirkung mit Sales-sicherer Begründung und internem nächsten Schritt – analog R19:
+
+| Regel | Bedingung | Warn-Text (Kategorie: hinweis) |
+|---|---|---|
+| **R04** | `anzahl_heizkreise > 2` | Mehr als zwei Raumheizkreise → hydraulischen Sonderfall intern klären |
+| **R16** | `aussenflaeche_vorhanden = nein` | Keine Außenfläche → Alternativpfad prüfen oder Sonderfall markieren |
+| **R17** | `technologiepfad != hybrid` | Nur Hybrid-Pfad standardfähig → als Sonderfall bewerten oder Roadmap nennen |
+
+Außerdem wurde die Frage `anzahl_heizkreise` in `src/data/fragen.js` umbenannt in
+„Wie viele **Raumheizkreise** sind vorhanden?" mit Tooltip-Klärung, dass der TWW-Kreis separat geplant
+wird. Das verhindert falsch-positive R04-Blockierungen bei korrekter 2R+1TWW-Eingabe.
+
+Tests in `tests/engine.test.js` (`WP12 SK-76: Hard-Blocker-Warnungen`).
+
+## 10. Umgesetzt: FWS/Speicher-Varianten und Puffer-Sizing (SK-78)
+
+**FWS vs. Speicher:** Der `speicher_ww`-Katalogeintrag (`src/data/katalog.js`) ist jetzt ein
+variantenbasiertes Paket (`variantenFeld: 'ww_speicher_typ'`) mit zwei Varianten:
+
+- **Brauchwasserspeicher** (`wert: 'speicher'`): klassische Lösung, Positions-ID `speicher_ww_modul`,
+  Kostenannahme `k_speicher_ww`. Fallback-Variante (Index 0) bei fehlendem oder unbekanntem Typ.
+- **Frischwasserstation** (`wert: 'fws'`): hygienischer Durchflussbetrieb, Positions-ID `fws_modul`,
+  Kostenannahme `k_fws` (25.000 € Demo).
+
+Neue Frage `ww_speicher_typ` (Sektion B, sichtbar bei `ww_bereitung = zentral`, DQ: 1) ermöglicht die
+Variantenwahl im Gespräch. Rückwärtskompatibel: vorhandene Presets ohne `ww_speicher_typ` fallen auf
+Brauchwasserspeicher zurück.
+
+**Puffer-Sizing:** `src/logic/calc.js` (`ableiten()`) gibt das Feld `puffer_empfehlung_liter` aus:
+`puffer_liter_je_kw × wp_modul_kw` (Demo-Anhaltswert: 30 L/kW × 20 kW = 600 L). Beide Parameter
+sind editierbar in `src/data/annahmen.js`.
+
+Tests in `tests/engine.test.js` (`WP12 SK-78: FWS/Speicher-Varianten und Puffer-Sizing`).

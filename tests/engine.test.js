@@ -368,3 +368,63 @@ describe('WP12: Vorlauftemperatur-Korridor (R09/R20/R21)', () => {
     expect(STATUS_ORDER.indexOf(erg.status)).toBeGreaterThanOrEqual(STATUS_ORDER.indexOf('orange'))
   })
 })
+
+describe('WP12 SK-76: Hard-Blocker-Warnungen (R04/R16/R17)', () => {
+  const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+
+  it('R04: mehr als 2 Raumheizkreise → rot + Sales-sicherer Hinweis', () => {
+    const erg = berechne({ ...referenz, anzahl_heizkreise: 3 })
+    expect(erg.status).toBe('rot')
+    expect(erg.statusQuellen.some(q => q.regelId === 'R04' && q.wert === 'rot')).toBe(true)
+    expect(erg.warnungen.map(w => w.regelId)).toContain('R04')
+  })
+
+  it('R16: keine Außenfläche → rot + Sales-sicherer Hinweis', () => {
+    const erg = berechne({ ...referenz, aussenflaeche_vorhanden: 'nein' })
+    expect(erg.status).toBe('rot')
+    expect(erg.statusQuellen.some(q => q.regelId === 'R16' && q.wert === 'rot')).toBe(true)
+    expect(erg.warnungen.map(w => w.regelId)).toContain('R16')
+  })
+
+  it('R17: nicht-Hybrid → rot + Sales-sicherer Hinweis', () => {
+    const erg = berechne({ ...referenz, technologiepfad: 'monoenergetisch' })
+    expect(erg.status).toBe('rot')
+    expect(erg.statusQuellen.some(q => q.regelId === 'R17' && q.wert === 'rot')).toBe(true)
+    expect(erg.warnungen.map(w => w.regelId)).toContain('R17')
+  })
+})
+
+describe('WP12 SK-78: FWS/Speicher-Varianten und Puffer-Sizing', () => {
+  const basis = {
+    ...PRESETS.find(p => p.id === 'referenz').eingaben,
+    ww_bereitung: 'zentral',
+  }
+
+  it('ww_speicher_typ=speicher → LV enthält Brauchwasserspeicher (speicher_ww_modul)', () => {
+    const erg = berechne({ ...basis, ww_speicher_typ: 'speicher' })
+    expect(erg.lv.positionen.some(p => p.id === 'speicher_ww_modul')).toBe(true)
+    expect(erg.lv.positionen.some(p => p.id === 'fws_modul')).toBe(false)
+  })
+
+  it('ww_speicher_typ=fws → LV enthält Frischwasserstation (fws_modul)', () => {
+    const erg = berechne({ ...basis, ww_speicher_typ: 'fws' })
+    expect(erg.lv.positionen.some(p => p.id === 'fws_modul')).toBe(true)
+    expect(erg.lv.positionen.some(p => p.id === 'speicher_ww_modul')).toBe(false)
+  })
+
+  it('ww_speicher_typ=unbekannt → Fallback auf Speicher-Variante', () => {
+    const erg = berechne({ ...basis, ww_speicher_typ: 'unbekannt' })
+    expect(erg.lv.positionen.some(p => p.id === 'speicher_ww_modul')).toBe(true)
+  })
+
+  it('kein ww_speicher_typ → Fallback auf Speicher-Variante', () => {
+    const { ww_speicher_typ: _, ...ohneTyp } = basis
+    const erg = berechne(ohneTyp)
+    expect(erg.lv.positionen.some(p => p.id === 'speicher_ww_modul')).toBe(true)
+  })
+
+  it('puffer_empfehlung_liter > 0 in abgeleiteten Feldern', () => {
+    const erg = berechne(basis)
+    expect(erg.derived.puffer_empfehlung_liter).toBeGreaterThan(0)
+  })
+})
