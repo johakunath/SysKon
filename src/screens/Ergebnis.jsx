@@ -59,13 +59,14 @@ function ContractingKarte({ contracting }) {
           <h4>Preisgleitformel (Demo)</h4>
           <table className="fakten">
             <tbody>
+              <tr><td>Festanteil</td><td className="r">{prozent(pg.festanteil)}</td></tr>
               {pg.komponenten.map(k => (
                 <tr key={k.schluessel}><td>{k.label}</td><td className="r">{prozent(k.gewicht)}</td></tr>
               ))}
               <tr className="summe"><td>Basisjahr</td><td className="r">{pg.basisjahr}</td></tr>
             </tbody>
           </table>
-          <p className="hinweis">Jährliche Anpassung nach gewichteten Indizes; reale Indexreihen und rechtliche Prüfung folgen.</p>
+          <p className="hinweis">AVBFernwärme §24-orientiert (Demo): Festanteil + gewichtete Indizes. Reale Indexreihen und rechtliche Prüfung sind offen.</p>
         </div>
         <div className="karte">
           <h4>Vertragsparameter</h4>
@@ -355,12 +356,14 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
                   <tr><td>fixer Service p.a. (OPEX)</td><td className="r">{euro(ergebnis.pricing.opexPa)}</td></tr>
                   <tr className="summe"><td>Grundpreis p.a.</td><td className="r"><strong>{euro(ergebnis.pricing.grundpreisPa)}</strong></td></tr>
                   <tr><td>variable Energiekosten</td><td className="r">{ergebnis.pricing.variabelProMwh != null ? `${euro(ergebnis.pricing.variabelProMwh)} /MWh` : '–'}</td></tr>
-                  <tr><td>AP-Marge ({prozent(ergebnis.pricing.apMarge)})</td><td className="r">{ergebnis.pricing.apMargeAbsolutPa != null ? `${euro(ergebnis.pricing.apMargeAbsolutPa)} p.a.` : '–'}</td></tr>
+                  <tr><td>AP-Marge (auf Ziel-IRR gelöst)</td><td className="r">{prozent(ergebnis.pricing.effektiveMarge)}{ergebnis.pricing.margeGedeckelt ? ' ⚠︎ gedeckelt' : ''}</td></tr>
+                  <tr><td>AP-Marge absolut</td><td className="r">{ergebnis.pricing.apMargeAbsolutPa != null ? `${euro(ergebnis.pricing.apMargeAbsolutPa)} p.a.` : '–'}</td></tr>
                   <tr className="summe"><td>Arbeitspreis</td><td className="r"><strong>{ergebnis.pricing.arbeitspreisMwh != null ? `${euro(ergebnis.pricing.arbeitspreisMwh)} /MWh` : '–'}</strong></td></tr>
-                  <tr><td>Zielrendite-Indikation</td><td className="r">{ergebnis.pricing.zielrenditeIndikation != null ? prozent(ergebnis.pricing.zielrenditeIndikation) : '–'} (Ziel {prozent(ergebnis.pricing.zielIrr)}/{prozent(ergebnis.pricing.zielIrrAmbition)})</td></tr>
+                  <tr><td>erreichte IRR</td><td className="r">{ergebnis.pricing.erreichteIrr != null ? prozent(ergebnis.pricing.erreichteIrr) : '–'} (Ziel {prozent(ergebnis.pricing.zielIrr)})</td></tr>
+                  <tr><td>Marge Ziel / Ambition</td><td className="r">{ergebnis.pricing.margeZiel != null ? prozent(ergebnis.pricing.margeZiel) : '–'} / {ergebnis.pricing.margeAmbition != null ? prozent(ergebnis.pricing.margeAmbition) : '–'}</td></tr>
                 </tbody>
               </table>
-              <p className="hinweis">Marge nur auf den Arbeitspreis (keine Marge auf CAPEX/Grundpreis). Zielrendite ist eine nicht-iterative Demo-Indikation, kein IRR-Solver. Nicht in der Kundensicht.</p>
+              <p className="hinweis">Marge nur auf den Arbeitspreis (keine Marge auf CAPEX/Grundpreis). AP-Marge iterativ auf die Ziel-IRR gelöst (Cashflow-IRR). „Gedeckelt": Ziel-IRR auch bei Maximalmarge nicht erreichbar. Nicht in der Kundensicht.</p>
             </div>
           </div>
         </div>

@@ -36,7 +36,7 @@ Do not do yet: keine finale juristische Vertragsgenerierung; keine Einkaufs-/Her
 
 Ziel: Der Systempaket-Konfigurator bereitet später ein realistisches, konfigurierbares Contracting-Angebot mit GP, AP und Preisgleitformel vor, ohne interne Commercial-Logik in der Kundensicht zu zeigen.
 
-Stand: Pricing-Layer als erster Vertical-Slice umgesetzt – `src/logic/pricing.js` (GP/AP/Preisgleitformel), Kundensicht-Karte + interne Commercial-Sicht in `src/screens/Ergebnis.jsx`, konfigurierbare Annahmen + Frage `vertragslaufzeit`. Modell + Deferred (iterativer IRR-Solver, reale Indexreihen, Legal): `docs/PRICING_MODELL.md`.
+Stand: Pricing-Layer umgesetzt – `src/logic/pricing.js` (GP/AP/Preisgleitformel) mit iterativem IRR-Solver (`loeseApMargeFuerIrr`, Marge auf Ziel-IRR gelöst), AVBFernwärme §24-Preisgleitformel (Festanteil + amtliche Indizes, Evaluator `preisgleitWert`) und parameterisiertem Effizienzrisiko (Frage `effizienzrisiko`). Kundensicht-Karte + interne Commercial-Sicht in `src/screens/Ergebnis.jsx`, konfigurierbare Annahmen + Fragen `vertragslaufzeit`/`effizienzrisiko`. Verbleibend offen: reale Index-Zeitreihen + finale AVBFernwärme-/Rechtsfreigabe. Modell: `docs/PRICING_MODELL.md`.
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|

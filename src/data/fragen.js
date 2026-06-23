@@ -373,6 +373,13 @@ const SEKTIONEN_ROH = [
         { wert: '20', label: '20 Jahre', hinweis: 'Niedrigerer Grundpreis, längere Bindung.' },
       ],
       tooltip: 'Bestimmt die Grundpreis-Annuität (Demo). Leer = 15 Jahre Default.' },
+    { id: 'effizienzrisiko', label: 'Wer trägt das Effizienzrisiko der Wärmepumpe?', typ: 'select', dq: 0,
+      optionen: [
+        { wert: 'techem', label: 'Techem trägt das Risiko (Demo-Standard)', hinweis: 'Contracting-Wertversprechen: Effizienz liegt bei Techem.' },
+        { wert: 'geteilt', label: 'Risiko geteilt', hinweis: 'Effizienzabweichungen werden zwischen den Parteien geteilt.' },
+        { wert: 'kunde', label: 'Kunde trägt das Risiko', hinweis: 'Kunde trägt Effizienzabweichungen, meist günstigerer Preis.' },
+      ],
+      tooltip: 'Strukturierter Vertragsparameter (Demo). Leer = Techem trägt das Risiko.' },
   ]},
 ]
 
@@ -660,6 +667,7 @@ const PLAYBOOKS_KURZ = {
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
   vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '15 Jahre ist Demo-Standard; 10 oder 20 Jahre verschieben den Grundpreis.'),
+  effizienzrisiko: p('Klärt, wer Abweichungen von der erwarteten WP-Effizienz wirtschaftlich trägt.', 'Unklare Risikoverteilung führt später zu Streit über Wärmekosten und JAZ.', 'Techem-Übernahme ist das Contracting-Standardversprechen; Alternativen prüfen.'),
 }
 
 const mitPlaybook = (frage) => ({
