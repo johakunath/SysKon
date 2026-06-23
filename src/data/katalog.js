@@ -242,6 +242,23 @@ export const KATALOG = [
     ],
   },
   {
+    id: 'messkonzept', pakettyp: 'Basis', gruppe: 'Messkonzept',
+    positionen: [
+      { id: 'messkonzept_basis',
+        text: 'Messkonzept Basis (WP-Eigenstromzähler, Fernablesung, Übergabedokumentation)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_messkonzept_basis' },
+        foerder: 'f_messkonzept', tag: 'capex',
+        begruendung: 'Pflichtbaustein Contracting: separater WP-Zähler für JAZ-Messung und WP-Sondertarif-Abrechnung.',
+        kunde: {
+          titel: 'Messkonzept & Zählerinfrastruktur',
+          hersteller: 'systemseitig',
+          produkt: 'WP-Eigenstromzähler und Fernablesung',
+          leistungsumfang: 'WP-eigener Stromzähler (Zweirichtungszähler / WP-Sondertarif), Fernablesung-Anschluss und Übergabedokumentation. Pflichtbaustein für das Contracting-Modell.',
+        } },
+    ],
+  },
+  {
     id: 'monitoring', pakettyp: 'Monitoring', gruppe: 'Monitoring',
     variantenFeld: 'monitoring_variante',
     varianten: [
@@ -255,7 +272,7 @@ export const KATALOG = [
               titel: 'Monitoring Basic',
               hersteller: 'systemseitig',
               produkt: 'Zähler, Datenlogger und Fernablesung',
-              leistungsumfang: 'Grundlegende Mess- und Fernablesestruktur für Betrieb und spätere Auswertung.',
+              leistungsumfang: 'Betriebsmonitoring aufbauend auf Messkonzept Basis: Datenlogger, Fernablesung-Betrieb und Reporting-Infrastruktur.',
             } },
         ]},
       { wert: 'plus', name: 'Monitoring Plus',
@@ -268,7 +285,7 @@ export const KATALOG = [
               titel: 'Monitoring Basic',
               hersteller: 'systemseitig',
               produkt: 'Zähler, Datenlogger und Fernablesung',
-              leistungsumfang: 'Grundlegende Mess- und Fernablesestruktur für Betrieb und spätere Auswertung.',
+              leistungsumfang: 'Betriebsmonitoring aufbauend auf Messkonzept Basis: Datenlogger, Fernablesung-Betrieb und Reporting-Infrastruktur.',
             } },
           { id: 'mon_plus', text: 'Monitoring Plus (erweiterte Sensorik, Effizienz-Reporting)',
             menge: 1, einheit: 'pausch.',
