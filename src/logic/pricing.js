@@ -28,13 +28,17 @@ export function kapitalwert(rate, cashflows) {
 }
 
 // Interner Zinsfuß (IRR) per Bisektion. Erwartet einen Vorzeichenwechsel
-// (typisch: t0 negativ, Folgejahre positiv); sonst null.
+// (typisch: t0 negativ, Folgejahre positiv). Die Obergrenze wird automatisch
+// ausgeweitet, damit auch sehr hohe IRR (hoher Cashflow ggü. CAPEX) gefunden
+// werden, statt fälschlich null zu liefern.
 export function irr(cashflows, { unten = -0.9, oben = 1, iterationen = 100, toleranz = 1e-7 } = {}) {
-  let lo = unten, hi = oben
+  let lo = unten
   let flo = kapitalwert(lo, cashflows)
+  if (Math.abs(flo) < toleranz) return lo
+  let hi = oben
   let fhi = kapitalwert(hi, cashflows)
-  if (flo === 0) return lo
-  if (fhi === 0) return hi
+  for (let i = 0; i < 80 && flo * fhi > 0; i++) { hi = hi * 2 + 1; fhi = kapitalwert(hi, cashflows) }
+  if (Math.abs(fhi) < toleranz) return hi
   if (flo * fhi > 0) return null
   for (let i = 0; i < iterationen; i++) {
     const mid = (lo + hi) / 2
@@ -53,22 +57,24 @@ function jahresCashflow(kapitaldienstPa, variableKostenPa, marge) {
   return kapitaldienstPa + marge * variableKostenPa
 }
 
-// Iterative AP-Marge bis zur Ziel-IRR (Bisektion über die Marge). Liefert die
-// gelöste Marge plus Flags: `gedeckelt` (Ziel-IRR auch bei Maximalmarge nicht
-// erreichbar) bzw. `bereitsErreicht` (Ziel-IRR schon bei Marge 0 übertroffen).
+// Iterative AP-Marge bis zur Ziel-IRR. Gelöst wird die Nullstelle von
+// `kapitalwert(zielIrr, cashflows(marge))`: der Barwert bei der Ziel-IRR ist
+// monoton steigend in der Marge und wird genau dann null, wenn die IRR die
+// Ziel-IRR trifft. Das ist robust gegen sehr hohe IRR (anders als eine direkte
+// IRR-Suche, deren Bracket sprengen kann). Flags: `gedeckelt` (Ziel auch bei
+// Maximalmarge nicht erreichbar) bzw. `bereitsErreicht` (Ziel ≤ Kapitalkosten,
+// Marge 0). Bisektion ⇒ weiterhin iterativ.
 export function loeseApMargeFuerIrr({ capex, kapitaldienstPa, variableKostenPa, laufzeit, zielIrr, margeMax = 3, iterationen = 80 }) {
   if (!(capex > 0) || !(variableKostenPa > 0) || !(laufzeit > 0) || zielIrr == null) return null
-  const irrBeiMarge = (m) => irr([-capex, ...Array(laufzeit).fill(jahresCashflow(kapitaldienstPa, variableKostenPa, m))])
-  const gLo = (irrBeiMarge(0) ?? -Infinity) - zielIrr
-  if (gLo >= 0) return { marge: 0, gedeckelt: false, bereitsErreicht: true }
-  const gHi = (irrBeiMarge(margeMax) ?? -Infinity) - zielIrr
-  if (gHi < 0) return { marge: margeMax, gedeckelt: true, bereitsErreicht: false }
+  const npvBeiMarge = (m) => kapitalwert(zielIrr, [-capex, ...Array(laufzeit).fill(jahresCashflow(kapitaldienstPa, variableKostenPa, m))])
+  if (npvBeiMarge(0) >= 0) return { marge: 0, gedeckelt: false, bereitsErreicht: true }
+  if (npvBeiMarge(margeMax) < 0) return { marge: margeMax, gedeckelt: true, bereitsErreicht: false }
   let lo = 0, hi = margeMax
   for (let i = 0; i < iterationen; i++) {
     const mid = (lo + hi) / 2
-    const g = (irrBeiMarge(mid) ?? -Infinity) - zielIrr
-    if (Math.abs(g) < 1e-5) return { marge: mid, gedeckelt: false, bereitsErreicht: false }
-    if (g < 0) lo = mid; else hi = mid
+    const f = npvBeiMarge(mid)
+    if (Math.abs(f) < 1e-4) return { marge: mid, gedeckelt: false, bereitsErreicht: false }
+    if (f < 0) lo = mid; else hi = mid
   }
   return { marge: (lo + hi) / 2, gedeckelt: false, bereitsErreicht: false }
 }

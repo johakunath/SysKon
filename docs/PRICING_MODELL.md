@@ -45,10 +45,13 @@ Renditestellschraube ist damit die AP-Marge; sie wird iterativ auf die Ziel-IRR 
 
 **IRR-Solver:** Jahres-Cashflow = `Kapitaldienst + Marge × variable Energiekosten` (Energie- und
 Servicekosten kürzen sich gegen ihre Erlösanteile). `loeseApMargeFuerIrr()` bisektiert die Marge in
-`[0, 3]`, bis die Cashflow-IRR die Ziel-IRR trifft. Flags: `bereitsErreicht` (Ziel ≤ Kapitalkosten,
-Marge 0) und `gedeckelt` (Ziel auch bei 300 % Marge nicht erreichbar – Hinweis, dass GP/Annahmen zu
-prüfen sind). Hinweis: Bei kleiner Energiemenge relativ zur CAPEX steigt die nötige Marge stark, weil
-nur der AP Rendite trägt – im Demo bewusst sichtbar, vom PO zu bewerten.
+`[0, 3]` über die Nullstelle von `kapitalwert(zielIrr, cashflows(marge))` – der Barwert bei der
+Ziel-IRR ist monoton in der Marge und genau dann null, wenn die IRR die Ziel-IRR trifft. Dieser
+Barwert-Ansatz ist robust gegen sehr hohe IRR (eine direkte IRR-Suche kann ihr Bracket sprengen);
+`irr()` weitet seine Obergrenze zusätzlich automatisch aus. Flags: `bereitsErreicht` (Ziel ≤
+Kapitalkosten, Marge 0) und `gedeckelt` (Ziel auch bei 300 % Marge nicht erreichbar – Hinweis, dass
+GP/Annahmen zu prüfen sind). Hinweis: Bei kleiner Energiemenge relativ zur CAPEX steigt die nötige
+Marge, weil nur der AP Rendite trägt – im Demo bewusst sichtbar, vom PO zu bewerten.
 
 **Preisgleitformel (AVBFernwärme §24-orientiert):** Festanteil `a` plus gewichtete Verhältnisse
 amtlicher Indizes (Destatis: Tariflöhne, Erzeugerpreise Strom/Gas, Verbraucherpreisindex). Im

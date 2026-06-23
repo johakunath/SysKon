@@ -52,6 +52,21 @@ describe('Pricing / Contracting (WP8)', () => {
     expect(loeseApMargeFuerIrr({ ...args, variableKostenPa: 0, zielIrr: 0.13 })).toBeNull()
   })
 
+  it('irr() findet auch sehr hohe IRR (Bracket-Ausweitung statt null)', () => {
+    expect(irr([-100, ...Array(10).fill(150)])).toBeGreaterThan(1) // > 100 %
+  })
+
+  it('Codex-P1: hohe variable Kosten ggü. CAPEX werden NICHT gedeckelt', () => {
+    // VC weit über CAPEX: Ziel-IRR bei kleiner Marge erreichbar, IRR bei Marge 3
+    // läge weit über 100 % – früher fälschlich gedeckelt.
+    const args = { capex: 100000, kapitaldienstPa: 100000 * annuitaetenfaktor(0.06, 15), variableKostenPa: 200000, laufzeit: 15 }
+    const r = loeseApMargeFuerIrr({ ...args, zielIrr: 0.13 })
+    expect(r.gedeckelt).toBe(false)
+    expect(r.marge).toBeLessThan(0.2) // niedrige Marge genügt
+    const cf = [-args.capex, ...Array(15).fill(args.kapitaldienstPa + r.marge * args.variableKostenPa)]
+    expect(irr(cf)).toBeCloseTo(0.13, 3)
+  })
+
   it('Preisgleitformel: Festanteil + Index-Gewichte summieren zu 1', () => {
     const f = preisgleitformelBauen(ANNAHMEN)
     expect(f.gewichtSumme).toBe(1)
