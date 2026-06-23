@@ -16,6 +16,7 @@ import { REGELN } from '../data/regeln.js'
 import { KATALOG, LV_GRUPPEN } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
 import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
+import { contractingPreise } from './pricing.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
 export const STATUS_LABEL = {
@@ -176,7 +177,7 @@ function kundenWarntext(warnung) {
   return warnung.text
 }
 
-function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded }) {
+function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded, contractingKunde }) {
   const allePositionen = [...lvPositionen, ...opexPositionen]
   const gruppenNamen = [...new Set([...LV_GRUPPEN, ...allePositionen.map(pos => pos.gruppe), 'Service / Betrieb (p.a.)'])]
   const gruppen = gruppenNamen
@@ -228,8 +229,23 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
     text: kundenWarntext(w),
   }))
 
+  // Contracting-Angebot (kundensicher): nur GP/AP/Preisgleitformel und
+  // strukturierte Vertragsparameter – keine Marge/CAPEX/IRR (SK-70 / WP8).
+  const contracting = contractingKunde
+    ? {
+      laufzeit: contractingKunde.laufzeit,
+      grundpreis_pa: contractingKunde.grundpreis_pa,
+      grundpreis_monat: contractingKunde.grundpreis_monat,
+      arbeitspreis_mwh: contractingKunde.arbeitspreis_mwh,
+      preisgleitformel: contractingKunde.preisgleitformel,
+      vertragsparameter: contractingKunde.vertragsparameter,
+      enthalteneServices: opexPositionen.map(pos => pos.kunde?.titel ?? pos.text),
+    }
+    : null
+
   return {
     gruppen,
+    contracting,
     annahmen: annahmenTexte,
     ausschluesse,
     offenePunkte: [...pruefpunkte, ...fehlende].slice(0, 10),
@@ -388,8 +404,18 @@ export function berechne(eingaben, opts = {}) {
     .map(f => ({ id: f.id, sektion: f.sektion, label: f.label, dq: f.dq }))
   const datenlage = datenlageEinordnung(dq, fehlendeDaten, annahmen.dq_schwelle)
   const statusKorridor = STATUS_KORRIDOR[status] ?? STATUS_KORRIDOR.unbekannt
+
+  // Contracting-/Pricing-Layer (WP8): aus interner Kostensicht GP/AP/Preisgleit-
+  // formel ableiten. `pricing.kunde` ist kundensicher, `pricing.intern` trägt die
+  // Commercial-Interna (Marge, CAPEX, Zielrendite/IRR) hinter dem Sales-Toggle.
+  const pricing = contractingPreise({
+    lv: { positionen: lvPositionen, zwischensumme, contingency, brutto, foerderfaehig, foerderung, netto },
+    opex: { positionen: opexPositionen, summe_pa: opexSumme },
+    energie, derived, eingaben, annahmen,
+  })
   const kundenScope = kundenScopeBauen({
     eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded,
+    contractingKunde: pricing.kunde,
   })
 
   return {
@@ -401,5 +427,6 @@ export function berechne(eingaben, opts = {}) {
     lv: { positionen: lvPositionen, zwischensumme, contingency, brutto, foerderfaehig, foerderung, netto },
     opex: { positionen: opexPositionen, summe_pa: opexSumme },
     energie, kennzahlen, peScore, gruenKriterien, standardKriterien: gruenKriterien, fehlendeDaten,
+    pricing: pricing.intern,
   }
 }

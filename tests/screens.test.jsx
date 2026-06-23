@@ -66,7 +66,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(rechteVorschau).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
   })
 
-  it('Analyse-Kundensicht zeigt nur den preisfreien Umfang ohne interne Flächen', () => {
+  it('Analyse-Kundensicht zeigt das Richtpreis-Angebot ohne interne Commercial-Flächen', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -85,12 +85,18 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Annahmen')
     expect(html).toContain('Ausschlüsse')
     expect(html).toContain('Offene Punkte')
-    // SK-85: Kundensicht blendet interne Flächen vollständig aus (kein Tab, keine Preise)
+    // SK-85: Kundensicht blendet interne Flächen vollständig aus (kein Tab).
     expect(html).not.toContain('Interner Umfang')
     expect(html).not.toContain('Lösung &amp; Umfang')
     expect(html).not.toContain('Prüfpunkte')
     expect(html).not.toContain('CAPEX-Kennzahlen')
-    expect(html).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+    // WP8/SK-70: Kundensicht zeigt das Richtpreis-Angebot (Grundpreis/Arbeitspreis),
+    // aber KEINE internen Commercial-Begriffe (CAPEX, Netto/Brutto-LV, Förderung,
+    // Marge, IRR/Zielrendite).
+    expect(html).toContain('Richtpreis-Angebot (Demo)')
+    expect(html).toContain('Grundpreis')
+    expect(html).toContain('Arbeitspreis')
+    expect(html).not.toMatch(/CAPEX|Netto|Brutto|Förderung|Marge|IRR|Zielrendite/)
   })
 
   it('Angebot-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte ohne Binding-Offer-Disclaimer', () => {

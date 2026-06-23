@@ -59,8 +59,8 @@ const OPTION_HINTS = {
     '51-55': 'Noch gut besprechbar.',
     '56-60': 'Grenznaher, aber typischer Hybridkorridor.',
     '61-65': 'Erhöhte Effizienz- und Prüfanforderung.',
-    '66-70': 'Nur mit Fachprüfung weiterführen.',
-    '>70': 'Klarer Sonderfall im MVP.',
+    '66-70': 'Mit modernem R290-Setup standardfähig; interne Klärung.',
+    '>70': 'Über 70 °C: Fachprüfung, MVP-Sonderfall.',
     unbekannt: 'Temperaturniveau nachfassen.',
   },
   aussenflaeche_typ: {
@@ -133,6 +133,8 @@ const SEKTIONEN_ROH = [
       tooltip: 'Freistehende Gebäude sind der Standardfall; Innenstadtlage verschärft Schall- und Platzprüfung (R06).' },
     { id: 'wohneinheiten', label: 'Wie viele Wohneinheiten hat das Gebäude?', typ: 'zahl', einheit: 'WE', dq: 2, min: 1, max: 500,
       tooltip: 'Bezugsgröße für Kennzahlen (€/WE) und Heizlast-Notbehelf.' },
+    { id: 'anzahl_gebaeude', label: 'Wie viele Gebäude soll die Anlage versorgen?', typ: 'zahl', einheit: 'Gebäude', dq: 0, min: 1, max: 50,
+      tooltip: 'MVP-Systempaket versorgt genau ein Gebäude; mehr als eines ist kein Standardfit (R19). Leer = Annahme „ein Gebäude".' },
     { id: 'flaeche', label: 'Wie groß ist die beheizte Fläche?', typ: 'zahl', einheit: 'm²', dq: 2, min: 50, max: 50000,
       tooltip: 'Bezugsgröße für €/m² und Heizlast-Proxy, falls kein Verbrauch vorliegt.' },
     { id: 'baujahrklasse', label: 'In welche Baujahrklasse fällt das Gebäude?', typ: 'select', dq: 1,
@@ -223,7 +225,7 @@ const SEKTIONEN_ROH = [
         { wert: '>70', label: '> 70 °C' },
         { wert: 'unbekannt', label: 'unbekannt' },
       ],
-      tooltip: 'Über 65 °C ist der Standard-Hybrid nur nach Fachprüfung möglich (R09).' },
+      tooltip: 'Korridor: bis 65 °C Standard (Hinweis ab 56 °C, R09), 66–70 °C interne Klärung (R20), über 70 °C Fachprüfung (R21).' },
     { id: 'heizkoerper_ausreichend', label: 'Sind die Heizkörper ausreichend dimensioniert?', typ: 'select', optionen: JNU, dq: 1,
       tooltip: 'Knappe Heizflächen erhöhen die nötige Vorlauftemperatur.' },
     { id: 'hydraulischer_abgleich', label: 'Ist ein hydraulischer Abgleich vorhanden?', typ: 'select', optionen: JNU, dq: 1,
@@ -361,6 +363,16 @@ const SEKTIONEN_ROH = [
       tooltip: 'Laufende Kosten, gehen nicht ins einmalige LV ein (Opex).' },
     { id: 'fernablesung', label: 'Ist Fernablesung erforderlich?', typ: 'select', optionen: JNU, dq: 0,
       tooltip: 'In Monitoring Basic enthalten (Demo).' },
+  ]},
+
+  { id: 'K', titel: 'Vertrag & Angebot', fragen: [
+    { id: 'vertragslaufzeit', label: 'Welche Vertragslaufzeit soll angesetzt werden?', typ: 'select', dq: 0,
+      optionen: [
+        { wert: '10', label: '10 Jahre', hinweis: 'Höherer Grundpreis, schnellere Amortisation.' },
+        { wert: '15', label: '15 Jahre (Demo-Standard)', hinweis: 'Ausgewogener Demo-Standard.' },
+        { wert: '20', label: '20 Jahre', hinweis: 'Niedrigerer Grundpreis, längere Bindung.' },
+      ],
+      tooltip: 'Bestimmt die Grundpreis-Annuität (Demo). Leer = 15 Jahre Default.' },
   ]},
 ]
 
@@ -602,6 +614,7 @@ const p = (warum, warnsignale, einordnung) => ({ warum, warnsignale, einordnung 
 const PLAYBOOKS_KURZ = {
   gebaeudetyp: p('Setzt den Rahmen für Platz, Schall und Standardfit.', 'Innenstadt, enge Höfe oder direkte Nachbarn.', 'Freistehend ist Standard; verdichtet braucht Prüfung.'),
   wohneinheiten: p('Ordnet Objektgröße und Richtwerte pro WE ein.', 'Sehr kleine oder sehr große Objekte.', 'Erklärt Kennzahlen, ist allein kein Ausschluss.'),
+  anzahl_gebaeude: p('Klärt früh, ob nur ein Gebäude versorgt wird.', 'Mehr als ein Gebäude ist im MVP kein Standardfit.', 'Ein Gebäude ist Standard; mehrere sind Sonderfall.'),
   flaeche: p('Stützt Heizlastproxy und Kosten pro m².', 'Fläche passt nicht zu WE oder Verbrauch.', 'Schätzwert klar als Annahme führen.'),
   baujahrklasse: p('Gibt eine schnelle energetische Einordnung.', 'Modernisierung passt nicht zur Baujahrklasse.', 'Nur Gesprächsanker, keine Berechnung.'),
   sanierungsstand: p('Beeinflusst den Heizlastproxy im Demo-Modell.', 'Unklare Dämmung, Fenster oder Dachzustand.', 'Besser saniert stärkt Temperatur- und Leistungsfit.'),
@@ -646,6 +659,7 @@ const PLAYBOOKS_KURZ = {
   monitoring_variante: p('Setzt den Betriebsdaten-Umfang.', 'Reportingwünsche über Basic hinaus.', 'Basic ist Standard; Plus bei höherem Bedarf.'),
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
+  vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '15 Jahre ist Demo-Standard; 10 oder 20 Jahre verschieben den Grundpreis.'),
 }
 
 const mitPlaybook = (frage) => ({

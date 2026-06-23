@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { LV_GRUPPEN } from '../data/katalog.js'
 import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
+import { CONTRACTING_DEMO_HINWEIS } from '../data/texte.js'
 import Ampel from '../components/Ampel.jsx'
 import ScopeListe from '../components/ScopeListe.jsx'
 
@@ -40,9 +41,59 @@ function AnalyseKpi({ label, value, note }) {
   )
 }
 
+function ContractingKarte({ contracting }) {
+  if (!contracting) return null
+  const c = contracting
+  const pg = c.preisgleitformel
+  return (
+    <div className="karte analyse-hauptkarte">
+      <h3>Richtpreis-Angebot (Demo)</h3>
+      <p className="hinweis">{CONTRACTING_DEMO_HINWEIS}</p>
+      <div className="analyse-kpis">
+        <AnalyseKpi label="Grundpreis" value={`${euro(c.grundpreis_monat)} / Monat`} note={`${euro(c.grundpreis_pa)} p.a.`} />
+        <AnalyseKpi label="Arbeitspreis" value={c.arbeitspreis_mwh != null ? `${euro(c.arbeitspreis_mwh)} / MWh` : '–'} note="verbrauchsabhängig" />
+        <AnalyseKpi label="Vertragslaufzeit" value={`${c.laufzeit} Jahre`} />
+      </div>
+      <div className="karten-reihe">
+        <div className="karte">
+          <h4>Preisgleitformel (Demo)</h4>
+          <table className="fakten">
+            <tbody>
+              {pg.komponenten.map(k => (
+                <tr key={k.schluessel}><td>{k.label}</td><td className="r">{prozent(k.gewicht)}</td></tr>
+              ))}
+              <tr className="summe"><td>Basisjahr</td><td className="r">{pg.basisjahr}</td></tr>
+            </tbody>
+          </table>
+          <p className="hinweis">Jährliche Anpassung nach gewichteten Indizes; reale Indexreihen und rechtliche Prüfung folgen.</p>
+        </div>
+        <div className="karte">
+          <h4>Vertragsparameter</h4>
+          <table className="fakten">
+            <tbody>
+              <tr><td>Servicegrenze</td><td>{c.vertragsparameter.servicegrenze}</td></tr>
+              <tr><td>Effizienzrisiko</td><td>{c.vertragsparameter.effizienzrisiko}</td></tr>
+              <tr><td>Preisanpassung</td><td>{c.vertragsparameter.preisanpassung}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="karte">
+          <h4>Enthaltene Services</h4>
+          {c.enthalteneServices.length > 0 ? (
+            <ul className="checkliste">
+              {c.enthalteneServices.map((s, i) => <li key={i}>{s}</li>)}
+            </ul>
+          ) : <p className="hinweis">Im aktuellen Demo-Scope keine separaten Serviceposten.</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function KundenScope({ scope }) {
   return (
     <div className="kundenumfang">
+      <ContractingKarte contracting={scope.contracting} />
       <div className="karte analyse-hauptkarte">
         <h3>Kundenumfang</h3>
         <p className="hinweis">
@@ -293,6 +344,23 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
                 </tbody>
               </table>
               <p className="hinweis">CAPEX-/OPEX-Tags bereiten Stufe 2 vor; Werte bleiben Demo-Indikationen.</p>
+            </div>
+
+            <div className="karte">
+              <h3>Commercial / Pricing (intern, Demo)</h3>
+              <table className="fakten">
+                <tbody>
+                  <tr><td>Netto-CAPEX</td><td className="r">{euro(ergebnis.pricing.capex)}</td></tr>
+                  <tr><td>Kapitaldienst p.a. ({prozent(annahmen.kapitalkostensatz)}, {ergebnis.pricing.laufzeit} J)</td><td className="r">{euro(ergebnis.pricing.kapitaldienstPa)}</td></tr>
+                  <tr><td>fixer Service p.a. (OPEX)</td><td className="r">{euro(ergebnis.pricing.opexPa)}</td></tr>
+                  <tr className="summe"><td>Grundpreis p.a.</td><td className="r"><strong>{euro(ergebnis.pricing.grundpreisPa)}</strong></td></tr>
+                  <tr><td>variable Energiekosten</td><td className="r">{ergebnis.pricing.variabelProMwh != null ? `${euro(ergebnis.pricing.variabelProMwh)} /MWh` : '–'}</td></tr>
+                  <tr><td>AP-Marge ({prozent(ergebnis.pricing.apMarge)})</td><td className="r">{ergebnis.pricing.apMargeAbsolutPa != null ? `${euro(ergebnis.pricing.apMargeAbsolutPa)} p.a.` : '–'}</td></tr>
+                  <tr className="summe"><td>Arbeitspreis</td><td className="r"><strong>{ergebnis.pricing.arbeitspreisMwh != null ? `${euro(ergebnis.pricing.arbeitspreisMwh)} /MWh` : '–'}</strong></td></tr>
+                  <tr><td>Zielrendite-Indikation</td><td className="r">{ergebnis.pricing.zielrenditeIndikation != null ? prozent(ergebnis.pricing.zielrenditeIndikation) : '–'} (Ziel {prozent(ergebnis.pricing.zielIrr)}/{prozent(ergebnis.pricing.zielIrrAmbition)})</td></tr>
+                </tbody>
+              </table>
+              <p className="hinweis">Marge nur auf den Arbeitspreis (keine Marge auf CAPEX/Grundpreis). Zielrendite ist eine nicht-iterative Demo-Indikation, kein IRR-Solver. Nicht in der Kundensicht.</p>
             </div>
           </div>
         </div>

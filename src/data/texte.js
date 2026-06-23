@@ -12,3 +12,9 @@ export const DEMO_FOOTER =
 export const HANDOVER_FOOTNOTE =
   'Demo-Prototyp: alle Werte sind Demo-Annahmen, Schallwerte sind eine Demo-Abschätzung, ' +
   'Förderlogik ist Demo-Logik.'
+
+// Hinweis über dem kundensichtbaren Contracting-Angebot (Ergebnis.jsx, WP8).
+export const CONTRACTING_DEMO_HINWEIS =
+  'Richtpreis-Angebot (Demo) zur internen Konzeptabstimmung. Grundpreis, Arbeitspreis und ' +
+  'Preisgleitformel sind Demo-Annahmen, kein freigegebenes Festpreisangebot und keine ' +
+  'Rechts-, Förder- oder Schallgarantie.'

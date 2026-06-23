@@ -1,4 +1,4 @@
-// Datenebene 2/3: Regelsatz R01–R18 (HANDOVER §4, Schema §2.2).
+// Datenebene 2/3: Regelsatz R01–R21 (HANDOVER §4, Schema §2.2).
 //
 // Bedingungs-DSL (`wenn`):
 //   { feld, op, wert }            op: '=' '!=' '>' '>=' '<' '<=' 'in' 'nicht_in' 'nicht_leer'
@@ -79,12 +79,12 @@ export const REGELN = [
   },
   {
     id: 'R09',
-    wenn: { feld: 'vorlauftemp_klasse', op: 'in', wert: ['66-70', '>70'] },
-    dann: [
-      { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur über 65 °C – Standard-Hybrid nur nach Fachprüfung.' },
-      { typ: 'status', wert: 'orange' },
-    ],
-    begruendung: 'Hohe Vorlauftemperatur gefährdet WP-Effizienz und Auslegung.',
+    wenn: { und: [
+      { feld: 'vorlauftemp_klasse', op: 'in', wert: ['56-60', '61-65'] },
+      { feld: 'technologiepfad', op: '=', wert: 'hybrid' },
+    ]},
+    dann: { typ: 'warn', kategorie: 'hinweis', text: 'Vorlauftemperatur 56–65 °C: WP-Effizienz sinkt im oberen Hybridkorridor; der Bestandskessel deckt die kältesten Spitzen. Als Annahme im Gespräch markieren.' },
+    begruendung: 'Oberer Hybridkorridor (56–65 °C) bleibt standardfähig, darf aber nicht stillschweigend angenommen werden – Hinweis ohne Statusverschlechterung. Greift nur im Hybridpfad, da der Hinweis den Bestandskessel voraussetzt (R17 blockt Nicht-Hybrid ohnehin als rot).',
   },
   {
     id: 'R10',
@@ -166,5 +166,32 @@ export const REGELN = [
     wenn: { feld: 'schall_ampel_aktiv', op: 'in', wert: ['gelb', 'orange'] },
     dann: { typ: 'status', wert: '@schall_status' },
     begruendung: 'Schall-Ampel: Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag; gelb = prüfpflichtig, orange = Fachprüfung. Demo-Abschätzung, keine rechtsverbindliche Schallberechnung.',
+  },
+  {
+    id: 'R19',
+    wenn: { feld: 'anzahl_gebaeude', op: '>', wert: 1 },
+    dann: [
+      { typ: 'status', wert: 'rot' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Versorgung mehrerer Gebäude ist im MVP kein Standardfit – als Sonderfall intern bewerten und Scope separat klären.' },
+    ],
+    begruendung: 'MVP-Systempaket versorgt genau ein Gebäude; Mehr-Gebäude-Versorgung ist technischer Sonderfall (Robert: Hard Blocker).',
+  },
+  {
+    id: 'R20',
+    wenn: { feld: 'vorlauftemp_klasse', op: '=', wert: '66-70' },
+    dann: [
+      { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur 66–70 °C: nur mit modernem R290-/Hochtemperatur-Setup standardfähig – interne Klärung der Auslegung.' },
+      { typ: 'status', wert: 'gelb' },
+    ],
+    begruendung: 'Moderne R290-Luft/Wasser-WP erreichen bis 70 °C; im Hybrid deckt der Bestandskessel die Spitzen. Standardfähig mit interner Klärung statt Fachprüfung.',
+  },
+  {
+    id: 'R21',
+    wenn: { feld: 'vorlauftemp_klasse', op: '=', wert: '>70' },
+    dann: [
+      { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur über 70 °C – außerhalb des Standard-Hybridkorridors, Fachprüfung erforderlich.' },
+      { typ: 'status', wert: 'orange' },
+    ],
+    begruendung: 'Über 70 °C ist Sonderfall jenseits gängiger R290-Hybrid-Auslegung – Fachprüfung erforderlich.',
   },
 ]
