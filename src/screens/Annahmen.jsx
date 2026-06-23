@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { ANNAHMEN_META } from '../data/annahmen.js'
-import { ADMIN_STORAGE_KEY, makeDefaultAdminConfig, validateAdminConfig } from '../data/adminConfig.js'
+import { ADMIN_STORAGE_KEY, makeDefaultAdminConfig, mergeWithDefaults, validateAdminConfig } from '../data/adminConfig.js'
 import { REGELN } from '../data/regeln.js'
 import { bedingungText, wirkungText } from './format.js'
 import Testfaelle from './Testfaelle.jsx'
@@ -265,12 +265,13 @@ function ImportExportTab({ adminConfig, setAdminConfig, resetAdminConfig }) {
   const importieren = () => {
     try {
       const parsed = JSON.parse(text)
-      const importErrors = validateAdminConfig(parsed)
+      const merged = mergeWithDefaults(parsed)
+      const importErrors = validateAdminConfig(merged)
       if (importErrors.length) {
         setMeldung(`Import blockiert: ${importErrors.slice(0, 4).join(' ')}`)
         return
       }
-      setAdminConfig(parsed)
+      setAdminConfig(merged)
       setMeldung('Import übernommen.')
     } catch {
       setMeldung('Import blockiert: JSON ist ungültig.')
