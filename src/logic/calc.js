@@ -249,5 +249,7 @@ export function ableiten(e, a) {
     schall_je_variante: schall.je_variante,
     schall_gesperrte_varianten: schall.gesperrte,
     energie: energieIndikation(bedarf, a),
+    // Puffer-Sizing: Richtwert auf Basis kleinster WP-Einheit in homogener Kaskade
+    puffer_empfehlung_liter: a.puffer_liter_je_kw * a.wp_modul_kw,
   }
 }
