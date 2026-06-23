@@ -7,8 +7,9 @@ keine vollständige Implementierungsspezifikation. Code-Quellen sind verlinkt, n
 
 Status: Grundlagendokument. Codeseitig umgesetzt: SK-76 (Mehr-Gebäude-Blocker), SK-78
 (Vorlauftemperatur-Korridor), SK-77 (WP-Produktstamm Referenz), SK-81 (Berechnungs-/
-Output-Grenzen), SK-79 (Aufstellung & Schallschutzkonzept) und SK-75 (Datenquellen &
-Provenienzmodell). Übrige Child-Tickets bleiben Konzept/Entscheidung bis zu freigegebenem Scope.
+Output-Grenzen), SK-79 (Aufstellung & Schallschutzkonzept), SK-75 (Datenquellen &
+Provenienzmodell), SK-80 (Messkonzept/Strombeschaffung) und SK-82 (Elektroanschluss-Notiz
+dokumentiert). Übrige Child-Tickets bleiben Konzept/Entscheidung bis zu freigegebenem Scope.
 
 ## 1. Produkt-Scope & Stop-line
 
@@ -40,9 +41,9 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 | **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition zeigt Buderus/Dreammaker-Referenz; Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
 | **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
 | **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | **Umgesetzt** (§13): 5. Variante `aussen_offen` ergänzt; `einhausung` als Rockwool-Referenz; Container-Entscheidung (2 Größen bleiben); ATEC + Rockwool-Zaun als Katalog-Scope-Lines. Schallformel bleibt Demo-Vorprüfung. |
-| **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | Messkonzept als eigener Scope-/Regelblock neben Monitoring; Strombeschaffung als Commercial/Betrieb-Annahme; Verknüpfung mit Preisgleitformel. Noch Konzept. |
+| **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | **Umgesetzt** (§15): Messkonzept-Paket getrennt von Monitoring; `STROMBESCHAFFUNG_MODELL` verknüpft Strompreisannahme, Preisgleit-Gewicht und Messkonzept-Voraussetzung. |
 | **SK-81** Berechnungs-/Output-Grenzen | `ableiten()` mischt Sizing/Energie/Placement/Schall; Engine baut LV + interne Kennzahlen | **Umgesetzt** (§12): `BERECHNUNGS_DOMAENEN` + `SERVICEGRENZE` in `calc.js`; `bereich`-Tags auf opex-Katalogpositionen; `bereichsSummen` im Engine-Return. |
-| **SK-82** Elektroanschluss | `elektro_grundpaket`, `zaehlerschrank`, `kabelweg_*` (generisch) | Bleibt generisch bis zur Kevin-W./Patrick-L.-Notiz; danach Inputs/Blocker/Scope/Kundentexte ableiten. Keine erfundenen Anschlussdetails. Noch Konzept. |
+| **SK-82** Elektroanschluss | `elektro_grundpaket`, `zaehlerschrank`, `kabelweg_*` (generisch) | **Umgesetzt** (§16): Elektro-Paket bleibt generisch (`k_elektro: 25000`); Scope-Grenze und Entscheidungsrahmen für Kevin-W./Patrick-L.-Notiz dokumentiert. |
 
 ## 4. Kundensicht vs. interne Sicht
 
@@ -245,3 +246,47 @@ Manuell vs. skalierbar: 18 Felder sind als `skalierbar: true` markiert und sind
 Integrationskandidaten für TES-Abrechnung, Asset Manager oder Stammdaten/CRM.
 
 Referenz: `docs/PROVENIENZ_MODELL.md`. Tests in `tests/engine.test.js` (`WP12 SK-75: Datenquellen & Provenienzmodell`).
+
+## 15. Umgesetzt: Messkonzept, Monitoring, Strombeschaffung (SK-80)
+
+### Messkonzept vs. Monitoring
+
+| Scope | Katalog-ID | Inhalt | Annahme |
+|---|---|---|---|
+| **Messkonzept Basis** | `messkonzept_basis` | WP-Eigenstromzähler (Zweirichtungszähler/WP-Sondertarif), Fernablesung-Anschluss, Übergabedokumentation | `k_messkonzept_basis: 4500` € |
+| **Monitoring Basic** | `mon_basic` / `mon_basic2` | Datenlogger, Fernablesung-Betrieb, Reporting-Infrastruktur (aufbauend auf Messkonzept Basis) | `k_monitoring_basic: 5000` € |
+| **Monitoring Plus** | `mon_plus` | Erweiterte Sensorik und Effizienz-Reporting | `k_monitoring_plus: 12000` € |
+
+**Trennung:** Messkonzept = gesetzliches Messkonzept / Zählerinfrastruktur (einmalig, Pflicht im Contracting). Monitoring = Betriebsführungs-Infrastruktur (aufbauend). In früheren Versionen war der Zähler fälschlicherweise im Monitoring-Text enthalten.
+
+### STROMBESCHAFFUNG_MODELL (Dokumentationskonstante)
+
+Exportiert aus `src/data/annahmen.js`. Keine Rechenlogik – verknüpft die drei zusammenhängenden Annahmen:
+
+- `strompreis_annahme: 'strompreis_wp'` → 240 €/MWh (Demo-Energiekostengrundlage)
+- `preisgleitformel_anteil: 'pg_strom'` → 27 % Stromkostenanteil in der AVBFernwärme §24-Preisgleitformel
+- `messkonzept_voraussetzung: 'messkonzept_basis'` → separater WP-Zähler als technische Voraussetzung für WP-Sondertarif-Abrechnung und JAZ-Messung
+
+Modell `'wp_sondertarif'`: Techem beschafft WP-Strom über WP-Sondertarif (HTT/NTT). Strombeschaffung ist kein direkter BEG-Fördergegenstand (`foerderung: 'keine_direkte'`).
+
+### BEG-Förderannahme
+
+BEG bleibt Demo-Annahme. `f_messkonzept: 0` in `ANNAHMEN` (Zählerinfrastruktur kein BEG-Gegenstand). Interne Sicht via `sichtModus='intern'` zeigt den Subventionseffekt auf CAPEX; Kundensicht zeigt nur Annahmen und offene Prüfungen.
+
+Tests in `tests/engine.test.js` (`WP12 SK-80: Messkonzept & Strombeschaffung`).
+
+## 16. Umgesetzt: Elektroanschluss-Notiz (SK-82)
+
+**Entscheidung:** Das Elektro-Paket bleibt generisch bis zur Kevin-W./Patrick-L.-Notiz.
+
+Aktueller Stand: `elektro_netz`-Position in `katalog.js` mit `k_elektro: 25000` € (Demo-Pauschale). Leistungsumfang: "Elektroanbindung der Wärmepumpe inklusive Vorbereitung des Mess- und Anschlusskonzepts." Förderanteil: `f_elektro: 0.8`.
+
+**Scope-Grenze:** Elektro-Paket deckt den Anschluss bis zum Übergabepunkt Netzanschluss. Messkonzept Basis (§15) beginnt ab Zähler.
+
+**Was sich nach Vorliegen der Kevin-W./Patrick-L.-Notiz ändert:**
+- Neue Eingabefelder (Netzanschluss-Typ, Zählerschrank-Klasse, Kabelweg-Kategorie)
+- Neue Blocker-Regeln (z. B. Netzanschluss unzureichend → kein Standard-Scope)
+- Angepasste Scope-Lines im LV (differenzierte Positionen statt Pauschale)
+- Kundentexte mit konkreten Anschluss- und Koordinationshinweisen
+
+Keine erfundenen Anschluss-, Zähler- oder Netzdetails vor Vorliegen der Notiz.

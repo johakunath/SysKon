@@ -242,33 +242,50 @@ export const KATALOG = [
     ],
   },
   {
+    id: 'messkonzept', pakettyp: 'Basis', gruppe: 'Messkonzept',
+    positionen: [
+      { id: 'messkonzept_basis',
+        text: 'Messkonzept Basis (WP-Eigenstromzähler, Fernablesung, Übergabedokumentation)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_messkonzept_basis' },
+        foerder: 'f_messkonzept', tag: 'capex',
+        begruendung: 'Pflichtbaustein Contracting: separater WP-Zähler für JAZ-Messung und WP-Sondertarif-Abrechnung.',
+        kunde: {
+          titel: 'Messkonzept & Zählerinfrastruktur',
+          hersteller: 'systemseitig',
+          produkt: 'WP-Eigenstromzähler und Fernablesung',
+          leistungsumfang: 'WP-eigener Stromzähler (Zweirichtungszähler / WP-Sondertarif), Fernablesung-Anschluss und Übergabedokumentation. Pflichtbaustein für das Contracting-Modell.',
+        } },
+    ],
+  },
+  {
     id: 'monitoring', pakettyp: 'Monitoring', gruppe: 'Monitoring',
     variantenFeld: 'monitoring_variante',
     varianten: [
       { wert: 'basic', name: 'Monitoring Basic',
         positionen: [
-          { id: 'mon_basic', text: 'Monitoring Basic (verpflichtend): Zähler, Datenlogger, Fernablesung',
+          { id: 'mon_basic', text: 'Monitoring Basic (verpflichtend): Datenlogger, Fernablesung-Betrieb',
             menge: 1, einheit: 'pausch.',
             kosten: { typ: 'fix', annahme: 'k_monitoring_basic' }, foerder: 'f_monitoring', tag: 'capex',
             begruendung: 'Monitoring Basic ist im Contracting-Modell verpflichtend.',
             kunde: {
               titel: 'Monitoring Basic',
               hersteller: 'systemseitig',
-              produkt: 'Zähler, Datenlogger und Fernablesung',
-              leistungsumfang: 'Grundlegende Mess- und Fernablesestruktur für Betrieb und spätere Auswertung.',
+              produkt: 'Datenlogger und Fernablesung-Betrieb',
+              leistungsumfang: 'Betriebsmonitoring aufbauend auf Messkonzept Basis: Datenlogger, Fernablesung-Betrieb und Reporting-Infrastruktur.',
             } },
         ]},
       { wert: 'plus', name: 'Monitoring Plus',
         positionen: [
-          { id: 'mon_basic2', text: 'Monitoring Basic (verpflichtend): Zähler, Datenlogger, Fernablesung',
+          { id: 'mon_basic2', text: 'Monitoring Basic (verpflichtend): Datenlogger, Fernablesung-Betrieb',
             menge: 1, einheit: 'pausch.',
             kosten: { typ: 'fix', annahme: 'k_monitoring_basic' }, foerder: 'f_monitoring', tag: 'capex',
             begruendung: 'Monitoring Basic ist im Contracting-Modell verpflichtend.',
             kunde: {
               titel: 'Monitoring Basic',
               hersteller: 'systemseitig',
-              produkt: 'Zähler, Datenlogger und Fernablesung',
-              leistungsumfang: 'Grundlegende Mess- und Fernablesestruktur für Betrieb und spätere Auswertung.',
+              produkt: 'Datenlogger und Fernablesung-Betrieb',
+              leistungsumfang: 'Betriebsmonitoring aufbauend auf Messkonzept Basis: Datenlogger, Fernablesung-Betrieb und Reporting-Infrastruktur.',
             } },
           { id: 'mon_plus', text: 'Monitoring Plus (erweiterte Sensorik, Effizienz-Reporting)',
             menge: 1, einheit: 'pausch.',
@@ -368,6 +385,6 @@ export const KATALOG = [
 // Anzeige-Reihenfolge der LV-Gruppen (HANDOVER §15 B)
 export const LV_GRUPPEN = [
   'Wärmepumpenpaket', 'Hybrid-Einbindung', 'Hydraulik', 'Speicher / Warmwasser',
-  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Monitoring',
+  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Messkonzept', 'Monitoring',
   'Installation / Inbetriebnahme', 'Umfeldmaßnahmen',
 ]

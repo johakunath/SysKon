@@ -45,6 +45,7 @@ export const ANNAHMEN = {
   f_aufstellung: 0.8,
   f_install: 1.0,
   f_monitoring: 0,
+  f_messkonzept: 0,   // Zählerinfrastruktur: kein BEG-Fördergegenstand (Demo)
   f_fossil: 0,
 
   // Kostenbausteine einmalig (€)
@@ -56,6 +57,7 @@ export const ANNAHMEN = {
   k_elektro: 25000,
   k_monitoring_basic: 5000,
   k_monitoring_plus: 12000,
+  k_messkonzept_basis: 4500,  // €, WP-Eigenstromzähler + Fernablese-Anschluss (Demo, SK-80)
   k_install: 60000,
   k_umfeld: 30000,
   k_aussen_offen: 3000,
@@ -112,6 +114,18 @@ export const WP_PRODUKT_REFERENZ = {
   sizing_methode: 'Leistungsanteil × Heizlast-Proxy ÷ Modulleistung (Demo-Heuristik)',
   sizing_korridor: '1–6 Module à 20 kW (20–120 kW thermisch)',
   anmerkung: 'Demo-Referenzstand Buderus/Dreammaker; Alternativhersteller nach technischer Prüfung möglich.',
+}
+
+// SK-80: Strombeschaffungs-Modell (Dokumentationskonstante, keine Rechenlogik).
+// Verknüpft strompreis_wp (Energiekostenannahme) mit pg_strom (Preisgleitformel-Gewicht)
+// und messkonzept_basis (Pflicht-Infrastruktur für WP-Sondertarif-Abrechnung).
+export const STROMBESCHAFFUNG_MODELL = {
+  modell: 'wp_sondertarif',
+  beschreibung: 'Techem beschafft WP-Strom im WP-Sondertarif (HTT/NTT); getrennte Zählung via Messkonzept Basis.',
+  strompreis_annahme: 'strompreis_wp',           // 240 €/MWh Demo
+  preisgleitformel_anteil: 'pg_strom',           // 27 % Stromkostenanteil in Preisgleitformel
+  foerderung: 'keine_direkte',                   // Strombeschaffung kein BEG-Gegenstand
+  messkonzept_voraussetzung: 'messkonzept_basis',// Katalog-Paket; separater WP-Zähler Pflicht
 }
 
 // Metadaten für die editierbare Annahmen-Seite (Screen 4)
@@ -176,6 +190,10 @@ export const ANNAHMEN_META = [
     ['k_schallhaube', 'Schallhaube', '€'],
     ['k_schallschutzzaun', 'Schallschutzzaun (Rockwool – Demo)', '€'],
     ['k_atec_schallberechnung', 'ATEC-Schallberechnung (Demo-Pauschale)', '€'],
+  ]},
+  { gruppe: 'Messkonzept (Demo, SK-80)', felder: [
+    ['k_messkonzept_basis', 'Messkonzept Basis (WP-Eigenstromzähler, Fernablesung)', '€'],
+    ['f_messkonzept', 'Förderanteil Messkonzept (kein BEG-Gegenstand)', '0–1'],
   ]},
   { gruppe: 'Laufend & Sonstiges', felder: [
     ['monitoring_pa', 'Monitoring p.a.', '€/a'],

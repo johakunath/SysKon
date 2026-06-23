@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest'
 import { berechne, dqScore, pruefeBedingung, STATUS_ORDER } from '../src/logic/engine.js'
 import { PRESETS } from '../src/data/presets.js'
-import { WP_PRODUKT_REFERENZ } from '../src/data/annahmen.js'
+import { WP_PRODUKT_REFERENZ, STROMBESCHAFFUNG_MODELL, ANNAHMEN } from '../src/data/annahmen.js'
 import { KATALOG } from '../src/data/katalog.js'
 import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE, AUFSTELLVARIANTEN, AUFSTELLUNG_VARIANTEN_MAPPING } from '../src/logic/calc.js'
 import { QUELLENTYPEN, FELD_PROVENIENZ, VERTRAUEN_WERTE, AKTUALITAET_WERTE } from '../src/data/provenienz.js'
@@ -700,5 +700,46 @@ describe('WP12 SK-75: Datenquellen & Provenienzmodell', () => {
     expect(e.vertrauen).toBe('niedrig')
     expect(typeof e.followUp).toBe('string')
     expect(e.followUp.length).toBeGreaterThan(0)
+  })
+})
+
+describe('WP12 SK-80: Messkonzept & Strombeschaffung', () => {
+  it('KATALOG enthält ein Paket mit id messkonzept', () => {
+    const paket = KATALOG.find(p => p.id === 'messkonzept')
+    expect(paket).toBeDefined()
+    expect(paket.gruppe).toBe('Messkonzept')
+  })
+
+  it('messkonzept_basis Position existiert im messkonzept-Paket', () => {
+    const paket = KATALOG.find(p => p.id === 'messkonzept')
+    const pos = paket.positionen.find(p => p.id === 'messkonzept_basis')
+    expect(pos).toBeDefined()
+    expect(pos.kosten.annahme).toBe('k_messkonzept_basis')
+    expect(pos.foerder).toBe('f_messkonzept')
+    expect(pos.tag).toBe('capex')
+  })
+
+  it('ANNAHMEN.k_messkonzept_basis ist eine positive Zahl', () => {
+    expect(typeof ANNAHMEN.k_messkonzept_basis).toBe('number')
+    expect(ANNAHMEN.k_messkonzept_basis).toBeGreaterThan(0)
+  })
+
+  it('ANNAHMEN.f_messkonzept ist 0 (kein BEG-Fördergegenstand)', () => {
+    expect(ANNAHMEN.f_messkonzept).toBe(0)
+  })
+
+  it('STROMBESCHAFFUNG_MODELL hat alle Pflichtfelder', () => {
+    expect(STROMBESCHAFFUNG_MODELL).toBeDefined()
+    expect(STROMBESCHAFFUNG_MODELL.modell).toBe('wp_sondertarif')
+    expect(STROMBESCHAFFUNG_MODELL.strompreis_annahme).toBe('strompreis_wp')
+    expect(STROMBESCHAFFUNG_MODELL.preisgleitformel_anteil).toBe('pg_strom')
+    expect(STROMBESCHAFFUNG_MODELL.messkonzept_voraussetzung).toBe('messkonzept_basis')
+  })
+
+  it('Engine-Output für Referenz-Preset enthält messkonzept_basis in lv.positionen', () => {
+    const preset = PRESETS.find(p => p.id === 'referenz') ?? PRESETS[0]
+    const result = berechne(preset.eingaben)
+    const posIds = result.lv.positionen.map(p => p.id)
+    expect(posIds).toContain('messkonzept_basis')
   })
 })
