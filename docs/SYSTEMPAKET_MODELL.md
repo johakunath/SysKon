@@ -7,8 +7,8 @@ keine vollständige Implementierungsspezifikation. Code-Quellen sind verlinkt, n
 
 Status: Grundlagendokument. Codeseitig umgesetzt: SK-76 (Mehr-Gebäude-Blocker), SK-78
 (Vorlauftemperatur-Korridor), SK-77 (WP-Produktstamm Referenz), SK-81 (Berechnungs-/
-Output-Grenzen) und SK-79 (Aufstellung & Schallschutzkonzept). Übrige Child-Tickets bleiben
-Konzept/Entscheidung bis zu freigegebenem Scope.
+Output-Grenzen), SK-79 (Aufstellung & Schallschutzkonzept) und SK-75 (Datenquellen &
+Provenienzmodell). Übrige Child-Tickets bleiben Konzept/Entscheidung bis zu freigegebenem Scope.
 
 ## 1. Produkt-Scope & Stop-line
 
@@ -35,7 +35,7 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 
 | Ticket | Ist-Stand im Code | Lücke / Ziel |
 |---|---|---|
-| **SK-75** Datenherkunft & Provenienz | Proto-Signale: `dq`-Gewichte (`fragen.js`), `verbrauchsquelle`, `heizlast_geschaetzt` (`calc.js`), `*_bekannt`/`unbekannt`-Muster | Formales Provenienzmodell je Feld (Quelle, Erfassungsweg, Aktualität, Confidence, kundensichtbare Annahme); Asset-Manager-/Stammdaten als Quellen; manuell vs. skalierbar trennen. Noch Konzept. |
+| **SK-75** Datenherkunft & Provenienz | Proto-Signale: `dq`-Gewichte (`fragen.js`), `verbrauchsquelle`, `heizlast_geschaetzt` (`calc.js`), `*_bekannt`/`unbekannt`-Muster | **Umgesetzt** (§14): `QUELLENTYPEN` + `FELD_PROVENIENZ` in `src/data/provenienz.js`; alle dq>0-Felder haben Zielattribute (Quelle, Erfassungsweg, Aktualität, Vertrauen, kundensichtbare Annahme); manuell vs. skalierbar getrennt; `followUp` erzeugt Sales-Folgeaktion. Referenz: `docs/PROVENIENZ_MODELL.md`. |
 | **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (§5). R04/R16/R17 mit Sales-sicheren Warn-Texten ergänzt (§9). Nicht-Luft/Wasser über R17 abgedeckt. |
 | **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition zeigt Buderus/Dreammaker-Referenz; Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
 | **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
@@ -219,3 +219,29 @@ Codeumsetzung:
 Schallformel-Einordnung: Die Demo-Vorprüfung (`schallBewertung()` in `calc.js`) bleibt **keine rechtsverbindliche Schallberechnung**. ATEC-Service ist der vorgesehene Anbieter für den rechtsverbindlichen Nachweis.
 
 Tests in `tests/engine.test.js` (`WP12 SK-79: Aufstellung & Schallschutzkonzept`).
+
+## 14. Umgesetzt: Datenquellen & Provenienzmodell (SK-75)
+
+Alle fachlich wichtigen Eingabefelder haben jetzt deklarierte Zielattribute. Codeumsetzung in
+`src/data/provenienz.js` (reine Datenkonstanten, kein React, kein Runtime-Impact):
+
+| Export | Inhalt |
+|---|---|
+| `QUELLENTYPEN` | 6 Quellentypen mit Label, Beschreibung, `skalierbar`-Flag |
+| `FELD_PROVENIENZ` | 43 Felder mit `quelle`, `erfassungsweg`, `aktualitaet`, `vertrauen`, `skalierbar`, `kundenAnnahme`, `followUp` |
+| `VERTRAUEN_WERTE` | `['hoch', 'mittel', 'niedrig']` – Enum-Referenz |
+| `AKTUALITAET_WERTE` | `['aktuell', 'historisch', 'einmalig', 'berechnet']` – Enum-Referenz |
+
+Quellentypen: `tes_abrechnung`, `asset_manager`, `stammdaten` (skalierbar);
+`kunde_manuell`, `sales_manuell`, `abschaetzung` (manuell).
+
+Skalierbare Felder (Integrationskandidaten): `jahresverbrauch`, `vorlauftemp_klasse`,
+`wohneinheiten`, `flaeche`, `baujahrklasse`, `gaskessel_vorhanden`, `heizraum_vorhanden` u.a.
+
+Felder mit `followUp !== null` bezeichnen den Sales-Nachfassschritt bei schwacher Quelle
+(z. B. `sanierungsstand → Energieausweis anfordern`, `abstand_fenster → ATEC beauftragen`).
+
+Manuell vs. skalierbar: 18 Felder sind als `skalierbar: true` markiert und sind
+Integrationskandidaten für TES-Abrechnung, Asset Manager oder Stammdaten/CRM.
+
+Referenz: `docs/PROVENIENZ_MODELL.md`. Tests in `tests/engine.test.js` (`WP12 SK-75: Datenquellen & Provenienzmodell`).
