@@ -7,6 +7,8 @@ import { PRESETS } from '../src/data/presets.js'
 import { WP_PRODUKT_REFERENZ } from '../src/data/annahmen.js'
 import { KATALOG } from '../src/data/katalog.js'
 import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE, AUFSTELLVARIANTEN, AUFSTELLUNG_VARIANTEN_MAPPING } from '../src/logic/calc.js'
+import { QUELLENTYPEN, FELD_PROVENIENZ, VERTRAUEN_WERTE, AKTUALITAET_WERTE } from '../src/data/provenienz.js'
+import { ALLE_FRAGEN } from '../src/data/fragen.js'
 
 describe('pruefeBedingung', () => {
   it('!= trifft nicht bei undefiniert, null oder leerem Feld', () => {
@@ -607,5 +609,96 @@ describe('WP12 SK-79: Aufstellung & Schallschutzkonzept', () => {
     expect(je.aussen_offen).toBeDefined()
     expect(je.aussen_offen.abschlag).toBe(0)
     expect(typeof je.aussen_offen.lp).toBe('number')
+  })
+})
+
+describe('WP12 SK-75: Datenquellen & Provenienzmodell', () => {
+  const PFLICHT_FELDER = ['quelle', 'erfassungsweg', 'aktualitaet', 'vertrauen', 'skalierbar', 'kundenAnnahme', 'followUp']
+
+  it('QUELLENTYPEN hat die 6 erwarteten Quellentypen', () => {
+    const keys = Object.keys(QUELLENTYPEN)
+    expect(keys).toContain('tes_abrechnung')
+    expect(keys).toContain('asset_manager')
+    expect(keys).toContain('stammdaten')
+    expect(keys).toContain('kunde_manuell')
+    expect(keys).toContain('sales_manuell')
+    expect(keys).toContain('abschaetzung')
+  })
+
+  it('QUELLENTYPEN-Einträge haben label, beschreibung und skalierbar', () => {
+    for (const [id, typ] of Object.entries(QUELLENTYPEN)) {
+      expect(typeof typ.label, id).toBe('string')
+      expect(typeof typ.beschreibung, id).toBe('string')
+      expect(typeof typ.skalierbar, id).toBe('boolean')
+    }
+  })
+
+  it('mindestens 3 skalierbare Quellentypen vorhanden', () => {
+    const skalierbar = Object.values(QUELLENTYPEN).filter(t => t.skalierbar)
+    expect(skalierbar.length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('FELD_PROVENIENZ-Einträge haben alle Pflichtfelder', () => {
+    for (const [id, eintrag] of Object.entries(FELD_PROVENIENZ)) {
+      for (const feld of PFLICHT_FELDER) {
+        expect(eintrag, `${id}.${feld}`).toHaveProperty(feld)
+      }
+    }
+  })
+
+  it('vertrauen-Werte sind nur hoch/mittel/niedrig', () => {
+    for (const [id, eintrag] of Object.entries(FELD_PROVENIENZ)) {
+      expect(VERTRAUEN_WERTE, `vertrauen ungültig: ${id}=${eintrag.vertrauen}`).toContain(eintrag.vertrauen)
+    }
+  })
+
+  it('aktualitaet-Werte sind nur aktuell/historisch/einmalig/berechnet', () => {
+    for (const [id, eintrag] of Object.entries(FELD_PROVENIENZ)) {
+      expect(AKTUALITAET_WERTE, `aktualitaet ungültig: ${id}=${eintrag.aktualitaet}`).toContain(eintrag.aktualitaet)
+    }
+  })
+
+  it('quelle-Werte referenzieren nur bekannte QUELLENTYPEN', () => {
+    const gueltig = Object.keys(QUELLENTYPEN)
+    for (const [id, eintrag] of Object.entries(FELD_PROVENIENZ)) {
+      const quellen = Array.isArray(eintrag.quelle) ? eintrag.quelle : [eintrag.quelle]
+      for (const q of quellen) {
+        expect(gueltig, `unbekannte quelle in ${id}: ${q}`).toContain(q)
+      }
+    }
+  })
+
+  it('alle dq>0-Felder haben einen FELD_PROVENIENZ-Eintrag', () => {
+    const dqFelder = ALLE_FRAGEN.filter(f => f.dq > 0).map(f => f.id)
+    const fehlend = dqFelder.filter(id => !FELD_PROVENIENZ[id])
+    expect(fehlend).toEqual([])
+  })
+
+  it('mindestens 15 Felder sind als skalierbar markiert', () => {
+    const skalierbar = Object.values(FELD_PROVENIENZ).filter(e => e.skalierbar)
+    expect(skalierbar.length).toBeGreaterThanOrEqual(15)
+  })
+
+  it('tes_abrechnung und asset_manager kommen als Zielquelle vor', () => {
+    const ersteQuellen = Object.values(FELD_PROVENIENZ).map(e =>
+      Array.isArray(e.quelle) ? e.quelle[0] : e.quelle
+    )
+    expect(ersteQuellen).toContain('tes_abrechnung')
+    expect(ersteQuellen).toContain('asset_manager')
+  })
+
+  it('jahresverbrauch hat tes_abrechnung als Zielquelle mit hoch Vertrauen', () => {
+    const e = FELD_PROVENIENZ.jahresverbrauch
+    const erstQuelle = Array.isArray(e.quelle) ? e.quelle[0] : e.quelle
+    expect(erstQuelle).toBe('tes_abrechnung')
+    expect(e.vertrauen).toBe('hoch')
+    expect(e.skalierbar).toBe(true)
+  })
+
+  it('sanierungsstand hat niedrig Vertrauen und einen followUp-Hinweis', () => {
+    const e = FELD_PROVENIENZ.sanierungsstand
+    expect(e.vertrauen).toBe('niedrig')
+    expect(typeof e.followUp).toBe('string')
+    expect(e.followUp.length).toBeGreaterThan(0)
   })
 })
