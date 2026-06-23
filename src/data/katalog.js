@@ -23,7 +23,7 @@ export const KATALOG = [
           titel: 'Luft-Wasser-Wärmepumpen-Kaskade',
           hersteller: 'Buderus / Dreammaker (Demo-Referenz)',
           produkt: 'Logatherm WLW / Luft-Wasser-WP-Modul – finales Produkt im Angebot',
-          leistungsumfang: 'Außengeräte als modularer Wärmepumpen-Verbund (1–6 Module à 20 kW, max. 120 kW thermisch). Kältemittel R290, JAZ laut Betriebsannahme. Alternativhersteller nach technischer Prüfung möglich.',
+          leistungsumfang: 'Außengeräte als modularer Wärmepumpen-Verbund für den ermittelten Lösungskorridor. Kältemittel R290, JAZ laut Betriebsannahme. Alternativhersteller nach technischer Prüfung möglich.',
         } },
     ],
   },

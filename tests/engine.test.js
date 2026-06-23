@@ -452,7 +452,18 @@ describe('WP12 SK-77: WP-Produktstamm Referenz', () => {
     expect(pos).toBeDefined()
     expect(pos.kunde.hersteller).toContain('Buderus')
     expect(pos.kunde.produkt).toContain('Logatherm')
-    expect(pos.kunde.leistungsumfang).toContain('120 kW')
+  })
+
+  it('wp_modul kundenScope leistungsumfang enthält abgeleiteten Korridor aus Annahmen', () => {
+    const { ANNAHMEN } = require('../src/data/annahmen.js')
+    const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+    const erg = berechne(referenz)
+    const wpGruppe = erg.kundenScope.gruppen.find(g => g.name === 'Wärmepumpenpaket')
+    const wpPos = wpGruppe?.positionen.find(p => p.id === 'wp_modul')
+    expect(wpPos).toBeDefined()
+    const expectedMax = `${ANNAHMEN.wp_module_max * ANNAHMEN.wp_modul_kw} kW`
+    expect(wpPos.leistungsumfang).toContain(expectedMax)
+    expect(wpPos.leistungsumfang).toContain(`${ANNAHMEN.wp_modul_kw} kW`)
   })
 
   it('Leistungsklasse stimmt mit ANNAHMEN.wp_modul_kw überein', async () => {

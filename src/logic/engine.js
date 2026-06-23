@@ -164,7 +164,11 @@ function kundenLeistungsklasse(pos, ctx, annahmen) {
   return 'projektbezogener Leistungsumfang'
 }
 
-function kundenLeistungsumfang(pos) {
+function kundenLeistungsumfang(pos, annahmen) {
+  if (pos.id === 'wp_modul' && annahmen) {
+    const maxKw = annahmen.wp_module_max * annahmen.wp_modul_kw
+    return `Außengeräte als modularer Wärmepumpen-Verbund (1–${annahmen.wp_module_max} Module à ${annahmen.wp_modul_kw} kW, max. ${maxKw} kW thermisch). Kältemittel R290, JAZ laut Betriebsannahme. Alternativhersteller nach technischer Prüfung möglich.`
+  }
   if (pos.kunde?.leistungsumfang) return pos.kunde.leistungsumfang
   if (pos.pruefpflichtig) return 'Im Kundengespräch als Prüfpunkt aufnehmen und intern bestätigen lassen.'
   return 'Im aktuellen Demo-Scope als Leistungsbaustein enthalten.'
@@ -195,7 +199,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
             leistungsklasse: kundenLeistungsklasse(pos, derived, annahmen),
             menge: pos.menge,
             einheit: kundenEinheit(pos),
-            leistungsumfang: kundenLeistungsumfang(pos),
+            leistungsumfang: kundenLeistungsumfang(pos, annahmen),
             pruefpflichtig: !!pos.pruefpflichtig,
           }
         }),
