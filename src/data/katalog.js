@@ -264,27 +264,27 @@ export const KATALOG = [
     varianten: [
       { wert: 'basic', name: 'Monitoring Basic',
         positionen: [
-          { id: 'mon_basic', text: 'Monitoring Basic (verpflichtend): Zähler, Datenlogger, Fernablesung',
+          { id: 'mon_basic', text: 'Monitoring Basic (verpflichtend): Datenlogger, Fernablesung-Betrieb',
             menge: 1, einheit: 'pausch.',
             kosten: { typ: 'fix', annahme: 'k_monitoring_basic' }, foerder: 'f_monitoring', tag: 'capex',
             begruendung: 'Monitoring Basic ist im Contracting-Modell verpflichtend.',
             kunde: {
               titel: 'Monitoring Basic',
               hersteller: 'systemseitig',
-              produkt: 'Zähler, Datenlogger und Fernablesung',
+              produkt: 'Datenlogger und Fernablesung-Betrieb',
               leistungsumfang: 'Betriebsmonitoring aufbauend auf Messkonzept Basis: Datenlogger, Fernablesung-Betrieb und Reporting-Infrastruktur.',
             } },
         ]},
       { wert: 'plus', name: 'Monitoring Plus',
         positionen: [
-          { id: 'mon_basic2', text: 'Monitoring Basic (verpflichtend): Zähler, Datenlogger, Fernablesung',
+          { id: 'mon_basic2', text: 'Monitoring Basic (verpflichtend): Datenlogger, Fernablesung-Betrieb',
             menge: 1, einheit: 'pausch.',
             kosten: { typ: 'fix', annahme: 'k_monitoring_basic' }, foerder: 'f_monitoring', tag: 'capex',
             begruendung: 'Monitoring Basic ist im Contracting-Modell verpflichtend.',
             kunde: {
               titel: 'Monitoring Basic',
               hersteller: 'systemseitig',
-              produkt: 'Zähler, Datenlogger und Fernablesung',
+              produkt: 'Datenlogger und Fernablesung-Betrieb',
               leistungsumfang: 'Betriebsmonitoring aufbauend auf Messkonzept Basis: Datenlogger, Fernablesung-Betrieb und Reporting-Infrastruktur.',
             } },
           { id: 'mon_plus', text: 'Monitoring Plus (erweiterte Sensorik, Effizienz-Reporting)',
@@ -385,6 +385,6 @@ export const KATALOG = [
 // Anzeige-Reihenfolge der LV-Gruppen (HANDOVER §15 B)
 export const LV_GRUPPEN = [
   'Wärmepumpenpaket', 'Hybrid-Einbindung', 'Hydraulik', 'Speicher / Warmwasser',
-  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Monitoring',
+  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Messkonzept', 'Monitoring',
   'Installation / Inbetriebnahme', 'Umfeldmaßnahmen',
 ]
