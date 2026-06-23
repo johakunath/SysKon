@@ -58,11 +58,14 @@ export const ANNAHMEN = {
   k_monitoring_plus: 12000,
   k_install: 60000,
   k_umfeld: 30000,
+  k_aussen_offen: 3000,
   k_fundament: 15000,
   k_einhausung: 35000,
   k_kompakt_container: 120000,
   k_vollcontainer: 280000,
   k_schallhaube: 8000,
+  k_schallschutzzaun: 12000,         // €, Rockwool-Schallschutzzaun (Demo-Referenz, SK-79)
+  k_atec_schallberechnung: 3500,     // €, ATEC-Schallberechnungsservice Pauschale (Demo, SK-79)
 
   // Laufende Kosten & Sonstiges
   monitoring_pa: 1500,       // €/a
@@ -165,11 +168,14 @@ export const ANNAHMEN_META = [
     ['k_monitoring_plus', 'Monitoring Plus (Aufpreis)', '€'],
     ['k_install', 'Installation/Inbetriebnahme', '€'],
     ['k_umfeld', 'Umfeldmaßnahmen', '€'],
+    ['k_aussen_offen', 'Aufstellung offen (kein Wetterschutz)', '€'],
     ['k_fundament', 'Aufstellung Fundament', '€'],
-    ['k_einhausung', 'Aufstellung Einhausung', '€'],
+    ['k_einhausung', 'Aufstellung Einhausung / Schallschutzzaun', '€'],
     ['k_kompakt_container', 'Aufstellung Kompakt-Container', '€'],
     ['k_vollcontainer', 'Aufstellung Vollcontainer', '€'],
     ['k_schallhaube', 'Schallhaube', '€'],
+    ['k_schallschutzzaun', 'Schallschutzzaun (Rockwool – Demo)', '€'],
+    ['k_atec_schallberechnung', 'ATEC-Schallberechnung (Demo-Pauschale)', '€'],
   ]},
   { gruppe: 'Laufend & Sonstiges', felder: [
     ['monitoring_pa', 'Monitoring p.a.', '€/a'],

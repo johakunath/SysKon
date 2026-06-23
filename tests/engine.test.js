@@ -6,7 +6,7 @@ import { berechne, dqScore, pruefeBedingung, STATUS_ORDER } from '../src/logic/e
 import { PRESETS } from '../src/data/presets.js'
 import { WP_PRODUKT_REFERENZ } from '../src/data/annahmen.js'
 import { KATALOG } from '../src/data/katalog.js'
-import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE } from '../src/logic/calc.js'
+import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE, AUFSTELLVARIANTEN, AUFSTELLUNG_VARIANTEN_MAPPING } from '../src/logic/calc.js'
 
 describe('pruefeBedingung', () => {
   it('!= trifft nicht bei undefiniert, null oder leerem Feld', () => {
@@ -219,10 +219,10 @@ describe('Aufstellungs-Empfehlung', () => {
 
   it('empfiehlt standardmäßig die günstigste tragfähige Variante, ohne die Auswahl zu überschreiben', () => {
     const erg = berechne(basis)
-    expect(erg.derived.aufstellung_empfohlen).toBe('fundament')
+    expect(erg.derived.aufstellung_empfohlen).toBe('aussen_offen')
     expect(erg.derived.aufstellung_abweichung).toMatchObject({
       gewaehlt: 'einhausung',
-      empfohlen: 'fundament',
+      empfohlen: 'aussen_offen',
       gewaehlt_viable: true,
     })
   })
@@ -247,8 +247,10 @@ describe('Aufstellungs-Empfehlung', () => {
       aussenflaeche_breite_m: 2.2,
       aufstellvariante: 'fundament',
     })
-    expect(erg.derived.aufstellung_empfohlen).toBe('fundament')
-    expect(erg.derived.aufstellung_viable.map(v => v.variante)).toEqual(['fundament'])
+    // aussen_offen (flaecheMin 6, laengeMin 2.5, breiteMin 1.5) und fundament (flaecheMin 8, laengeMin 3, breiteMin 2)
+    // sind beide tragfähig; einhausung (breiteMin 2.5 > 2.2) und Container (flaecheMin >= 30) fallen raus.
+    expect(erg.derived.aufstellung_empfohlen).toBe('aussen_offen')
+    expect(erg.derived.aufstellung_viable.map(v => v.variante)).toEqual(['aussen_offen', 'fundament'])
   })
 
   it('übernimmt Schall- und Flächensperren in den Placement-Korridor', () => {
@@ -528,5 +530,82 @@ describe('WP12 SK-81: Berechnungs- und Output-Grenzen', () => {
     expect(scope).not.toContain('marge')
     expect(scope).not.toContain('irr')
     expect(scope).not.toContain('brutto_lv')
+  })
+})
+
+describe('WP12 SK-79: Aufstellung & Schallschutzkonzept', () => {
+  const basis = {
+    aussenflaeche_vorhanden: 'ja',
+    aussenflaeche_m2: 40,
+    aussenflaeche_laenge_m: 8,
+    aussenflaeche_breite_m: 5,
+    technologiepfad: 'hybrid',
+    heizlast_bekannt: 'ja',
+    heizlast_kw: 80,
+    gebietstyp: 'WA',
+    abstand_fenster: 20,
+  }
+
+  it('AUFSTELLVARIANTEN enthält aussen_offen', () => {
+    expect(AUFSTELLVARIANTEN).toContain('aussen_offen')
+    expect(AUFSTELLVARIANTEN[0]).toBe('aussen_offen')
+    expect(AUFSTELLVARIANTEN).toHaveLength(5)
+  })
+
+  it('AUFSTELLUNG_VARIANTEN_MAPPING hat alle 5 Varianten mit Entscheidungsdokumentation', () => {
+    expect(AUFSTELLUNG_VARIANTEN_MAPPING).toBeDefined()
+    for (const v of AUFSTELLVARIANTEN) {
+      expect(AUFSTELLUNG_VARIANTEN_MAPPING[v], `fehlend: ${v}`).toBeDefined()
+      expect(typeof AUFSTELLUNG_VARIANTEN_MAPPING[v].roberts_draft).toBe('string')
+      expect(typeof AUFSTELLUNG_VARIANTEN_MAPPING[v].entscheidung).toBe('string')
+    }
+  })
+
+  it('aussen_offen Katalog-Position existiert und hat gültige kunde-Felder', () => {
+    const paket = KATALOG.find(p => p.id === 'aufstellung')
+    const variante = paket?.varianten.find(v => v.wert === 'aussen_offen')
+    expect(variante).toBeDefined()
+    const pos = variante.positionen[0]
+    expect(pos.id).toBe('aufst_aussen_offen')
+    expect(pos.tag).toBe('capex')
+    expect(typeof pos.kunde.titel).toBe('string')
+    expect(typeof pos.kunde.hersteller).toBe('string')
+    expect(typeof pos.kunde.produkt).toBe('string')
+    expect(typeof pos.kunde.leistungsumfang).toBe('string')
+  })
+
+  it('berechne() mit aussen_offen enthält aufst_aussen_offen im LV', () => {
+    const erg = berechne({ ...basis, aufstellvariante: 'aussen_offen' })
+    const posIds = erg.lv.positionen.map(p => p.id)
+    expect(posIds).toContain('aufst_aussen_offen')
+    expect(posIds).not.toContain('aufst_fundament')
+  })
+
+  it('Rockwool-Schallschutzzaun und ATEC-Schallberechnung sind als Katalog-Positionen vorhanden', () => {
+    const ids = KATALOG.flatMap(p =>
+      p.positionen?.map(pos => pos.id) ??
+      p.varianten?.flatMap(v => v.positionen.map(pos => pos.id)) ?? []
+    )
+    expect(ids).toContain('schallschutzzaun_pos')
+    expect(ids).toContain('atec_schall_pos')
+  })
+
+  it('ATEC und Rockwool-Zaun erscheinen im LV bei hoher Schallsensibilität + offener Aufstellung', () => {
+    const erg = berechne({
+      ...basis,
+      aufstellvariante: 'aussen_offen',
+      schallsensibilitaet: 'hoch',
+    })
+    const posIds = erg.lv.positionen.map(p => p.id)
+    expect(posIds).toContain('atec_schall_pos')
+    expect(posIds).toContain('schallschutzzaun_pos')
+  })
+
+  it('schall_je_variante enthält aussen_offen mit abschlag 0 (ohne Schallhaube)', () => {
+    const erg = berechne({ ...basis, aufstellvariante: 'aussen_offen' })
+    const je = erg.derived.schall_je_variante
+    expect(je.aussen_offen).toBeDefined()
+    expect(je.aussen_offen.abschlag).toBe(0)
+    expect(typeof je.aussen_offen.lp).toBe('number')
   })
 })

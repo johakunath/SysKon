@@ -105,6 +105,19 @@ export const KATALOG = [
     id: 'aufstellung', pakettyp: 'Aufstellung', gruppe: 'Aufstellung',
     variantenFeld: 'aufstellvariante',
     varianten: [
+      { wert: 'aussen_offen', name: 'Außenaufstellung offen',
+        positionen: [
+          { id: 'aufst_aussen_offen', text: 'Außenaufstellung offen (Fundament, kein Wetterschutz)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_aussen_offen' }, foerder: 'f_aufstellung', tag: 'capex',
+            begruendung: 'Günstigste Variante ohne Wetterschutz oder Einhausung; nur für geeignete Mikrolage.',
+            kunde: {
+              titel: 'Außenaufstellung offen',
+              hersteller: 'systemseitig',
+              produkt: 'Außenaufstellung ohne Einhausung',
+              leistungsumfang: 'Einfache Außenaufstellung auf Fundament ohne Einhausung oder Wetterschutz. Nur für standortspezifisch geeignete Mikrolage (Schall, Witterung, Sichtschutz vorab klären).',
+            } },
+        ]},
       { wert: 'fundament', name: 'Standard-Fundament',
         positionen: [
           { id: 'aufst_fundament', text: 'Fundament, Anbindung Heizraum, Witterungsschutz',
@@ -120,15 +133,15 @@ export const KATALOG = [
         ]},
       { wert: 'einhausung', name: 'Schutz-/Schall-Einhausung',
         positionen: [
-          { id: 'aufst_einhausung', text: 'Einhausung inkl. Schallwand und Vandalismusschutz',
+          { id: 'aufst_einhausung', text: 'Einhausung inkl. Schallschutzwand und Vandalismusschutz',
             menge: 1, einheit: 'pausch.',
             kosten: { typ: 'fix', annahme: 'k_einhausung' }, foerder: 'f_aufstellung', tag: 'capex',
-            begruendung: 'Mittlerer CapEx, adressiert Schall- und Vandalismusrisiken (−12 dB Demo).',
+            begruendung: 'Mittlerer CapEx, adressiert Schall- und Vandalismusrisiken (−12 dB Demo). Schallschutzwand: Demo-Referenz Rockwool.',
             kunde: {
               titel: 'Schutz- und Schall-Einhausung',
               hersteller: 'systemseitig',
-              produkt: 'Einhausung für Außenaufstellung',
-              leistungsumfang: 'Einhausung zur wettergeschützten Aufstellung mit zusätzlicher Schall- und Objektschutzwirkung.',
+              produkt: 'Einhausung mit Schallschutzwand (Demo-Referenz: Rockwool)',
+              leistungsumfang: 'Einhausung zur wettergeschützten Aufstellung mit Schall- und Objektschutzwirkung (Demo-Abschlag −12 dB). Schallschutzwand auf Basis absorptiver Elemente (Demo-Referenz: Rockwool).',
             } },
         ]},
       { wert: 'kompakt_container', name: 'Kompakt-Container',
@@ -163,18 +176,53 @@ export const KATALOG = [
     id: 'schall', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
     bedingung: { und: [
       { feld: 'schallhaube', op: '=', wert: 'ja' },
-      { feld: 'aufstellvariante', op: '=', wert: 'fundament' },
+      { feld: 'aufstellvariante', op: 'in', wert: ['fundament', 'aussen_offen'] },
     ]},
     positionen: [
       { id: 'schallhaube_pos', text: 'Standard-Schallhaube für WP-Kaskade',
         menge: 1, einheit: 'pausch.',
         kosten: { typ: 'fix', annahme: 'k_schallhaube' }, foerder: 'f_aufstellung', tag: 'capex',
-        begruendung: 'Schallminderung −8 dB (Demo) bei Fundamentaufstellung.',
+        begruendung: 'Schallminderung −8 dB (Demo) bei offener Außenaufstellung oder Fundament.',
         kunde: {
           titel: 'Schallhaube',
           hersteller: 'herstellerneutral',
           produkt: 'Schallmindernde Haube für Außenmodule',
-          leistungsumfang: 'Zusätzliche Schallmaßnahme für die Fundamentaufstellung im aktuellen Lösungskorridor.',
+          leistungsumfang: 'Zusätzliche Schallmaßnahme (Demo-Abschlag −8 dB) im aktuellen Lösungskorridor.',
+        } },
+    ],
+  },
+  {
+    id: 'schall_rockwool', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
+    bedingung: { und: [
+      { feld: 'schallsensibilitaet', op: '=', wert: 'hoch' },
+      { feld: 'aufstellvariante', op: 'in', wert: ['aussen_offen', 'fundament'] },
+    ]},
+    positionen: [
+      { id: 'schallschutzzaun_pos', text: 'Schallschutzzaun (Rockwool – Demo-Referenz)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_schallschutzzaun' }, foerder: 'f_aufstellung', tag: 'capex',
+        begruendung: 'Absorptiver Schallschutzzaun für Fundament-/Offenvarianten bei hoher Schallsensibilität; Rockwool als Demo-Referenzprodukt (SK-79).',
+        kunde: {
+          titel: 'Schallschutzzaun',
+          hersteller: 'Rockwool (Demo-Referenz)',
+          produkt: 'Absorptiver Schallschutzzaun für Außenaufstellung',
+          leistungsumfang: 'Absorptiver Schallschutzzaun (Demo-Referenz: Rockwool) als ergänzende Maßnahme zur Fundament- oder offenen Außenaufstellung bei erhöhter Schallsensibilität.',
+        } },
+    ],
+  },
+  {
+    id: 'schall_atec', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
+    bedingung: { feld: 'schallsensibilitaet', op: '=', wert: 'hoch' },
+    positionen: [
+      { id: 'atec_schall_pos', text: 'ATEC-Schallberechnungsservice (Demo-Pauschale)',
+        menge: 1, einheit: 'pausch.',
+        kosten: { typ: 'fix', annahme: 'k_atec_schallberechnung' }, foerder: 'f_aufstellung', tag: 'capex',
+        begruendung: 'Fachplanerische Schallberechnung und Schutzkonzept (ATEC als Demo-Referenzanbieter). Löst die Demo-Vorprüfung durch rechtsverbindlichen Nachweis ab (SK-79).',
+        kunde: {
+          titel: 'Schallberechnung & Schutzkonzept',
+          hersteller: 'ATEC (Demo-Referenz)',
+          produkt: 'Fachplanerische Schallberechnung',
+          leistungsumfang: 'Schallberechnung und Schutzkonzept durch Fachplaner (Demo-Referenz: ATEC). Ablöst die Demo-Vorprüfung durch rechtsverbindlichen Nachweis für den Standort.',
         } },
     ],
   },
