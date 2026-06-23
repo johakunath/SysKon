@@ -4,6 +4,35 @@
 
 const log10 = Math.log10
 
+// SK-81: Die vier Berechnungsdomänen – explizite Grenzziehung vor WP8-Pricing-Aufbau.
+// engine.js aggregiert jede Domäne in `bereichsSummen`.
+export const BERECHNUNGS_DOMAENEN = {
+  invest: {
+    beschreibung: 'Einmalige Investitionskosten (CAPEX)',
+    quellen: 'Katalog-Positionen tag:"capex"; engine.lv.*',
+  },
+  cop_jaz: {
+    beschreibung: 'COP/JAZ, Jahreswärmebedarf, Betriebsstrom und -gas',
+    quellen: 'energieIndikation(); ANNAHMEN.jaz / wp_deckungsanteil; engine.energie.*',
+  },
+  betriebsfuehrung: {
+    beschreibung: 'Monitoring und Datendienst (OPEX)',
+    quellen: 'Katalog tag:"opex" bereich:"betriebsfuehrung"; engine.opex.positionen',
+  },
+  wartung_instandsetzung: {
+    beschreibung: 'Wartung, Instandhaltung und Instandsetzung (OPEX)',
+    quellen: 'Katalog tag:"opex" bereich:"wartung_instandsetzung"; engine.opex.positionen',
+  },
+}
+
+// Servicegrenze-Default: Techem-Leistungsumfang endet standardmäßig vor dem
+// Heizkreisverteiler. Sekundärheizkreise sind Sonderfall / separater Scope.
+export const SERVICEGRENZE = {
+  typ: 'vor_heizkreisverteiler',
+  beschreibung: 'Techem-Leistungsumfang bis vor den Heizkreisverteiler; Sekundärheizkreise nicht im Standard-Scope.',
+  optionen: ['vor_heizkreisverteiler', 'inkl_heizkreisverteiler'],
+}
+
 export function zahl(wert) {
   const n = typeof wert === 'string' ? parseFloat(wert.replace(',', '.')) : wert
   return Number.isFinite(n) ? n : null

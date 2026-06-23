@@ -44,7 +44,7 @@ Reihenfolge nach dem Sales-Output-First-Pivot (Juni 2026). Abhängigkeiten stehe
 |---:|---|---|---|---|---|---|---|---|
 | 1 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten (Input für WP12/WP8) | SK-72 | – | P1 | M | Todo |
 | 2 | SK-74 | WP12 Technical System Package Logic | Technisches Systempaketmodell für MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting schärfen | SK-74 | SK-72 | P1 | XL | Todo |
-| 3 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | SK-85 (erledigt), SK-74 | P1 | XL | Todo |
+| 3 | SK-70 | WP8 Contracting-Angebot & Pricing-Logik | Realistische GP/AP-/Preisgleitformel-Logik mit internem Commercial Layer vorbereiten | SK-70 | SK-85 (erledigt), SK-74 | P1 | XL | In Arbeit |
 | 4 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | SK-70 | P1 | L | Todo |
 
 ## Aktueller Fokus

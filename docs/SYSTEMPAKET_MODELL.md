@@ -5,9 +5,9 @@ Robert's Workshop-Stand in ein kohärentes Modell übersetzen, **bevor** WP8/SK-
 Vertragsparameter darauf aufsetzt. Dieses Dokument beschreibt die Domäne und benennt Lücken; es ist
 keine vollständige Implementierungsspezifikation. Code-Quellen sind verlinkt, nicht dupliziert.
 
-Status: Grundlagendokument. Codeseitig in diesem Stand umgesetzt sind nur SK-76 (Mehr-Gebäude-
-Blocker) und SK-78 (Vorlauftemperatur-Korridor); alle übrigen Child-Tickets bleiben Konzept/
-Entscheidung bis zu freigegebenem Scope.
+Status: Grundlagendokument. Codeseitig umgesetzt: SK-76 (Mehr-Gebäude-Blocker), SK-78
+(Vorlauftemperatur-Korridor), SK-77 (WP-Produktstamm Referenz) und SK-81 (Berechnungs-/
+Output-Grenzen). Übrige Child-Tickets bleiben Konzept/Entscheidung bis zu freigegebenem Scope.
 
 ## 1. Produkt-Scope & Stop-line
 
@@ -36,11 +36,11 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 |---|---|---|
 | **SK-75** Datenherkunft & Provenienz | Proto-Signale: `dq`-Gewichte (`fragen.js`), `verbrauchsquelle`, `heizlast_geschaetzt` (`calc.js`), `*_bekannt`/`unbekannt`-Muster | Formales Provenienzmodell je Feld (Quelle, Erfassungsweg, Aktualität, Confidence, kundensichtbare Annahme); Asset-Manager-/Stammdaten als Quellen; manuell vs. skalierbar trennen. Noch Konzept. |
 | **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (§5). R04/R16/R17 mit Sales-sicheren Warn-Texten ergänzt (§9). Nicht-Luft/Wasser über R17 abgedeckt. |
-| **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | Produktstamm-Zielfelder (Hersteller/Familie/Modell, Leistungsklasse, COP/JAZ, Kaskadenlimits, Einsatzgrenzen); Buderus/Dreammaker als Referenz dokumentieren, nicht hart codieren. Noch Konzept. |
+| **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition zeigt Buderus/Dreammaker-Referenz; Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
 | **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
 | **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | Mapping auf Robert's Entwurf; Entscheidung Containeranzahl; „außen ungeschützt" als Low-CAPEX-Variante prüfen; ATEC als Schallberechnungs-Service; Rockwool-Zaun als Scope-Line. Entscheidung offen (§7). |
 | **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | Messkonzept als eigener Scope-/Regelblock neben Monitoring; Strombeschaffung als Commercial/Betrieb-Annahme; Verknüpfung mit Preisgleitformel. Noch Konzept. |
-| **SK-81** Berechnungs-/Output-Grenzen | `ableiten()` mischt Sizing/Energie/Placement/Schall; Engine baut LV + interne Kennzahlen | Getrennte Domänen Invest / COP-JAZ / Betriebsführung / Instandsetzung; kundenfähiger Scope ohne interne Kosten/Marge/IRR; Servicegrenze als Parameter. Noch Konzept (vgl. CODEBASE_NOTES Split-Vorschlag). |
+| **SK-81** Berechnungs-/Output-Grenzen | `ableiten()` mischt Sizing/Energie/Placement/Schall; Engine baut LV + interne Kennzahlen | **Umgesetzt** (§12): `BERECHNUNGS_DOMAENEN` + `SERVICEGRENZE` in `calc.js`; `bereich`-Tags auf opex-Katalogpositionen; `bereichsSummen` im Engine-Return. |
 | **SK-82** Elektroanschluss | `elektro_grundpaket`, `zaehlerschrank`, `kabelweg_*` (generisch) | Bleibt generisch bis zur Kevin-W./Patrick-L.-Notiz; danach Inputs/Blocker/Scope/Kundentexte ableiten. Keine erfundenen Anschlussdetails. Noch Konzept. |
 
 ## 4. Kundensicht vs. interne Sicht
@@ -138,3 +138,61 @@ Brauchwasserspeicher zurück.
 sind editierbar in `src/data/annahmen.js`.
 
 Tests in `tests/engine.test.js` (`WP12 SK-78: FWS/Speicher-Varianten und Puffer-Sizing`).
+
+## 11. Umgesetzt: WP-Produktstamm Referenz (SK-77)
+
+`src/data/annahmen.js` exportiert `WP_PRODUKT_REFERENZ` — die strukturierte Demo-Referenz für das
+aktuelle Buderus/Dreammaker-Produkt:
+
+| Feld | Wert | Bedeutung |
+|---|---|---|
+| `hersteller` | Buderus / Dreammaker | Demo-Referenzstand |
+| `produktfamilie` | Logatherm WLW / Luft-Wasser-WP-Kaskade | |
+| `leistungsklasse_je_modul_kw` | 20 | stimmt mit `ANNAHMEN.wp_modul_kw` überein |
+| `kaskade_min` / `kaskade_max` | 1 / 6 | stimmt mit `ANNAHMEN.wp_module_max` überein |
+| `cop_referenz_a2w35` | 3,5 | Demo-Referenzwert |
+| `vorlauf_max_standard_c` | 65 | Standardbereich (R09 Hinweis) |
+| `vorlauf_max_technisch_c` | 70 | technisches Maximum (R20/R21) |
+| `aussentemp_min_c` | −20 | Einsatzgrenze Außentemperatur |
+| `kuehlmittel` | R290 | |
+| `sizing_methode` | Leistungsanteil × Heizlast ÷ Modulleistung | Demo-Heuristik |
+
+Der `wp_modul`-Katalogeintrag (`src/data/katalog.js`) zeigt in der `kunde`-Sektion jetzt
+Buderus/Dreammaker als Referenzhersteller, Logatherm WLW als Produktfamilie und den
+Kaskadenkorridor „1–6 Module à 20 kW, max. 120 kW". Der Hinweis „Alternativhersteller nach
+technischer Prüfung möglich" ist Pflichtbestandteil des Textes.
+
+Nicht hart codiert: `WP_PRODUKT_REFERENZ` ist ein separater Export; der Katalog referenziert
+keinen Import und bleibt für Alternativprodukte editierbar.
+
+Tests in `tests/engine.test.js` (`WP12 SK-77: WP-Produktstamm Referenz`).
+
+## 12. Umgesetzt: Berechnungs- und Output-Grenzen (SK-81)
+
+Die vier Berechnungsdomänen sind jetzt explizit benannt und strukturell getrennt:
+
+| Domäne | Beschreibung | Code-Quelle |
+|---|---|---|
+| **Invest** | Einmalige Investitionskosten (CAPEX) | `lv.*`; Katalog `tag:"capex"` |
+| **COP/JAZ** | Energieeffizienz, Jahreswärmebedarf, Betriebsstrom/-gas | `energieIndikation()`; `energie.*` |
+| **Betriebsführung** | Monitoring und Datendienst (OPEX) | Katalog `tag:"opex"` `bereich:"betriebsfuehrung"` |
+| **Wartung/Instandsetzung** | Wartung, Instandhaltung, Instandsetzung (OPEX) | Katalog `tag:"opex"` `bereich:"wartung_instandsetzung"` |
+
+`src/logic/calc.js` exportiert `BERECHNUNGS_DOMAENEN` (Dokumentationskonstante) und `SERVICEGRENZE`
+(Default: `vor_heizkreisverteiler`; Sekundärheizkreise außerhalb Standard-Scope).
+
+`src/data/katalog.js` trägt `bereich`-Felder auf allen opex-Positionen:
+- `om_basis` / `om_komfort` → `bereich: 'wartung_instandsetzung'`
+- `mon_pa` → `bereich: 'betriebsfuehrung'`
+
+`src/logic/engine.js` gibt `bereichsSummen` im Ergebnisobjekt zurück:
+- `invest` (= `lv.netto`)
+- `cop_jaz` (Energie-KPIs aus `derived.energie`)
+- `betriebsfuehrung_pa` (Summe Betriebsführungs-OPEX)
+- `wartung_instandsetzung_pa` (Summe Wartungs-OPEX)
+
+Invariante: `betriebsfuehrung_pa + wartung_instandsetzung_pa ≈ opex.summe_pa`.
+
+Kundensicht-Garantie bleibt unverändert: `kundenScope` enthält weiterhin keine Marge/CAPEX/IRR.
+
+Tests in `tests/engine.test.js` (`WP12 SK-81: Berechnungs- und Output-Grenzen`).
