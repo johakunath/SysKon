@@ -7,14 +7,14 @@
 //
 // Roadmap Stufe 3 (docs/PRODUCT_ROADMAP.md): Ziel-IRR 13 % (Ambition 15 %),
 // Vertragslaufzeiten 10/15/20 Jahre, Marge NUR auf den Arbeitspreis – keine
-// Marge auf CAPEX und keine Marge auf den Grundpreis. Der iterative Solver
-// (AP-Marge bis Ziel-IRR) ist bewusst noch nicht enthalten; die Zielrendite
-// erscheint als transparente, nicht-iterative Demo-Indikation.
+// Marge auf CAPEX und keine Marge auf den Grundpreis. Die AP-Marge wird
+// iterativ auf die Ziel-IRR gelöst (loeseApMargeFuerIrr). Reale Indexreihen
+// und die rechtliche AVBFernwärme-Prüfung bleiben offen (siehe Doc).
 
 import { zahl } from './calc.js'
 
-// Annuitätenfaktor: verteilt eine Investition über n Jahre bei Zinssatz i.
-// Zinssatz 0 ⇒ lineare Verteilung (1/n).
+// Annuitätenfaktor (Kapitalwiedergewinnungsfaktor): verteilt eine Investition
+// über n Jahre bei Zinssatz i. Zinssatz 0 ⇒ lineare Verteilung (1/n).
 export function annuitaetenfaktor(zinssatz, jahre) {
   if (!jahre || jahre <= 0) return 0
   if (!zinssatz) return 1 / jahre
@@ -22,18 +22,96 @@ export function annuitaetenfaktor(zinssatz, jahre) {
   return (zinssatz * Math.pow(q, jahre)) / (Math.pow(q, jahre) - 1)
 }
 
-// Preisgleitformel (AVBFernwärme-orientiert, Demo): Basiswert + gewichtete
-// Indexkomponenten. Die Gewichte summieren zu 1; reale Indexreihen und eine
-// rechtliche Prüfung sind noch offen (siehe docs/PRICING_MODELL.md).
-function preisgleitformelBauen(annahmen) {
+// Kapitalwert (NPV) einer Zahlungsreihe bei gegebenem Zinssatz.
+export function kapitalwert(rate, cashflows) {
+  return cashflows.reduce((s, cf, t) => s + cf / Math.pow(1 + rate, t), 0)
+}
+
+// Interner Zinsfuß (IRR) per Bisektion. Erwartet einen Vorzeichenwechsel
+// (typisch: t0 negativ, Folgejahre positiv); sonst null.
+export function irr(cashflows, { unten = -0.9, oben = 1, iterationen = 100, toleranz = 1e-7 } = {}) {
+  let lo = unten, hi = oben
+  let flo = kapitalwert(lo, cashflows)
+  let fhi = kapitalwert(hi, cashflows)
+  if (flo === 0) return lo
+  if (fhi === 0) return hi
+  if (flo * fhi > 0) return null
+  for (let i = 0; i < iterationen; i++) {
+    const mid = (lo + hi) / 2
+    const fmid = kapitalwert(mid, cashflows)
+    if (Math.abs(fmid) < toleranz) return mid
+    if (flo * fmid < 0) { hi = mid; fhi = fmid } else { lo = mid; flo = fmid }
+  }
+  return (lo + hi) / 2
+}
+
+// Jährlicher Netto-Cashflow des Contractors bei gegebener AP-Marge.
+// Herleitung: Erlös (GP + AP) − Kosten (Energie + Service). GP = Kapitaldienst
+// + Service, AP-Erlös = variable Energiekosten × (1 + Marge). Service- und
+// Energieanteil heben sich auf ⇒ CF = Kapitaldienst + Marge × variable Kosten.
+function jahresCashflow(kapitaldienstPa, variableKostenPa, marge) {
+  return kapitaldienstPa + marge * variableKostenPa
+}
+
+// Iterative AP-Marge bis zur Ziel-IRR (Bisektion über die Marge). Liefert die
+// gelöste Marge plus Flags: `gedeckelt` (Ziel-IRR auch bei Maximalmarge nicht
+// erreichbar) bzw. `bereitsErreicht` (Ziel-IRR schon bei Marge 0 übertroffen).
+export function loeseApMargeFuerIrr({ capex, kapitaldienstPa, variableKostenPa, laufzeit, zielIrr, margeMax = 3, iterationen = 80 }) {
+  if (!(capex > 0) || !(variableKostenPa > 0) || !(laufzeit > 0) || zielIrr == null) return null
+  const irrBeiMarge = (m) => irr([-capex, ...Array(laufzeit).fill(jahresCashflow(kapitaldienstPa, variableKostenPa, m))])
+  const gLo = (irrBeiMarge(0) ?? -Infinity) - zielIrr
+  if (gLo >= 0) return { marge: 0, gedeckelt: false, bereitsErreicht: true }
+  const gHi = (irrBeiMarge(margeMax) ?? -Infinity) - zielIrr
+  if (gHi < 0) return { marge: margeMax, gedeckelt: true, bereitsErreicht: false }
+  let lo = 0, hi = margeMax
+  for (let i = 0; i < iterationen; i++) {
+    const mid = (lo + hi) / 2
+    const g = (irrBeiMarge(mid) ?? -Infinity) - zielIrr
+    if (Math.abs(g) < 1e-5) return { marge: mid, gedeckelt: false, bereitsErreicht: false }
+    if (g < 0) lo = mid; else hi = mid
+  }
+  return { marge: (lo + hi) / 2, gedeckelt: false, bereitsErreicht: false }
+}
+
+// Preisgleitformel (AVBFernwärme §24-orientiert, Demo): ein Festanteil plus
+// gewichtete Indexkomponenten (Lohn/Strom/Gas/Investitionsgüter). Festanteil +
+// Index-Gewichte summieren zu 1. Genannt sind die fachlich passenden amtlichen
+// Indizes (Destatis); reale Indexreihen und die rechtliche Prüfung sind offen.
+export function preisgleitformelBauen(annahmen) {
   const komponenten = [
-    { schluessel: 'lohn', label: 'Lohnindex', gewicht: annahmen.pg_lohn },
-    { schluessel: 'strom', label: 'Strompreisindex', gewicht: annahmen.pg_strom },
-    { schluessel: 'gas', label: 'Gaspreisindex', gewicht: annahmen.pg_gas },
-    { schluessel: 'invest', label: 'Investitionsgüter-/Inflationsindex', gewicht: annahmen.pg_invest },
+    { schluessel: 'lohn', label: 'Lohnindex', referenz: 'Destatis Tarifindex Dienstleistungen', gewicht: annahmen.pg_lohn },
+    { schluessel: 'strom', label: 'Strompreisindex', referenz: 'Destatis Erzeugerpreisindex Strom', gewicht: annahmen.pg_strom },
+    { schluessel: 'gas', label: 'Gaspreisindex', referenz: 'Destatis Erzeugerpreisindex Gas', gewicht: annahmen.pg_gas },
+    { schluessel: 'invest', label: 'Investitionsgüter-/Inflationsindex', referenz: 'Destatis Verbraucherpreisindex', gewicht: annahmen.pg_invest },
   ]
-  const summe = komponenten.reduce((s, k) => s + (k.gewicht ?? 0), 0)
-  return { basisjahr: annahmen.pg_basisjahr, komponenten, gewichtSumme: Math.round(summe * 1000) / 1000 }
+  const festanteil = annahmen.pg_fest
+  const summe = festanteil + komponenten.reduce((s, k) => s + (k.gewicht ?? 0), 0)
+  return {
+    basisjahr: annahmen.pg_basisjahr,
+    festanteil,
+    komponenten,
+    gewichtSumme: Math.round(summe * 1000) / 1000,
+  }
+}
+
+// Preisänderungsfaktor P/P0 = a + Σ wₖ·(Iₖ/I0ₖ). Ohne Indexstände (Basisjahr,
+// alle Iₖ = I0ₖ) ergibt sich Faktor 1. Basiswert je Index default 100.
+export function preisgleitWert(formel, indexStaende = {}, basiswerte = {}) {
+  if (!formel) return null
+  return formel.komponenten.reduce((faktor, k) => {
+    const aktuell = indexStaende[k.schluessel]
+    const basis = basiswerte[k.schluessel] ?? 100
+    const verhaeltnis = aktuell != null && basis ? aktuell / basis : 1
+    return faktor + (k.gewicht ?? 0) * verhaeltnis
+  }, formel.festanteil ?? 0)
+}
+
+// Effizienzrisiko-Allokation (Vertragsparameter, kundensicher). Konfigurierbar
+// über die Frage `effizienzrisiko`; Default: Techem trägt das Risiko.
+export const EFFIZIENZRISIKO_TEXT = {
+  techem: 'Techem trägt das WP-Effizienzrisiko (Demo-Annahme)',
+  geteilt: 'Effizienzrisiko zwischen Techem und Kunde geteilt (Demo-Annahme)',
+  kunde: 'Kunde trägt das Effizienzrisiko (Demo-Annahme)',
 }
 
 // Hauptfunktion: erzeugt {kunde, intern} aus der internen Kostensicht.
@@ -49,25 +127,32 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
   const grundpreisPa = kapitaldienstPa + opexPa
   const grundpreisMonat = grundpreisPa / 12
 
-  // Arbeitspreis: variable Energiekosten je MWh + Marge (NUR hier).
+  // Arbeitspreis: variable Energiekosten je MWh + Marge (NUR hier). Die Marge
+  // wird iterativ auf die Ziel-IRR gelöst; ap_marge ist nur noch Fallback.
   const bedarf = derived?.waermebedarf_mwh ?? null
   const variableKostenPa = energie ? energie.kosten_strom + energie.kosten_gas : null
   const variabelProMwh = bedarf && variableKostenPa != null ? variableKostenPa / bedarf : null
-  const arbeitspreisMwh = variabelProMwh != null ? variabelProMwh * (1 + annahmen.ap_marge) : null
+
+  const loesungZiel = loeseApMargeFuerIrr({ capex, kapitaldienstPa, variableKostenPa, laufzeit, zielIrr: annahmen.ziel_irr })
+  const loesungAmbition = loeseApMargeFuerIrr({ capex, kapitaldienstPa, variableKostenPa, laufzeit, zielIrr: annahmen.ziel_irr_ambition })
+  const effektiveMarge = loesungZiel?.marge ?? annahmen.ap_marge
+  const arbeitspreisMwh = variabelProMwh != null ? variabelProMwh * (1 + effektiveMarge) : null
+
+  // Tatsächlich erreichte IRR bei effektiver Marge (Reporting/Sanity).
+  const erreichteIrr = capex > 0 && variableKostenPa != null && laufzeit
+    ? irr([-capex, ...Array(laufzeit).fill(jahresCashflow(kapitaldienstPa, variableKostenPa, effektiveMarge))])
+    : null
+  const apMargeAbsolutPa = variableKostenPa != null ? variableKostenPa * effektiveMarge : null
 
   const preisgleitformel = preisgleitformelBauen(annahmen)
+  const effizienzrisiko = EFFIZIENZRISIKO_TEXT[eingaben?.effizienzrisiko] ?? EFFIZIENZRISIKO_TEXT.techem
 
   // Vertragsparameter (strukturiert, kundensicher).
   const vertragsparameter = {
     servicegrenze: 'bis Heizkreisverteiler (Demo-Standard)',
-    effizienzrisiko: 'Techem trägt das WP-Effizienzrisiko (Demo-Annahme)',
+    effizienzrisiko,
     preisanpassung: 'jährlich nach Preisgleitformel (AVBFernwärme-orientiert, Demo)',
   }
-
-  // Interner Commercial-Aufbau (NUR intern). Zielrendite als transparente,
-  // nicht-iterative Demo-Indikation: jährliche AP-Marge bezogen auf die CAPEX.
-  const apMargeAbsolutPa = variableKostenPa != null ? variableKostenPa * annahmen.ap_marge : null
-  const zielrenditeIndikation = capex > 0 && apMargeAbsolutPa != null ? apMargeAbsolutPa / capex : null
 
   return {
     kunde: {
@@ -85,11 +170,16 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
       kapitaldienstPa,
       annuitaetenfaktor: af,
       variabelProMwh,
-      apMarge: annahmen.ap_marge,
+      variableKostenPa,
+      effektiveMarge,
       apMargeAbsolutPa,
       grundpreisPa,
       arbeitspreisMwh,
-      zielrenditeIndikation,
+      erreichteIrr,
+      margeZiel: loesungZiel?.marge ?? null,
+      margeAmbition: loesungAmbition?.marge ?? null,
+      margeGedeckelt: loesungZiel?.gedeckelt ?? false,
+      apMargeFallback: annahmen.ap_marge,
       zielIrr: annahmen.ziel_irr,
       zielIrrAmbition: annahmen.ziel_irr_ambition,
     },

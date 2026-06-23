@@ -77,11 +77,13 @@ export const ANNAHMEN = {
   ap_marge: 0.15,               // Marge auf den Arbeitspreis
   ziel_irr: 0.13,               // Ziel-IRR (Demo)
   ziel_irr_ambition: 0.15,      // Ambitionsszenario
-  // Preisgleitformel-Gewichte (AVBFernwärme-orientiert, Summe = 1)
-  pg_lohn: 0.30,
-  pg_strom: 0.30,
-  pg_gas: 0.25,
-  pg_invest: 0.15,
+  // Preisgleitformel-Gewichte (AVBFernwärme §24-orientiert): Festanteil +
+  // Index-Gewichte summieren zu 1.
+  pg_fest: 0.10,
+  pg_lohn: 0.27,
+  pg_strom: 0.27,
+  pg_gas: 0.22,
+  pg_invest: 0.14,
   pg_basisjahr: 2026,
 }
 
@@ -158,6 +160,7 @@ export const ANNAHMEN_META = [
     ['ap_marge', 'Marge auf Arbeitspreis', '0–1'],
     ['ziel_irr', 'Ziel-IRR', '0–1'],
     ['ziel_irr_ambition', 'Ziel-IRR Ambition', '0–1'],
+    ['pg_fest', 'Preisgleit: Festanteil', '0–1'],
     ['pg_lohn', 'Preisgleit: Lohnindex-Gewicht', '0–1'],
     ['pg_strom', 'Preisgleit: Strompreisindex-Gewicht', '0–1'],
     ['pg_gas', 'Preisgleit: Gaspreisindex-Gewicht', '0–1'],
