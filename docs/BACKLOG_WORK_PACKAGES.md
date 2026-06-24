@@ -10,20 +10,6 @@ Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden S
 
 Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht dauerhaft in diesem aktiven Detaildokument. Nach Abschluss werden sie nach `docs/BACKLOG_ARCHIVE.md` verschoben oder dort zusammengefasst.
 
-## WP12 Technical System Package Logic
-
-Domänenmodell (SK-74): `docs/SYSTEMPAKET_MODELL.md` – technische Beschreibung, Per-Child-Mapping und umgesetzte Teile (SK-76 Mehr-Gebäude-Blocker, SK-78 Vorlauftemperatur-Korridor).
-
-Ziel: SysKon hat ein schärferes technisches Paketmodell für das MVP-Hybrid-Luft/Wasser-Wärmepumpen-Contracting-Produkt. WP12 ist eine technische Grundlage vor WP8/SK-70: Erst Paketgrenzen, Blocker, Komponenten, Datenherkunft und interne vs. kundensichtbare Aussagen klären, dann Preise, GP/AP und Vertragsparameter darauf aufbauen. WP7 bleibt archiviert; kundenfähige Scope-Ausgabe wird später gegen dieses Modell nachgeschärft. Sequenz nach Pivot: WP13 (saubere Flächen + Sichtmodus) und WP10 (Tool-Learnings als Input) laufen vor WP12.
-
-Stop-line (Planungstool-Drift): WP12 darf die Engine nicht zu einem Standort-/Planungstool ausbauen. Site-Survey, Kartografie, LiDAR und 3D-Placement bleiben Integrations-/Recherchethemen (North Star aus SK-68), nicht eigene SysKon-Berechnung. Vor jeder Erweiterung von `src/logic/calc.js` um Standort-/Sizing-Logik prüfen, ob sie wirklich nötig ist oder extern zugekauft werden sollte.
-
-Do not do yet: keine finale juristische Vertragsgenerierung; keine Einkaufs-/Herstellkosten, interne Kundenpreisbildung, Marge, Subventionsinterna, internen Gesamt-CAPEX oder IRR in der Kundensicht zeigen; nicht auf einen möglichst kurzen Fragebogen optimieren, sondern auf einen validen Angebotskorridor; keine dynamische Stromtarif-Optimierung implementieren; keine Details aus der Kevin-W./Patrick-L.-Elektro-Notiz erfinden, bevor sie vorliegt.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-74 | Epic | Technical package | Technical System Package Logic | Robert's Workshop-Stand in ein kohärentes technisches Produktmodell übersetzen: Hybrid-Luft/Wasser-WP, Standardhydraulik, Aufstellung, Schall, Messkonzept, Monitoring, Datenherkunft, Berechnung und Scope-Grenzen. | MVP-Systempaket ist als technische Domäne beschrieben; WP12-Abhängigkeiten zu WP7-Kundenscope, WP8-Pricing/Contracting und WP11-Admin/Governance sind benannt; keine App-Implementierung ohne später freigegebenen Scope. | P1 | XL | Todo |
-
 ## WP8 Contracting-Angebot & Pricing-Logik
 
 Ziel: Der Systempaket-Konfigurator bereitet später ein realistisches, konfigurierbares Contracting-Angebot mit GP, AP und Preisgleitformel vor, ohne interne Commercial-Logik in der Kundensicht zu zeigen.
