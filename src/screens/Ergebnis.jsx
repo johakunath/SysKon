@@ -26,7 +26,7 @@ function exportLvCsv(lv, annahmen) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = 'analyse-richt-lv.csv'
+  a.download = 'angebot-kalkulation.csv'
   a.click()
   URL.revokeObjectURL(url)
 }

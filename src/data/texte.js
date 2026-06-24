@@ -4,9 +4,8 @@
 
 // Globale Fußnote der App (App.jsx).
 export const DEMO_FOOTER =
-  'Interner Demo-Prototyp – Richtpreis-Angebotskonzept zur internen Abstimmung. ' +
-  'Alle Werte sind Demo-Annahmen. Roadmap: Stufe 2 (Grundpreis/Arbeitspreis, Ziel-IRR), ' +
-  'monoenergetischer Pfad, Preisgleitformeln, BEG-Kostendeckel.'
+  'Richtpreis-Angebot (Demo) – Alle Werte sind Demo-Annahmen und Richtpreise; ' +
+  'Endpreise setzen Vor-Ort-Aufnahme und kaufmännische Freigabe voraus.'
 
 // Fußnote der internen Prüfnotiz (Handover.jsx).
 export const HANDOVER_FOOTNOTE =
@@ -15,6 +14,7 @@ export const HANDOVER_FOOTNOTE =
 
 // Hinweis über dem kundensichtbaren Contracting-Angebot (Ergebnis.jsx, WP8).
 export const CONTRACTING_DEMO_HINWEIS =
-  'Richtpreis-Angebot (Demo) zur internen Konzeptabstimmung. Grundpreis, Arbeitspreis und ' +
-  'Preisgleitformel sind Demo-Annahmen, kein freigegebenes Festpreisangebot und keine ' +
-  'Rechts-, Förder- oder Schallgarantie.'
+  'Richtpreis-Angebot (Demo) zur Gesprächsvorbereitung und ersten Orientierung. ' +
+  'Grundpreis, Arbeitspreis und Preisgleitformel basieren auf Demo-Annahmen; ' +
+  'Endpreise setzen Vor-Ort-Aufnahme und kaufmännische Freigabe voraus. ' +
+  'Keine Rechts-, Förder- oder Schallgarantie.'

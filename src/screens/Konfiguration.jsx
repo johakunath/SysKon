@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { applyAdminConfig, makeDefaultAdminConfig } from '../data/adminConfig.js'
 import { PRESETS } from '../data/presets.js'
 import { pruefeBedingung } from '../logic/engine.js'
-import { num, VARIANTEN_NAME, korridorTitel, kundenPreviewText } from './format.js'
+import { num, euro, VARIANTEN_NAME, korridorTitel, kundenPreviewText } from './format.js'
 import Ampel from '../components/Ampel.jsx'
 import ScopeListe from '../components/ScopeListe.jsx'
 
@@ -156,7 +156,48 @@ function PreviewScope({ titel, eintraege, max }) {
   )
 }
 
-export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen, sektionen = DEFAULT_EFFECTIVE_SEKTIONEN }) {
+function AufstelloptionenPreview({ viable, schallJeVariante, istIntern }) {
+  if (!viable || viable.length === 0) return null
+  return (
+    <div className="preview-block">
+      <h4>Aufstelloptionen</h4>
+      <ul className="aufstelloptionen-liste">
+        {viable.slice(0, 4).map(v => {
+          const schall = schallJeVariante?.[v.variante]
+          return (
+            <li key={v.variante} className="aufstelloption-zeile">
+              <span className="aufstelloption-label">{v.label}</span>
+              <span className="aufstelloption-meta">
+                {istIntern && v.kosten > 0 ? <span className="aufstelloption-kosten">+{euro(v.kosten)}</span> : null}
+                {schall ? <Ampel status={schall.ampel} groesse="klein" /> : null}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
+
+function RisikoFlags({ warnungen }) {
+  const flags = warnungen.filter(w => w.status === 'rot' || w.status === 'orange').slice(0, 3)
+  if (flags.length === 0) return null
+  return (
+    <div className="preview-block">
+      <h4>Gesprächsrisiken</h4>
+      <ul className="risiko-liste">
+        {flags.map((w, i) => (
+          <li key={i} className={`risiko-flag status-${w.status}`}>
+            <Ampel status={w.status} groesse="klein" />
+            <span>{kundenPreviewText(w.text)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen, sektionen = DEFAULT_EFFECTIVE_SEKTIONEN, sichtModus = 'kunde' }) {
   const sichtbar = (f) => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen)
   const beantwortet = (f) => {
     const w = eingaben[f.id]
@@ -286,8 +327,8 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
       <aside className="spalte-rechts">
         <div className="karte live kunden-preview">
-          <h3>Umfangs-Vorschau</h3>
-          <p className="hinweis">Kundensicht ohne Preise. Interne Kalkulation bleibt im Angebot (Internsicht) getrennt.</p>
+          <h3>Gesprächs-Vorschau</h3>
+          <p className="hinweis">Lösungskorridor für das Kundengespräch. Richtpreis-Indikation und Detailkalkulation vollständig im Angebot (Internsicht).</p>
 
           <div className="status-zeile kompakt">
             <Ampel status={ergebnis.status} groesse="gross" />
@@ -296,6 +337,9 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               <div className="hinweis">{kundenPreviewText(ergebnis.statusKorridor?.aktion)}</div>
             </div>
           </div>
+          {ergebnis.statusKorridor?.bedeutung && (
+            <p className="naechster-schritt">{ergebnis.statusKorridor.bedeutung}</p>
+          )}
 
           <div className="dq">
             <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong> · {ergebnis.datenlage?.titel}</div>
@@ -303,17 +347,36 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           </div>
 
           <div className="preview-block">
-            <h4>Vorlösung</h4>
+            <h4>Lösungs-Vorschau</h4>
             <div className="mini-fakten">
               <div><span>Pfad</span><strong>{technologiepfadPreview}</strong></div>
               {technologiepfadHinweis ? <div><span>Einordnung</span><strong>{technologiepfadHinweis}</strong></div> : null}
               <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
-              <div><span>Aufstellung</span><strong>{VARIANTEN_NAME[eingaben.aufstellvariante] ?? '-'}</strong></div>
+              {d.wp_kw ? <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div> : null}
+              <div>
+                <span>Aufstellung</span>
+                <strong>{d.aufstellung_empfohlen_label ?? VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong>
+              </div>
             </div>
             {d.aufstellung_abweichung ? (
-              <p className="hinweis">Gewählte Variante weicht von der tragfähigen Empfehlung ab.</p>
+              <p className="hinweis">Gewählte Variante weicht von der Empfehlung ab.</p>
             ) : null}
           </div>
+
+          <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} istIntern={sichtModus === 'intern'} />
+
+          {sichtModus === 'intern' && ergebnis.lv?.netto > 0 && (
+            <div className="preview-block">
+              <h4>Richtpreis-Korridor (intern, Demo)</h4>
+              <div className="korridor-range">
+                <span>{euro(ergebnis.lv.netto * 0.8)}</span>
+                <span className="korridor-bis">bis {euro(ergebnis.lv.netto * 1.2)}</span>
+              </div>
+              <p className="hinweis">Richtpreis-Bandbreite (Demo, ±20 %). Endpreis nach Vor-Ort-Aufnahme.</p>
+            </div>
+          )}
+
+          <RisikoFlags warnungen={ergebnis.warnungen} />
 
           <UmfangsVorschau scope={scope} />
           <PreviewScope titel="Annahmen" eintraege={scope.annahmen} max={3} />
