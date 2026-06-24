@@ -10,16 +10,6 @@ Umfangsregel: Der Agent plant zuerst. Wenn der Nutzer einen zusammenhängenden S
 
 Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht dauerhaft in diesem aktiven Detaildokument. Nach Abschluss werden sie nach `docs/BACKLOG_ARCHIVE.md` verschoben oder dort zusammengefasst.
 
-## WP8 Contracting-Angebot & Pricing-Logik
-
-Ziel: Der Systempaket-Konfigurator bereitet später ein realistisches, konfigurierbares Contracting-Angebot mit GP, AP und Preisgleitformel vor, ohne interne Commercial-Logik in der Kundensicht zu zeigen.
-
-Stand: Pricing-Layer umgesetzt – `src/logic/pricing.js` (GP/AP/Preisgleitformel) mit iterativem IRR-Solver (`loeseApMargeFuerIrr`, Marge auf Ziel-IRR gelöst), AVBFernwärme §24-Preisgleitformel (Festanteil + amtliche Indizes, Evaluator `preisgleitWert`) und parameterisiertem Effizienzrisiko (Frage `effizienzrisiko`). Kundensicht-Karte + interne Commercial-Sicht in `src/screens/Ergebnis.jsx`, konfigurierbare Annahmen + Fragen `vertragslaufzeit`/`effizienzrisiko`. Verbleibend offen: reale Index-Zeitreihen + finale AVBFernwärme-/Rechtsfreigabe. Modell: `docs/PRICING_MODELL.md`.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-70 | Epic | Pricing | Contracting-Angebot & Pricing-Logik | Pricing-Logik so konzipieren, dass Kundenpreise realistisch genug für den nächsten Prozessschritt sind und spätere Enttäuschungen vermeiden. Kundensicht zeigt GP/Grundpreis, AP/Arbeitspreis, Preisgleitformel, enthaltene Services, Annahmen, offene Punkte und strukturierte Vertragsparameter. Interne Sicht zeigt Einkaufskosten, Kostenaufbau, interne Preisbildung, Marge, Förderannahmen, resultierenden CAPEX und später IRR-/Zielrendite-Logik. WP8 baut auf dem technischen Paketmodell aus WP12 auf. | GP, AP und Preisgleitformel sind als Kundenausgabe definiert; enthaltene Services, Annahmen, Servicegrenze, Effizienzrisiko-Allokation zwischen Techem und Kunde sowie Preisänderungsklausel-Parameter sind strukturiert vorbereitet; interne Commercial-Felder sind dem Sales-Internal-Toggle zugeordnet; konfigurierbare Annahmen sind als Produktanforderung beschrieben; keine interne Marge, Einkaufslogik, Subventionsinterna, interner Gesamt-CAPEX oder IRR-Logik erscheint in der Kundensicht; keine finale juristische Vertragsgenerierung. | P1 | XL | In Arbeit |
-
 ## WP9 Angebotsvarianten, Speichern, PDF & Export
 
 Ziel: Sales kann ein Angebot vorbereiten, speichern, als PDF exportieren und mit wenigen Klicks eine zweite Variante erzeugen. Spätere Übergaben bleiben bewusst schlank und machen SysKon nicht zum CRM.
