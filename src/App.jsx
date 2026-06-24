@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { applyAdminConfig, loadAdminConfig, makeDefaultAdminConfig, saveAdminConfig, touchAdminConfig } from './data/adminConfig.js'
+import { loadAngebote, neueAngebotId, saveAngebote } from './data/angebote.js'
 import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
 import { DEMO_FOOTER } from './data/texte.js'
 import { berechne } from './logic/engine.js'
@@ -23,6 +24,9 @@ export default function App() {
     () => ({ ...PRESETS.find(p => p.id === DEFAULT_PRESET_ID).eingaben })
   )
   const [adminConfig, setAdminConfigState] = useState(loadAdminConfig)
+  const [angebote, setAngeboteState] = useState(loadAngebote)
+  const [aktivesAngebotId, setAktivesAngebotId] = useState(null)
+  const [gespraechsErgebnis, setGespraechsErgebnis] = useState({ status: 'offen', kommentar: '' })
   const effectiveConfig = useMemo(() => applyAdminConfig(adminConfig), [adminConfig])
   const annahmen = effectiveConfig.annahmen
 
@@ -48,6 +52,58 @@ export default function App() {
     setAdminConfigState(defaults)
   }
 
+  const setAngebote = (next) => {
+    setAngeboteState(prev => {
+      const resolved = typeof next === 'function' ? next(prev) : next
+      saveAngebote(resolved)
+      return resolved
+    })
+  }
+
+  const onAngebotSpeichern = (name) => {
+    const id = aktivesAngebotId ?? neueAngebotId()
+    const eintrag = {
+      id,
+      name: name?.trim() || `Angebot ${new Date().toLocaleDateString('de-DE')}`,
+      erstelltAm: new Date().toISOString(),
+      eingaben: { ...eingaben },
+      gespraechsErgebnis: { ...gespraechsErgebnis },
+    }
+    setAngebote(prev => {
+      const idx = prev.findIndex(a => a.id === id)
+      if (idx >= 0) {
+        const next = [...prev]
+        next[idx] = eintrag
+        return next
+      }
+      return [...prev, eintrag]
+    })
+    setAktivesAngebotId(id)
+  }
+
+  const onAngebotLaden = (id) => {
+    const a = angebote.find(a => a.id === id)
+    if (!a) return
+    setEingaben({ ...a.eingaben })
+    setGespraechsErgebnis({ ...a.gespraechsErgebnis })
+    setAktivesAngebotId(id)
+  }
+
+  const onAngebotDuplizieren = () => {
+    const aktiv = angebote.find(a => a.id === aktivesAngebotId)
+    const basisName = aktiv ? aktiv.name : `Angebot ${new Date().toLocaleDateString('de-DE')}`
+    const eintrag = {
+      id: neueAngebotId(),
+      name: `Kopie von ${basisName}`,
+      erstelltAm: new Date().toISOString(),
+      eingaben: { ...eingaben },
+      gespraechsErgebnis: { status: 'offen', kommentar: '' },
+    }
+    setAngebote(prev => [...prev, eintrag])
+    setAktivesAngebotId(eintrag.id)
+    setGespraechsErgebnis({ status: 'offen', kommentar: '' })
+  }
+
   const ergebnis = useMemo(() => berechne(eingaben, {
     annahmen,
     katalog: effectiveConfig.katalog,
@@ -63,6 +119,8 @@ export default function App() {
     setAdminConfig,
     resetAdminConfig,
     governance: effectiveConfig.governance,
+    angebote, aktivesAngebotId, gespraechsErgebnis, setGespraechsErgebnis,
+    onAngebotSpeichern, onAngebotLaden, onAngebotDuplizieren,
   }
 
   const visibleScreens = adminModus ? [...MAIN_SCREENS, ...ADMIN_SCREENS] : MAIN_SCREENS

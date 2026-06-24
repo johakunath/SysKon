@@ -641,10 +641,84 @@ details summary:hover { color: var(--akzent); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+/* Angebotsvarianten & Gesprächsergebnis */
+.angebot-aktionsbar {
+  padding: 12px 20px;
+  background: var(--bg-2, #f5f5f5);
+  border-bottom: 1px solid var(--rand, #ddd);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.angebot-speichern-reihe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.angebot-name-input {
+  flex: 1;
+  min-width: 180px;
+  max-width: 340px;
+  font-size: var(--fs-s);
+  padding: 5px 8px;
+  border: 1px solid var(--rand, #ccc);
+  border-radius: 4px;
+  background: #fff;
+}
+.btn-erfolg { background: var(--gruen, #2a7a2a) !important; color: #fff !important; }
+.angebot-varianten { padding-top: 4px; }
+.varianten-label { font-size: var(--fs-xs); color: var(--text-2, #555); }
+.varianten-liste {
+  list-style: none;
+  margin: 6px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.variante-zeile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid var(--rand, #ddd);
+  font-size: var(--fs-xs);
+}
+.variante-zeile.aktiv { border-color: var(--akzent, #0057b8); background: #edf3ff; }
+.variante-name { flex: 1; font-weight: 500; }
+.variante-datum { color: var(--text-2, #888); white-space: nowrap; }
+.variante-mehr { font-size: var(--fs-2xs); color: var(--text-2, #888); padding: 2px 8px; }
+
+.gespraech-karte { margin-top: 24px; }
+.gespraech-felder {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.gespraech-feld {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.gespraech-feld label { font-size: var(--fs-xs); font-weight: 600; }
+.gespraech-feld select { font-size: var(--fs-s); padding: 5px 8px; min-width: 220px; }
+.gespraech-feld-kommentar { flex: 1; min-width: 240px; }
+.gespraech-feld textarea { font-size: var(--fs-s); padding: 6px 8px; resize: vertical; }
+.zeichen-zaehler { font-size: var(--fs-2xs); color: var(--text-2, #888); align-self: flex-end; }
+
+/* Print-only elements (hidden on screen, shown in print) */
+.print-only { display: none; }
+
 /* Druck (Handover-Export via window.print) */
 @media print {
   @page { size: A4 portrait; margin: 18mm 15mm; }
   .no-print { display: none !important; }
+  .print-only { display: block !important; }
   body { background: #fff; font-size: var(--fs-2xs); color: #000; }
   .app { display: block; }
   .seite { padding: 0; animation: none; }
@@ -669,4 +743,19 @@ details summary:hover { color: var(--akzent); }
   /* Seitenumbruch: zweite/dritte Karte in karten-reihe dürfen umbrechen */
   .karten-reihe .karte { break-before: auto; }
   .druckbereich > .karte:first-child { break-after: avoid; }
+  /* Richtpreis-Angebot Druckkopf */
+  .print-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1.5px solid #333;
+    padding-bottom: 6pt;
+    margin-bottom: 14pt;
+    font-size: 10pt;
+  }
+  .print-header strong { font-size: 13pt; display: block; }
+  .print-angebot-name { font-size: 10pt; color: #444; }
+  /* Kunden-Positionen umbrechen sauber */
+  .kunden-position { break-inside: avoid; }
+  .kunden-gruppe { break-inside: avoid; }
 }
