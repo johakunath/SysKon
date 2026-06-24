@@ -156,7 +156,7 @@ function PreviewScope({ titel, eintraege, max }) {
   )
 }
 
-function AufstelloptionenPreview({ viable, schallJeVariante }) {
+function AufstelloptionenPreview({ viable, schallJeVariante, istIntern }) {
   if (!viable || viable.length === 0) return null
   return (
     <div className="preview-block">
@@ -168,7 +168,7 @@ function AufstelloptionenPreview({ viable, schallJeVariante }) {
             <li key={v.variante} className="aufstelloption-zeile">
               <span className="aufstelloption-label">{v.label}</span>
               <span className="aufstelloption-meta">
-                {v.kosten > 0 ? <span className="aufstelloption-kosten">+{euro(v.kosten)}</span> : null}
+                {istIntern && v.kosten > 0 ? <span className="aufstelloption-kosten">+{euro(v.kosten)}</span> : null}
                 {schall ? <Ampel status={schall.ampel} groesse="klein" /> : null}
               </span>
             </li>
@@ -197,7 +197,7 @@ function RisikoFlags({ warnungen }) {
   )
 }
 
-export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen, sektionen = DEFAULT_EFFECTIVE_SEKTIONEN }) {
+export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebnis, setScreen, sektionen = DEFAULT_EFFECTIVE_SEKTIONEN, sichtModus = 'kunde' }) {
   const sichtbar = (f) => !f.sichtbar || pruefeBedingung(f.sichtbar, eingaben, annahmen)
   const beantwortet = (f) => {
     const w = eingaben[f.id]
@@ -363,9 +363,9 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             ) : null}
           </div>
 
-          <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} />
+          <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} istIntern={sichtModus === 'intern'} />
 
-          {ergebnis.lv?.netto > 0 && (
+          {sichtModus === 'intern' && ergebnis.lv?.netto > 0 && (
             <div className="preview-block">
               <h4>Richtpreis-Korridor (intern, Demo)</h4>
               <div className="korridor-range">
