@@ -220,7 +220,7 @@ export default function Ergebnis({
           <div className="angebot-varianten">
             <strong className="varianten-label">Gespeicherte Varianten ({angebote.length})</strong>
             <ul className="varianten-liste">
-              {angebote.slice(0, 10).map(a => (
+              {angebote.map(a => (
                 <li key={a.id} className={`variante-zeile${a.id === aktivesAngebotId ? ' aktiv' : ''}`}>
                   <span className="variante-name">{a.name}</span>
                   <small className="variante-datum">{new Date(a.erstelltAm).toLocaleDateString('de-DE')}</small>
@@ -229,9 +229,6 @@ export default function Ergebnis({
                   </button>
                 </li>
               ))}
-              {angebote.length > 10 && (
-                <li className="hinweis variante-mehr">… {angebote.length - 10} weitere Varianten</li>
-              )}
             </ul>
           </div>
         )}

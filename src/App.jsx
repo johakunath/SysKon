@@ -25,7 +25,9 @@ export default function App() {
   )
   const [adminConfig, setAdminConfigState] = useState(loadAdminConfig)
   const [angebote, setAngeboteState] = useState(loadAngebote)
-  const [aktivesAngebotId, setAktivesAngebotId] = useState(null)
+  const [aktivesAngebotId, setAktivesAngebotIdState] = useState(() => {
+    try { return localStorage.getItem('syskon_aktives_angebot_id') ?? null } catch { return null }
+  })
   const [gespraechsErgebnis, setGespraechsErgebnis] = useState({ status: 'offen', kommentar: '' })
   const effectiveConfig = useMemo(() => applyAdminConfig(adminConfig), [adminConfig])
   const annahmen = effectiveConfig.annahmen
@@ -50,6 +52,14 @@ export default function App() {
     const defaults = makeDefaultAdminConfig()
     saveAdminConfig(defaults)
     setAdminConfigState(defaults)
+  }
+
+  const setAktivesAngebotId = (id) => {
+    setAktivesAngebotIdState(id)
+    try {
+      if (id) localStorage.setItem('syskon_aktives_angebot_id', id)
+      else localStorage.removeItem('syskon_aktives_angebot_id')
+    } catch {}
   }
 
   const setAngebote = (next) => {

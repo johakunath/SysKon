@@ -676,6 +676,8 @@ details summary:hover { color: var(--akzent); }
   display: flex;
   flex-direction: column;
   gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
 }
 .variante-zeile {
   display: flex;
