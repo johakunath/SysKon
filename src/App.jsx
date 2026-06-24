@@ -153,14 +153,14 @@ export default function App() {
           <button
             className={sichtModus === 'kunde' ? 'aktiv' : ''}
             onClick={() => setSichtModus('kunde')}
-            title="Kundensicht: nur der preisfreie Umfang"
+            title="Kundensicht: Umfang für das Kundengespräch – ohne interne Kalkulation"
           >
             Kundensicht
           </button>
           <button
             className={sichtModus === 'intern' ? 'aktiv' : ''}
             onClick={() => setSichtModus('intern')}
-            title="Internsicht: Vorlösung, LV/CAPEX und Prüfpunkte"
+            title="Internsicht: Interne Details, Kalkulation und Prüfpunkte"
           >
             Internsicht
           </button>

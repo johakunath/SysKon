@@ -303,7 +303,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           </div>
 
           <div className="preview-block">
-            <h4>Vorlösung</h4>
+            <h4>Lösungs-Vorschau</h4>
             <div className="mini-fakten">
               <div><span>Pfad</span><strong>{technologiepfadPreview}</strong></div>
               {technologiepfadHinweis ? <div><span>Einordnung</span><strong>{technologiepfadHinweis}</strong></div> : null}

@@ -35,7 +35,7 @@ export function kundenPreviewText(text) {
     .replace(/Förderlogik/g, 'interne Prüflogik')
     .replace(/Förderberatung/g, 'Beratung zu externen Programmen')
     .replace(/Förderannahme/g, 'interne Annahme')
-    .replace(/förderfähig/g, 'intern prüfpflichtig')
+    .replace(/förderfähig/g, 'zu prüfen')
     .replace(/Förderung/g, 'interne Prüfung')
     .replace(/CAPEX/g, 'interne Kalkulation')
     .replace(/OPEX/g, 'Betrieb')
