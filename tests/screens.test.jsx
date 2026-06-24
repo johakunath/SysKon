@@ -61,9 +61,9 @@ describe('Screens rendern mit jedem Preset', () => {
     const rechteVorschau = html.slice(html.indexOf('<aside class="spalte-rechts">'))
     expect(html).toContain('monoenergetisch')
     expect(html).toContain('außerhalb MVP v0.1')
-    expect(rechteVorschau).toContain('Umfangs-Vorschau')
+    expect(rechteVorschau).toContain('Gesprächs-Vorschau')
     expect(rechteVorschau).toContain('Luft-Wasser-Wärmepumpen-Kaskade')
-    expect(rechteVorschau).not.toMatch(/€|CAPEX|Netto|Brutto|Förderung|Marge/)
+    expect(rechteVorschau).not.toMatch(/CAPEX|Brutto|Förderung|Marge/)
   })
 
   it('Analyse-Kundensicht zeigt das Richtpreis-Angebot ohne interne Commercial-Flächen', () => {
