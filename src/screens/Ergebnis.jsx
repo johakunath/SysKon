@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { LV_GRUPPEN } from '../data/katalog.js'
 import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
 import { CONTRACTING_DEMO_HINWEIS } from '../data/texte.js'
@@ -146,8 +146,29 @@ function KundenScope({ scope }) {
   )
 }
 
-export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'kunde' }) {
+export default function Ergebnis({
+  eingaben, annahmen, ergebnis, sichtModus = 'kunde',
+  angebote = [], aktivesAngebotId = null,
+  gespraechsErgebnis, setGespraechsErgebnis,
+  onAngebotSpeichern, onAngebotLaden, onAngebotDuplizieren,
+}) {
   const [internTab, setInternTab] = useState('loesung')
+  const [gespeichert, setGespeichert] = useState(false)
+  const [angebotName, setAngebotName] = useState(() => {
+    const aktiv = angebote.find(a => a.id === aktivesAngebotId)
+    return aktiv?.name ?? `Angebot ${new Date().toLocaleDateString('de-DE')}`
+  })
+
+  useEffect(() => {
+    const aktiv = angebote.find(a => a.id === aktivesAngebotId)
+    setAngebotName(aktiv?.name ?? `Angebot ${new Date().toLocaleDateString('de-DE')}`)
+  }, [aktivesAngebotId, angebote])
+
+  const handleSpeichern = () => {
+    onAngebotSpeichern?.(angebotName)
+    setGespeichert(true)
+    setTimeout(() => setGespeichert(false), 2000)
+  }
   const d = ergebnis.derived
   const lv = ergebnis.lv
   const kundenScope = ergebnis.kundenScope
@@ -177,6 +198,48 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
           <span className="summary-detail">{summaryDetail}</span>
         </div>
         <div className="summary-aktion">{summaryAktion}</div>
+      </div>
+
+      <div className="angebot-aktionsbar no-print">
+        <div className="angebot-speichern-reihe">
+          <input
+            type="text"
+            className="angebot-name-input"
+            value={angebotName}
+            onChange={e => setAngebotName(e.target.value)}
+            placeholder={`Angebot ${new Date().toLocaleDateString('de-DE')}`}
+            aria-label="Angebotsname"
+          />
+          <button onClick={handleSpeichern} className={gespeichert ? 'btn-erfolg' : ''}>
+            {gespeichert ? 'Gespeichert ✓' : 'Speichern'}
+          </button>
+          <button onClick={onAngebotDuplizieren}>Duplizieren</button>
+          <button onClick={() => window.print()}>Als PDF exportieren</button>
+        </div>
+        {angebote.length > 0 && (
+          <div className="angebot-varianten">
+            <strong className="varianten-label">Gespeicherte Varianten ({angebote.length})</strong>
+            <ul className="varianten-liste">
+              {angebote.map(a => (
+                <li key={a.id} className={`variante-zeile${a.id === aktivesAngebotId ? ' aktiv' : ''}`}>
+                  <span className="variante-name">{a.name}</span>
+                  <small className="variante-datum">{new Date(a.erstelltAm).toLocaleDateString('de-DE')}</small>
+                  <button onClick={() => onAngebotLaden?.(a.id)} disabled={a.id === aktivesAngebotId}>
+                    {a.id === aktivesAngebotId ? 'Aktiv' : 'Laden'}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className="print-header print-only">
+        <div>
+          <strong>Richtpreis-Angebot (Demo)</strong>
+          <span className="print-angebot-name">{angebotName}</span>
+        </div>
+        <small>{new Date().toLocaleDateString('de-DE')}</small>
       </div>
 
       {istKunde && <KundenScope scope={kundenScope} />}
@@ -431,6 +494,38 @@ export default function Ergebnis({ eingaben, annahmen, ergebnis, sichtModus = 'k
 
         </div>
       )}
+
+      <div className="karte gespraech-karte no-print">
+        <h3>Gesprächsergebnis</h3>
+        <div className="gespraech-felder">
+          <div className="gespraech-feld">
+            <label htmlFor="gespraech-status">Status</label>
+            <select
+              id="gespraech-status"
+              value={gespraechsErgebnis?.status ?? 'offen'}
+              onChange={e => setGespraechsErgebnis?.(prev => ({ ...prev, status: e.target.value }))}
+            >
+              <option value="offen">Offen</option>
+              <option value="interessiert">Interessiert</option>
+              <option value="folgetermin">Folgetermin vereinbart</option>
+              <option value="nicht_weiterverfolgt">Nicht weiterverfolgt</option>
+            </select>
+          </div>
+          <div className="gespraech-feld gespraech-feld-kommentar">
+            <label htmlFor="gespraech-kommentar">Kommentar</label>
+            <textarea
+              id="gespraech-kommentar"
+              maxLength={200}
+              rows={3}
+              value={gespraechsErgebnis?.kommentar ?? ''}
+              onChange={e => setGespraechsErgebnis?.(prev => ({ ...prev, kommentar: e.target.value }))}
+              placeholder="Gesprächsnotiz (max. 200 Zeichen)"
+            />
+            <small className="zeichen-zaehler">{(gespraechsErgebnis?.kommentar ?? '').length}/200</small>
+          </div>
+        </div>
+        <p className="hinweis">Wird beim Speichern mit dem Angebot abgelegt. Kein CRM-Ersatz.</p>
+      </div>
     </div>
   )
 }
