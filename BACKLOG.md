@@ -45,8 +45,8 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 | Order | Epic | Outcome | Hängt ab von | Priority | Effort | Status |
 |---:|---|---|---|---|---|---|
 | 1 | SK-95 Angebots-Snapshot Sidebar | GP/AP + Förderart + Komponentenliste live in Konfiguration-Sidebar | SK-70 (GP/AP-Engine, Done) | P1 | M | Done |
-| 2 | SK-96 Förderung kundenseitig | Förderart (Typ, z.B. BEG EM) kundenseitig sichtbar – kein Förderbetrag | SK-95 | P1 | S | Todo |
-| 3 | SK-97 SmartControl Katalog | SmartControl als eigenes Katalogobjekt (inkl. KI-Variante) | – | P2 | S | Todo |
+| 2 | SK-96 Förderung kundenseitig | Förderart (Typ, z.B. BEG EM) kundenseitig sichtbar – kein Förderbetrag | SK-95 | P1 | S | Done |
+| 3 | SK-97 SmartControl Katalog | SmartControl als eigenes Katalogobjekt (inkl. KI-Variante) | – | P2 | S | Done |
 | 4 | SK-98 Inline-Fragenkontext | Alle Infos zur Fragenbeantwortung inline neben der Frage sichtbar | – | P2 | M | Todo |
 | 5 | SK-99 Admin Demo-Reife | Admin auf 3 klare Bereiche vereinfachen; zeigt Pflegbarkeit durch 1–2 Personen | – | P2 | S | Todo |
 | 6 | SK-100 Angebot als Dokument | Kundensicht dokumentähnlich (Logo, Name, Datum, klare Sektionen) | – | P3 | M | Todo |
@@ -54,7 +54,7 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 
 ## Aktueller Fokus
 
-WP9/SK-71 (Angebotsvarianten/Speichern/PDF), SK-58, SK-60, SK-61, SK-62 und SK-95 (Angebots-Snapshot Sidebar) sind abgeschlossen (PR #23, PR #24, PR #25). SK-95 zeigt GP/AP + Förderart + Komponentenliste live in der Konfiguration-Sidebar; CapEx und Förderbetrag bleiben intern. Nächste Priorität ist SK-96 (Förderart in allen Kundensichten konsistent – nur Typ, kein Betrag). SK-72 (Discovery) bleibt geblockt bis der PO Zugang zu Techem-Bestandstools bereitstellt.
+WP9/SK-71, SK-58, SK-60, SK-61, SK-62, SK-95, SK-96 und SK-97 sind abgeschlossen. SK-97: SmartControl (Demo-Referenz: SmartZero) als eigenes Katalogobjekt in neuer Gruppe „Steuerung & Monitoring"; Standard- und KI-Variante über Frage J wählbar; Presets auf 'standard' gesetzt; Tests prüfen KundenScope. Nächste Priorität: SK-98 (Inline-Fragenkontext). SK-72 bleibt geblockt.
 
 ## Child-Tickets
 

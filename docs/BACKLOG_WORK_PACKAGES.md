@@ -30,33 +30,7 @@ doppelten Angaben zu bereits gezeigten Informationen.
 
 ---
 
-## SK-96 – Förderung kundenseitig sichtbar
 
-Ziel: Förderbetrag und Förderart werden kundenseitig sichtbar – in der Sidebar
-(via SK-95) und in der Ergebnis-Kundensicht. Regulatorisch geboten.
-
-Hinweis: SK-61/SK-85 haben Förderung bewusst hinter den intern-Guard gezogen.
-SK-95 hat Förderart (Typ, z.B. "BEG EM") bereits kundenseitig eingeführt.
-SK-96 stellt sicher, dass Förderart konsistent in allen Kundensichten erscheint;
-Förderbetrag (€) bleibt intern-only (PO-Entscheidung Jun 2026: nur Typ, kein Betrag).
-Intern-Details (Förderquote, Berechnung, IRR-Einfluss) bleiben hinter Internsicht.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-96 | Epic | Results | Förderung kundenseitig | Förderart (z.B. BEG EM) in allen Kundensichten konsistent sichtbar. Förderbetrag (€) bleibt intern-only. SK-95 hat Sidebar + ContractingKarte bereits abgedeckt; SK-96 prüft Vollständigkeit und ergänzt ggf. weitere Kundensicht-Stellen. | Alle Kundensichten zeigen Förderart; kein Förderbetrag in Kundensicht; Hinweis „indikativ, kein Rechtsanspruch" bleibt; Intern-Detail bleibt hinter Internsicht. | P1 | S | Todo |
-
----
-
-## SK-97 – SmartControl als Katalogobjekt
-
-Ziel: SmartZero SmartControl (KI-fähiges Steuergerät) als eigene Katalogposition
-neben der Wärmepumpe – in Komponentenliste, Scope und Kalkulation.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-97 | Epic | Catalog | SmartControl Katalog | SmartControl als Katalogobjekt mit eigenem Kostenansatz, Scope-Zeile und Komponentenlisten-Eintrag. Optional: KI-Variante als Auswahlfeld. | Erscheint in KundenScope unter „Steuerung & Monitoring"; eigene LV-Position; optional: KI-Variante als Frage/Schalter; Tests prüfen Auftauchen in kundenScope. | P2 | S | Todo |
-
----
 
 ## SK-98 – Kurze Hinweise verbessern (NICHT Playbook zurückbringen)
 

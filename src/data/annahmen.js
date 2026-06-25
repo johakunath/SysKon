@@ -68,6 +68,9 @@ export const ANNAHMEN = {
   k_schallhaube: 8000,
   k_schallschutzzaun: 12000,         // €, Rockwool-Schallschutzzaun (Demo-Referenz, SK-79)
   k_atec_schallberechnung: 3500,     // €, ATEC-Schallberechnungsservice Pauschale (Demo, SK-79)
+  k_smartcontrol: 12000,             // €, SmartZero SmartControl Standard (Demo, SK-97)
+  k_smartcontrol_ki: 18000,          // €, SmartZero SmartControl KI-Variante (Demo, SK-97)
+  f_smartcontrol: 0,                 // kein BEG-Gegenstand (Demo)
 
   // Laufende Kosten & Sonstiges
   monitoring_pa: 1500,       // €/a
@@ -198,6 +201,11 @@ export const ANNAHMEN_META = [
   { gruppe: 'Messkonzept (Demo, SK-80)', felder: [
     ['k_messkonzept_basis', 'Messkonzept Basis (WP-Eigenstromzähler, Fernablesung)', '€'],
     ['f_messkonzept', 'Förderanteil Messkonzept (kein BEG-Gegenstand)', '0–1'],
+  ]},
+  { gruppe: 'SmartControl (Demo, SK-97)', felder: [
+    ['k_smartcontrol', 'SmartControl Standard', '€'],
+    ['k_smartcontrol_ki', 'SmartControl KI-Variante', '€'],
+    ['f_smartcontrol', 'Förderanteil SmartControl (kein BEG-Gegenstand)', '0–1'],
   ]},
   { gruppe: 'Laufend & Sonstiges', felder: [
     ['monitoring_pa', 'Monitoring p.a.', '€/a'],

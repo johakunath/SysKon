@@ -55,6 +55,9 @@ Diese Einträge wurden aus `BACKLOG.md` und `docs/BACKLOG_WORK_PACKAGES.md` entf
 | SK-60 | Epic | Live solution corridor | Gesprächs-Vorschau Sidebar: Aufstelloptionen mit Schall-Ampel, Risiko-Flags, Richtpreis-Korridor ±20 % (intern-only). CAPEX-Leak-Fix: Korridor und Kostenadder hinter `sichtModus === 'intern'` gegated (Codex P1 Review-Finding adressiert). PR #24. | Done |
 | SK-61 | Epic | Sales-safe result semantics | `kundenPreviewText()` förderfähig → zu prüfen; CSV-Dateiname → angebot-kalkulation.csv. PR #24. | Done |
 | SK-62 | Epic | Internal engine remains available | Audit Jun 2026: alle Kriterien durch WP13/WP8/SK-60 erfüllt. LV/CAPEX/OPEX hinter sichtModus-Toggle; Admin-Screens hinter adminModus-Toggle; PE-Engine (`berechne()`) vollständig erhalten. Keine Code-Änderungen nötig. | Done |
+| SK-95 | Epic | Angebots-Snapshot Sidebar | GP/AP live in Konfiguration-Sidebar (AngebotSnapshot) + Ergebnis-Kundensicht (ContractingKarte). Förderart ("BEG EM") kundenseitig sichtbar; Förderbetrag und CapEx intern-only. Komponentennamen in Kundensicht ohne €; Komponentenkosten per Gruppe in Internsicht. PR #25. | Done |
+| SK-96 | Epic | Förderung kundenseitig | Audit Jun 2026: SK-95 hatte Förderart vollständig in Sidebar (AngebotSnapshot) und Ergebnis-Kundensicht (ContractingKarte) eingeführt. SK-96 ergänzte positive Test-Assertions (BEG EM + Disclaimer in beiden Kundensichten) und bestätigte dass Förderbetrag nicht in Kundensicht sichtbar ist. Keine Produktionsänderungen nötig. | Done |
+| SK-97 | Epic | SmartControl Katalog | SmartZero SmartControl als eigenes Katalogobjekt in neuer LV-Gruppe „Steuerung & Monitoring". Standard- und KI-Variante über Frage `smartcontrol_variante` in Sektion J wählbar. `k_smartcontrol: 12000`, `k_smartcontrol_ki: 18000`, `f_smartcontrol: 0` in annahmen.js. Alle Presets auf 'standard' gesetzt. Playbook, Provenienz und Test für KundenScope-Auftauchen ergänzt. 121 Tests grün. | Done |
 
 ## v0.1 Build
 

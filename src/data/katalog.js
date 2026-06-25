@@ -301,6 +301,38 @@ export const KATALOG = [
     ],
   },
   {
+    id: 'smartcontrol', pakettyp: 'Steuerung', gruppe: 'Steuerung & Monitoring',
+    variantenFeld: 'smartcontrol_variante',
+    varianten: [
+      { wert: 'standard', name: 'SmartControl Standard',
+        positionen: [
+          { id: 'smartcontrol_std', text: 'SmartZero SmartControl (Steuergerät, Standard)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_smartcontrol' }, foerder: 'f_smartcontrol', tag: 'capex',
+            begruendung: 'Digitales Steuergerät für Wärmepumpenanlage im Contracting-Modell (Demo-Referenz: SmartZero).',
+            kunde: {
+              titel: 'SmartControl',
+              hersteller: 'SmartZero (Demo-Referenz)',
+              produkt: 'Digitales Steuergerät',
+              leistungsumfang: 'Digitales Steuergerät für Betriebsführung, Optimierung und Datenintegration der Wärmepumpenanlage im Contracting-Modell.',
+            } },
+        ]},
+      { wert: 'ki', name: 'SmartControl KI',
+        positionen: [
+          { id: 'smartcontrol_ki', text: 'SmartZero SmartControl KI (KI-gestützte Regelung)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'fix', annahme: 'k_smartcontrol_ki' }, foerder: 'f_smartcontrol', tag: 'capex',
+            begruendung: 'KI-gestützte Betriebsführung für adaptive Effizienzoptimierung (Demo-Aufpreis gegenüber Standard).',
+            kunde: {
+              titel: 'SmartControl KI',
+              hersteller: 'SmartZero (Demo-Referenz)',
+              produkt: 'KI-gestütztes Steuergerät',
+              leistungsumfang: 'KI-gestützte Betriebsführung und adaptive Effizienzoptimierung. Lernende Regellogik für den Betriebsoptimierungskorridor (Demo).',
+            } },
+        ]},
+    ],
+  },
+  {
     id: 'installation', pakettyp: 'Basis', gruppe: 'Installation / Inbetriebnahme',
     positionen: [
       { id: 'install_ibn', text: 'Installation, Montage und Inbetriebnahme',
@@ -386,5 +418,6 @@ export const KATALOG = [
 export const LV_GRUPPEN = [
   'Wärmepumpenpaket', 'Hybrid-Einbindung', 'Hydraulik', 'Speicher / Warmwasser',
   'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Messkonzept', 'Monitoring',
+  'Steuerung & Monitoring',
   'Installation / Inbetriebnahme', 'Umfeldmaßnahmen',
 ]

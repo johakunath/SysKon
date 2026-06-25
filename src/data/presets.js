@@ -26,6 +26,7 @@ export const PRESETS = [
       netzanschluss_bekannt: 'ja', zaehlerschrank_ok: 'ja', kabelweg: 'mittel',
       foerderung_annahme: 'ja',
       monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
+      smartcontrol_variante: 'standard',
     },
     erwartung: {
       status: 'gelb',
@@ -54,6 +55,7 @@ export const PRESETS = [
       netzanschluss_bekannt: 'nein', zaehlerschrank_ok: 'unbekannt', kabelweg: 'mittel',
       foerderung_annahme: 'ja',
       monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
+      smartcontrol_variante: 'standard',
     },
     erwartung: {
       status: 'gelb',
@@ -83,6 +85,7 @@ export const PRESETS = [
       netzanschluss_bekannt: 'ja', zaehlerschrank_ok: 'ja', kabelweg: 'einfach',
       foerderung_annahme: 'ja',
       monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
+      smartcontrol_variante: 'standard',
     },
     erwartung: {
       status: 'gelb',
@@ -110,6 +113,7 @@ export const PRESETS = [
       netzanschluss_bekannt: 'nein', zaehlerschrank_ok: 'unbekannt', kabelweg: 'schwierig',
       foerderung_annahme: 'ja',
       monitoring_variante: 'basic', service_variante: 'basis',
+      smartcontrol_variante: 'standard',
     },
     erwartung: {
       status: 'orange',
@@ -138,6 +142,7 @@ export const PRESETS = [
       netzanschluss_bekannt: 'ja', zaehlerschrank_ok: 'ja', kabelweg: 'mittel',
       foerderung_annahme: 'ja',
       monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
+      smartcontrol_variante: 'standard',
     },
     erwartung: {
       status: 'rot',
