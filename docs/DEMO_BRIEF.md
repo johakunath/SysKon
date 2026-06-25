@@ -1,148 +1,139 @@
-# Demo Brief – Passion SmartZero Konfigurator
+# Demo Brief – SysKon / Passion SmartZero
 
-Dieses Dokument hält die Demo-Vision und strategischen Rahmenbedingungen fest,
-damit Agent-Sessions dieses Gespräch nicht wiederholen müssen. Letzte Aktualisierung: Juni 2026.
-
----
-
-## Hintergrund und Produkt
-
-**Passion SmartZero Contracting** ist ein Contracting-Produkt zur Dekarbonisierung
-von kleineren Mehrfamilienhäusern (MFH) durch:
-- Wärmepumpen (monoenergetisch oder hybrid mit bestehendem Gas-/Ölkessel)
-- Optional: SmartControl-Gerät (potenziell KI-gesteuert, wie bei Wettbewerbern)
-
-Passion ist der Contractor – nicht der Hersteller. Kunden sind Eigentümer
-heterogener Bestandsimmobilien. Das USP liegt in hochindividuellen Verträgen
-für ein breites Gebäudespektrum.
+Erfasst Jun 2026. Referenz für zukünftige Agent-Sessions, damit der Demo-Kontext
+nicht neu erarbeitet werden muss.
 
 ---
 
-## Demo-Ziel
+## Produkt
 
-**Zielgruppe**: Internes Team (ein weiterer PM, Vorgesetzte(r), 2–3 Ingenieure)
+**Passion SmartZero Contracting** — Wärmepumpen-Contracting zur Dekarbonisierung
+von kleineren Mehrfamilienhäusern. Technologiepfade:
+- Hybrid (WP + bestehender Gas- oder Ölkessel)
+- Monoenergetisch (WP ersetzt Bestandsheizung vollständig)
+- Passion SmartControl als eigenes Produkt-/Servicepaket (ggf. KI-gesteuert;
+  Wettbewerber bieten dies bereits an)
 
-**Kernaussage**: Ein regelbasierter, konfigurierbarer Konfigurator kann die
-Angebotserstellung für SmartZero 10× schneller machen als die aktuellen
-Excel-Prozesse – ohne Kalkulationstiefe, Individualität oder Kontrollierbarkeit
-zu verlieren.
-
-**Aktueller Schmerz**: Selbstgepflegte Excel-Sheets, sehr langsam, nicht
-skalierbar. Zielzustand: 10× Wachstum mit 1–2 Personen, die das Tool gemeinsam
-mit Vertrieb, Einkauf, Controlling und Management pflegen.
-
-**Build-or-Buy-Entscheidung**: Die Demo soll zeigen, dass diese Technologie
-grundsätzlich geeignet ist – unabhängig davon, ob das Tool selbst gebaut,
-eine CPQ-Lösung konfiguriert oder mit/ohne KI entwickelt wird.
-
----
-
-## Wichtigste Einwände der Ingenieure (zu widerlegen)
-
-1. **„Der Prozess ist nicht standardisierbar genug."**
-   → Admin-Screen zeigt konfigurierbare Regeln, Ausschlussbedingungen und
-   Preisannahmen. Standardisierung ist parametrisch, nicht starr.
-
-2. **„Zu viel Standardisierung – wir verlieren unser USP individueller Verträge."**
-   → Internsicht zeigt individuelle Kalkulation pro Objekt (WP-Sizing,
-   Aufstellvariante, CapEx, GP/AP). Regeln sind editierbar; Ausnahmen sind
-   steuerbar. Das Tool beschleunigt den Prozess, ersetzt aber nicht das Urteil.
+Der Contractor (Passion) übernimmt Installation, Betrieb und Wartung.
+Vertragsparameter: Grundpreis + Arbeitspreis (kWh), Laufzeiten 10/15/20 Jahre.
 
 ---
 
 ## Demo-Szenario
 
-Ein Sales Agent erstellt gemeinsam mit einem Kunden oder im Vorfeld eines
-Gesprächs ein Angebot. Der Kunde kann auf einem Notebook mitsehen (nicht
-zwingend). Der Agent kann zwischen Abschnitten springen – kein linearer Zwang.
+**Anlass**: Internes Team-Meeting — Produktmanager, Führungskraft, Engineers.
 
-**Referenz-Vorbild**: „Manfred" (Temondo/Techem-internes Tool für ähnliche
-Angebotsprozesse, das der PM aus früherer Tätigkeit kennt).
+**These, die bewiesen werden soll**:
+> Ein konfigurierbares, regelbasiertes Tool kann den Angebotsprozess
+> 10× schneller machen als Excel, ohne Kalkulations-Tiefe, individuelle
+> Vertragsgestaltung oder Kontrollierbarkeit zu verlieren. Und ohne hohe
+> Implementierungs- oder Wartungskosten.
+
+**Kontext**: Aktuell werden Angebote über selbst gepflegte Excel-Sheets
+erstellt — sehr langsam, nicht skalierbar. Das Ziel ist mittelfristig 10×
+Skalierung, mit 1–2 Personen, die das Tool gemeinsam mit Supply Chain,
+Sales und Management warten.
+
+**Primäres Vorbild**: „Manfred" bei Temondo/Techem — ein CPQ-Konfigurator
+für ähnliche Anwendungsfälle. SysKon soll zeigen, dass dieses Konzept für
+SmartZero umsetzbar ist — ob mit AI-Unterstützung, Eigenentwicklung oder
+einer bestehenden CPQ-Lösung.
 
 ---
 
-## Layout-Vision (drei Screens)
+## Der zentrale Einwand (Engineers)
 
-### Screen 1: Konfiguration (Hauptseite – Zentrum des Tools)
+Engineers sind skeptisch aus zwei Gründen:
+1. **Zu starr**: „Wir können den Angebotsprozess nicht genug standardisieren,
+   weil jedes Gebäude und jeder Vertrag individuell ist."
+2. **Zu simpel**: „Wenn wir standardisieren, verlieren wir unser USP —
+   hochindividuelle Verträge für eine heterogene Immobilienbranche."
+
+**Die Antwort des Tools**: Das Admin-Panel zeigt, dass Fragen, Regeln,
+Katalog und Preisannahmen vollständig konfigurierbar sind. Das Internsicht-
+Modus zeigt, dass alle individuellen Kalkulationspunkte erhalten bleiben
+und nachvollziehbar sind. Standardisierung ersetzt nicht individuelle
+Entscheidung — sie strukturiert und beschleunigt sie.
+
+---
+
+## Nutzungskontext des Tools
+
+**Primäre Nutzung**: Sales-Agent führt das Tool während eines Kundengesprächs
+(Telefon oder vor Ort, Kunde sieht Bildschirm). Agents können zwischen
+Sektionen springen — kein starrer Pfad nötig.
+
+**Zielgruppe Sales-Agent**: Technisch versierte Verkäufer, die Gebäudetechnik
+verstehen. Technische Sprache ist OK und notwendig für Glaubwürdigkeit.
+
+**Kundensicht**: Kunde sieht das Tool bei bestimmten Momenten — vor allem
+den Angebots-Snapshot auf der rechten Seite und ggf. die Angebots-Preview.
+
+---
+
+## Gewünschtes 3-Screen-Layout
+
+### Screen 1: Konfiguration (Hauptseite — Zentrum der Demo)
 
 ```
-┌──────────┬─────────────────────────────┬──────────────────────────┐
-│  Links   │         Mitte               │       Rechts             │
-│          │                             │                          │
-│ Sektions-│  Fragen mit allem nötigen   │  Angebots-Snapshot       │
-│ naviga-  │  Kontext direkt daneben:    │  (live, sofort):         │
-│ tion     │  - Fragetitel               │  - GP + AP (€/a)         │
-│ (A–J)    │  - Antwortfeld              │  - CapEx (Richtwert)     │
-│          │  - Warum fragen wir das?    │  - Förderung (Betrag/Art)│
-│          │  - Richtwert / Einordnung   │  - Komponenten & Services│
-│          │  - Warnsignale              │  - Aufstellvariante      │
-│          │                             │  - Gesprächskorridor     │
-│          │                             │  - Nächster Schritt      │
-└──────────┴─────────────────────────────┴──────────────────────────┘
+[Linke Spalte]         [Mitte]                    [Rechte Spalte]
+Sektions-Navigation    Fragen                      Angebots-Snapshot
+A Gebäude              + inline Kontext            ─────────────────
+B Wärme                  (warum, Richtwert,         Contracting-Preis:
+C Bestand                Einordnung direkt          GP: X €/Jahr
+D Temperatur             neben der Frage)           AP: X ct/kWh
+E Heizraum                                         ─────────────────
+F Aufstellung                                       Komponenten:
+G Schall                                            • WP 2 × 20 kW
+H Elektro                                           • SmartControl
+I Commercial                                        • Hydraulikpaket
+J Service                                           • Monitoring
+                                                   ─────────────────
+                                                    CapEx: ~X €
+                                                    Förderung: ~X €
+                                                   ─────────────────
+                                                    Status + nächster
+                                                    Schritt
 ```
 
-**Wichtig**: Der Angebots-Snapshot auf der rechten Seite aktualisiert sich live
-mit jeder Eingabe. Das ist der „Wow-Moment" der Demo. GP/AP, Förderung und
-CapEx sollen kundenseitig sichtbar sein (nicht nur intern), da Förderung
-regulatorisch offengelegt werden muss und CapEx ein zentraler Verhandlungshebel
-für den Kunden ist.
+**Wichtig**: Der Angebots-Snapshot auf der rechten Seite ist der
+„Money Shot" der Demo. Er zeigt dem Kunden sofort Contracting-Preis,
+was installiert wird, und Förderung — alles live aktualisiert.
 
-### Screen 2: Angebot (Angebots-Preview)
+### Screen 2: Angebot (Offer Preview)
 
-Zeigt das Angebot in einer sauberen, dokumentähnlichen Darstellung.
-- Kundensicht: Umfang, Leistungen, Preise (GP/AP), Förderung, Annahmen
-- Internsicht: vollständige LV-/CapEx-Kalkulation, Margen, IRR, Regelnachweise
-- PDF-Export via Drucken
+Saubere Dokumenten-Ansicht des Kundenangebots. Zeigt:
+- GP/AP, Laufzeit, Vertragsparameter
+- Komponentenliste mit Umfang
+- Förderindikation
+- Annahmen und offene Punkte
 
-### Screen 3: Admin
+### Screen 3: Admin (Konfigurierbarkeit demonstrieren)
 
-Demonstriert, dass das Tool durch 1–2 interne Personen pflegbar ist:
-- Fragen & Playbook-Texte konfigurierbar
-- Komponenten-Katalog & Preisannahmen editierbar
-- Regeln einsehbar (und zukünftig editierbar)
-Ziel: Kein Agency-Aufwand für laufende Pflege.
+Zeigt, dass das Tool wartbar ist:
+- Fragen & Playbook (Gesprächshilfen pro Frage konfigurierbar)
+- Katalog & Preise (Komponenten, Kosten, Scope-Texte)
+- Regeln (regelbasierte Logik, nachvollziehbar)
 
----
-
-## Kernkomponenten des Produkts (im Tool sichtbar)
-
-| Komponente | Beschreibung |
-|---|---|
-| Wärmepumpe | Luft-Wasser, Kaskade 1–6 × 20 kW, Hersteller Referenz (Buderus/Dreammaker) |
-| SmartControl | Eigenes Steuergerät (potenziell KI-gesteuert); eigene Katalogposition |
-| Hybrideinbindung | Bestehender Gas-/Ölkessel als Backup-Heizung (Hybrid-Pfad) |
-| Hydraulik | 2 Raumheizkreise + Warmwasser, Pufferspeicher |
-| Aufstellung | 5 Varianten: Außen offen, Fundament, Einhausung, Kompakt-, Vollcontainer |
-| Monitoring | Betriebsmonitoring auf Basis Messkonzept |
-| Service | Wartung, Instandsetzung, Betriebsführung |
+Goal für Audience: „Ein PM + ein Engineer können das ohne Agentur pflegen."
 
 ---
 
-## Was der Demo-Flow zeigen soll
+## Was für den aktuellen Demozweck NICHT prioritär ist
 
-1. **Gebäude eingeben** → Korridor und Komponentenliste erscheinen live
-2. **Aufstellvariante wählen** → CapEx und GP/AP passen sich an
-3. **Hybrid vs. Mono** → Tool zeigt, welcher Pfad für das Objekt passt und warum
-4. **Förderung** → Betrag und Art werden sichtbar (Kundensicht)
-5. **Zu Angebot wechseln** → Sauberes Dokument, druckbar
-6. **Internsicht zeigen** → LV, CapEx-Detail, Regeln → überzeugt Ingenieure
-7. **Admin zeigen** → Katalog, Preise, Regeln editierbar → überzeugt PM und Führung
+- Vollständige Kundendokument-Ästhetik (Branding, Logo, Druckqualität)
+- Geführter Gesprächsfluss (Agents springen selbst durch die Sektionen)
+- Narrative Einführung / Onboarding
+- CRM-Integration
+- Echte Förderzeitreihen oder rechtliche Freigabe
 
 ---
 
-## Abgrenzung (was das Tool nicht ist)
+## Nächste Epics (grob, Details in BACKLOG_WORK_PACKAGES.md)
 
-- Kein verbindliches Angebot (Demo-Annahmen, Vor-Ort-Aufnahme bleibt nötig)
-- Kein Planungstool (kein Sizing durch LiDAR/Kartografie)
-- Keine Customer-Self-Service-Bestellung
-- Keine CRM- oder WeClapp-Integration (bewusst deferred)
-- Keine echten Kundendaten
-
----
-
-## Referenzen
-
-- Produktroadmap: `docs/PRODUCT_ROADMAP.md`
-- Aktiver Backlog: `BACKLOG.md`
-- Technisches Domänenmodell: `docs/SYSTEMPAKET_MODELL.md`
-- Pricing-Modell: `docs/PRICING_MODELL.md`
+- SK-95: Angebots-Snapshot in Konfiguration-Sidebar (GP/AP + CapEx + Komponenten + Förderung)
+- SK-96: Förderung kundenseitig sichtbar
+- SK-97: SmartControl als Katalogobjekt
+- SK-98: Inline-Fragenkontext (alles Nötige neben der Frage)
+- SK-99: Admin auf Demo-Reife bringen (3 klare Bereiche)
+- SK-100: Angebot als Dokument (sauberes Layout, kein Web-App-Feeling)
