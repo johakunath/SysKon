@@ -189,7 +189,9 @@ function AngebotSnapshot({ ergebnis, sichtModus, annahmen }) {
   const foerderart = FOERDERUNG_ART_LABEL
 
   const capexPos = lv.positionen.filter(p => p.tag === 'capex' && p.betrag > 0)
-  const komponentenNamen = [...new Set(capexPos.map(p => p.gruppe))]
+  const komponentenNamen = (ergebnis.kundenScope?.gruppen ?? [])
+    .flatMap(g => g.positionen.map(p => p.titel))
+    .slice(0, 8)
   const capexGruppen = Object.entries(
     capexPos.reduce((acc, p) => {
       acc[p.gruppe] = (acc[p.gruppe] || 0) + p.betrag

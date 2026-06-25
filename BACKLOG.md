@@ -44,8 +44,8 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 
 | Order | Epic | Outcome | Hängt ab von | Priority | Effort | Status |
 |---:|---|---|---|---|---|---|
-| 1 | SK-95 Angebots-Snapshot Sidebar | GP + AP + CapEx + Förderung + Komponenten live in Konfiguration-Sidebar | SK-70 (GP/AP-Engine, Done) | P1 | M | Todo |
-| 2 | SK-96 Förderung kundenseitig | Förderungsbetrag/-art kundenseitig sichtbar (regulatorisch geboten) | SK-95 | P1 | S | Todo |
+| 1 | SK-95 Angebots-Snapshot Sidebar | GP/AP + Förderart + Komponentenliste live in Konfiguration-Sidebar | SK-70 (GP/AP-Engine, Done) | P1 | M | Done |
+| 2 | SK-96 Förderung kundenseitig | Förderart (Typ, z.B. BEG EM) kundenseitig sichtbar – kein Förderbetrag | SK-95 | P1 | S | Todo |
 | 3 | SK-97 SmartControl Katalog | SmartControl als eigenes Katalogobjekt (inkl. KI-Variante) | – | P2 | S | Todo |
 | 4 | SK-98 Inline-Fragenkontext | Alle Infos zur Fragenbeantwortung inline neben der Frage sichtbar | – | P2 | M | Todo |
 | 5 | SK-99 Admin Demo-Reife | Admin auf 3 klare Bereiche vereinfachen; zeigt Pflegbarkeit durch 1–2 Personen | – | P2 | S | Todo |
@@ -54,7 +54,7 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 
 ## Aktueller Fokus
 
-WP9/SK-71 (Angebotsvarianten/Speichern/PDF), SK-58 (Sales-first Framing), SK-60 (Live-Gesprächs-Vorschau), SK-61 (Sales-safe Semantics) und SK-62 (Internal engine guardrails) sind abgeschlossen (PR #23, PR #24). Die Demo-Vision wurde Jun 2026 mit dem PO konkretisiert: drei Screens (Konfiguration als Hauptseite, Angebot, Admin), Fokus auf Live-Angebots-Snapshot in der rechten Sidebar mit GP/AP + CapEx + Förderung + Komponenten. Nächste Priorität ist SK-95 (Sidebar-Snapshot). SK-72 (Discovery) bleibt geblockt bis der PO Zugang zu Techem-Bestandstools bereitstellt.
+WP9/SK-71 (Angebotsvarianten/Speichern/PDF), SK-58, SK-60, SK-61, SK-62 und SK-95 (Angebots-Snapshot Sidebar) sind abgeschlossen (PR #23, PR #24, PR #25). SK-95 zeigt GP/AP + Förderart + Komponentenliste live in der Konfiguration-Sidebar; CapEx und Förderbetrag bleiben intern. Nächste Priorität ist SK-96 (Förderart in allen Kundensichten konsistent – nur Typ, kein Betrag). SK-72 (Discovery) bleibt geblockt bis der PO Zugang zu Techem-Bestandstools bereitstellt.
 
 ## Child-Tickets
 
