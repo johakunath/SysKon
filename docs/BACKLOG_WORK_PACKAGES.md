@@ -26,7 +26,7 @@ doppelten Angaben zu bereits gezeigten Informationen.
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-95 | Epic | Sidebar | Angebots-Snapshot Sidebar | GP + AP (€/a) + CapEx-Richtwert + Förderungsbetrag/-art + Komponentenliste live in der rechten Konfiguration-Sidebar. Kundenseitig sichtbar (Förderung regulatorisch offenzulegen; CapEx ist Kundenverhandlungshebel). Kompaktes Layout – keine Re-Clutterung der Sidebar (SK-88). | GP/AP erscheint live; CapEx als Richtwert ±Band; Förderung mit Betrag+Typ sichtbar; Komponentenliste kompakt (WP, SmartControl, Aufstellung, Services); alles ohne Seitennavigation; kein intern-Guard für diese Werte; Sidebar bleibt scanbar auf einen Blick. | P1 | M | Todo |
+| SK-95 | Epic | Sidebar | Angebots-Snapshot Sidebar | GP + AP live in Sidebar + Ergebnis-Kundensicht. Förderart (Typ, z.B. BEG EM) kundenseitig sichtbar; Förderbetrag und CapEx bleiben intern. Komponentenliste (Namen, keine Preise) in Kundensicht; Komponentenkosten per Gruppe in Internsicht. Ersetzt den alten intern-only Richtpreis-Korridor-Block. | GP/AP live in Sidebar; Förderart kundenseitig sichtbar (kein Betrag); Komponentennamen in Kundensicht ohne €; Internsicht zeigt zusätzlich CapEx netto + Förderbetrag + Komponentenkosten; Sidebar bleibt scanbar. | P1 | M | Done |
 
 ---
 
@@ -36,12 +36,14 @@ Ziel: Förderbetrag und Förderart werden kundenseitig sichtbar – in der Sideb
 (via SK-95) und in der Ergebnis-Kundensicht. Regulatorisch geboten.
 
 Hinweis: SK-61/SK-85 haben Förderung bewusst hinter den intern-Guard gezogen.
-SK-96 hebt das für Betrag + Typ gezielt auf (explizite PO-Entscheidung Jun 2026).
+SK-95 hat Förderart (Typ, z.B. "BEG EM") bereits kundenseitig eingeführt.
+SK-96 stellt sicher, dass Förderart konsistent in allen Kundensichten erscheint;
+Förderbetrag (€) bleibt intern-only (PO-Entscheidung Jun 2026: nur Typ, kein Betrag).
 Intern-Details (Förderquote, Berechnung, IRR-Einfluss) bleiben hinter Internsicht.
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-96 | Epic | Results | Förderung kundenseitig | Förderbetrag (€) und Förderart (z.B. BEG EM) in Kundensicht und Sidebar. Bewusste Aufhebung des bisherigen `!istKunde`-Guards für dieses Feld (regulatorisch geboten, PO-Entscheidung Jun 2026). | Kundensicht zeigt Förderung (Betrag + Typ); Sidebar zeigt Förderung; Hinweis „indikativ, kein Rechtsanspruch" bleibt; Intern-Detail (Förderquote, Berechnung) bleibt hinter Internsicht. | P1 | S | Todo |
+| SK-96 | Epic | Results | Förderung kundenseitig | Förderart (z.B. BEG EM) in allen Kundensichten konsistent sichtbar. Förderbetrag (€) bleibt intern-only. SK-95 hat Sidebar + ContractingKarte bereits abgedeckt; SK-96 prüft Vollständigkeit und ergänzt ggf. weitere Kundensicht-Stellen. | Alle Kundensichten zeigen Förderart; kein Förderbetrag in Kundensicht; Hinweis „indikativ, kein Rechtsanspruch" bleibt; Intern-Detail bleibt hinter Internsicht. | P1 | S | Todo |
 
 ---
 

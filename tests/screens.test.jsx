@@ -63,7 +63,9 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('außerhalb MVP v0.1')
     expect(rechteVorschau).toContain('Gesprächs-Vorschau')
     expect(rechteVorschau).toContain('Luft-Wasser-Wärmepumpen-Kaskade')
-    expect(rechteVorschau).not.toMatch(/CAPEX|Brutto|Förderung|Marge/)
+    // SK-95: "Förderung" als Typ-Label (z.B. "BEG EM") ist kundenseitig sichtbar;
+    // finanzielle Begriffe (CAPEX, Brutto, Marge) bleiben ausgeblendet.
+    expect(rechteVorschau).not.toMatch(/CAPEX|Brutto|Marge/)
   })
 
   it('Analyse-Kundensicht zeigt das Richtpreis-Angebot ohne interne Commercial-Flächen', () => {
@@ -96,7 +98,9 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Richtpreis-Angebot (Demo)')
     expect(html).toContain('Grundpreis')
     expect(html).toContain('Arbeitspreis')
-    expect(html).not.toMatch(/CAPEX|Netto|Brutto|Förderung|Marge|IRR|Zielrendite/)
+    // SK-95: "Förderung" als Typ-Label (BEG EM) ist in der Kundensicht sichtbar;
+    // Finanzdetails (CAPEX, Netto/Brutto-LV, Marge, IRR) bleiben intern-only.
+    expect(html).not.toMatch(/CAPEX|Netto|Brutto|Marge|IRR|Zielrendite/)
   })
 
   it('Angebot-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte ohne Binding-Offer-Disclaimer', () => {
