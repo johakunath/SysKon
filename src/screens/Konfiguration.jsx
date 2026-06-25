@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { applyAdminConfig, makeDefaultAdminConfig } from '../data/adminConfig.js'
 import { PRESETS } from '../data/presets.js'
+import { FOERDERUNG_ART_LABEL } from '../data/annahmen.js'
 import { pruefeBedingung } from '../logic/engine.js'
 import { num, euro, VARIANTEN_NAME, korridorTitel, kundenPreviewText } from './format.js'
 import Ampel from '../components/Ampel.jsx'
@@ -175,6 +176,67 @@ function AufstelloptionenPreview({ viable, schallJeVariante, istIntern }) {
           )
         })}
       </ul>
+    </div>
+  )
+}
+
+function AngebotSnapshot({ ergebnis, sichtModus, annahmen }) {
+  const lv = ergebnis.lv
+  const pricing = ergebnis.pricing
+  const istIntern = sichtModus === 'intern'
+  if (!lv?.netto) return null
+
+  const foerderart = FOERDERUNG_ART_LABEL
+
+  const capexPos = lv.positionen.filter(p => p.tag === 'capex' && p.betrag > 0)
+  const komponentenNamen = (ergebnis.kundenScope?.gruppen ?? [])
+    .flatMap(g => g.positionen.map(p => p.titel))
+    .slice(0, 8)
+  const capexGruppen = Object.entries(
+    capexPos.reduce((acc, p) => {
+      acc[p.gruppe] = (acc[p.gruppe] || 0) + p.betrag
+      return acc
+    }, {})
+  )
+
+  return (
+    <div className="preview-block">
+      <h4>Angebots-Snapshot <span className="hinweis-inline">(Demo)</span></h4>
+      <div className="mini-fakten">
+        {pricing?.grundpreisPa > 0 && (
+          <div><span>Grundpreis</span><strong>{euro(pricing.grundpreisPa / 12)} / Monat</strong></div>
+        )}
+        {pricing?.arbeitspreisMwh != null && (
+          <div><span>Arbeitspreis</span><strong>{euro(pricing.arbeitspreisMwh)} / MWh</strong></div>
+        )}
+        {lv.foerderung > 0 && (
+          <div><span>Förderung</span><strong>{foerderart}</strong></div>
+        )}
+        {istIntern && lv.netto > 0 && (
+          <div><span>CapEx (netto)</span><strong>{euro(lv.netto)}</strong></div>
+        )}
+        {istIntern && lv.foerderung > 0 && (
+          <div><span>Förderbetrag</span><strong>−{euro(lv.foerderung)}</strong></div>
+        )}
+      </div>
+      {lv.foerderung > 0 && (
+        <p className="hinweis">Indikativ, kein Rechtsanspruch.</p>
+      )}
+      {istIntern ? (
+        capexGruppen.length > 0 && (
+          <div className="mini-fakten snapshot-komponenten">
+            {capexGruppen.map(([gruppe, betrag]) => (
+              <div key={gruppe}><span>{gruppe}</span><strong>{euro(betrag)}</strong></div>
+            ))}
+          </div>
+        )
+      ) : (
+        komponentenNamen.length > 0 && (
+          <ul className="snapshot-komponenten-liste">
+            {komponentenNamen.map(name => <li key={name}>{name}</li>)}
+          </ul>
+        )
+      )}
     </div>
   )
 }
@@ -365,16 +427,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
           <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} istIntern={sichtModus === 'intern'} />
 
-          {sichtModus === 'intern' && ergebnis.lv?.netto > 0 && (
-            <div className="preview-block">
-              <h4>Richtpreis-Korridor (intern, Demo)</h4>
-              <div className="korridor-range">
-                <span>{euro(ergebnis.lv.netto * 0.8)}</span>
-                <span className="korridor-bis">bis {euro(ergebnis.lv.netto * 1.2)}</span>
-              </div>
-              <p className="hinweis">Richtpreis-Bandbreite (Demo, ±20 %). Endpreis nach Vor-Ort-Aufnahme.</p>
-            </div>
-          )}
+          <AngebotSnapshot ergebnis={ergebnis} sichtModus={sichtModus} annahmen={annahmen} />
 
           <RisikoFlags warnungen={ergebnis.warnungen} />
 

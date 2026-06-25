@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { LV_GRUPPEN } from '../data/katalog.js'
+import { FOERDERUNG_ART_LABEL } from '../data/annahmen.js'
 import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
 import { CONTRACTING_DEMO_HINWEIS } from '../data/texte.js'
 import Ampel from '../components/Ampel.jsx'
@@ -41,7 +42,7 @@ function AnalyseKpi({ label, value, note }) {
   )
 }
 
-function ContractingKarte({ contracting }) {
+function ContractingKarte({ contracting, foerderart }) {
   if (!contracting) return null
   const c = contracting
   const pg = c.preisgleitformel
@@ -53,6 +54,7 @@ function ContractingKarte({ contracting }) {
         <AnalyseKpi label="Grundpreis" value={`${euro(c.grundpreis_monat)} / Monat`} note={`${euro(c.grundpreis_pa)} p.a.`} />
         <AnalyseKpi label="Arbeitspreis" value={c.arbeitspreis_mwh != null ? `${euro(c.arbeitspreis_mwh)} / MWh` : '–'} note="verbrauchsabhängig" />
         <AnalyseKpi label="Vertragslaufzeit" value={`${c.laufzeit} Jahre`} />
+        {foerderart && <AnalyseKpi label="Förderung" value={foerderart} note="Indikativ, kein Rechtsanspruch" />}
       </div>
       <div className="karten-reihe">
         <div className="karte">
@@ -91,10 +93,10 @@ function ContractingKarte({ contracting }) {
   )
 }
 
-function KundenScope({ scope }) {
+function KundenScope({ scope, foerderart }) {
   return (
     <div className="kundenumfang">
-      <ContractingKarte contracting={scope.contracting} />
+      <ContractingKarte contracting={scope.contracting} foerderart={foerderart} />
       <div className="karte analyse-hauptkarte">
         <h3>Kundenumfang</h3>
         <p className="hinweis">
@@ -242,7 +244,12 @@ export default function Ergebnis({
         <small>{new Date().toLocaleDateString('de-DE')}</small>
       </div>
 
-      {istKunde && <KundenScope scope={kundenScope} />}
+      {istKunde && (
+        <KundenScope
+          scope={kundenScope}
+          foerderart={lv.foerderung > 0 ? FOERDERUNG_ART_LABEL : null}
+        />
+      )}
 
       {!istKunde && (
         <div className="tabs-sekundaer no-print">

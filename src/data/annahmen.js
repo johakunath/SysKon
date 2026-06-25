@@ -94,6 +94,10 @@ export const ANNAHMEN = {
   pg_basisjahr: 2026,
 }
 
+// Förderart-Label für Kundensicht (Demo). Kein numerischer ANNAHMEN-Wert,
+// daher eigener Export (nicht über Admin editierbar).
+export const FOERDERUNG_ART_LABEL = 'BEG EM'
+
 // SK-77: WP-Produktstamm Demo-Referenz (nicht editierbar).
 // Buderus/Dreammaker ist der aktuelle Referenzstand; Alternativhersteller sind nach
 // technischer Prüfung möglich. Felder dokumentieren die Zielstruktur für später

@@ -50,6 +50,11 @@ Diese Einträge wurden aus `BACKLOG.md` und `docs/BACKLOG_WORK_PACKAGES.md` entf
 | SK-85 | Story | WP13 View mode | `sichtModus` (`kunde`/`intern`) als App-State getrennt vom Admin-Toggle; Topbar-Umschalter. Kundensicht zeigt nur den preisfreien Kundenumfang, blendet LV/CAPEX/OPEX vollständig aus. Test sichert, dass die Kundensicht keine Preise/CAPEX exponiert. Voraussetzung für WP8. | Done |
 | SK-86 | Story | WP13 Consolidation | Vier Analyse-Tabs auf einen fokussierten Output reduziert: Kundensicht = ein Kundenumfang; Internsicht = zwei Tabs (Lösung & Umfang, Prüfpunkte) mit zusammengeführter Vorlösung/LV. | Done |
 | SK-87 | UX | WP13 Copy | Annahmen-/Disclaimer-Redundanz entfernt: „Nicht als Zusage lesen" erscheint in der Internsicht genau einmal statt mehrfach pro Tab. | Done |
+| SK-71 | Epic | WP9 Angebotsvarianten, Speichern, PDF & Export | localStorage-Persistenz `src/data/angebote.js`; Varianten-Panel (Speichern/Duplizieren/Laden), Gesprächsergebnis-Karte (Dropdown + Kommentar) und PDF-Export via `window.print()` in `src/screens/Ergebnis.jsx`; Print-CSS-Erweiterung; aktivesAngebotId in localStorage persisted. PR #23. | Done |
+| SK-58 | Epic | Sales-first product framing | PE-Handover-Sprache aus DEMO_FOOTER, CONTRACTING_DEMO_HINWEIS, Toggle-Tooltips und Konfiguration-Live-Preview entfernt; Reframe auf Richtpreis-Angebotstool (Demo). PR #24. | Done |
+| SK-60 | Epic | Live solution corridor | Gesprächs-Vorschau Sidebar: Aufstelloptionen mit Schall-Ampel, Risiko-Flags, Richtpreis-Korridor ±20 % (intern-only). CAPEX-Leak-Fix: Korridor und Kostenadder hinter `sichtModus === 'intern'` gegated (Codex P1 Review-Finding adressiert). PR #24. | Done |
+| SK-61 | Epic | Sales-safe result semantics | `kundenPreviewText()` förderfähig → zu prüfen; CSV-Dateiname → angebot-kalkulation.csv. PR #24. | Done |
+| SK-62 | Epic | Internal engine remains available | Audit Jun 2026: alle Kriterien durch WP13/WP8/SK-60 erfüllt. LV/CAPEX/OPEX hinter sichtModus-Toggle; Admin-Screens hinter adminModus-Toggle; PE-Engine (`berechne()`) vollständig erhalten. Keine Code-Änderungen nötig. | Done |
 
 ## v0.1 Build
 

@@ -15,6 +15,7 @@ Mobiler Kurzindex für aktive Arbeit. Details stehen in den verlinkten Arbeitsdo
 ## Detaildokumente
 
 - Produkt-Roadmap nach Konzept-Pivot: `docs/PRODUCT_ROADMAP.md`
+- Demo-Vision und Stakeholder-Brief: `docs/DEMO_BRIEF.md`
 - Arbeitsgruppen und Ticketdetails: `docs/BACKLOG_WORK_PACKAGES.md`
 - Code- und Produktkontext für Agenten: `docs/CODEBASE_NOTES.md`
 - Erledigte / historische Tickets: `docs/BACKLOG_ARCHIVE.md`
@@ -28,6 +29,7 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 - Kundengespräch unterstützen, keine Customer-Self-Service-Bestellstrecke.
 - Frühe Konfiguration und Erklärung, kein finales Angebot und keine Engineering-Auslegung.
 - Richtpreis, Lösungskorridor und nächster sinnvoller Schritt statt verbindlichem Angebot.
+- Demo-Zielgruppe Jun 2026: internes Team (PM, Führung, Ingenieure). Siehe `docs/DEMO_BRIEF.md`.
 
 ## Werte
 
@@ -38,16 +40,21 @@ SysKon ist primär ein Sales-facing Co-Creation- und Vorqualifizierungs-Prototyp
 
 ## Next Epic Queue
 
-Reihenfolge nach dem Sales-Output-First-Pivot (Juni 2026). Abhängigkeiten stehen in der Spalte „Hängt ab von". Begründung der Umsortierung: `docs/BACKLOG_WORK_PACKAGES.md` (WP13) und `docs/PRODUCT_ROADMAP.md`.
+Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `docs/DEMO_BRIEF.md`.
 
-| Order | Epic | Work Package | Outcome | Next Child | Hängt ab von | Priority | Effort | Status |
-|---:|---|---|---|---|---|---|---|---|
-| 1 | SK-72 | WP10 Bestehende Tools & Learnings prüfen | Vor dem Überbauen Richtpreis-, Planungs- und Solution-Finder-Learnings auswerten (Input für WP12/WP8) | SK-72 | – | P1 | M | Todo |
-| 2 | SK-71 | WP9 Angebotsvarianten, Speichern, PDF & Export | Angebotsvarianten speichern, duplizieren, exportieren und später übertragen können | SK-71 | SK-70 | P1 | L | Todo |
+| Order | Epic | Outcome | Hängt ab von | Priority | Effort | Status |
+|---:|---|---|---|---|---|---|
+| 1 | SK-95 Angebots-Snapshot Sidebar | GP/AP + Förderart + Komponentenliste live in Konfiguration-Sidebar | SK-70 (GP/AP-Engine, Done) | P1 | M | Done |
+| 2 | SK-96 Förderung kundenseitig | Förderart (Typ, z.B. BEG EM) kundenseitig sichtbar – kein Förderbetrag | SK-95 | P1 | S | Todo |
+| 3 | SK-97 SmartControl Katalog | SmartControl als eigenes Katalogobjekt (inkl. KI-Variante) | – | P2 | S | Todo |
+| 4 | SK-98 Inline-Fragenkontext | Alle Infos zur Fragenbeantwortung inline neben der Frage sichtbar | – | P2 | M | Todo |
+| 5 | SK-99 Admin Demo-Reife | Admin auf 3 klare Bereiche vereinfachen; zeigt Pflegbarkeit durch 1–2 Personen | – | P2 | S | Todo |
+| 6 | SK-100 Angebot als Dokument | Kundensicht dokumentähnlich (Logo, Name, Datum, klare Sektionen) | – | P3 | M | Todo |
+| 7 | SK-72 Bestehende Tools & Learnings | Discovery: Techem-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
 
 ## Aktueller Fokus
 
-WP0 bis WP7, WP11, das UX-Prerequisite vor SK-70, der Sales-Output-First-Block (SK-83 CI-Gate und WP13/SK-84 Kunden-/Internsicht-Modus), WP15 (Layout & Element QA: geteilte UI-Bausteine, zentrale Texte, Design-Tokens, SK-88 rechte Vorschau verschlankt), WP16 (Navigation & Naming: Flow „Angebot erstellen → Angebot", ein Admin-Bereich, Richtpreis-Reframe ohne Binding-Offer-Disclaimer) sowie WP14/SK-89 (Playbook de-emphasizen: prominente Inline-Playbook-UI bereits in UX-SK70-PRE durch dezenten Gesprächshinweis ersetzt, toter `.playbook`-CSS entfernt, SK-59 als `Deferred` bestätigt, SK-67-Playbook-Daten bleiben im Code/Admin/Tests) sind umgesetzt und im Archiv. Mit WP16 ist das frühere „kein verbindliches Angebot"-Non-Goal aus SK-58 vom PO aufgehoben; SysKon ist jetzt als Richtpreis-Angebotstool (Demo) gerahmt. WP12/SK-74 und WP8/SK-70 sind abgeschlossen: WP12 alle Child-Tickets umgesetzt (SK-75–SK-82), Domänenmodell `docs/SYSTEMPAKET_MODELL.md`; WP8 GP/AP/IRR-Solver/Preisgleitformel/interne Commercial-Sicht umgesetzt, offene Punkte (Indexzeitreihen, Rechtsfreigabe) deferred, Referenz `docs/PRICING_MODELL.md`. Nächster Queue-Punkt ist WP10/SK-72 (bestehende Tools & Learnings prüfen – Discovery-Task, erfordert Input zu Techem-Bestandstools).
+WP9/SK-71 (Angebotsvarianten/Speichern/PDF), SK-58, SK-60, SK-61, SK-62 und SK-95 (Angebots-Snapshot Sidebar) sind abgeschlossen (PR #23, PR #24, PR #25). SK-95 zeigt GP/AP + Förderart + Komponentenliste live in der Konfiguration-Sidebar; CapEx und Förderbetrag bleiben intern. Nächste Priorität ist SK-96 (Förderart in allen Kundensichten konsistent – nur Typ, kein Betrag). SK-72 (Discovery) bleibt geblockt bis der PO Zugang zu Techem-Bestandstools bereitstellt.
 
 ## Child-Tickets
 

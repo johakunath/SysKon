@@ -724,6 +724,11 @@ details summary:hover { color: var(--akzent); }
 .gespraech-feld textarea { font-size: var(--fs-s); padding: 6px 8px; resize: vertical; }
 .zeichen-zaehler { font-size: var(--fs-2xs); color: var(--text-2, #888); align-self: flex-end; }
 
+/* SK-95: Angebots-Snapshot Sidebar */
+.snapshot-komponenten { margin-top: 8px; border-top: 1px solid var(--zeile); padding-top: 8px; }
+.snapshot-komponenten-liste { list-style: none; margin: 8px 0 0; padding: 0; font-size: var(--fs-xs); color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+.snapshot-komponenten-liste li::before { content: "· "; }
+
 /* Print-only elements (hidden on screen, shown in print) */
 .print-only { display: none; }
 
