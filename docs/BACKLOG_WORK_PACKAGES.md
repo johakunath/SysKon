@@ -20,9 +20,13 @@ Förderung + Komponentenliste – kundenseitig sichtbar. Das ist der zentrale
 „Wow-Moment" der Demo. Kontext: GP/AP-Engine fertig (WP8/SK-70); Sidebar zeigt
 bereits Korridor (SK-60), aber nicht Contracting-Preise oder Förderung.
 
+Schutzplanke (SK-88): Die Sidebar wurde bewusst verschlankt. SK-95 muss die
+neuen Daten kompakt und scanbar integrieren – keine Wall-of-Data, keine
+doppelten Angaben zu bereits gezeigten Informationen.
+
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-95 | Epic | Sidebar | Angebots-Snapshot Sidebar | GP + AP (€/a) + CapEx-Richtwert + Förderungsbetrag/-art + Komponentenliste live in der rechten Konfiguration-Sidebar. Kundenseitig sichtbar (Förderung regulatorisch offenzulegen; CapEx ist Kundenverhandlungshebel). | GP/AP erscheint live; CapEx als Richtwert ±Band; Förderung mit Betrag+Typ sichtbar; Komponentenliste (WP, SmartControl, Aufstellung, Services) live; alles ohne Seitennavigation; kein intern-Guard für diese Werte. | P1 | M | Todo |
+| SK-95 | Epic | Sidebar | Angebots-Snapshot Sidebar | GP + AP (€/a) + CapEx-Richtwert + Förderungsbetrag/-art + Komponentenliste live in der rechten Konfiguration-Sidebar. Kundenseitig sichtbar (Förderung regulatorisch offenzulegen; CapEx ist Kundenverhandlungshebel). Kompaktes Layout – keine Re-Clutterung der Sidebar (SK-88). | GP/AP erscheint live; CapEx als Richtwert ±Band; Förderung mit Betrag+Typ sichtbar; Komponentenliste kompakt (WP, SmartControl, Aufstellung, Services); alles ohne Seitennavigation; kein intern-Guard für diese Werte; Sidebar bleibt scanbar auf einen Blick. | P1 | M | Todo |
 
 ---
 
@@ -31,9 +35,13 @@ bereits Korridor (SK-60), aber nicht Contracting-Preise oder Förderung.
 Ziel: Förderbetrag und Förderart werden kundenseitig sichtbar – in der Sidebar
 (via SK-95) und in der Ergebnis-Kundensicht. Regulatorisch geboten.
 
+Hinweis: SK-61/SK-85 haben Förderung bewusst hinter den intern-Guard gezogen.
+SK-96 hebt das für Betrag + Typ gezielt auf (explizite PO-Entscheidung Jun 2026).
+Intern-Details (Förderquote, Berechnung, IRR-Einfluss) bleiben hinter Internsicht.
+
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-96 | Epic | Results | Förderung kundenseitig | Förderbetrag (€) und Förderart (z.B. BEG EM) in Kundensicht und Sidebar. Aktuell hinter `!istKunde` verborgen. | Kundensicht zeigt Förderung; Sidebar zeigt Förderung; Hinweis „indikativ, kein Rechtsanspruch" bleibt; Intern-Detail (Förderquote, Berechnung) bleibt hinter Internsicht. | P1 | S | Todo |
+| SK-96 | Epic | Results | Förderung kundenseitig | Förderbetrag (€) und Förderart (z.B. BEG EM) in Kundensicht und Sidebar. Bewusste Aufhebung des bisherigen `!istKunde`-Guards für dieses Feld (regulatorisch geboten, PO-Entscheidung Jun 2026). | Kundensicht zeigt Förderung (Betrag + Typ); Sidebar zeigt Förderung; Hinweis „indikativ, kein Rechtsanspruch" bleibt; Intern-Detail (Förderquote, Berechnung) bleibt hinter Internsicht. | P1 | S | Todo |
 
 ---
 
@@ -48,15 +56,25 @@ neben der Wärmepumpe – in Komponentenliste, Scope und Kalkulation.
 
 ---
 
-## SK-98 – Inline-Fragenkontext
+## SK-98 – Kurze Hinweise verbessern (NICHT Playbook zurückbringen)
 
-Ziel: Alle Infos zur Fragenbeantwortung direkt neben der Frage – kein separates
-Training nötig. Playbook-Daten (`warum`, `warnsignale`, `einordnung`) existieren
-bereits in `src/data/fragen.js`; Rendering im Hauptflow ggf. nicht prominent genug.
+Ziel: Der bestehende kurze Gesprächshinweis (`hinweisKurz`, max. 150 Zeichen)
+neben jeder Frage soll vollständig befüllt und gut sichtbar sein.
+
+Schutzplanke (SK-89): Die prominente Inline-Playbook-UI (`warum`, `warnsignale`,
+`einordnung`) wurde bewusst entfernt und ist nur noch im Admin editierbar.
+SK-98 darf diese Entscheidung NICHT rückgängig machen. Kein `warum`-Block,
+kein `warnsignale`-Accordion, keine `einordnung`-Texte im Hauptflow.
+
+Was SK-98 stattdessen tut:
+- Sicherstellen, dass `hinweisKurz` für alle relevanten Fragen befüllt ist
+- Ggf. visuellen Kontrast oder Kompaktheit des Gesprächshinweises verbessern
+- Optional: ein diskretes Tooltip-/Info-Icon (nicht ausklappbarer Block) für
+  zusätzlichen Kontext wo nötig – immer einzeilig, niemals Fließtext-Blöcke
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-98 | Epic | UX | Inline-Fragenkontext | `warum`-Text, Einordnung und Richtwert inline neben dem Antwortfeld. Warnsignale kontextuell. | Jede Frage zeigt ihr `warum`; Richtwert/Einordnung wo vorhanden; Warnsignale wenn relevant; alles im Fließtext, kein Modal. | P2 | M | Todo |
+| SK-98 | Epic | UX | Kurze Hinweise verbessern | `hinweisKurz` für alle wichtigen Fragen befüllen; visuell gut sichtbar halten. Kein Playbook-Block inline – das wurde in SK-89 bewusst entfernt. | Alle Fragen mit relevantem Kontext haben einen kurzen Hinweis (max. 150 Z.); kein warum/warnsignale/einordnung im Hauptflow; kein Modal, kein Accordion; Playbook bleibt Admin-only. | P2 | S | Todo |
 
 ---
 
@@ -76,9 +94,13 @@ ohne Agency. Aktuell 6 Tabs, zu überwältigend für die Demo.
 Ziel: Ergebnis-Kundensicht sieht aus wie ein echtes Angebotsdokument, nicht wie
 eine Web-App.
 
+Schutzplanke (SK-94): Der Binding-Offer-Disclaimer wurde bewusst entfernt. Aber
+der Charakter als Richtpreis-Angebot (Demo) muss sichtbar bleiben – keine
+Formulierungen, die ein verbindliches Angebot suggerieren.
+
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-100 | Epic | Results | Angebot als Dokument | Kundensicht mit sauberem Dokumentlayout: Logo-Platzhalter, Angebotsname, Datum, klare Sektionen. PDF-Export via window.print() bleibt. | Erkennbare Dokumentstruktur; Name+Datum oben; Logo-Platzhalter; Druckversion professionell; keine Tab-Navigation im Kundensicht-Print. | P3 | M | Todo |
+| SK-100 | Epic | Results | Angebot als Dokument | Kundensicht mit sauberem Dokumentlayout: Logo-Platzhalter, Angebotsname, Datum, klare Sektionen. PDF-Export via window.print() bleibt. „Richtpreis-Angebot (Demo)"-Label bleibt sichtbar (kein verbindliches Angebot). | Erkennbare Dokumentstruktur; Name+Datum oben; Logo-Platzhalter; Druckversion professionell; keine Tab-Navigation im Kundensicht-Print; Richtpreis-Demo-Kennzeichnung vorhanden. | P3 | M | Todo |
 
 ---
 
