@@ -370,6 +370,12 @@ const SEKTIONEN_ROH = [
         { wert: 'plus', label: 'Monitoring Plus (Basic + Erweiterung)' },
       ],
       tooltip: 'Basic ist verpflichtend; Plus ergänzt Sensorik und Reporting.' },
+    { id: 'smartcontrol_variante', label: 'Welche SmartControl-Variante soll angesetzt werden?', typ: 'select', dq: 1,
+      optionen: [
+        { wert: 'standard', label: 'SmartControl Standard', hinweis: 'Digitales Steuergerät für die Wärmepumpenanlage.' },
+        { wert: 'ki', label: 'SmartControl KI', hinweis: 'KI-gestützte adaptive Betriebsführung (Demo-Aufpreis).' },
+      ],
+      tooltip: 'SmartZero SmartControl: digitales Steuergerät im Contracting-Modell. KI-Variante mit adaptiver Regellogik (Demo, SK-97).' },
     { id: 'service_variante', label: 'Welches Servicepaket soll angesetzt werden?', typ: 'select', dq: 1,
       optionen: [
         { wert: 'basis', label: 'Service Basis (O&M 1,5 %/a Demo)' },
@@ -680,6 +686,7 @@ const PLAYBOOKS_KURZ = {
   kabelweg: p('Beeinflusst Elektroaufwand und Umsetzung.', 'Lange Wege oder Brandschutzabschnitte.', 'Schwierig als Risiko benennen.'),
   foerderung_annahme: p('Verändert die Netto-Richtindikation.', 'Nicht als Förderberatung darstellen.', 'Ja ist Demo; unsicher braucht Förderprüfung.'),
   monitoring_variante: p('Setzt den Betriebsdaten-Umfang.', 'Reportingwünsche über Basic hinaus.', 'Basic ist Standard; Plus bei höherem Bedarf.'),
+  smartcontrol_variante: p('SmartControl steuert die Wärmepumpenanlage und integriert Betriebsdaten.', 'KI-Variante nur ansetzen, wenn Bedarf an adaptiver Optimierung besteht.', 'Standard ist Demo-Default; KI ist Aufpreis-Option für gehobenen Bedarf.'),
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
   vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '15 Jahre ist Demo-Standard; 10 oder 20 Jahre verschieben den Grundpreis.'),

@@ -456,6 +456,15 @@ export const FELD_PROVENIENZ = {
     kundenAnnahme: 'Servicepaket nach Gesprächswahl',
     followUp: null,
   },
+  smartcontrol_variante: {
+    quelle: ['sales_manuell'],
+    erfassungsweg: 'Sales-Auswahl im Gespräch',
+    aktualitaet: 'einmalig',
+    vertrauen: 'hoch',
+    skalierbar: false,
+    kundenAnnahme: 'SmartControl-Variante nach Gesprächswahl (Demo-Referenz: SmartZero)',
+    followUp: null,
+  },
 }
 
 export const VERTRAUEN_WERTE = ['hoch', 'mittel', 'niedrig']

@@ -31,16 +31,6 @@ doppelten Angaben zu bereits gezeigten Informationen.
 ---
 
 
-## SK-97 – SmartControl als Katalogobjekt
-
-Ziel: SmartZero SmartControl (KI-fähiges Steuergerät) als eigene Katalogposition
-neben der Wärmepumpe – in Komponentenliste, Scope und Kalkulation.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-97 | Epic | Catalog | SmartControl Katalog | SmartControl als Katalogobjekt mit eigenem Kostenansatz, Scope-Zeile und Komponentenlisten-Eintrag. Optional: KI-Variante als Auswahlfeld. | Erscheint in KundenScope unter „Steuerung & Monitoring"; eigene LV-Position; optional: KI-Variante als Frage/Schalter; Tests prüfen Auftauchen in kundenScope. | P2 | S | Todo |
-
----
 
 ## SK-98 – Kurze Hinweise verbessern (NICHT Playbook zurückbringen)
 

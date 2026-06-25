@@ -107,6 +107,34 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).not.toMatch(/CAPEX|Netto|Brutto|Marge|IRR|Zielrendite/)
   })
 
+  it('SK-97: SmartControl erscheint in KundenScope unter Steuerung & Monitoring', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(
+      <Ergebnis
+        eingaben={eingaben}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnis}
+        sichtModus="kunde"
+      />
+    )
+    expect(html).toContain('Steuerung &amp; Monitoring')
+    expect(html).toContain('SmartControl')
+
+    // KI-Variante erscheint wenn gewählt
+    const eingabenKi = { ...PRESETS[0].eingaben, smartcontrol_variante: 'ki' }
+    const ergebnisKi = berechne(eingabenKi)
+    const htmlKi = renderToString(
+      <Ergebnis
+        eingaben={eingabenKi}
+        annahmen={{ ...ANNAHMEN }}
+        ergebnis={ergebnisKi}
+        sichtModus="kunde"
+      />
+    )
+    expect(htmlKi).toContain('SmartControl KI')
+  })
+
   it('Angebot-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte ohne Binding-Offer-Disclaimer', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
