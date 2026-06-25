@@ -32,28 +32,6 @@ doppelten Angaben zu bereits gezeigten Informationen.
 
 
 
-## SK-98 – Kurze Hinweise verbessern (NICHT Playbook zurückbringen)
-
-Ziel: Der bestehende kurze Gesprächshinweis (`hinweisKurz`, max. 150 Zeichen)
-neben jeder Frage soll vollständig befüllt und gut sichtbar sein.
-
-Schutzplanke (SK-89): Die prominente Inline-Playbook-UI (`warum`, `warnsignale`,
-`einordnung`) wurde bewusst entfernt und ist nur noch im Admin editierbar.
-SK-98 darf diese Entscheidung NICHT rückgängig machen. Kein `warum`-Block,
-kein `warnsignale`-Accordion, keine `einordnung`-Texte im Hauptflow.
-
-Was SK-98 stattdessen tut:
-- Sicherstellen, dass `hinweisKurz` für alle relevanten Fragen befüllt ist
-- Ggf. visuellen Kontrast oder Kompaktheit des Gesprächshinweises verbessern
-- Optional: ein diskretes Tooltip-/Info-Icon (nicht ausklappbarer Block) für
-  zusätzlichen Kontext wo nötig – immer einzeilig, niemals Fließtext-Blöcke
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-98 | Epic | UX | Kurze Hinweise verbessern | `hinweisKurz` für alle wichtigen Fragen befüllen; visuell gut sichtbar halten. Kein Playbook-Block inline – das wurde in SK-89 bewusst entfernt. | Alle Fragen mit relevantem Kontext haben einen kurzen Hinweis (max. 150 Z.); kein warum/warnsignale/einordnung im Hauptflow; kein Modal, kein Accordion; Playbook bleibt Admin-only. | P2 | S | Todo |
-
----
-
 ## SK-99 – Admin auf Demo-Reife bringen
 
 Ziel: Admin demonstriert Pflegbarkeit durch 1–2 interne Personen (PM + Engineer)
