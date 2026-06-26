@@ -24,6 +24,14 @@ describe('C2: JAZ je Vorlauftemperatur-Klasse', () => {
     expect(resolveJaz(ANNAHMEN, undefined)).toBe(ANNAHMEN.jaz)
     expect(berechne(base).energie.jaz).toBe(3.3)
   })
+
+  it('lehnt nicht-positive/leere JAZ-Overrides ab (kein Infinity)', () => {
+    expect(resolveJaz({ jaz: 3.3, jaz_le45: 0 }, '<=45')).toBe(3.3)   // 0 → Fallback
+    expect(resolveJaz({ jaz: 3.3, jaz_le45: -2 }, '<=45')).toBe(3.3)  // negativ → Fallback
+    expect(resolveJaz({ jaz: 0 }, 'unbekannt')).toBe(3.3)            // Fallback selbst 0 → harter Default
+    const e = berechne({ ...base, vorlauftemp_klasse: '<=45' }, { annahmen: { ...ANNAHMEN, jaz_le45: 0 } }).energie
+    expect(Number.isFinite(e.strom_mwh)).toBe(true)
+  })
 })
 
 describe('C1: WP-Volllaststunden', () => {

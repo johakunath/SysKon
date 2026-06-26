@@ -75,7 +75,7 @@ function FrageHilfe({ frage }) {
   )
 }
 
-function Frage({ frage, wert, onChange, gesperrt }) {
+function Frage({ frage, wert, onChange, gesperrt, zeigeHilfe }) {
   const istSelect = frage.typ === 'select'
   const gespraechshinweis = kurzerHinweis(frage)
   const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
@@ -97,7 +97,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
           </label>
         )}
-        <FrageHilfe frage={frage} />
+        {zeigeHilfe ? <FrageHilfe frage={frage} /> : null}
       </div>
       <div className={`frage-inhalt${gespraechshinweis ? '' : ' ohne-hinweis'}`}>
         <div className="frage-feld">
@@ -382,6 +382,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   frage={f}
                   wert={eingaben[f.id]}
                   gesperrt={f.id === 'aufstellvariante' ? gesperrteVarianten : null}
+                  zeigeHilfe={sichtModus === 'intern'}
                   onChange={(wert) => setEingaben({ ...eingaben, [f.id]: wert })}
                 />
               ))}

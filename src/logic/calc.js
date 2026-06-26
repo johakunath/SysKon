@@ -283,9 +283,16 @@ const JAZ_KEY = {
   '<=45': 'jaz_le45', '46-50': 'jaz_46_50', '51-55': 'jaz_51_55',
   '56-60': 'jaz_56_60', '61-65': 'jaz_61_65', '66-70': 'jaz_66_70', '>70': 'jaz_gt70',
 }
+// Nur positive, endliche JAZ-Werte akzeptieren (Admin-editierbar: 0/negativ/leer
+// würde sonst wp_waerme/jaz → Infinity erzeugen). Klassenwert → Fallback a.jaz →
+// harter Default 3.3.
+const positiveJaz = (wert) => {
+  const n = zahl(wert)
+  return n != null && n > 0 ? n : null
+}
 export function resolveJaz(a, vlKlasse) {
   const key = JAZ_KEY[vlKlasse]
-  return (key != null ? zahl(a[key]) : null) ?? a.jaz
+  return positiveJaz(key != null ? a[key] : null) ?? positiveJaz(a?.jaz) ?? 3.3
 }
 
 // Energieindikation Hybrid: WP deckt Deckungsanteil der Wärmemenge, Rest Gaskessel.
