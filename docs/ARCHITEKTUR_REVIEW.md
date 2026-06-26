@@ -186,9 +186,27 @@ C4 (Sensitivität Energie-Split/IRR). Alle ohne Dringlichkeit für den Demo-Zwec
 
 ---
 
+## Umsetzung der Empfehlungen (Folge-PR)
+Nach dem Review-PR (#29: A2, A3, B1, B3) wurden in einem Folge-PR die offenen Empfehlungen umgesetzt:
+
+| Punkt | Status | Umsetzung |
+|---|---|---|
+| A1 | erledigt | DSL-Kommentar zum reservierten `ziel:'modul'`-Eimer in `regeln.js`. |
+| A5 | erledigt | `Handover.jsx` als „Deferred Surface“ in `docs/CODEBASE_NOTES.md` geführt. |
+| A6 | erledigt | gemeinsamer Helfer `src/logic/lv.js` (`gruppiereNachGruppe`); `engine.js` + `Ergebnis.jsx` nutzen ihn. |
+| B2 | erledigt | `?`-Tiefenhilfe (Tooltip + Playbook) in der Konfiguration; reaktiviert die vorhandene `.tooltip`-CSS. |
+| B5 | erledigt | `Ampel` mit `role="img"`+`aria-label`/`title` (Status nicht mehr nur farblich). |
+| C1 | erledigt | `derived.wp_volllaststunden` abgeleitet und in der internen Energie-Karte gezeigt; Kopplungs-Kommentar. |
+| C2 | erledigt | JAZ je Vorlauftemperatur-Klasse (`ANNAHMEN.jaz_*`, `resolveJaz`); `56-60`/unbekannt = 3,3 (Referenz unverändert). |
+| C3 | erledigt | Contingency-nicht-förderfähig in `engine.js` + `CODEBASE_NOTES.md` dokumentiert. |
+| C4 | erledigt | Sensitivität Energie-Split↔IRR (`pricing.intern.sensitivitaet`) in der internen Commercial-Karte. |
+| B4 | zurückgestellt | Progressive Offenlegung der internen Dichte: bewusste Designentscheidung, kein Eingriff nötig. |
+| B6 | by design | Keine Mobil-Optimierung (Desktop-Tool laut Zielgeräte-Kommentar in `styles.css`). |
+| A7 | by design | JSON-Deep-Clone in `applyAdminConfig` bei dieser Größe unkritisch. |
+
 ## Fazit (alle drei Pässe)
 SysKon ist architektonisch diszipliniert, für Sales und Ingenieure gut bedienbar und
 energetisch mit realistischen, mathematisch konsistenten Standardverfahren hinterlegt.
-Umgesetzt wurden vier Low-Risk-Fixes (A2, A3, B1, B3); die übrigen Punkte sind dokumentierte
-Empfehlungen bzw. bewusste Demo-Vereinfachungen. Kein Korrektheitsfehler in Kernlogik oder
+Umgesetzt wurden vier Low-Risk-Fixes (A2, A3, B1, B3) sowie der Folge-PR mit A1, A5, A6, B2, B5,
+C1–C4; B4/B6/A7 bleiben bewusst offen/by-design. Kein Korrektheitsfehler in Kernlogik oder
 Energetik.

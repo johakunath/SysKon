@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { LV_GRUPPEN } from '../data/katalog.js'
+import { gruppiereNachGruppe } from '../logic/lv.js'
 import { FOERDERUNG_ART_LABEL } from '../data/annahmen.js'
 import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
 import { CONTRACTING_DEMO_HINWEIS } from '../data/texte.js'
@@ -189,10 +189,7 @@ export default function Ergebnis({
   const kundenScope = ergebnis.kundenScope
   const istKunde = sichtModus === 'kunde'
 
-  const gruppenNamen = [...new Set([...LV_GRUPPEN, ...lv.positionen.map(p => p.gruppe)])]
-  const gruppen = gruppenNamen
-    .map(g => ({ name: g, positionen: lv.positionen.filter(p => p.gruppe === g) }))
-    .filter(g => g.positionen.length > 0)
+  const gruppen = gruppiereNachGruppe(lv.positionen)
 
   const blocker = ergebnis.warnungen.filter(w => w.status === 'rot' || w.status === 'orange')
   const hinweise = ergebnis.warnungen.filter(w => w.status !== 'rot' && w.status !== 'orange')
@@ -417,8 +414,9 @@ export default function Ergebnis({
                   <tbody>
                     <tr><td>Wärmebedarf</td><td className="r">{num(ergebnis.energie.bedarf)} MWh/a</td></tr>
                     <tr><td>davon WP ({prozent(annahmen.wp_deckungsanteil)})</td><td className="r">{num(ergebnis.energie.wp_waerme)} MWh/a</td></tr>
-                    <tr><td>Strom WP (JAZ {annahmen.jaz})</td><td className="r">{num(ergebnis.energie.strom_mwh)} MWh/a · {euro(ergebnis.energie.kosten_strom)}</td></tr>
+                    <tr><td>Strom WP (JAZ {num(d.jaz_effektiv, 1)}, je VL-Temp.)</td><td className="r">{num(ergebnis.energie.strom_mwh)} MWh/a · {euro(ergebnis.energie.kosten_strom)}</td></tr>
                     <tr><td>Gas Bestandskessel (η {annahmen.kessel_eta})</td><td className="r">{num(ergebnis.energie.gas_mwh)} MWh/a · {euro(ergebnis.energie.kosten_gas)}</td></tr>
+                    <tr><td>WP-Volllaststunden</td><td className="r">{num(d.wp_volllaststunden)} h/a</td></tr>
                     <tr><td>Wärmekostenindikation</td><td className="r">{num(ergebnis.kennzahlen.waermekosten_mwh)} €/MWh</td></tr>
                   </tbody>
                 </table>
@@ -454,7 +452,26 @@ export default function Ergebnis({
                   <tr><td>Marge Ziel / Ambition</td><td className="r">{ergebnis.pricing.margeZiel != null ? prozent(ergebnis.pricing.margeZiel) : '–'} / {ergebnis.pricing.margeAmbition != null ? prozent(ergebnis.pricing.margeAmbition) : '–'}</td></tr>
                 </tbody>
               </table>
-              <p className="hinweis">Marge nur auf den Arbeitspreis (keine Marge auf CAPEX/Grundpreis). AP-Marge iterativ auf die Ziel-IRR gelöst (Cashflow-IRR). „Gedeckelt": Ziel-IRR auch bei Maximalmarge nicht erreichbar. Nicht in der Kundensicht.</p>
+              {ergebnis.pricing.sensitivitaet?.length > 0 && (
+                <>
+                  <h4>Sensitivität Energie-Split → IRR (Basis-Marge fix)</h4>
+                  <table className="fakten">
+                    <thead>
+                      <tr><th>WP-Deckung</th><th className="r">var. Kosten p.a.</th><th className="r">erreichte IRR</th></tr>
+                    </thead>
+                    <tbody>
+                      {ergebnis.pricing.sensitivitaet.map((s, i) => (
+                        <tr key={i} className={s.basis ? 'gewaehlt' : ''}>
+                          <td>{prozent(s.deckungsanteil)}{s.basis ? ' (Basis)' : ''}</td>
+                          <td className="r">{euro(s.variableKostenPa)}</td>
+                          <td className="r">{s.erreichteIrr != null ? prozent(s.erreichteIrr) : '–'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+              <p className="hinweis">Marge nur auf den Arbeitspreis (keine Marge auf CAPEX/Grundpreis). AP-Marge iterativ auf die Ziel-IRR gelöst (Cashflow-IRR). „Gedeckelt": Ziel-IRR auch bei Maximalmarge nicht erreichbar. Sensitivität: WP-Deckungsanteil ±10 %-Punkte bei konstanter Basis-Marge und CAPEX. Nicht in der Kundensicht.</p>
             </div>
           </div>
         </div>

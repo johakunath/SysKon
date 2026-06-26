@@ -239,6 +239,9 @@ body {
   border: 6px solid transparent; border-top-color: #fff;
 }
 .tooltip:hover + .tooltip-text, .tooltip:focus-visible + .tooltip-text, .tooltip.offen + .tooltip-text { opacity: 1; }
+.tooltip-text .tt-zeile { display: block; }
+.tooltip-text .tt-zeile + .tt-zeile { margin-top: 5px; }
+.tooltip-text .tt-zeile strong { color: var(--akzent-tief); }
 input, select {
   padding: 7px 9px; border: 1px solid var(--rand); border-radius: var(--radius-klein);
   font: inherit; background: #fff; max-width: 420px; color: var(--text);
