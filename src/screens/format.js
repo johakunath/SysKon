@@ -1,6 +1,7 @@
 // Anzeige-Helfer für die Screens (kein Fachwissen hier hinein!)
 
 import { STATUS_LABEL } from '../logic/engine.js'
+import { AUFSTELLVARIANTEN_META } from '../logic/calc.js'
 
 export const euro = (n) => n == null ? '–'
   : new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
@@ -10,13 +11,11 @@ export const num = (n, stellen = 0) => n == null ? '–'
 
 export const prozent = (n) => n == null ? '–' : `${Math.round(n * 100)} %`
 
-export const VARIANTEN_NAME = {
-  aussen_offen: 'Außenaufstellung offen',
-  fundament: 'Standard-Fundament',
-  einhausung: 'Schutz-/Schall-Einhausung',
-  kompakt_container: 'Kompakt-Container',
-  vollcontainer: 'Vollcontainer',
-}
+// Aufstellvarianten-Anzeigenamen: eine Quelle (AUFSTELLVARIANTEN_META in calc.js),
+// statt die Labels in Logik und Anzeige doppelt zu pflegen.
+export const VARIANTEN_NAME = Object.fromEntries(
+  Object.entries(AUFSTELLVARIANTEN_META).map(([wert, meta]) => [wert, meta.label])
+)
 
 // Titel des Gesprächskorridors mit Fallback auf das Status-Label – einheitlich
 // für alle Screens, statt den Ausdruck mehrfach inline zu wiederholen.
