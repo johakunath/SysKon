@@ -546,6 +546,12 @@ details summary:hover { color: var(--akzent); }
   font-size: var(--fs-xs); color: var(--text); margin-bottom: var(--sp-3);
 }
 .admin-tabs { margin-bottom: 0; }
+.admin-tabs-trenner { flex: 0 0 1px; height: 16px; background: var(--rand-stark); margin: 0 6px; align-self: center; }
+.tab.tab-nebensache { opacity: 0.65; font-size: var(--fs-sm); }
+.tab.tab-nebensache:hover { opacity: 1; }
+.tab.tab-nebensache.aktiv { opacity: 1; }
+.admin-tab-beschreibung { margin: 2px 0 6px; color: var(--muted); font-size: var(--fs-sm); }
+.admin-bereich-label { font-weight: 600; font-size: var(--fs-sm); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 8px 0 4px; }
 .admin-stack { display: grid; gap: 14px; }
 .admin-grid { align-items: start; }
 .admin-list { display: grid; gap: var(--sp-3); }

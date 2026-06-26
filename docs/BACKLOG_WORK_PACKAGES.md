@@ -32,17 +32,6 @@ doppelten Angaben zu bereits gezeigten Informationen.
 
 
 
-## SK-99 – Admin auf Demo-Reife bringen
-
-Ziel: Admin demonstriert Pflegbarkeit durch 1–2 interne Personen (PM + Engineer)
-ohne Agency. Aktuell 6 Tabs, zu überwältigend für die Demo.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-99 | Epic | Admin | Admin Demo-Reife | Admin auf 3 Kernbereiche reduzieren: (1) Fragen & Playbook, (2) Katalog & Preise, (3) Regeln & Annahmen. Testfälle/Governance/Import sekundär. | Kommuniziert „Das kann ein PM konfigurieren"; 3 Hauptbereiche klar; unter 30 Sekunden um zu verstehen, was jeder Bereich tut. | P2 | S | Todo |
-
----
-
 ## SK-100 – Angebot als Dokument
 
 Ziel: Ergebnis-Kundensicht sieht aus wie ein echtes Angebotsdokument, nicht wie

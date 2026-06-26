@@ -5,11 +5,12 @@ import { REGELN } from '../data/regeln.js'
 import { bedingungText, wirkungText } from './format.js'
 import Testfaelle from './Testfaelle.jsx'
 
-const TABS = [
-  ['annahmen', 'Annahmen'],
-  ['fragen', 'Fragen'],
-  ['katalog', 'Katalog'],
-  ['governance', 'Governance'],
+const PRIMARY_TABS = [
+  ['fragen', 'Fragen & Playbook', 'Fragetexte, Optionshinweise und Sales-Playbook-Texte bearbeiten.'],
+  ['katalog_preise', 'Katalog & Preise', 'Leistungsumfang und Demo-Richtpreise pflegen: Pakettexte, Kundentitel, Preisannahmen.'],
+  ['regeln', 'Regeln & Annahmen', 'Aktive Entscheidungsregeln einsehen; Governance-Felder verwalten.'],
+]
+const SECONDARY_TABS = [
   ['testfaelle', 'Testfälle'],
   ['import', 'Import/Export'],
 ]
@@ -327,8 +328,9 @@ export default function Annahmen({
   annahmen = {},
   setScreen = () => {},
 }) {
-  const [tab, setTab] = useState('annahmen')
+  const [tab, setTab] = useState('fragen')
   const updated = adminConfig.updatedAt ? new Date(adminConfig.updatedAt).toLocaleString('de-DE') : 'noch nicht lokal geändert'
+  const tabBeschreibung = PRIMARY_TABS.find(([id]) => id === tab)?.[2]
 
   return (
     <div className="seite">
@@ -344,16 +346,27 @@ export default function Annahmen({
           <button onClick={resetAdminConfig}>Demo-Defaults</button>
         </div>
         <div className="tabs-sekundaer admin-tabs no-print">
-          {TABS.map(([id, label]) => (
+          {PRIMARY_TABS.map(([id, label]) => (
             <button key={id} className={tab === id ? 'tab aktiv' : 'tab'} onClick={() => setTab(id)}>{label}</button>
           ))}
+          <span className="admin-tabs-trenner" role="separator" />
+          {SECONDARY_TABS.map(([id, label]) => (
+            <button key={id} className={`tab tab-nebensache${tab === id ? ' aktiv' : ''}`} onClick={() => setTab(id)}>{label}</button>
+          ))}
         </div>
+        {tabBeschreibung && <p className="admin-tab-beschreibung">{tabBeschreibung}</p>}
       </div>
 
-      {tab === 'annahmen' && <AnnahmenTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} />}
       {tab === 'fragen' && <FragenTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} sektionen={sektionen} />}
-      {tab === 'katalog' && <KatalogTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} katalog={katalog} />}
-      {tab === 'governance' && <GovernanceTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} ergebnis={ergebnis} />}
+      {tab === 'katalog_preise' && (
+        <>
+          <p className="admin-bereich-label">Preise & Demo-Annahmen</p>
+          <AnnahmenTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} />
+          <p className="admin-bereich-label">Katalog & Leistungsumfang</p>
+          <KatalogTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} katalog={katalog} />
+        </>
+      )}
+      {tab === 'regeln' && <GovernanceTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} ergebnis={ergebnis} />}
       {tab === 'testfaelle' && (
         <Testfaelle
           eingaben={eingaben}
