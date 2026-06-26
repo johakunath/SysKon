@@ -126,4 +126,69 @@ Prüfpunkte). Im Großen wie im Detail gut lesbar. Hauptpunkte: ein konkreter Na
   (Feature-Entscheidung, größerer Eingriff). B4/B5/B6 wie beschrieben.
 
 ## C. Energetik
-_(Folgepass – noch offen.)_
+
+### Methode
+Engine real auf den Referenzfall gerechnet (`berechne(PRESETS.referenz)`), jeden Schritt
+unabhängig per Hand nachgerechnet und mit dem Engine-Output verglichen, sämtliche
+Annahmen gegen branchenübliche Korridore geprüft und die Formeln auf Standardkonformität
+geprüft. Referenzfall: 70 WE, 4.000 m², teilsaniert, 650 MWh/a inkl. WW, Hybrid, Einhausung.
+
+### Gesamturteil
+Die Zahlen ergeben auf den ersten Blick Sinn, sind realistisch und gehen mathematisch auf
+(Hand- und Engine-Rechnung stimmen auf den Euro überein). Es werden durchweg **Standard-
+Verfahren** verwendet – nichts zu Einfaches, nichts zu Kompliziertes: Volllaststunden-
+Heizlastproxy, Leistungs-/Arbeitsanteil-Split für Hybrid, punktquellenbasierte Schall-
+Vorprüfung mit TA-Lärm-Grenzwerten, Annuität (KWF), NPV/IRR per Bisektion, Marge nur auf
+den Arbeitspreis. Befunde sind **Modellierungs-/Annahmen-Urteile, keine Rechenfehler** –
+daher in diesem Pass bewusst report-only (Änderungen an Annahmen ändern Ergebnisse und
+brauchen PO-Freigabe).
+
+### Nachgerechneter Referenzfall (Hand = Engine)
+| Größe | Wert | Plausibilität |
+|---|---|---|
+| spez. Wärmebedarf | 650 MWh ÷ 4.000 m² = **162,5 kWh/m²·a** | teilsaniertes MFH (Bj. 60–79): realistisch (130–180). ✓ |
+| Heizlast (Proxy) | 650 MWh ÷ 2.200 Vbh = **295 kW** = 73,8 W/m² | deckt sich mit Flächenproxy teilsaniert (75 W/m²). ✓ konsistent |
+| WP-Kaskade | 295 × 0,27 ≈ 80 kW → **4 × 20 kW** | Hybrid-Leistungsanteil ~27 % der Heizlast: Standard-Bivalenzauslegung. ✓ |
+| Energie-Split | WP **422,5** / Gas **227,5** MWh (65/35) | klassisch: kleine WP-Leistung deckt großen Arbeitsanteil. ✓ |
+| Strom/Gas | 128,0 MWh (JAZ 3,3) / 244,6 MWh (η 0,93) | Mengen korrekt; JAZ/η siehe C2. |
+| Schall (Einhausung) | 74 − 20·log₁₀(12) − 8 − 12 = **32,4 dB(A)** < WA 40 → grün | Standard-Punktquellengleichung + TA Lärm. ✓ |
+| CAPEX netto | 354,5k + 10 % = 389,95k − 105,9k Förderung = **284,1k €** | Förderung 35 % auf 302,5k förderfähig. ✓ |
+| Kennzahlen | **4.058 €/WE · 71 €/m² · 3.551 €/kW** | für Hybrid-Retrofit realistisch. ✓ |
+| Contracting | GP **36,6k €/a** (3.050 €/Mt) · AP **100,0 €/MWh** · IRR **13,0 %** | Annuität 0,10296 verifiziert; Marge 29,2 % (Ambition 38,4 %). |
+| Wärmepreis all-in | (36,6k + 100,0×650) ÷ 650 = **156,3 €/MWh** | Contracting-Korridor 120–200 €/MWh. ✓ |
+
+### Stärken
+1. **Interne Konsistenz.** Vbh-Proxy (73,8 W/m²) und Flächenproxy (75 W/m²) ergeben dieselbe
+   Heizlast-Größenordnung – die Annahmen sind aufeinander kalibriert, nicht beliebig.
+2. **Domänen-korrekte Standardverfahren.** Leistungs-/Arbeitsanteil-Trennung (eine kleine
+   WP deckt energetisch viel) ist die richtige Hybrid-Logik. Schall: Lp = LW − 20·log₁₀(r) − 8
+   (hemisphärische Punktquelle) + 10·log₁₀(n)-Kaskade (inkohärente Addition) + TA-Lärm-
+   Nachtwerte (WR 35 / WA 40 / MI 45) – exakt korrekt. Annuität (KWF) und IRR/NPV sauber.
+3. **Energiepreise realistisch** (Strom-WP 240 €/MWh, Gas 80 €/MWh; Stand 2025/26).
+4. **Marge nur auf AP, iterativ auf Ziel-IRR gelöst** – methodisch sauber (NPV bei Ziel-IRR
+   monoton in der Marge), robust gegen hohe IRR. Erreichte IRR trifft das Ziel exakt.
+
+### Befunde (priorisiert)
+| ID | Schwere | Ort | Befund |
+|----|---------|-----|--------|
+| C1 | niedrig (Modell) | `annahmen.js` `wp_leistungsanteil`/`wp_deckungsanteil`; `calc.js` | 0,27 (Leistung) und 0,65 (Energie) sind **unabhängige Konstanten**, nicht aus einem Bivalenzpunkt abgeleitet. Ihre Kombination impliziert **~5.281 WP-Volllaststunden** – am oberen, gerade noch vertretbaren Rand (typ. Auslegung 1.800–2.500 Vlh; als Grundlast-WP real ~5.000–6.000 Betriebsstunden plausibel). Empfehlung: implizite Vlh als Leitplanke ausweisen / interne Warnung bei > ~3.000, mittelfristig aus Bivalenzpunkt herleiten. |
+| C2 | niedrig (Modell) | `annahmen.js` `jaz`; `calc.js` `energieIndikation` | **JAZ ist eine flache Konstante (3,3)**, entkoppelt vom Vorlauftemperaturniveau. Regeln R09/R20/R21 warnen nur; die Energie-/COP-Rechnung verschlechtert die JAZ nicht mit steigender VL-Temperatur. Im Referenzfall (56–60 °C) ist 3,3 vertretbar bis leicht optimistisch. Empfehlung: JAZ je `vorlauftemp_klasse` staffeln. |
+| C3 | info | `engine.js` Förderlogik | **Contingency ist implizit nicht förderfähig**: `foerderfaehig` wird auf der Zwischensumme (ohne Contingency) berechnet, `netto = brutto − foerderung` zieht aber vom Brutto (inkl. Contingency) ab. Konservativ und vertretbar (kein Zuschuss auf den Risikopuffer) – als bewusste Entscheidung dokumentieren, damit es nicht als Fehler gelesen wird. |
+| C4 | niedrig (kaufm.) | `pricing.js` | Die AP-Marge (29 %, Ambition 39 %) ist hoch, weil der Hybrid weiter 35 % Gas verbrennt → geringe variable Einsparung gegenüber CAPEX-lastigem System; die IRR reagiert stark auf den Energie-Split. All-in 156 €/MWh bleibt plausibel. Empfehlung: Sensitivität Energie-Split ↔ IRR intern sichtbar machen. |
+
+### In diesem Pass umgesetzt
+- Keine Code-Änderung (alle Befunde sind Annahmen-/Modellurteile mit Ergebniswirkung → PO-Freigabe).
+- Verifiziert: Hand- und Engine-Rechnung des Referenzfalls deckungsgleich; Formeln standardkonform.
+
+### Offene Empfehlungen (nicht umgesetzt)
+C1 (Bivalenzpunkt/Vlh-Leitplanke), C2 (JAZ je VL-Klasse), C3 (Doku Contingency/Förderung),
+C4 (Sensitivität Energie-Split/IRR). Alle ohne Dringlichkeit für den Demo-Zweck.
+
+---
+
+## Fazit (alle drei Pässe)
+SysKon ist architektonisch diszipliniert, für Sales und Ingenieure gut bedienbar und
+energetisch mit realistischen, mathematisch konsistenten Standardverfahren hinterlegt.
+Umgesetzt wurden vier Low-Risk-Fixes (A2, A3, B1, B3); die übrigen Punkte sind dokumentierte
+Empfehlungen bzw. bewusste Demo-Vereinfachungen. Kein Korrektheitsfehler in Kernlogik oder
+Energetik.
