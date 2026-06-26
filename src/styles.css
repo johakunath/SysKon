@@ -735,6 +735,35 @@ details summary:hover { color: var(--akzent); }
 .snapshot-komponenten-liste { list-style: none; margin: 8px 0 0; padding: 0; font-size: var(--fs-xs); color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
 .snapshot-komponenten-liste li::before { content: "· "; }
 
+/* SK-100: Angebot als Dokument */
+.angebot-dok-kopf {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--fl);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+.angebot-dok-logo {
+  flex: 0 0 80px;
+  height: 48px;
+  border: 1.5px dashed var(--rand-stark);
+  border-radius: var(--radius-klein);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.angebot-dok-meta { display: flex; flex-direction: column; gap: 1px; }
+.angebot-dok-label { font-size: var(--fs-xs); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.angebot-dok-name { font-size: var(--fs-lg); font-weight: 600; }
+.angebot-dok-datum { font-size: var(--fs-sm); color: var(--muted); }
+
 /* Print-only elements (hidden on screen, shown in print) */
 .print-only { display: none; }
 
@@ -782,4 +811,16 @@ details summary:hover { color: var(--akzent); }
   /* Kunden-Positionen umbrechen sauber */
   .kunden-position { break-inside: avoid; }
   .kunden-gruppe { break-inside: avoid; }
+  /* SK-100: Angebot als Dokument – Druckkopf */
+  .angebot-dok-kopf {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    padding: 8pt 12pt !important;
+    margin-bottom: 14pt !important;
+    page-break-after: avoid;
+  }
+  .angebot-dok-logo { border-color: #aaa !important; }
+  .angebot-dok-label { color: #555 !important; }
+  .angebot-dok-datum { color: #555 !important; }
+  .angebot-dok-name { font-size: 14pt; }
 }

@@ -148,6 +148,19 @@ function KundenScope({ scope, foerderart }) {
   )
 }
 
+function AngebotDokumentKopf({ name, datum }) {
+  return (
+    <div className="angebot-dok-kopf">
+      <div className="angebot-dok-logo"><span>Logo</span></div>
+      <div className="angebot-dok-meta">
+        <span className="angebot-dok-label">Richtpreis-Angebot (Demo)</span>
+        <strong className="angebot-dok-name">{name}</strong>
+        <span className="angebot-dok-datum">{datum}</span>
+      </div>
+    </div>
+  )
+}
+
 export default function Ergebnis({
   eingaben, annahmen, ergebnis, sichtModus = 'kunde',
   angebote = [], aktivesAngebotId = null,
@@ -236,19 +249,27 @@ export default function Ergebnis({
         )}
       </div>
 
-      <div className="print-header print-only">
-        <div>
-          <strong>Richtpreis-Angebot (Demo)</strong>
-          <span className="print-angebot-name">{angebotName}</span>
+      {!istKunde && (
+        <div className="print-header print-only">
+          <div>
+            <strong>Richtpreis-Angebot (Demo)</strong>
+            <span className="print-angebot-name">{angebotName}</span>
+          </div>
+          <small>{new Date().toLocaleDateString('de-DE')}</small>
         </div>
-        <small>{new Date().toLocaleDateString('de-DE')}</small>
-      </div>
+      )}
 
       {istKunde && (
-        <KundenScope
-          scope={kundenScope}
-          foerderart={lv.foerderung > 0 ? FOERDERUNG_ART_LABEL : null}
-        />
+        <>
+          <AngebotDokumentKopf
+            name={angebotName}
+            datum={new Date().toLocaleDateString('de-DE')}
+          />
+          <KundenScope
+            scope={kundenScope}
+            foerderart={lv.foerderung > 0 ? FOERDERUNG_ART_LABEL : null}
+          />
+        </>
       )}
 
       {!istKunde && (

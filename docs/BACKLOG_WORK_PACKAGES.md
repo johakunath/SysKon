@@ -32,21 +32,6 @@ doppelten Angaben zu bereits gezeigten Informationen.
 
 
 
-## SK-100 – Angebot als Dokument
-
-Ziel: Ergebnis-Kundensicht sieht aus wie ein echtes Angebotsdokument, nicht wie
-eine Web-App.
-
-Schutzplanke (SK-94): Der Binding-Offer-Disclaimer wurde bewusst entfernt. Aber
-der Charakter als Richtpreis-Angebot (Demo) muss sichtbar bleiben – keine
-Formulierungen, die ein verbindliches Angebot suggerieren.
-
-| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
-|---|---|---|---|---|---|---|---|---|
-| SK-100 | Epic | Results | Angebot als Dokument | Kundensicht mit sauberem Dokumentlayout: Logo-Platzhalter, Angebotsname, Datum, klare Sektionen. PDF-Export via window.print() bleibt. „Richtpreis-Angebot (Demo)"-Label bleibt sichtbar (kein verbindliches Angebot). | Erkennbare Dokumentstruktur; Name+Datum oben; Logo-Platzhalter; Druckversion professionell; keine Tab-Navigation im Kundensicht-Print; Richtpreis-Demo-Kennzeichnung vorhanden. | P3 | M | Todo |
-
----
-
 ## WP10 – Bestehende Tools & Learnings prüfen (SK-72, Blocked)
 
 Status: **Blocked** – erfordert Zugang zu Techem-Bestandstools durch den PO.
