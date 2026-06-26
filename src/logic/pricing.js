@@ -150,6 +150,25 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
     : null
   const apMargeAbsolutPa = variableKostenPa != null ? variableKostenPa * effektiveMarge : null
 
+  // Sensitivität Energie-Split ↔ IRR (Review C4, intern): variiert den WP-Deckungsanteil
+  // um ±10 %-Punkte (geklemmt) bei KONSTANTER AP-Marge (Basis-Angebot) und konstanter CAPEX.
+  // Zeigt, wie stark die erreichte IRR driftet, wenn der reale Split von der Annahme abweicht.
+  // (Würde man je Szenario die Marge neu auf die Ziel-IRR lösen, bliebe die IRR per Konstruktion
+  // konstant – uninformativ.) WP-Wärme ist je MWh günstiger als Gas-Spitzenlast, daher senkt ein
+  // höherer WP-Anteil die variablen Kosten und damit den absoluten Margenbetrag → niedrigere IRR.
+  const jazEff = derived?.jaz_effektiv ?? annahmen.jaz
+  const baseDeckung = annahmen.wp_deckungsanteil
+  const sensitivitaet = (bedarf && capex > 0 && variableKostenPa != null)
+    ? [-0.1, 0, 0.1].map(delta => {
+      const deckung = Math.min(1, Math.max(0, baseDeckung + delta))
+      const wpWaerme = bedarf * deckung
+      const vkPa = (wpWaerme / jazEff) * annahmen.strompreis_wp
+        + ((bedarf - wpWaerme) / annahmen.kessel_eta) * annahmen.gaspreis
+      const erreicht = irr([-capex, ...Array(laufzeit).fill(kapitaldienstPa + effektiveMarge * vkPa)])
+      return { deckungsanteil: deckung, variableKostenPa: vkPa, erreichteIrr: erreicht, basis: delta === 0 }
+    })
+    : []
+
   const preisgleitformel = preisgleitformelBauen(annahmen)
   const effizienzrisiko = EFFIZIENZRISIKO_TEXT[eingaben?.effizienzrisiko] ?? EFFIZIENZRISIKO_TEXT.techem
 
@@ -188,6 +207,7 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
       apMargeFallback: annahmen.ap_marge,
       zielIrr: annahmen.ziel_irr,
       zielIrrAmbition: annahmen.ziel_irr_ambition,
+      sensitivitaet,
     },
   }
 }

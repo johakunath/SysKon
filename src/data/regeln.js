@@ -15,6 +15,10 @@
 //   { typ:'status', wert }                            'gruen'|'gelb'|'orange'|'rot' oder '@feld';
 //                                                     Engine nimmt immer die schlechteste Stufe.
 // Konfliktauflösung: exclude schlägt require (Engine).
+//   `ziel` ist normalerweise ein Eingabefeld (z. B. 'aufstellvariante') und sperrt dessen Optionen.
+//   Sonderfall: `ziel:'modul'` ist ein RESERVIERTER Eimer für Modul-Excludes – `wert` nennt dann den
+//   Modulnamen (wie bei require). Die Engine prüft `excluded.modul` und entfernt ein so gesperrtes,
+//   zuvor per require erzwungenes Modul (exclude schlägt require).
 
 export const REGELN = [
   {

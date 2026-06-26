@@ -13,7 +13,7 @@ export const BERECHNUNGS_DOMAENEN = {
   },
   cop_jaz: {
     beschreibung: 'COP/JAZ, Jahreswärmebedarf, Betriebsstrom und -gas',
-    quellen: 'energieIndikation(); ANNAHMEN.jaz / wp_deckungsanteil; engine.energie.*',
+    quellen: 'energieIndikation(); ANNAHMEN.jaz_* (je VL-Klasse) / wp_deckungsanteil; engine.energie.*',
   },
   betriebsfuehrung: {
     beschreibung: 'Monitoring und Datendienst (OPEX)',
@@ -277,15 +277,35 @@ export function aufstellungEmpfehlung(e, a, derived, gesperrteVarianten = []) {
   }
 }
 
-// Energieindikation Hybrid: WP deckt Deckungsanteil der Wärmemenge, Rest Gaskessel
-export function energieIndikation(bedarf, a) {
+// JAZ je Vorlauftemperatur-Klasse (Review C2): höhere VL → niedrigere JAZ.
+// Unbekannte/fehlende Klasse fällt auf a.jaz zurück.
+const JAZ_KEY = {
+  '<=45': 'jaz_le45', '46-50': 'jaz_46_50', '51-55': 'jaz_51_55',
+  '56-60': 'jaz_56_60', '61-65': 'jaz_61_65', '66-70': 'jaz_66_70', '>70': 'jaz_gt70',
+}
+// Nur positive, endliche JAZ-Werte akzeptieren (Admin-editierbar: 0/negativ/leer
+// würde sonst wp_waerme/jaz → Infinity erzeugen). Klassenwert → Fallback a.jaz →
+// harter Default 3.3.
+const positiveJaz = (wert) => {
+  const n = zahl(wert)
+  return n != null && n > 0 ? n : null
+}
+export function resolveJaz(a, vlKlasse) {
+  const key = JAZ_KEY[vlKlasse]
+  return positiveJaz(key != null ? a[key] : null) ?? positiveJaz(a?.jaz) ?? 3.3
+}
+
+// Energieindikation Hybrid: WP deckt Deckungsanteil der Wärmemenge, Rest Gaskessel.
+// JAZ richtet sich nach der Vorlauftemperatur-Klasse (vlKlasse), sonst Fallback a.jaz.
+export function energieIndikation(bedarf, a, vlKlasse) {
   if (!bedarf) return null
+  const jaz = resolveJaz(a, vlKlasse)
   const wp_waerme = bedarf * a.wp_deckungsanteil
   const gas_waerme = bedarf - wp_waerme
-  const strom_mwh = wp_waerme / a.jaz
+  const strom_mwh = wp_waerme / jaz
   const gas_mwh = gas_waerme / a.kessel_eta
   return {
-    bedarf, wp_waerme, gas_waerme, strom_mwh, gas_mwh,
+    bedarf, wp_waerme, gas_waerme, strom_mwh, gas_mwh, jaz,
     kosten_strom: strom_mwh * a.strompreis_wp,
     kosten_gas: gas_mwh * a.gaspreis,
   }
@@ -297,6 +317,7 @@ export function ableiten(e, a) {
   const wp = wpAuslegung(hl.heizlast, a)
   const schall = schallBewertung(e, wp.wp_module, a)
   const bedarf = waermebedarf(e, a, hl.heizlast)
+  const energie = energieIndikation(bedarf, a, e.vorlauftemp_klasse)
   return {
     heizlast_effektiv: hl.heizlast ? Math.round(hl.heizlast) : null,
     heizlast_geschaetzt: hl.geschaetzt,
@@ -311,7 +332,11 @@ export function ableiten(e, a) {
     schall_status: schall.status,
     schall_je_variante: schall.je_variante,
     schall_gesperrte_varianten: schall.gesperrte,
-    energie: energieIndikation(bedarf, a),
+    energie,
+    jaz_effektiv: energie ? energie.jaz : resolveJaz(a, e.vorlauftemp_klasse),
+    // WP-Volllaststunden (Review C1): impliziter Auslegungs-Kennwert (wp_waerme ÷ wp_kw).
+    // Durch die feste Kopplung deckungsanteil/leistungsanteil ~konstant; Demo-Indikation.
+    wp_volllaststunden: energie && wp.wp_kw ? Math.round((energie.wp_waerme * 1000) / wp.wp_kw) : null,
     // Puffer-Sizing: Richtwert auf Basis kleinster WP-Einheit in homogener Kaskade
     puffer_empfehlung_liter: a.puffer_liter_je_kw * a.wp_modul_kw,
   }

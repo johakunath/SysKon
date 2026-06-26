@@ -6,10 +6,22 @@ export const ANNAHMEN = {
   // Energie & Effizienz
   strompreis_wp: 240,        // €/MWh
   gaspreis: 80,              // €/MWh
-  jaz: 3.3,                  // Jahresarbeitszahl WP
+  jaz: 3.3,                  // Jahresarbeitszahl WP (Fallback, wenn VL-Klasse unbekannt; Review C2)
+  // JAZ je Vorlauftemperatur-Klasse (Demo, R290-Luft/Wasser): höhere VL → niedrigere JAZ.
+  // Resolver in calc.js (resolveJaz); unbekannte/fehlende Klasse fällt auf `jaz` zurück.
+  jaz_le45: 4.3,             // ≤ 45 °C
+  jaz_46_50: 4.0,            // 46–50 °C
+  jaz_51_55: 3.7,            // 51–55 °C
+  jaz_56_60: 3.3,            // 56–60 °C (Demo-Referenz, = jaz)
+  jaz_61_65: 3.0,            // 61–65 °C
+  jaz_66_70: 2.8,            // 66–70 °C
+  jaz_gt70: 2.6,             // > 70 °C
   kessel_eta: 0.93,          // Wirkungsgrad Bestandskessel
   vbh_ohne_ww: 1900,         // Vollbenutzungsstunden ohne Warmwasser
   vbh_mit_ww: 2200,          // Vollbenutzungsstunden mit Warmwasser
+  // Hinweis (Review C1): wp_deckungsanteil (Energie) und wp_leistungsanteil (Leistung) sind
+  // unabhängige Demo-Konstanten. Ihre Kombination impliziert ~konstante WP-Volllaststunden
+  // (≈ vbh × deckungsanteil / leistungsanteil ≈ 5.300 h); mittelfristig aus Bivalenzpunkt ableiten.
   wp_deckungsanteil: 0.65,   // Anteil WP an der Wärmemenge (Hybrid)
   wp_leistungsanteil: 0.27,  // WP-Leistung als Anteil der Heizlast (Auslegungs-Demo)
   wp_modul_kw: 20,           // kW thermisch je WP-Modul
@@ -114,7 +126,7 @@ export const WP_PRODUKT_REFERENZ = {
   kaskade_min: 1,
   kaskade_max: 6,
   cop_referenz_a2w35: 3.5,
-  jaz_quelle: 'ANNAHMEN.jaz',
+  jaz_quelle: 'ANNAHMEN.jaz_* je Vorlauftemperatur-Klasse (Fallback ANNAHMEN.jaz)',
   vorlauf_max_standard_c: 65,
   vorlauf_max_technisch_c: 70,
   aussentemp_min_c: -20,
@@ -140,7 +152,14 @@ export const ANNAHMEN_META = [
   { gruppe: 'Energie & Effizienz', felder: [
     ['strompreis_wp', 'Strompreis Wärmepumpe', '€/MWh'],
     ['gaspreis', 'Gaspreis', '€/MWh'],
-    ['jaz', 'JAZ Wärmepumpe', '–'],
+    ['jaz', 'JAZ Wärmepumpe (Fallback)', '–'],
+    ['jaz_le45', 'JAZ ≤ 45 °C', '–'],
+    ['jaz_46_50', 'JAZ 46–50 °C', '–'],
+    ['jaz_51_55', 'JAZ 51–55 °C', '–'],
+    ['jaz_56_60', 'JAZ 56–60 °C', '–'],
+    ['jaz_61_65', 'JAZ 61–65 °C', '–'],
+    ['jaz_66_70', 'JAZ 66–70 °C', '–'],
+    ['jaz_gt70', 'JAZ > 70 °C', '–'],
     ['kessel_eta', 'Kesselwirkungsgrad', '0–1'],
     ['vbh_ohne_ww', 'Vollbenutzungsstunden ohne WW', 'h/a'],
     ['vbh_mit_ww', 'Vollbenutzungsstunden mit WW', 'h/a'],

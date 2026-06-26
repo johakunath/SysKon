@@ -55,7 +55,27 @@ function formatMenge(menge, einheit) {
   return [wert, einheit].filter(Boolean).join(' ')
 }
 
-function Frage({ frage, wert, onChange, gesperrt }) {
+// On-demand-Tiefenhilfe (Review B2): macht das autorisierte, bisher nur im Admin
+// sichtbare Wissen (tooltip + Sales-Playbook) per Hover/Focus zugänglich. Nutzt die
+// vorhandene .tooltip-CSS; bewusst KEIN aria-expanded/Disclosure (frühere UX-Entscheidung).
+function FrageHilfe({ frage }) {
+  const pb = frage.playbook ?? {}
+  const hatInhalt = frage.tooltip || pb.warum || pb.warnsignale || pb.einordnung
+  if (!hatInhalt) return null
+  return (
+    <span className="tooltip-wrap">
+      <button type="button" className="tooltip" aria-label={`Hilfe zu: ${frage.label}`}>?</button>
+      <span className="tooltip-text" role="tooltip">
+        {frage.tooltip ? <span className="tt-zeile">{frage.tooltip}</span> : null}
+        {pb.warum ? <span className="tt-zeile"><strong>Warum:</strong> {pb.warum}</span> : null}
+        {pb.warnsignale ? <span className="tt-zeile"><strong>Warnsignale:</strong> {pb.warnsignale}</span> : null}
+        {pb.einordnung ? <span className="tt-zeile"><strong>Einordnung:</strong> {pb.einordnung}</span> : null}
+      </span>
+    </span>
+  )
+}
+
+function Frage({ frage, wert, onChange, gesperrt, zeigeHilfe }) {
   const istSelect = frage.typ === 'select'
   const gespraechshinweis = kurzerHinweis(frage)
   const invalide = frage.typ === 'zahl' && wert !== undefined && wert !== '' && (
@@ -77,6 +97,7 @@ function Frage({ frage, wert, onChange, gesperrt }) {
             {frage.einheit ? <span className="einheit"> ({frage.einheit})</span> : null}
           </label>
         )}
+        {zeigeHilfe ? <FrageHilfe frage={frage} /> : null}
       </div>
       <div className={`frage-inhalt${gespraechshinweis ? '' : ' ohne-hinweis'}`}>
         <div className="frage-feld">
@@ -361,6 +382,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   frage={f}
                   wert={eingaben[f.id]}
                   gesperrt={f.id === 'aufstellvariante' ? gesperrteVarianten : null}
+                  zeigeHilfe={sichtModus === 'intern'}
                   onChange={(wert) => setEingaben({ ...eingaben, [f.id]: wert })}
                 />
               ))}

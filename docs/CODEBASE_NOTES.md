@@ -26,7 +26,10 @@ Token-sparsame Orientierung für Agenten. Für Details nur die verlinkten Dateie
 - Gesamtstatus: `src/logic/engine.js` berechnet `ergebnis.status` aus `src/data/regeln.js` plus SYS-Sonderfall, wenn die gewählte Aufstellvariante gesperrt ist.
 - Status-Reihenfolge: `gruen < gelb < orange < rot`; die Engine behält immer den schlechtesten Status.
 - Datenqualität: `dqScore()` nutzt sichtbare Pflichtfragen aus `src/data/fragen.js`; `unbekannt` zählt nicht als beantwortet.
-- Handover: Code existiert in `src/screens/Handover.jsx`, ist aber im sichtbaren Demo-Fluss ausgeblendet.
+- Deferred Surfaces: `src/screens/Handover.jsx` ist **bewusst zurückgestellt** – nur über Tests gerendert, im sichtbaren Demo-Fluss nicht geroutet (kein App-Tab). Bei UI-Refactors mitziehen, aber nicht „aufräumen“/löschen, bis die Entscheidung revidiert wird (Review A5).
+- Förderlogik: `foerderfaehig` (engine.js) rechnet bewusst auf der Zwischensumme OHNE Contingency; die Förderung wird vom Brutto abgezogen → Contingency ist nicht förderfähig (konservativ, Review C3).
+- LV-Gruppierung: gemeinsamer Helfer `src/logic/lv.js` (`gruppiereNachGruppe`) wird von `engine.js` und `Ergebnis.jsx` genutzt (Review A6) – nicht erneut inline nachbauen.
+- JAZ: richtet sich nach der Vorlauftemperatur-Klasse (`ANNAHMEN.jaz_*`, Resolver `resolveJaz` in calc.js; Fallback `ANNAHMEN.jaz`); `derived.jaz_effektiv`/`derived.wp_volllaststunden` für Anzeige (Review C1/C2).
 - Roadmap nach Produkt-Pivot: `docs/PRODUCT_ROADMAP.md`. Aktuelle Leitlinie: Sales/KAM führt das Gespräch; interne Fachlogik läuft als Guardrail mit.
 - Die größten Kontextdateien sind `src/styles.css`, `src/screens/Ergebnis.jsx`, `src/logic/engine.js`, `src/data/fragen.js`, `src/screens/Konfiguration.jsx` und `src/data/katalog.js`.
 

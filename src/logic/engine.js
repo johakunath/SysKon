@@ -13,9 +13,10 @@
 
 import { ANNAHMEN } from '../data/annahmen.js'
 import { REGELN } from '../data/regeln.js'
-import { KATALOG, LV_GRUPPEN } from '../data/katalog.js'
+import { KATALOG } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
 import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
+import { gruppiereNachGruppe } from './lv.js'
 import { contractingPreise } from './pricing.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
@@ -183,28 +184,24 @@ function kundenWarntext(warnung) {
 
 function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded, contractingKunde }) {
   const allePositionen = [...lvPositionen, ...opexPositionen]
-  const gruppenNamen = [...new Set([...LV_GRUPPEN, ...allePositionen.map(pos => pos.gruppe), 'Service / Betrieb (p.a.)'])]
-  const gruppen = gruppenNamen
-    .map(name => ({
-      name,
-      positionen: allePositionen
-        .filter(pos => pos.gruppe === name)
-        .map(pos => {
-          const kunde = pos.kunde ?? {}
-          return {
-            id: pos.id,
-            titel: kunde.titel ?? pos.text,
-            hersteller: kunde.hersteller ?? 'herstellerneutral',
-            produkt: kunde.produkt ?? 'Produkt wird später festgelegt',
-            leistungsklasse: kundenLeistungsklasse(pos, derived, annahmen),
-            menge: pos.menge,
-            einheit: kundenEinheit(pos),
-            leistungsumfang: kundenLeistungsumfang(pos, annahmen),
-            pruefpflichtig: !!pos.pruefpflichtig,
-          }
-        }),
+  const gruppen = gruppiereNachGruppe(allePositionen, ['Service / Betrieb (p.a.)'])
+    .map(gruppe => ({
+      name: gruppe.name,
+      positionen: gruppe.positionen.map(pos => {
+        const kunde = pos.kunde ?? {}
+        return {
+          id: pos.id,
+          titel: kunde.titel ?? pos.text,
+          hersteller: kunde.hersteller ?? 'herstellerneutral',
+          produkt: kunde.produkt ?? 'Produkt wird später festgelegt',
+          leistungsklasse: kundenLeistungsklasse(pos, derived, annahmen),
+          menge: pos.menge,
+          einheit: kundenEinheit(pos),
+          leistungsumfang: kundenLeistungsumfang(pos, annahmen),
+          pruefpflichtig: !!pos.pruefpflichtig,
+        }
+      }),
     }))
-    .filter(gruppe => gruppe.positionen.length > 0)
 
   const annahmenTexte = [
     'Vorläufiger Kundenumfang mit Richtpreisen für das Sales-Gespräch.',
@@ -372,6 +369,9 @@ export function berechne(eingaben, opts = {}) {
   const zwischensumme = lvPositionen.reduce((s, p) => s + p.betrag, 0)
   const contingency = zwischensumme * annahmen.contingency
   const brutto = zwischensumme + contingency
+  // foerderfaehig rechnet bewusst auf der Zwischensumme OHNE Contingency (Review C3):
+  // der Risikopuffer ist kein Förder-Gegenstand. netto zieht die Förderung anschließend
+  // vom Brutto (inkl. Contingency) ab → Contingency ist implizit nicht förderfähig (konservativ).
   const foerderfaehig = lvPositionen.reduce((s, p) => s + p.betrag * p.foerderanteil, 0)
   const foerderAktiv = eingaben.foerderung_annahme !== 'nein'
   const foerderung = foerderAktiv ? foerderfaehig * annahmen.foerderquote : 0
