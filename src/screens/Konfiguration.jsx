@@ -22,8 +22,9 @@ const SEKTION_KURZ = {
   F: 'Aufstellung',
   G: 'Schall',
   H: 'Elektro',
-  I: 'Commercial',
-  J: 'Service',
+  I: 'Förderung',
+  J: 'Betrieb',
+  K: 'Vertrag',
 }
 
 const DEFAULT_EFFECTIVE_SEKTIONEN = applyAdminConfig(makeDefaultAdminConfig()).sektionen

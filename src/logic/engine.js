@@ -361,7 +361,7 @@ export function berechne(eingaben, opts = {}) {
         foerderanteil: annahmen[pos.foerder] ?? 0, tag: pos.tag,
         bereich: pos.bereich ?? null,
         begruendung: pos.begruendung, pruefpflichtig: !!pos.pruefpflichtig,
-        kunde: pos.kunde, variante: varianteName,
+        kunde: pos.kunde,
         erzwungen: paket.bedingung?.feld?.startsWith?.('require_') ? 'R03' : null,
       }
       if (pos.tag === 'opex') opexPositionen.push({ ...eintrag, prozent: pos.kosten.typ === 'prozent_lv' ? annahmen[pos.kosten.annahme] : null })
