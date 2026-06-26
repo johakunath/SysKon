@@ -71,7 +71,59 @@ React; angemessen.
 ---
 
 ## B. UX/UI
-_(Folgepass – noch offen.)_
+
+### Methode
+Quellcode aller Screens + `styles.css` gelesen und die gebaute App live betrachtet
+(Chromium-Screenshots der Konfiguration und beider Ergebnis-Sichten, Desktop 1440×900).
+Personas laut Produktfokus: **Vertrieb (Sales/KAM)** und **Energie-Ingenieure**.
+
+### Gesamturteil
+Für die Zielpersonas gut geeignet. Klares, ruhiges „Präzisionswerkzeug“-Erscheinungsbild
+(Stahlblau, Haarlinien, Monospace-Ziffern für €/kW/dB), durchgängiges Design-System
+(Token-, Typo- und Abstands-Skala), saubere Navigation und eine überzeugende Trennung von
+**Kundensicht** (dokumentartiges Richtpreis-Angebot) und **Internsicht** (Kalkulation,
+Prüfpunkte). Im Großen wie im Detail gut lesbar. Hauptpunkte: ein konkreter Navigations-Bug
+(behoben) und ein verstecktes Hilfetext-Potenzial für Ingenieure.
+
+### Stärken
+1. **Dual-Persona-Modell sitzt.** Der Kundensicht/Internsicht-Umschalter trennt ein echtes,
+   dokumentartiges Angebot (Logo, Label „Richtpreis-Angebot (Demo)“, Name, Datum,
+   Komponentenkarten mit Hersteller/Produkt/Leistung, „enthalten/prüfen“-Badges) sauber von
+   der internen Kalkulation (CAPEX/OPEX/Energie/Commercial). Bedient beide Personas mit einer
+   Datenbasis.
+2. **Navigation & Orientierung.** 3-Spalten-Konfiguration: links Abschnittsanker A–K mit
+   Fortschritt (n/m, ✓) und aktiver Hervorhebung (IntersectionObserver-Scrollspy), Mitte die
+   Fragen, rechts die sticky „Gesprächs-Vorschau“. Man weiß jederzeit, wo man ist und was noch fehlt.
+3. **Inline-Kontext an der Frage (SK-98).** Jede Frage zeigt Label, Antwortkarten mit
+   Optionshinweis und einen separaten Gesprächshinweis – ohne Modal/Klick. Gut für schnelle Gespräche.
+4. **Lesbarkeit/Detail.** Tabellen mit Tabellenziffern, Gruppenkopfzeilen, rechtsbündige Beträge,
+   aufklappbare Begründungen je LV-Position, Ampel + Korridor-Titel mit Handlungsaussage.
+   Statusfarben mit ausreichend Kontrast; Hinweis-/OK-/Warn-Boxen einheitlich.
+5. **Zugänglichkeit (für einen Demo-Prototyp solide).** Radiogruppen mit `role` +
+   `aria-labelledby`, Labels an Eingaben, sichtbare Fokus-Ringe, `prefers-reduced-motion`
+   respektiert, dekoratives Logo `aria-hidden`.
+6. **Druck/Export.** Eigene Print-Styles (A4, Druckkopf, umbruchsichere Karten,
+   farbtreue Ampeln) und CSV-Export der Kalkulation.
+
+### Befunde (priorisiert)
+
+| ID | Schwere | Ort | Befund |
+|----|---------|-----|--------|
+| B1 | mittel | `Konfiguration.jsx` `SEKTION_KURZ` | **Nav-Labels passten nicht zu den Abschnitts-Überschriften:** Nav zeigte „Commercial“ (Überschrift „I · Förderannahme“) und „Service“ (Überschrift „J · Betrieb & Monitoring“); Abschnitt **K** („Vertrag & Angebot“) fehlte ganz und fiel auf den Volltitel zurück. Verwirrende Navigation. → **behoben**: I→„Förderung“, J→„Betrieb“, K→„Vertrag“. |
+| B2 | mittel | `Konfiguration.jsx` `Frage`; `fragen.js` (`tooltip`, `playbook`); `styles.css` `.tooltip*` | **Tiefe Hilfe ist autorisiert, aber im Live-Fluss unsichtbar.** Pro Frage existieren `tooltip` und ein Sales-Playbook (`warum`/`warnsignale`/`einordnung`) – beide nur im **Admin** editierbar/sichtbar. Im Konfigurations-Fluss wird **nur** `hinweisKurz` (auf 150 Zeichen gekürzt) gezeigt; die `.tooltip`-CSS ist im Live-Fluss toter Code. Besonders Ingenieure würden „warum/warnsignale“ schätzen. Empfehlung: on-demand-Disclosure (z. B. „?“/„Mehr“ je Frage), das das vorhandene Playbook wiederverwendet. Kein Low-Risk-Auto-Fix (Feature) – als Empfehlung geführt. |
+| B3 | niedrig | `styles.css` | **Token-Drift:** `--fs-s` war nirgends definiert (Tippfehler für `--fs-sm`) und wurde in 4 Regeln genutzt → Schriftgröße ungültig/geerbt; `--fl` (Hintergrund Angebots-Dokumentkopf) undefiniert. → **behoben** (`--fs-sm`, `--karte`). Zusätzlich nutzen einige Regeln ad-hoc-Fallbacks (`var(--text-2,#555)`, `--bg-2`, `--gruen`) statt der Token – kosmetisch, gemeldet. |
+| B4 | niedrig | Internsicht `Ergebnis.jsx` | Hohe Informationsdichte (Summary-Strip → KPIs → LV-Tabelle → 4 Kennzahlen-Karten). Gut gruppiert, aber für Erst-Sales viel auf einmal. Summary-Strip und „Warum dieser Korridor entsteht“ mildern das. Kein Eingriff nötig; ggf. progressive Offenlegung erwägen. |
+| B5 | niedrig | `Ampel.jsx` + Aufruforte | Status teils nur über Farbe (z. B. Ampel-Punkt ohne Textbegleitung in einzelnen Vorschau-Zeilen). Meist mit Textlabel kombiniert; für volle Barrierefreiheit ein `title`/sr-only-Text am Ampel-Punkt ergänzen. |
+| B6 | info | `styles.css` Media-Queries | Mobil bewusst nicht optimiert (Desktop-Tool laut Kommentar). Für die Personas vertretbar; Tablet-Korridor (901–1180px) ist abgedeckt. |
+
+### In diesem Pass umgesetzt
+- **B1** `SEKTION_KURZ` an die Abschnitts-Überschriften angeglichen (I/J korrigiert, K ergänzt).
+- **B3** CSS-Token-Tippfehler behoben (`--fs-s`→`--fs-sm`, `--fl`→`--karte`).
+- Verifiziert: `npm test` (121/121) und `npm run build` erfolgreich; Sichtprüfung per Screenshots.
+
+### Offene Empfehlungen (nicht umgesetzt)
+- **B2** tiefe Hilfe (Tooltip/Playbook) on-demand im Konfigurations-Fluss zugänglich machen
+  (Feature-Entscheidung, größerer Eingriff). B4/B5/B6 wie beschrieben.
 
 ## C. Energetik
 _(Folgepass – noch offen.)_
