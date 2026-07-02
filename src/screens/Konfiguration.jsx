@@ -215,11 +215,21 @@ function AngebotSnapshot({ ergebnis, sichtModus }) {
   const capexPos = lv.positionen.filter(p => p.tag === 'capex' && p.betrag > 0)
   // Größenangabe nur, wenn sie informativ ist (enthält Zahlen, z. B. „4 × 20 kW");
   // generische Fallback-Texte („projektbezogener Leistungsumfang") bleiben weg.
+  // DEMO_BRIEF nennt WP, SmartControl, Hydraulikpaket und Monitoring explizit als
+  // Snapshot-Komponenten – diese Gruppen vor dem Kappen priorisieren, damit die
+  // Katalogreihenfolge sie nicht aus der Live-Sidebar verdrängt (Codex-Review PR #31).
+  const SNAPSHOT_PRIO = ['Wärmepumpenpaket', 'Steuerung & Monitoring', 'Hydraulik', 'Monitoring']
+  const rang = (gruppe) => {
+    const idx = SNAPSHOT_PRIO.indexOf(gruppe)
+    return idx === -1 ? SNAPSHOT_PRIO.length : idx
+  }
   const komponenten = (ergebnis.kundenScope?.gruppen ?? [])
     .flatMap(g => g.positionen.map(p => ({
       titel: p.titel,
       groesse: /\d/.test(p.leistungsklasse ?? '') ? p.leistungsklasse : null,
+      rang: rang(g.name),
     })))
+    .sort((a, b) => a.rang - b.rang) // stabil: Rest behält Katalogreihenfolge
     .slice(0, 6)
   const capexGruppen = Object.entries(
     capexPos.reduce((acc, p) => {
