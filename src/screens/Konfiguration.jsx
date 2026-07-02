@@ -154,7 +154,7 @@ function UmfangsVorschau({ scope }) {
     <div className="preview-block">
       <h4>Leistungen</h4>
       <ul className="preview-positionen">
-        {positionen.slice(0, 10).map(pos => (
+        {positionen.slice(0, 5).map(pos => (
           <li key={`${pos.gruppe}-${pos.id}`}>
             <span>
               <strong>{pos.titel}</strong>
@@ -163,7 +163,7 @@ function UmfangsVorschau({ scope }) {
             <em>{formatMenge(pos.menge, pos.einheit)}</em>
           </li>
         ))}
-        {positionen.length > 10 ? <li className="preview-mehr">Weitere Leistungen <em>{positionen.length - 10}</em></li> : null}
+        {positionen.length > 5 ? <li className="preview-mehr">+{positionen.length - 5} weitere Leistungen <em>im Angebot</em></li> : null}
       </ul>
     </div>
   )
@@ -202,7 +202,9 @@ function AufstelloptionenPreview({ viable, schallJeVariante, istIntern }) {
   )
 }
 
-function AngebotSnapshot({ ergebnis, sichtModus, annahmen }) {
+// Money Shot der Demo (DEMO_BRIEF): Contracting-Preis, Komponenten und Förderung
+// live und zuoberst. AP in €/MWh (PO-Entscheidung: €/MWh statt ct/kWh beibehalten).
+function AngebotSnapshot({ ergebnis, sichtModus }) {
   const lv = ergebnis.lv
   const pricing = ergebnis.pricing
   const istIntern = sichtModus === 'intern'
@@ -211,9 +213,14 @@ function AngebotSnapshot({ ergebnis, sichtModus, annahmen }) {
   const foerderart = FOERDERUNG_ART_LABEL
 
   const capexPos = lv.positionen.filter(p => p.tag === 'capex' && p.betrag > 0)
-  const komponentenNamen = (ergebnis.kundenScope?.gruppen ?? [])
-    .flatMap(g => g.positionen.map(p => p.titel))
-    .slice(0, 8)
+  // Größenangabe nur, wenn sie informativ ist (enthält Zahlen, z. B. „4 × 20 kW");
+  // generische Fallback-Texte („projektbezogener Leistungsumfang") bleiben weg.
+  const komponenten = (ergebnis.kundenScope?.gruppen ?? [])
+    .flatMap(g => g.positionen.map(p => ({
+      titel: p.titel,
+      groesse: /\d/.test(p.leistungsklasse ?? '') ? p.leistungsklasse : null,
+    })))
+    .slice(0, 6)
   const capexGruppen = Object.entries(
     capexPos.reduce((acc, p) => {
       acc[p.gruppe] = (acc[p.gruppe] || 0) + p.betrag
@@ -222,15 +229,25 @@ function AngebotSnapshot({ ergebnis, sichtModus, annahmen }) {
   )
 
   return (
-    <div className="preview-block">
+    <div className="preview-block snapshot-block">
       <h4>Angebots-Snapshot <span className="hinweis-inline">(Demo)</span></h4>
-      <div className="mini-fakten">
+      <div className="snapshot-preise">
         {pricing?.grundpreisPa > 0 && (
-          <div><span>Grundpreis</span><strong>{euro(pricing.grundpreisPa / 12)} / Monat</strong></div>
+          <div className="snapshot-preis">
+            <span>Grundpreis</span>
+            <strong>{euro(pricing.grundpreisPa / 12)} <em>/ Monat</em></strong>
+            <small>{euro(pricing.grundpreisPa)} p.a.</small>
+          </div>
         )}
         {pricing?.arbeitspreisMwh != null && (
-          <div><span>Arbeitspreis</span><strong>{euro(pricing.arbeitspreisMwh)} / MWh</strong></div>
+          <div className="snapshot-preis">
+            <span>Arbeitspreis</span>
+            <strong>{euro(pricing.arbeitspreisMwh)} <em>/ MWh</em></strong>
+            <small>verbrauchsabhängig</small>
+          </div>
         )}
+      </div>
+      <div className="mini-fakten">
         {lv.foerderung > 0 && (
           <div><span>Förderung</span><strong>{foerderart}</strong></div>
         )}
@@ -253,9 +270,11 @@ function AngebotSnapshot({ ergebnis, sichtModus, annahmen }) {
           </div>
         )
       ) : (
-        komponentenNamen.length > 0 && (
+        komponenten.length > 0 && (
           <ul className="snapshot-komponenten-liste">
-            {komponentenNamen.map(name => <li key={name}>{name}</li>)}
+            {komponenten.map(k => (
+              <li key={k.titel}>{k.titel}{k.groesse ? <small> · {k.groesse}</small> : null}</li>
+            ))}
           </ul>
         )
       )}
@@ -411,9 +430,14 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
       </main>
 
       <aside className="spalte-rechts">
+        {/* Reihenfolge = DEMO_BRIEF-Skizze: Angebots-Snapshot (Money Shot) zuerst,
+            dann Status + nächster Schritt, danach Diagnostik. Nichts eingeklappt –
+            Sales soll im Live-Gespräch nicht klicken müssen. */}
         <div className="karte live kunden-preview">
-          <h3>Gesprächs-Vorschau</h3>
-          <p className="hinweis">Lösungskorridor für das Kundengespräch. Richtpreis-Indikation und Detailkalkulation vollständig im Angebot (Internsicht).</p>
+          <h3>Angebots-Vorschau (live)</h3>
+          <p className="hinweis">Richtpreis und Umfang aktualisieren sich mit jeder Antwort. Detailkalkulation vollständig im Angebot (Internsicht).</p>
+
+          <AngebotSnapshot ergebnis={ergebnis} sichtModus={sichtModus} />
 
           <div className="status-zeile kompakt">
             <Ampel status={ergebnis.status} groesse="gross" />
@@ -425,6 +449,8 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
           {ergebnis.statusKorridor?.bedeutung && (
             <p className="naechster-schritt">{ergebnis.statusKorridor.bedeutung}</p>
           )}
+
+          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zum Angebot →</button>
 
           <div className="dq">
             <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong> · {ergebnis.datenlage?.titel}</div>
@@ -450,15 +476,11 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
 
           <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} istIntern={sichtModus === 'intern'} />
 
-          <AngebotSnapshot ergebnis={ergebnis} sichtModus={sichtModus} annahmen={annahmen} />
-
           <RisikoFlags warnungen={ergebnis.warnungen} />
 
           <UmfangsVorschau scope={scope} />
           <PreviewScope titel="Annahmen" eintraege={scope.annahmen} max={3} />
           <PreviewScope titel="Offene Punkte" eintraege={wichtigsteOffenePunkte} max={3} />
-
-          <button className="primaer" onClick={() => setScreen('ergebnis')}>Zum Angebot →</button>
         </div>
       </aside>
     </div>

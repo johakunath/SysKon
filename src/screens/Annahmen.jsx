@@ -85,9 +85,14 @@ function FragenTab({ adminConfig, setAdminConfig, sektionen }) {
 
   return (
     <div className="admin-stack">
+      {/* Demo-Polish: je Sektion einklappbar (natives details, kein aria-expanded),
+          damit die Pflegefläche auf einen Blick scanbar bleibt. */}
       {sektionen.map(sektion => (
-        <section key={sektion.id} className="karte">
-          <h3>{sektion.id} · {sektion.titel}</h3>
+        <details key={sektion.id} className="karte admin-akkordeon">
+          <summary className="admin-akkordeon-kopf">
+            <strong>{sektion.id} · {sektion.titel}</strong>
+            <span>{sektion.fragen.length} Fragen</span>
+          </summary>
           <div className="admin-list">
             {sektion.fragen.map(frage => {
               const edit = adminConfig.fragen[frage.id]
@@ -123,7 +128,7 @@ function FragenTab({ adminConfig, setAdminConfig, sektionen }) {
               )
             })}
           </div>
-        </section>
+        </details>
       ))}
     </div>
   )
@@ -171,12 +176,14 @@ function KatalogTab({ adminConfig, setAdminConfig, katalog }) {
     <div className="admin-stack">
       {katalog.map(paket => {
         const edit = adminConfig.katalog[paket.id]
+        const positionsZahl = (paket.positionen?.length ?? 0)
+          + (paket.varianten ?? []).reduce((s, v) => s + (v.positionen?.length ?? 0), 0)
         return (
-          <section key={paket.id} className="karte">
-            <div className="admin-edit-head">
-              <h3>{paket.id}</h3>
-              <span>{paket.varianten ? 'Variantenpaket' : 'Paket'}</span>
-            </div>
+          <details key={paket.id} className="karte admin-akkordeon">
+            <summary className="admin-akkordeon-kopf">
+              <strong>{paket.id}</strong>
+              <span>{paket.varianten ? 'Variantenpaket' : 'Paket'} · {positionsZahl} Positionen</span>
+            </summary>
             <div className="admin-editor-grid">
               <TextField label="Pakettyp" value={edit.pakettyp} onChange={v => setPaket(paket.id, 'pakettyp', v)} />
               <TextField label="Gruppe" value={edit.gruppe} onChange={v => setPaket(paket.id, 'gruppe', v)} />
@@ -200,7 +207,7 @@ function KatalogTab({ adminConfig, setAdminConfig, katalog }) {
                 ))}
               </div>
             ))}
-          </section>
+          </details>
         )
       })}
     </div>
