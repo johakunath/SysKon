@@ -61,7 +61,7 @@ describe('Screens rendern mit jedem Preset', () => {
     const rechteVorschau = html.slice(html.indexOf('<aside class="spalte-rechts">'))
     expect(html).toContain('monoenergetisch')
     expect(html).toContain('außerhalb MVP v0.1')
-    expect(rechteVorschau).toContain('Gesprächs-Vorschau')
+    expect(rechteVorschau).toContain('Angebots-Vorschau')
     expect(rechteVorschau).toContain('Luft-Wasser-Wärmepumpen-Kaskade')
     // SK-95/SK-96: "Förderung" als Typ-Label "BEG EM" ist kundenseitig sichtbar;
     // finanzielle Begriffe (CAPEX, Brutto, Marge) bleiben ausgeblendet.

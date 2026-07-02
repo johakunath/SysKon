@@ -407,35 +407,8 @@ export default function Ergebnis({
               </table>
             </div>
 
-            <div className="karte">
-              <h3>Energieindikation p.a. (Demo)</h3>
-              {ergebnis.energie ? (
-                <table className="fakten">
-                  <tbody>
-                    <tr><td>Wärmebedarf</td><td className="r">{num(ergebnis.energie.bedarf)} MWh/a</td></tr>
-                    <tr><td>davon WP ({prozent(annahmen.wp_deckungsanteil)})</td><td className="r">{num(ergebnis.energie.wp_waerme)} MWh/a</td></tr>
-                    <tr><td>Strom WP (JAZ {num(d.jaz_effektiv, 1)}, je VL-Temp.)</td><td className="r">{num(ergebnis.energie.strom_mwh)} MWh/a · {euro(ergebnis.energie.kosten_strom)}</td></tr>
-                    <tr><td>Gas Bestandskessel (η {annahmen.kessel_eta})</td><td className="r">{num(ergebnis.energie.gas_mwh)} MWh/a · {euro(ergebnis.energie.kosten_gas)}</td></tr>
-                    <tr><td>WP-Volllaststunden</td><td className="r">{num(d.wp_volllaststunden)} h/a</td></tr>
-                    <tr><td>Wärmekostenindikation</td><td className="r">{num(ergebnis.kennzahlen.waermekosten_mwh)} €/MWh</td></tr>
-                  </tbody>
-                </table>
-              ) : <p className="hinweis">Kein Wärmebedarf ableitbar – Verbrauch oder Fläche erfassen.</p>}
-            </div>
-
-            <div className="karte">
-              <h3>Laufende Kosten p.a. (OPEX)</h3>
-              <table className="fakten">
-                <tbody>
-                  {ergebnis.opex.positionen.map(p => (
-                    <tr key={p.id}><td>{p.text}</td><td className="r">{euro(p.betrag)}</td></tr>
-                  ))}
-                  <tr className="summe"><td>Summe OPEX</td><td className="r">{euro(ergebnis.opex.summe_pa)}</td></tr>
-                </tbody>
-              </table>
-              <p className="hinweis">CAPEX-/OPEX-Tags bereiten Stufe 2 vor; Werte bleiben Demo-Indikationen.</p>
-            </div>
-
+            {/* Demo-Polish: Commercial direkt neben CAPEX – Kalkulationstiefe für
+                die Engineer-Zielgruppe nebeneinander. */}
             <div className="karte">
               <h3>Commercial / Pricing (intern, Demo)</h3>
               <table className="fakten">
@@ -472,6 +445,35 @@ export default function Ergebnis({
                 </>
               )}
               <p className="hinweis">Marge nur auf den Arbeitspreis (keine Marge auf CAPEX/Grundpreis). AP-Marge iterativ auf die Ziel-IRR gelöst (Cashflow-IRR). „Gedeckelt": Ziel-IRR auch bei Maximalmarge nicht erreichbar. Sensitivität: WP-Deckungsanteil ±10 %-Punkte bei konstanter Basis-Marge und CAPEX. Nicht in der Kundensicht.</p>
+            </div>
+
+            <div className="karte">
+              <h3>Energieindikation p.a. (Demo)</h3>
+              {ergebnis.energie ? (
+                <table className="fakten">
+                  <tbody>
+                    <tr><td>Wärmebedarf</td><td className="r">{num(ergebnis.energie.bedarf)} MWh/a</td></tr>
+                    <tr><td>davon WP ({prozent(annahmen.wp_deckungsanteil)})</td><td className="r">{num(ergebnis.energie.wp_waerme)} MWh/a</td></tr>
+                    <tr><td>Strom WP (JAZ {num(d.jaz_effektiv, 1)}, je VL-Temp.)</td><td className="r">{num(ergebnis.energie.strom_mwh)} MWh/a · {euro(ergebnis.energie.kosten_strom)}</td></tr>
+                    <tr><td>Gas Bestandskessel (η {annahmen.kessel_eta})</td><td className="r">{num(ergebnis.energie.gas_mwh)} MWh/a · {euro(ergebnis.energie.kosten_gas)}</td></tr>
+                    <tr><td>WP-Volllaststunden</td><td className="r">{num(d.wp_volllaststunden)} h/a</td></tr>
+                    <tr><td>Wärmekostenindikation</td><td className="r">{num(ergebnis.kennzahlen.waermekosten_mwh)} €/MWh</td></tr>
+                  </tbody>
+                </table>
+              ) : <p className="hinweis">Kein Wärmebedarf ableitbar – Verbrauch oder Fläche erfassen.</p>}
+            </div>
+
+            <div className="karte">
+              <h3>Laufende Kosten p.a. (OPEX)</h3>
+              <table className="fakten">
+                <tbody>
+                  {ergebnis.opex.positionen.map(p => (
+                    <tr key={p.id}><td>{p.text}</td><td className="r">{euro(p.betrag)}</td></tr>
+                  ))}
+                  <tr className="summe"><td>Summe OPEX</td><td className="r">{euro(ergebnis.opex.summe_pa)}</td></tr>
+                </tbody>
+              </table>
+              <p className="hinweis">CAPEX-/OPEX-Tags bereiten Stufe 2 vor; Werte bleiben Demo-Indikationen.</p>
             </div>
           </div>
         </div>

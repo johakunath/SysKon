@@ -314,14 +314,11 @@ button:disabled { opacity: 0.5; cursor: default; }
 .summary-mitte strong { font-size: var(--fs-base); }
 .preview-block { border-top: 1px solid var(--zeile); padding-top: 10px; margin-top: 10px; }
 .preview-block h4 { margin-top: 0; }
-.naechster-schritt { font-size: var(--fs-xs); color: var(--text-2, #555); margin: 6px 0 0 0; padding: 6px 8px; background: var(--bg-2, #f5f5f5); border-radius: 4px; }
 .aufstelloptionen-liste { list-style: none; margin: 6px 0 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .aufstelloption-zeile { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-xs); }
 .aufstelloption-label { flex: 1; }
 .aufstelloption-meta { display: flex; align-items: center; gap: 4px; }
-.aufstelloption-kosten { font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-2, #666); }
-.korridor-range { display: flex; align-items: baseline; gap: 6px; font-family: var(--mono); font-weight: 600; font-size: var(--fs-sm); margin: 4px 0; }
-.korridor-bis { color: var(--text-2, #888); font-size: var(--fs-xs); }
+.aufstelloption-kosten { font-family: var(--mono); font-size: var(--fs-2xs); color: var(--muted); }
 .risiko-liste { list-style: none; margin: 6px 0 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .risiko-flag { display: flex; align-items: flex-start; gap: 6px; font-size: var(--fs-xs); }
 .risiko-flag span { flex: 1; line-height: 1.4; }
@@ -558,6 +555,18 @@ details summary:hover { color: var(--akzent); }
 .admin-stack { display: grid; gap: 14px; }
 .admin-grid { align-items: start; }
 .admin-list { display: grid; gap: var(--sp-3); }
+/* Demo-Polish: einklappbare Admin-Sektionen (Fragen/Katalog) für scanbare Pflegefläche */
+.admin-akkordeon > summary {
+  display: flex; align-items: baseline; gap: var(--sp-3);
+  cursor: pointer; list-style: none;
+}
+.admin-akkordeon > summary::-webkit-details-marker { display: none; }
+.admin-akkordeon > summary::after { content: '▸'; margin-left: auto; color: var(--muted); font-size: var(--fs-xs); }
+.admin-akkordeon[open] > summary::after { content: '▾'; }
+.admin-akkordeon > summary strong { font-size: var(--fs-base); }
+.admin-akkordeon > summary span { color: var(--muted); font-size: var(--fs-xs); }
+.admin-akkordeon > summary:hover strong { color: var(--akzent); }
+.admin-akkordeon[open] > summary { margin-bottom: 10px; }
 .admin-edit-card {
   border: 1px solid var(--zeile);
   border-radius: var(--radius-klein);
@@ -664,8 +673,8 @@ details summary:hover { color: var(--akzent); }
 /* Angebotsvarianten & Gesprächsergebnis */
 .angebot-aktionsbar {
   padding: 12px 20px;
-  background: var(--bg-2, #f5f5f5);
-  border-bottom: 1px solid var(--rand, #ddd);
+  background: var(--hover-flaeche);
+  border-bottom: 1px solid var(--rand);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -682,13 +691,13 @@ details summary:hover { color: var(--akzent); }
   max-width: 340px;
   font-size: var(--fs-sm);
   padding: 5px 8px;
-  border: 1px solid var(--rand, #ccc);
-  border-radius: 4px;
+  border: 1px solid var(--rand);
+  border-radius: var(--radius-klein);
   background: #fff;
 }
-.btn-erfolg { background: var(--gruen, #2a7a2a) !important; color: #fff !important; }
+.btn-erfolg { background: var(--st-gruen) !important; color: #fff !important; }
 .angebot-varianten { padding-top: 4px; }
-.varianten-label { font-size: var(--fs-xs); color: var(--text-2, #555); }
+.varianten-label { font-size: var(--fs-xs); color: var(--muted); }
 .varianten-liste {
   list-style: none;
   margin: 6px 0 0 0;
@@ -704,15 +713,14 @@ details summary:hover { color: var(--akzent); }
   align-items: center;
   gap: 10px;
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-klein);
   background: #fff;
-  border: 1px solid var(--rand, #ddd);
+  border: 1px solid var(--rand);
   font-size: var(--fs-xs);
 }
-.variante-zeile.aktiv { border-color: var(--akzent, #0057b8); background: #edf3ff; }
+.variante-zeile.aktiv { border-color: var(--akzent); background: var(--akzent-wahl-flaeche); }
 .variante-name { flex: 1; font-weight: 500; }
-.variante-datum { color: var(--text-2, #888); white-space: nowrap; }
-.variante-mehr { font-size: var(--fs-2xs); color: var(--text-2, #888); padding: 2px 8px; }
+.variante-datum { color: var(--muted); white-space: nowrap; }
 
 .gespraech-karte { margin-top: 24px; }
 .gespraech-felder {
@@ -731,12 +739,27 @@ details summary:hover { color: var(--akzent); }
 .gespraech-feld select { font-size: var(--fs-sm); padding: 5px 8px; min-width: 220px; }
 .gespraech-feld-kommentar { flex: 1; min-width: 240px; }
 .gespraech-feld textarea { font-size: var(--fs-sm); padding: 6px 8px; resize: vertical; }
-.zeichen-zaehler { font-size: var(--fs-2xs); color: var(--text-2, #888); align-self: flex-end; }
+.zeichen-zaehler { font-size: var(--fs-2xs); color: var(--muted); align-self: flex-end; }
 
-/* SK-95: Angebots-Snapshot Sidebar */
+/* SK-95: Angebots-Snapshot Sidebar (Demo-Polish: Money-Shot-Preise zuoberst) */
+.snapshot-preise { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 8px 0 10px; }
+.snapshot-preis {
+  border: 1px solid var(--rand); border-radius: var(--radius-klein);
+  background: var(--akzent-hell); padding: 8px 10px;
+  display: grid; gap: 2px; min-width: 0;
+}
+.snapshot-preis > span { color: var(--muted); font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: 0.06em; }
+.snapshot-preis strong {
+  font-family: var(--mono); font-size: var(--fs-lg); font-weight: 600;
+  line-height: var(--lh-eng); color: var(--akzent-tief); font-variant-numeric: tabular-nums;
+}
+.snapshot-preis strong em { font-style: normal; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: var(--fs-2xs); color: var(--muted); }
+.snapshot-preis small { color: var(--muted); font-size: var(--fs-2xs); }
 .snapshot-komponenten { margin-top: 8px; border-top: 1px solid var(--zeile); padding-top: 8px; }
-.snapshot-komponenten-liste { list-style: none; margin: 8px 0 0; padding: 0; font-size: var(--fs-xs); color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
-.snapshot-komponenten-liste li::before { content: "· "; }
+.snapshot-komponenten-liste { list-style: none; margin: 8px 0 0; padding: 0; font-size: var(--fs-xs); display: flex; flex-direction: column; gap: 3px; }
+.snapshot-komponenten-liste li::before { content: "· "; color: var(--muted); }
+.snapshot-komponenten-liste small { color: var(--muted); }
+.kunden-preview > .primaer { width: 100%; margin: 12px 0 4px; }
 
 /* SK-100: Angebot als Dokument */
 .angebot-dok-kopf {
