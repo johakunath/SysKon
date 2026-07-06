@@ -12,25 +12,20 @@ Token-Regel: Erledigte Work Packages und erledigte Child-Tickets stehen nicht da
 
 ---
 
-## SK-95 – Angebots-Snapshot in Konfiguration-Sidebar
+## SK-101 – Sidebar-/Ergebnis-Konsolidierung, Vertragstyp & Vendor-Namen-Bereinigung
 
-Ziel: Die rechte Sidebar der Konfiguration-Hauptseite wird zum vollständigen
-Angebots-Snapshot, der sich live mit jeder Eingabe aktualisiert. GP/AP + CapEx +
-Förderung + Komponentenliste – kundenseitig sichtbar. Das ist der zentrale
-„Wow-Moment" der Demo. Kontext: GP/AP-Engine fertig (WP8/SK-70); Sidebar zeigt
-bereits Korridor (SK-60), aber nicht Contracting-Preise oder Förderung.
-
-Schutzplanke (SK-88): Die Sidebar wurde bewusst verschlankt. SK-95 muss die
-neuen Daten kompakt und scanbar integrieren – keine Wall-of-Data, keine
-doppelten Angaben zu bereits gezeigten Informationen.
+Ziel: Nach Live-Annotationen die Konfiguration-Sidebar von Redundanzen befreien
+und den Ergebnis-Screen in Informationen (links) vs. Aktionen (rechte
+Sticky-Sidebar) strukturieren. Zusätzlich eine echte Vertragstyp-Weiche
+(AVB-Fernwärme vs. Individualvertrag) einführen und einen real existierenden
+Vendor-Namen, der versehentlich als Platzhalter im Code/den Docs gelandet
+war, vollständig entfernen (siehe CLAUDE.md-Hard-Rule).
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|
-| SK-95 | Epic | Sidebar | Angebots-Snapshot Sidebar | GP + AP live in Sidebar + Ergebnis-Kundensicht. Förderart (Typ, z.B. BEG EM) kundenseitig sichtbar; Förderbetrag und CapEx bleiben intern. Komponentenliste (Namen, keine Preise) in Kundensicht; Komponentenkosten per Gruppe in Internsicht. Ersetzt den alten intern-only Richtpreis-Korridor-Block. | GP/AP live in Sidebar; Förderart kundenseitig sichtbar (kein Betrag); Komponentennamen in Kundensicht ohne €; Internsicht zeigt zusätzlich CapEx netto + Förderbetrag + Komponentenkosten; Sidebar bleibt scanbar. | P1 | M | Done |
+| SK-101 | Epic | Konfiguration/Ergebnis | Sidebar-Konsolidierung, Ergebnis-Layout-Split, Vertragstyp-Frage | Konfiguration-Sidebar: Snapshot-Redundanzen, Tooltips und doppelte Status-/Datenqualität-/Gesprächsrisiken-Blöcke zu einem "Offene Punkte"-Block konsolidiert; Lösungs-Vorschau/Aufstelloptionen/Leistungen visuell gruppiert; breitere/größere Sidebar. Ergebnis-Screen in `.ergebnis-layout` (Info links, Aktionen rechts sticky) restrukturiert; LV in "Leistungsverzeichnis" umbenannt (Zeilen default offen, globaler Toggle, Kunden-/Interninfo je Position zusammengeführt). Admin-Navigation vereinfacht (Gear-Button navigiert direkt). Neue Frage `vertragstyp` (AVB-Fernwärme/Individualvertrag): AVB bindet Laufzeit fest auf `AVB_LAUFZEIT_JAHRE` (10, nicht admin-editierbar) und nutzt die §24-Preisgleitformel; Individualvertrag erlaubt freie Laufzeit/Preisanpassung. "MVP"-Jargon und der reale Vendor-Name aus der CLAUDE.md-Hard-Rule vollständig aus Code/Tests/Docs entfernt. Codex-Review-Findings zu Rechtssicherheits-Wording und stale-Admin-Config adressiert. | 129 Tests grün; kein "MVP" oder der in CLAUDE.md genannte Vendor-Name mehr in `src/`/Docs; AVB-Laufzeit bleibt 10 Jahre unabhängig von persistierter Admin-Config; Ergebnis-Sidebar bleibt beim Scrollen sichtbar (sticky); Print-Layout kollabiert weiterhin auf eine Spalte. | P1 | L | Done |
 
 ---
-
-
 
 ## WP10 – Bestehende Tools & Learnings prüfen (SK-72, Blocked)
 
