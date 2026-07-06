@@ -94,7 +94,7 @@ export const ANNAHMEN = {
 
   // Contracting & Pricing (Demo, WP8/SK-70). Roadmap Stufe 3:
   // Marge NUR auf Arbeitspreis, keine Marge auf CAPEX/Grundpreis.
-  vertragslaufzeit_default: 15, // Jahre (10/15/20 wählbar)
+  vertragslaufzeit_default: 10, // Jahre (10/15/20 wählbar), 10 = AVB-konform
   kapitalkostensatz: 0.06,      // Zinssatz der Grundpreis-Annuität (keine Marge)
   ap_marge: 0.15,               // Marge auf den Arbeitspreis
   ziel_irr: 0.13,               // Ziel-IRR (Demo)
@@ -111,7 +111,12 @@ export const ANNAHMEN = {
 
 // Förderart-Label für Kundensicht (Demo). Kein numerischer ANNAHMEN-Wert,
 // daher eigener Export (nicht über Admin editierbar).
-export const FOERDERUNG_ART_LABEL = 'BEG EM'
+export const FOERDERUNG_ART_LABEL = 'Bundesförderung für effiziente Gebäude – Einzelmaßnahmen (BEG EM)'
+
+// Feste AVB-Fernwärme-Laufzeit (Demo). Bewusst kein ANNAHMEN-Feld: Admin darf
+// vertragslaufzeit_default (Individualvertrag-Fallback) ändern, ohne dass ein
+// zuvor lokal gespeicherter Admin-Stand die AVB-Bindung auf 10 Jahre aufweicht.
+export const AVB_LAUFZEIT_JAHRE = 10
 
 // SK-77: WP-Produktstamm Demo-Referenz (nicht editierbar).
 // Buderus/Dreammaker ist der aktuelle Referenzstand; Alternativhersteller sind nach
@@ -140,7 +145,7 @@ export const WP_PRODUKT_REFERENZ = {
 // und messkonzept_basis (Pflicht-Infrastruktur für WP-Sondertarif-Abrechnung).
 export const STROMBESCHAFFUNG_MODELL = {
   modell: 'wp_sondertarif',
-  beschreibung: 'Techem beschafft WP-Strom im WP-Sondertarif (HTT/NTT); getrennte Zählung via Messkonzept Basis.',
+  beschreibung: 'Der Contractor beschafft WP-Strom im WP-Sondertarif (HTT/NTT); getrennte Zählung via Messkonzept Basis.',
   strompreis_annahme: 'strompreis_wp',           // 240 €/MWh Demo
   preisgleitformel_anteil: 'pg_strom',           // 27 % Stromkostenanteil in Preisgleitformel
   foerderung: 'keine_direkte',                   // Strombeschaffung kein BEG-Gegenstand

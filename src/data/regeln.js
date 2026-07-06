@@ -44,9 +44,9 @@ export const REGELN = [
     wenn: { feld: 'anzahl_heizkreise', op: '>', wert: 2 },
     dann: [
       { typ: 'status', wert: 'rot' },
-      { typ: 'warn', kategorie: 'hinweis', text: 'Mehr als zwei Raumheizkreise: MVP-Standardpaket unterstützt max. zwei Raumheizkreise (zzgl. TWW-Kreis) – als hydraulischen Sonderfall intern bewerten und Scope separat klären.' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Mehr als zwei Raumheizkreise: Das Standardpaket unterstützt max. zwei Raumheizkreise (zzgl. TWW-Kreis) – als hydraulischen Sonderfall intern bewerten und Scope separat klären.' },
     ],
-    begruendung: 'MVP unterstützt maximal zwei Raumheizkreise (exkl. TWW-Kreis) – technischer Sonderfall.',
+    begruendung: 'Das Standardpaket unterstützt maximal zwei Raumheizkreise (exkl. TWW-Kreis) – technischer Sonderfall.',
   },
   {
     id: 'R05',
@@ -161,18 +161,18 @@ export const REGELN = [
     wenn: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'nein' },
     dann: [
       { typ: 'status', wert: 'rot' },
-      { typ: 'warn', kategorie: 'hinweis', text: 'Keine Außenfläche verfügbar: MVP-Systempaket setzt Außenaufstellung der Wärmepumpe voraus – kein Standardfit; Alternativpfad prüfen oder Sonderfall markieren.' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Keine Außenfläche verfügbar: Das Systempaket setzt Außenaufstellung der Wärmepumpe voraus – kein Standardfit; Alternativpfad prüfen oder Sonderfall markieren.' },
     ],
-    begruendung: 'MVP setzt Außenaufstellung voraus – ohne Außenfläche keine Standardlösung.',
+    begruendung: 'Das Systempaket setzt Außenaufstellung voraus – ohne Außenfläche keine Standardlösung.',
   },
   {
     id: 'R17',
     wenn: { feld: 'technologiepfad', op: '!=', wert: 'hybrid' },
     dann: [
       { typ: 'status', wert: 'rot' },
-      { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad außerhalb MVP: Nur der Hybrid-Pfad (Luft-Wasser-WP + Gas-Bestandskessel) ist aktuell standardfähig – als Sonderfall intern bewerten oder Roadmap-Termin nennen.' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad außerhalb des Standards: Nur der Hybrid-Pfad (Luft-Wasser-WP + Gas-Bestandskessel) ist aktuell standardfähig – als Sonderfall intern bewerten oder Roadmap-Termin nennen.' },
     ],
-    begruendung: 'Technologiepfad außerhalb MVP v0.1 (monoenergetisch ist Roadmap-Platzhalter).',
+    begruendung: 'Technologiepfad außerhalb des aktuellen Standards (monoenergetisch ist Roadmap-Platzhalter).',
   },
   {
     id: 'R18',
@@ -185,9 +185,9 @@ export const REGELN = [
     wenn: { feld: 'anzahl_gebaeude', op: '>', wert: 1 },
     dann: [
       { typ: 'status', wert: 'rot' },
-      { typ: 'warn', kategorie: 'hinweis', text: 'Versorgung mehrerer Gebäude ist im MVP kein Standardfit – als Sonderfall intern bewerten und Scope separat klären.' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Versorgung mehrerer Gebäude ist kein Standardfit – als Sonderfall intern bewerten und Scope separat klären.' },
     ],
-    begruendung: 'MVP-Systempaket versorgt genau ein Gebäude; Mehr-Gebäude-Versorgung ist technischer Sonderfall (Robert: Hard Blocker).',
+    begruendung: 'Das Systempaket versorgt genau ein Gebäude; Mehr-Gebäude-Versorgung ist technischer Sonderfall (Robert: Hard Blocker).',
   },
   {
     id: 'R20',

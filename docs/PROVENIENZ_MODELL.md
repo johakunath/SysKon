@@ -10,8 +10,8 @@ Codeumsetzung: `src/data/provenienz.js` exportiert `QUELLENTYPEN` und `FELD_PROV
 
 | ID | Label | Skalierbar | Beschreibung |
 |---|---|---|---|
-| `tes_abrechnung` | TES-Abrechnung | ja | Verbrauchs- und Abrechnungsdaten aus bestehenden Techem-Heizkostenerfassungsverträgen. Stärkste schnell verfügbare Datenquelle. |
-| `asset_manager` | Asset Manager | ja | Stamm- und Betriebsdaten aus dem Techem Asset Manager. Zielquelle für skalierbare automatisierte Befüllung. |
+| `tes_abrechnung` | TES-Abrechnung | ja | Verbrauchs- und Abrechnungsdaten aus bestehenden Heizkostenerfassungsverträgen mit einem Messdienstleister. Stärkste schnell verfügbare Datenquelle. |
+| `asset_manager` | Asset Manager | ja | Stamm- und Betriebsdaten aus dem Asset-Management-System des Messdienstleisters. Zielquelle für skalierbare automatisierte Befüllung. |
 | `stammdaten` | Stammdaten / CRM | ja | Strukturierte Daten aus CRM, Liegenschaftsdatenbank oder Vertragsstamm. Pflege variiert. |
 | `kunde_manuell` | Kundenangabe (manuell) | nein | Vom Kunden im Gespräch genannte Information ohne externen Beleg. Verlässlichkeit stark variierend. |
 | `sales_manuell` | Sales-Einschätzung (manuell) | nein | Von Sales eingeschätzte oder ausgewählte Information. Kein externer Beleg. |

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { berechne } from '../src/logic/engine.js'
-import { ANNAHMEN } from '../src/data/annahmen.js'
+import { ANNAHMEN, AVB_LAUFZEIT_JAHRE } from '../src/data/annahmen.js'
 import {
   annuitaetenfaktor, contractingPreise, irr, kapitalwert,
   loeseApMargeFuerIrr, preisgleitformelBauen, preisgleitWert, EFFIZIENZRISIKO_TEXT,
@@ -80,18 +80,28 @@ describe('Pricing / Contracting (WP8)', () => {
     expect(preisgleitWert(f, { lohn: 110, strom: 120, gas: 115, invest: 105 })).toBeGreaterThan(1)
   })
 
-  it('Effizienzrisiko ist parameterisiert (Default Techem)', () => {
+  it('Effizienzrisiko ist parameterisiert (Default Contractor)', () => {
     const def = berechne(referenz).kundenScope.contracting.vertragsparameter.effizienzrisiko
-    expect(def).toBe(EFFIZIENZRISIKO_TEXT.techem)
+    expect(def).toBe(EFFIZIENZRISIKO_TEXT.contractor)
     const kunde = berechne({ ...referenz, effizienzrisiko: 'kunde' }).kundenScope.contracting.vertragsparameter.effizienzrisiko
     expect(kunde).toBe(EFFIZIENZRISIKO_TEXT.kunde)
   })
 
-  it('längere Laufzeit senkt den Grundpreis; leere Laufzeit fällt auf Default', () => {
-    const kurz = berechne({ ...referenz, vertragslaufzeit: '10' }).pricing.grundpreisPa
-    const lang = berechne({ ...referenz, vertragslaufzeit: '20' }).pricing.grundpreisPa
+  it('längere Laufzeit senkt den Grundpreis (nur Individualvertrag); leere Laufzeit fällt auf Default', () => {
+    const kurz = berechne({ ...referenz, vertragstyp: 'individual', vertragslaufzeit: '10' }).pricing.grundpreisPa
+    const lang = berechne({ ...referenz, vertragstyp: 'individual', vertragslaufzeit: '20' }).pricing.grundpreisPa
     expect(lang).toBeLessThan(kurz)
-    expect(berechne(referenz).pricing.laufzeit).toBe(ANNAHMEN.vertragslaufzeit_default)
+    expect(berechne({ ...referenz, vertragstyp: 'individual' }).pricing.laufzeit).toBe(ANNAHMEN.vertragslaufzeit_default)
+  })
+
+  it('AVB-Fernwärme bindet die Laufzeit fest auf AVB_LAUFZEIT_JAHRE, unabhängig von vertragslaufzeit und Admin-Annahmen', () => {
+    const avb10 = berechne({ ...referenz, vertragslaufzeit: '10' }).pricing.laufzeit
+    const avb20 = berechne({ ...referenz, vertragslaufzeit: '20' }).pricing.laufzeit
+    expect(avb10).toBe(AVB_LAUFZEIT_JAHRE)
+    expect(avb20).toBe(AVB_LAUFZEIT_JAHRE)
+    // Auch mit abweichendem (z. B. veraltet persistiertem) Admin-Default bleibt AVB fest auf 10.
+    const avbMitAbweichendemDefault = berechne(referenz, { annahmen: { ...ANNAHMEN, vertragslaufzeit_default: 15 } }).pricing.laufzeit
+    expect(avbMitAbweichendemDefault).toBe(AVB_LAUFZEIT_JAHRE)
   })
 
   it('Kundensicht trägt KEINE Commercial-Interna (Boundary-Guard)', () => {

@@ -85,9 +85,14 @@ Editierbar auf der Annahmen-Seite (`ANNAHMEN_META`, Gruppe „Contracting & Pric
   `pg_basisjahr` (2026).
 
 Pro Angebot wählbar (Sektion K, **`dq:0`** = DQ-neutral, in `src/data/fragen.js`):
-- `vertragslaufzeit` (10/15/20 Jahre; leer → `vertragslaufzeit_default`).
-- `effizienzrisiko` (`techem`/`geteilt`/`kunde`; leer → `techem`). Mapping auf kundensichere Texte in
-  `EFFIZIENZRISIKO_TEXT` (`src/logic/pricing.js`).
+- `vertragstyp` (`avb`/`individual`; leer → `avb`). AVB-Fernwärme bindet die Laufzeit fest auf
+  `vertragslaufzeit_default` und nutzt die §24-Preisgleitformel; ein AVB-Angebot muss immer verfügbar
+  sein. Individualvertrag erlaubt andere Laufzeiten und eine frei ausgehandelte Preisanpassung
+  (kein `preisgleitformel`-Objekt) – muss mit dem Kunden verhandelt werden.
+- `vertragslaufzeit` (10/15/20 Jahre; nur bei `vertragstyp: 'individual'` wirksam, sonst fest auf
+  `vertragslaufzeit_default`; leer → `vertragslaufzeit_default`).
+- `effizienzrisiko` (`contractor`/`geteilt`/`kunde`; leer → `contractor`). Mapping auf kundensichere Texte
+  in `EFFIZIENZRISIKO_TEXT` (`src/logic/pricing.js`).
 
 ## 6. Stand & verbleibendes Deferred
 
@@ -97,14 +102,14 @@ Umgesetzt (Folge-PR zu WP8):
   `gedeckelt`-Flag statt der früheren nicht-iterativen Indikation.
 - **Preisgleitformel (AVBFernwärme §24-Struktur):** Festanteil + gewichtete amtliche Indizes mit
   Evaluator `preisgleitWert()`; Indexreferenzen (Destatis) benannt.
-- **Effizienzrisiko-Allokation:** parameterisiert (Frage `effizienzrisiko`, Default Techem).
+- **Effizienzrisiko-Allokation:** parameterisiert (Frage `effizienzrisiko`, Default Contractor).
 
 Verbleibend offen:
 - **Reale Index-Zeitreihen:** `preisgleitWert()` ist evaluierbar, aber die Indexstände sind noch
   Platzhalter (Basisjahr ⇒ Faktor 1). Anbindung echter Reihen (Lohn, Strom, Gas, Inflation) offen.
 - **Finale AVBFernwärme-/Rechtsfreigabe:** Struktur ist §24-orientiert, ersetzt aber keine juristische
   Prüfung; keine finale Vertragsgenerierung.
-- **Effizienzrisiko-Default:** „Techem trägt das Risiko" im Review bestätigen; ein numerischer Effekt
+- **Effizienzrisiko-Default:** „Contractor trägt das Risiko" im Review bestätigen; ein numerischer Effekt
   (z. B. JAZ-Risikoaufschlag) ist bewusst noch nicht modelliert.
 - **Renditemodell-Bewertung:** Da nur der AP Marge trägt, kann die nötige Marge bei kleiner
   Energiemenge hoch werden – vom PO zu bewerten, ob GP/Annahmen anzupassen sind.

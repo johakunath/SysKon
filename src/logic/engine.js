@@ -44,12 +44,12 @@ export const STATUS_KORRIDOR = {
     aktion: 'Fachprüfung einplanen und keine belastbare Richtindikation nach außen verwenden.',
   },
   rot: {
-    titel: 'Kein Standardfit im MVP',
-    bedeutung: 'Der aktuelle MVP-Standardpfad passt nicht; das ist noch kein Umsetzungsurteil.',
+    titel: 'Kein Standardfit',
+    bedeutung: 'Der aktuelle Standardpfad passt nicht; das ist noch kein Umsetzungsurteil.',
     aktion: 'Sonderfall markieren, Alternativpfad prüfen oder den Fall zurückstellen.',
   },
   unbekannt: {
-    titel: 'Noch kein Gesprächskorridor',
+    titel: 'Noch nicht einordenbar',
     bedeutung: 'Es fehlen Pflichtdaten, bevor die Demo sinnvoll eingeordnet werden kann.',
     aktion: 'Konfiguration vervollständigen und anschließend erneut einordnen.',
   },
@@ -177,7 +177,7 @@ function kundenLeistungsumfang(pos, annahmen) {
 
 function kundenWarntext(warnung) {
   if (warnung.kategorie === 'foerderung') return 'Interne Förderprüfung klären, bevor Aussagen nach außen genutzt werden.'
-  if (warnung.status === 'rot') return 'Aktueller MVP-Standardfit passt nicht; Alternativpfad oder Sonderfall prüfen.'
+  if (warnung.status === 'rot') return 'Aktueller Standardfit passt nicht; Alternativpfad oder Sonderfall prüfen.'
   if (warnung.status === 'orange') return 'Fachprüfung einplanen, bevor der Umfang belastbar genutzt wird.'
   return warnung.text
 }
@@ -205,7 +205,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
 
   const annahmenTexte = [
     'Vorläufiger Kundenumfang mit Richtpreisen für das Sales-Gespräch.',
-    `Technologiepfad: ${eingaben.technologiepfad === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen MVP-Standards'}.`,
+    `Technologiepfad: ${eingaben.technologiepfad === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen Standards'}.`,
     derived.aufstellung_begruendung,
     `Datenlage: ${annahmen.dq_schwelle}%-Schwelle intern, aktuell ${derived.heizlast_geschaetzt ? 'mit Heizlast-Annahme' : 'mit angegebener Heizlast'}.`,
   ].filter(Boolean)
@@ -217,7 +217,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
       text: `${v}: aktuell nicht tragfähig im Demo-Korridor.`,
     })),
     ...(eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
-      ? [{ titel: 'Technologiepfad außerhalb MVP', text: 'Der gewählte Pfad ist noch nicht als Standardumfang abbildbar.' }]
+      ? [{ titel: 'Technologiepfad außerhalb des Standards', text: 'Der gewählte Pfad ist noch nicht als Standardumfang abbildbar.' }]
       : []),
   ]
 

@@ -123,7 +123,7 @@ export const PRESETS = [
   {
     id: 'tf4',
     name: 'Testfall 4: Ausschluss Hydraulik (42 WE)',
-    beschreibung: '3.200 m², vier Heizkreise, WW zentral, Kessel vorhanden, Außenfläche gut – nicht standardfähig im MVP.',
+    beschreibung: '3.200 m², vier Heizkreise, WW zentral, Kessel vorhanden, Außenfläche gut – nicht standardfähig.',
     eingaben: {
       gebaeudetyp: 'freistehend', wohneinheiten: 42, flaeche: 3200,
       baujahrklasse: '1960-1979', sanierungsstand: 'teilsaniert',
@@ -146,7 +146,7 @@ export const PRESETS = [
     },
     erwartung: {
       status: 'rot',
-      hinweis: 'Mehr als zwei Heizkreise: nicht standardfähig im MVP (R04), technischer Sonderfall.',
+      hinweis: 'Mehr als zwei Heizkreise: nicht standardfähig (R04), technischer Sonderfall.',
     },
   },
 ]

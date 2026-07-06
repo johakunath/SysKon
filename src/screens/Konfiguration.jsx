@@ -5,7 +5,6 @@ import { FOERDERUNG_ART_LABEL } from '../data/annahmen.js'
 import { pruefeBedingung } from '../logic/engine.js'
 import { num, euro, VARIANTEN_NAME, korridorTitel, kundenPreviewText } from './format.js'
 import Ampel from '../components/Ampel.jsx'
-import ScopeListe from '../components/ScopeListe.jsx'
 
 const TECHNOLOGIEPFAD_PREVIEW = {
   hybrid: 'Hybrid',
@@ -53,6 +52,21 @@ function kuerzen(text, max) {
 function formatMenge(menge, einheit) {
   const wert = typeof menge === 'number' ? num(menge) : menge
   return [wert, einheit].filter(Boolean).join(' ')
+}
+
+// Ein Punkt statt zwei getrennter, teils redundanter Listen (Gesprächsrisiken +
+// Offene Punkte). Warnungen tragen die konkrete, kundensicher entschärfte
+// Formulierung; fehlende Kundendaten haben keinen Status und landen daher
+// hinter den Warnungen (stabile Sortierung).
+const KRITIKALITAET_RANG = { rot: 0, orange: 1, gelb: 2 }
+function kombiniereOffenePunkte(ergebnis, scope) {
+  const risiken = ergebnis.warnungen.map(w => ({ text: kundenPreviewText(w.text), status: w.status }))
+  const offeneDaten = scope.offenePunkte
+    .filter(p => p.titel === 'Offene Kundendaten')
+    .map(p => ({ text: kundenPreviewText(p.text), status: null }))
+  return [...risiken, ...offeneDaten].sort(
+    (a, b) => (KRITIKALITAET_RANG[a.status] ?? 3) - (KRITIKALITAET_RANG[b.status] ?? 3)
+  )
 }
 
 // On-demand-Tiefenhilfe (Review B2): macht das autorisierte, bisher nur im Admin
@@ -148,51 +162,66 @@ function Frage({ frage, wert, onChange, gesperrt, zeigeHilfe }) {
   )
 }
 
-function UmfangsVorschau({ scope }) {
+function UmfangsVorschau({ scope, lvPositionen, lv, istIntern }) {
   const positionen = scope.gruppen.flatMap(gruppe => gruppe.positionen.map(pos => ({ ...pos, gruppe: gruppe.name })))
+  const preisJeId = new Map((lvPositionen ?? []).filter(p => p.betrag > 0).map(p => [p.id, p.betrag]))
   return (
     <div className="preview-block">
       <h4>Leistungen</h4>
       <ul className="preview-positionen">
-        {positionen.slice(0, 5).map(pos => (
-          <li key={`${pos.gruppe}-${pos.id}`}>
-            <span>
-              <strong>{pos.titel}</strong>
-              <small>{pos.produkt} · {pos.leistungsklasse}</small>
-            </span>
-            <em>{formatMenge(pos.menge, pos.einheit)}</em>
-          </li>
-        ))}
-        {positionen.length > 5 ? <li className="preview-mehr">+{positionen.length - 5} weitere Leistungen <em>im Angebot</em></li> : null}
+        {positionen.map(pos => {
+          const preis = istIntern ? preisJeId.get(pos.id) : null
+          return (
+            <li key={`${pos.gruppe}-${pos.id}`}>
+              <span>
+                <strong>{pos.titel}</strong>
+                <small>
+                  {pos.produkt}
+                  {pos.leistungsklasse && pos.leistungsklasse !== 'projektbezogener Leistungsumfang' ? ` · ${pos.leistungsklasse}` : ''}
+                </small>
+              </span>
+              {preis ? <em>{euro(preis)}</em> : pos.menge > 1 ? <em>{formatMenge(pos.menge, pos.einheit)}</em> : null}
+            </li>
+          )
+        })}
       </ul>
+      {istIntern && lv?.netto > 0 && (
+        <div className="mini-fakten leistungen-summe">
+          <div><span>CapEx (netto)</span><strong>{euro(lv.netto)}</strong></div>
+          {lv.foerderung > 0 && (
+            <div><span>Förderbetrag</span><strong>−{euro(lv.foerderung)}</strong></div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
 
-function PreviewScope({ titel, eintraege, max }) {
-  if (!eintraege.length) return null
-  return (
-    <div className="preview-block">
-      <h4>{titel}</h4>
-      <ScopeListe eintraege={eintraege} preview max={max} listenklasse="preview-scope" strongTitel={false} />
-    </div>
-  )
-}
 
 function AufstelloptionenPreview({ viable, schallJeVariante, istIntern }) {
   if (!viable || viable.length === 0) return null
+  const guenstigsteKosten = istIntern ? Math.min(...viable.map(v => v.kosten ?? Infinity)) : null
   return (
     <div className="preview-block">
       <h4>Aufstelloptionen</h4>
       <ul className="aufstelloptionen-liste">
         {viable.slice(0, 4).map(v => {
           const schall = schallJeVariante?.[v.variante]
+          const istGuenstigste = istIntern && v.kosten === guenstigsteKosten
           return (
             <li key={v.variante} className="aufstelloption-zeile">
               <span className="aufstelloption-label">{v.label}</span>
               <span className="aufstelloption-meta">
-                {istIntern && v.kosten > 0 ? <span className="aufstelloption-kosten">+{euro(v.kosten)}</span> : null}
-                {schall ? <Ampel status={schall.ampel} groesse="klein" /> : null}
+                {istIntern && v.kosten > 0 ? (
+                  <span className={`aufstelloption-kosten${istGuenstigste ? ' guenstigste' : ''}`}>
+                    +{euro(v.kosten)}
+                  </span>
+                ) : null}
+                {schall ? (
+                  <span className="aufstelloption-schall" title="Schall-Einordnung">
+                    <Ampel status={schall.ampel} groesse="klein" />
+                  </span>
+                ) : null}
               </span>
             </li>
           )
@@ -204,43 +233,15 @@ function AufstelloptionenPreview({ viable, schallJeVariante, istIntern }) {
 
 // Money Shot der Demo (DEMO_BRIEF): Contracting-Preis, Komponenten und Förderung
 // live und zuoberst. AP in €/MWh (PO-Entscheidung: €/MWh statt ct/kWh beibehalten).
-function AngebotSnapshot({ ergebnis, sichtModus }) {
+function AngebotSnapshot({ ergebnis }) {
   const lv = ergebnis.lv
   const pricing = ergebnis.pricing
-  const istIntern = sichtModus === 'intern'
   if (!lv?.netto) return null
 
   const foerderart = FOERDERUNG_ART_LABEL
 
-  const capexPos = lv.positionen.filter(p => p.tag === 'capex' && p.betrag > 0)
-  // Größenangabe nur, wenn sie informativ ist (enthält Zahlen, z. B. „4 × 20 kW");
-  // generische Fallback-Texte („projektbezogener Leistungsumfang") bleiben weg.
-  // DEMO_BRIEF nennt WP, SmartControl, Hydraulikpaket und Monitoring explizit als
-  // Snapshot-Komponenten – diese Gruppen vor dem Kappen priorisieren, damit die
-  // Katalogreihenfolge sie nicht aus der Live-Sidebar verdrängt (Codex-Review PR #31).
-  const SNAPSHOT_PRIO = ['Wärmepumpenpaket', 'Steuerung & Monitoring', 'Hydraulik', 'Monitoring']
-  const rang = (gruppe) => {
-    const idx = SNAPSHOT_PRIO.indexOf(gruppe)
-    return idx === -1 ? SNAPSHOT_PRIO.length : idx
-  }
-  const komponenten = (ergebnis.kundenScope?.gruppen ?? [])
-    .flatMap(g => g.positionen.map(p => ({
-      titel: p.titel,
-      groesse: /\d/.test(p.leistungsklasse ?? '') ? p.leistungsklasse : null,
-      rang: rang(g.name),
-    })))
-    .sort((a, b) => a.rang - b.rang) // stabil: Rest behält Katalogreihenfolge
-    .slice(0, 6)
-  const capexGruppen = Object.entries(
-    capexPos.reduce((acc, p) => {
-      acc[p.gruppe] = (acc[p.gruppe] || 0) + p.betrag
-      return acc
-    }, {})
-  )
-
   return (
     <div className="preview-block snapshot-block">
-      <h4>Angebots-Snapshot <span className="hinweis-inline">(Demo)</span></h4>
       <div className="snapshot-preise">
         {pricing?.grundpreisPa > 0 && (
           <div className="snapshot-preis">
@@ -261,51 +262,36 @@ function AngebotSnapshot({ ergebnis, sichtModus }) {
         {lv.foerderung > 0 && (
           <div><span>Förderung</span><strong>{foerderart}</strong></div>
         )}
-        {istIntern && lv.netto > 0 && (
-          <div><span>CapEx (netto)</span><strong>{euro(lv.netto)}</strong></div>
-        )}
-        {istIntern && lv.foerderung > 0 && (
-          <div><span>Förderbetrag</span><strong>−{euro(lv.foerderung)}</strong></div>
-        )}
       </div>
-      {lv.foerderung > 0 && (
-        <p className="hinweis">Indikativ, kein Rechtsanspruch.</p>
-      )}
-      {istIntern ? (
-        capexGruppen.length > 0 && (
-          <div className="mini-fakten snapshot-komponenten">
-            {capexGruppen.map(([gruppe, betrag]) => (
-              <div key={gruppe}><span>{gruppe}</span><strong>{euro(betrag)}</strong></div>
-            ))}
-          </div>
-        )
-      ) : (
-        komponenten.length > 0 && (
-          <ul className="snapshot-komponenten-liste">
-            {komponenten.map(k => (
-              <li key={k.titel}>{k.titel}{k.groesse ? <small> · {k.groesse}</small> : null}</li>
-            ))}
-          </ul>
-        )
-      )}
     </div>
   )
 }
 
-function RisikoFlags({ warnungen }) {
-  const flags = warnungen.filter(w => w.status === 'rot' || w.status === 'orange').slice(0, 3)
-  if (flags.length === 0) return null
+function StatusUndOffenePunkte({ ergebnis, punkte }) {
   return (
-    <div className="preview-block">
-      <h4>Gesprächsrisiken</h4>
-      <ul className="risiko-liste">
-        {flags.map((w, i) => (
-          <li key={i} className={`risiko-flag status-${w.status}`}>
-            <Ampel status={w.status} groesse="klein" />
-            <span>{kundenPreviewText(w.text)}</span>
-          </li>
-        ))}
-      </ul>
+    <div className="preview-block status-block" id="offene-punkte-block">
+      <h4>Offene Punkte</h4>
+      <div className="status-zeile kompakt">
+        <Ampel status={ergebnis.status} groesse="klein" />
+        <div>
+          <strong>{korridorTitel(ergebnis)}</strong>
+          <div className="hinweis">{kundenPreviewText(ergebnis.statusKorridor?.aktion)}</div>
+        </div>
+      </div>
+      <div className="dq">
+        <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong> · {ergebnis.datenlage?.titel}</div>
+        <div className="dq-balken"><div style={{ width: `${ergebnis.dq}%` }} /></div>
+      </div>
+      {punkte.length > 0 && (
+        <ul className="risiko-liste">
+          {punkte.slice(0, 5).map((p, i) => (
+            <li key={i} className={`risiko-flag${p.status ? ` status-${p.status}` : ''}`}>
+              <Ampel status={p.status ?? 'unbekannt'} groesse="klein" />
+              <span>{p.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -354,12 +340,16 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
   }, [])
 
   const gesperrteVarianten = ergebnis.excluded.aufstellvariante ?? []
+  // AVB-Fernwärme bindet die Laufzeit fest auf 10 Jahre – ein AVB-Angebot muss
+  // immer verfügbar sein. Andere Laufzeiten nur im individuell mit dem Kunden
+  // ausgehandelten Vertrag (siehe logic/pricing.js: contractingPreise).
+  const vertragslaufzeitGesperrt = eingaben.vertragstyp === 'individual' ? [] : ['15', '20']
   const d = ergebnis.derived
   const scope = ergebnis.kundenScope
-  const wichtigsteOffenePunkte = scope.offenePunkte.slice(0, 3)
+  const offenePunkteKombiniert = kombiniereOffenePunkte(ergebnis, scope)
   const technologiepfadPreview = TECHNOLOGIEPFAD_PREVIEW[eingaben.technologiepfad] ?? 'nicht gewählt'
   const technologiepfadHinweis = eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
-    ? 'außerhalb MVP v0.1'
+    ? 'außerhalb des aktuellen Standards'
     : null
 
   return (
@@ -410,7 +400,11 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   key={f.id}
                   frage={f}
                   wert={eingaben[f.id]}
-                  gesperrt={f.id === 'aufstellvariante' ? gesperrteVarianten : null}
+                  gesperrt={
+                    f.id === 'aufstellvariante' ? gesperrteVarianten
+                      : f.id === 'vertragslaufzeit' ? vertragslaufzeitGesperrt
+                      : null
+                  }
                   zeigeHilfe={sichtModus === 'intern'}
                   onChange={(wert) => setEingaben({ ...eingaben, [f.id]: wert })}
                 />
@@ -434,6 +428,11 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               {s.id === 'C' && eingaben.technologiepfad === 'monoenergetisch' && (
                 <p className="warnbox">Monoenergetischer Pfad ist in v0.1 nur ein Roadmap-Platzhalter (Status rot, R17).</p>
               )}
+              {s.id === 'K' && vertragslaufzeitGesperrt.length > 0 && (
+                <p className="warnbox">
+                  AVB-Fernwärme bindet die Laufzeit fest auf 10 Jahre. 15/20 Jahre nur im individuell mit dem Kunden ausgehandelten Vertrag.
+                </p>
+              )}
             </div>
           )
         })}
@@ -444,36 +443,30 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             dann Status + nächster Schritt, danach Diagnostik. Nichts eingeklappt –
             Sales soll im Live-Gespräch nicht klicken müssen. */}
         <div className="karte live kunden-preview">
-          <h3>Angebots-Vorschau (live)</h3>
-          <p className="hinweis">Richtpreis und Umfang aktualisieren sich mit jeder Antwort. Detailkalkulation vollständig im Angebot (Internsicht).</p>
-
-          <AngebotSnapshot ergebnis={ergebnis} sichtModus={sichtModus} />
-
-          <div className="status-zeile kompakt">
-            <Ampel status={ergebnis.status} groesse="gross" />
-            <div>
-              <strong>{korridorTitel(ergebnis)}</strong>
-              <div className="hinweis">{kundenPreviewText(ergebnis.statusKorridor?.aktion)}</div>
-            </div>
+          <div className="vorschau-titel-zeile">
+            <h3>Angebots-Vorschau</h3>
+            {offenePunkteKombiniert.length > 0 && (
+              <button
+                type="button"
+                className="risiko-badge"
+                onClick={() => document.getElementById('offene-punkte-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              >
+                ⚠ {offenePunkteKombiniert.length} offene {offenePunkteKombiniert.length === 1 ? 'Punkt' : 'Punkte'}
+              </button>
+            )}
           </div>
-          {ergebnis.statusKorridor?.bedeutung && (
-            <p className="naechster-schritt">{ergebnis.statusKorridor.bedeutung}</p>
-          )}
+
+          <AngebotSnapshot ergebnis={ergebnis} />
 
           <button className="primaer" onClick={() => setScreen('ergebnis')}>Zum Angebot →</button>
 
-          <div className="dq">
-            <div className="dq-label">Datenlage: <strong>{ergebnis.dq} %</strong> · {ergebnis.datenlage?.titel}</div>
-            <div className="dq-balken"><div style={{ width: `${ergebnis.dq}%` }} /></div>
-          </div>
-
-          <div className="preview-block">
+          <div className="preview-block loesungs-block">
             <h4>Lösungs-Vorschau</h4>
             <div className="mini-fakten">
               <div><span>Pfad</span><strong>{technologiepfadPreview}</strong></div>
               {technologiepfadHinweis ? <div><span>Einordnung</span><strong>{technologiepfadHinweis}</strong></div> : null}
               <div><span>Heizlast</span><strong>{num(d.heizlast_effektiv)} kW</strong></div>
-              {d.wp_kw ? <div><span>WP-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div> : null}
+              {d.wp_kw ? <div><span>Wärmepumpen-Kaskade</span><strong>{d.wp_module} × {annahmen.wp_modul_kw} kW</strong></div> : null}
               <div>
                 <span>Aufstellung</span>
                 <strong>{d.aufstellung_empfohlen_label ?? VARIANTEN_NAME[eingaben.aufstellvariante] ?? '–'}</strong>
@@ -482,15 +475,13 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             {d.aufstellung_abweichung ? (
               <p className="hinweis">Gewählte Variante weicht von der Empfehlung ab.</p>
             ) : null}
+
+            <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} istIntern={sichtModus === 'intern'} />
+
+            <UmfangsVorschau scope={scope} lvPositionen={ergebnis.lv.positionen} lv={ergebnis.lv} istIntern={sichtModus === 'intern'} />
           </div>
 
-          <AufstelloptionenPreview viable={d.aufstellung_viable} schallJeVariante={d.schall_je_variante} istIntern={sichtModus === 'intern'} />
-
-          <RisikoFlags warnungen={ergebnis.warnungen} />
-
-          <UmfangsVorschau scope={scope} />
-          <PreviewScope titel="Annahmen" eintraege={scope.annahmen} max={3} />
-          <PreviewScope titel="Offene Punkte" eintraege={wichtigsteOffenePunkte} max={3} />
+          <StatusUndOffenePunkte ergebnis={ergebnis} punkte={offenePunkteKombiniert} />
         </div>
       </aside>
     </div>

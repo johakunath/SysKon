@@ -32,6 +32,33 @@ function exportLvCsv(lv, annahmen) {
   URL.revokeObjectURL(url)
 }
 
+const ICON_PROPS = { viewBox: '0 0 16 16', width: 14, height: 14, fill: 'none', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true }
+
+function IconSpeichern() {
+  return (
+    <svg {...ICON_PROPS}>
+      <path d="M2 2h9l3 3v9H2V2Z" />
+      <path d="M4.5 2v4h6V2M4.5 14v-4.5h7V14" />
+    </svg>
+  )
+}
+function IconDuplizieren() {
+  return (
+    <svg {...ICON_PROPS}>
+      <rect x="2.5" y="4.5" width="8" height="9" rx="1" />
+      <path d="M5.5 4.5V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1.5" />
+    </svg>
+  )
+}
+function IconExport() {
+  return (
+    <svg {...ICON_PROPS}>
+      <path d="M8 1.5v7.5M5 6.5 8 9.5 11 6.5" />
+      <path d="M2.5 11v2.5h11V11" />
+    </svg>
+  )
+}
+
 function AnalyseKpi({ label, value, note }) {
   return (
     <div className="analyse-kpi">
@@ -59,16 +86,22 @@ function ContractingKarte({ contracting, foerderart }) {
       <div className="karten-reihe">
         <div className="karte">
           <h4>Preisgleitformel (Demo)</h4>
-          <table className="fakten">
-            <tbody>
-              <tr><td>Festanteil</td><td className="r">{prozent(pg.festanteil)}</td></tr>
-              {pg.komponenten.map(k => (
-                <tr key={k.schluessel}><td>{k.label}</td><td className="r">{prozent(k.gewicht)}</td></tr>
-              ))}
-              <tr className="summe"><td>Basisjahr</td><td className="r">{pg.basisjahr}</td></tr>
-            </tbody>
-          </table>
-          <p className="hinweis">AVBFernwärme §24-orientiert (Demo): Festanteil + gewichtete Indizes. Reale Indexreihen und rechtliche Prüfung sind offen.</p>
+          {pg ? (
+            <>
+              <table className="fakten">
+                <tbody>
+                  <tr><td>Festanteil</td><td className="r">{prozent(pg.festanteil)}</td></tr>
+                  {pg.komponenten.map(k => (
+                    <tr key={k.schluessel}><td>{k.label}</td><td className="r">{prozent(k.gewicht)}</td></tr>
+                  ))}
+                  <tr className="summe"><td>Basisjahr</td><td className="r">{pg.basisjahr}</td></tr>
+                </tbody>
+              </table>
+              <p className="hinweis">AVBFernwärme §24-orientiert (Demo): Festanteil + gewichtete Indizes. Reale Indexreihen und rechtliche Prüfung sind offen.</p>
+            </>
+          ) : (
+            <p className="hinweis">Individualvertrag: freie Preisanpassung ohne §24-Formel (Demo). Details im Vertragsentwurf zu klären.</p>
+          )}
         </div>
         <div className="karte">
           <h4>Vertragsparameter</h4>
@@ -99,9 +132,6 @@ function KundenScope({ scope, foerderart }) {
       <ContractingKarte contracting={scope.contracting} foerderart={foerderart} />
       <div className="karte analyse-hauptkarte">
         <h3>Kundenumfang</h3>
-        <p className="hinweis">
-          Verständliche Komponenten- und Leistungsübersicht für das Kundengespräch. Ohne Preise und ohne interne Kalkulation.
-        </p>
         <div className="kunden-gruppen">
           {scope.gruppen.map(gruppe => (
             <section key={gruppe.name} className="kunden-gruppe">
@@ -111,7 +141,7 @@ function KundenScope({ scope, foerderart }) {
                   <article key={pos.id} className="kunden-position">
                     <div className="kunden-position-kopf">
                       <strong>{pos.titel}</strong>
-                      {pos.pruefpflichtig ? <span className="kunden-badge warn">prüfen</span> : <span className="kunden-badge">enthalten</span>}
+                      {pos.pruefpflichtig && <span className="kunden-badge warn">prüfen</span>}
                     </div>
                     <dl>
                       <div><dt>Hersteller</dt><dd>{pos.hersteller}</dd></div>
@@ -151,7 +181,7 @@ function KundenScope({ scope, foerderart }) {
 function AngebotDokumentKopf({ name, datum }) {
   return (
     <div className="angebot-dok-kopf">
-      <div className="angebot-dok-logo"><span>Logo</span></div>
+      <img className="angebot-dok-logo" src="/systempaket-logo.svg" alt="" aria-hidden="true" />
       <div className="angebot-dok-meta">
         <span className="angebot-dok-label">Richtpreis-Angebot (Demo)</span>
         <strong className="angebot-dok-name">{name}</strong>
@@ -169,6 +199,7 @@ export default function Ergebnis({
 }) {
   const [internTab, setInternTab] = useState('loesung')
   const [gespeichert, setGespeichert] = useState(false)
+  const [lvAlleOffen, setLvAlleOffen] = useState(true)
   const [angebotName, setAngebotName] = useState(() => {
     const aktiv = angebote.find(a => a.id === aktivesAngebotId)
     return aktiv?.name ?? `Angebot ${new Date().toLocaleDateString('de-DE')}`
@@ -190,10 +221,10 @@ export default function Ergebnis({
   const istKunde = sichtModus === 'kunde'
 
   const gruppen = gruppiereNachGruppe(lv.positionen)
+  const kundenInfoJeId = new Map(kundenScope.gruppen.flatMap(g => g.positionen.map(pos => [pos.id, pos])))
 
   const blocker = ergebnis.warnungen.filter(w => w.status === 'rot' || w.status === 'orange')
   const hinweise = ergebnis.warnungen.filter(w => w.status !== 'rot' && w.status !== 'orange')
-  const scopeKurz = gruppen.slice(0, 5).map(g => g.name).join(', ')
   const summaryAktion = istKunde
     ? 'Offene Pflichtdaten und Regelhinweise priorisieren, bevor der Kundenumfang weitergegeben wird.'
     : ergebnis.statusKorridor?.aktion
@@ -203,48 +234,8 @@ export default function Ergebnis({
 
   return (
     <div className="seite">
-      <div className={`summary-strip status-${ergebnis.status ?? 'unbekannt'} no-print`}>
-        <Ampel status={ergebnis.status} groesse="gross" />
-        <div className="summary-mitte">
-          <strong>Gesprächskorridor: {korridorTitel(ergebnis)}</strong>
-          <span className="summary-detail">{summaryDetail}</span>
-        </div>
-        <div className="summary-aktion">{summaryAktion}</div>
-      </div>
-
-      <div className="angebot-aktionsbar no-print">
-        <div className="angebot-speichern-reihe">
-          <input
-            type="text"
-            className="angebot-name-input"
-            value={angebotName}
-            onChange={e => setAngebotName(e.target.value)}
-            placeholder={`Angebot ${new Date().toLocaleDateString('de-DE')}`}
-            aria-label="Angebotsname"
-          />
-          <button onClick={handleSpeichern} className={gespeichert ? 'btn-erfolg' : ''}>
-            {gespeichert ? 'Gespeichert ✓' : 'Speichern'}
-          </button>
-          <button onClick={onAngebotDuplizieren}>Duplizieren</button>
-          <button onClick={() => window.print()}>Als PDF exportieren</button>
-        </div>
-        {angebote.length > 0 && (
-          <div className="angebot-varianten">
-            <strong className="varianten-label">Gespeicherte Varianten ({angebote.length})</strong>
-            <ul className="varianten-liste">
-              {angebote.map(a => (
-                <li key={a.id} className={`variante-zeile${a.id === aktivesAngebotId ? ' aktiv' : ''}`}>
-                  <span className="variante-name">{a.name}</span>
-                  <small className="variante-datum">{new Date(a.erstelltAm).toLocaleDateString('de-DE')}</small>
-                  <button onClick={() => onAngebotLaden?.(a.id)} disabled={a.id === aktivesAngebotId}>
-                    {a.id === aktivesAngebotId ? 'Aktiv' : 'Laden'}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+    <div className="ergebnis-layout">
+      <div className="ergebnis-hauptspalte">
 
       {!istKunde && (
         <div className="print-header print-only">
@@ -280,7 +271,7 @@ export default function Ergebnis({
       {!istKunde && internTab === 'loesung' && (<>
         <div className="analyse-grid">
           <div className="karte analyse-hauptkarte">
-            <h3>Vorlösung für Sales/KAM</h3>
+            <h3>Vorlösung für Sales</h3>
             <div className="analyse-kpis">
               <AnalyseKpi label="Technologiepfad" value="Hybrid: Luft-Wasser-WP + Gas-Bestandskessel" />
               <AnalyseKpi label="WP-Kaskade" value={`${d.wp_module} × ${annahmen.wp_modul_kw} kW = ${d.wp_kw} kW`} note={d.heizlast_methode} />
@@ -303,85 +294,76 @@ export default function Ergebnis({
                       {d.aufstellung_abweichung.kosten_delta > 0 ? ` (${euro(d.aufstellung_abweichung.kosten_delta)} mehr Zusatz-CAPEX).` : '.'}
                     </td></tr>
                   ) : null}
-                  <tr><td>Gesprächskorridor</td><td>
-                    <Ampel status={ergebnis.status} groesse="klein" />
-                    <strong> {korridorTitel(ergebnis)}</strong>
-                    <div className="hinweis">{ergebnis.statusKorridor?.bedeutung}</div>
-                  </td></tr>
-                  <tr><td>Datenlage</td><td>{ergebnis.dq} % · {ergebnis.datenlage?.titel}<div className="hinweis">{ergebnis.datenlage?.aktion}</div></td></tr>
-                  <tr><td>Prüfaufwand</td><td>Score {ergebnis.peScore} von 5 · keine LV-Kostenposition</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
 
           <div className="karte">
-            <h3>Warum dieser Korridor entsteht</h3>
+            <h3>Warum dieser Status entsteht</h3>
             <ul className="kriterien">
               {ergebnis.standardKriterien.map((k, i) => (
                 <li key={i} className={k.erfuellt ? 'ok' : 'fehlt'}>{k.erfuellt ? '✓' : '×'} {k.text}</li>
               ))}
             </ul>
             <div className="status-hierarchie">
-              <div><span className="sh-label">Gesprächskorridor</span><Ampel status={ergebnis.status} groesse="klein" /> <strong>{korridorTitel(ergebnis)}</strong></div>
               {blocker.length > 0 && <div><span className="sh-label">Blocker</span><span className="sh-wert">{blocker.length} Prüfpunkte</span></div>}
               {hinweise.length > 0 && <div><span className="sh-label">Hinweise</span><span className="sh-wert">{hinweise.length} Hinweise</span></div>}
             </div>
-          </div>
-
-          <div className="karte">
-            <h3>Datenlage als Sales-Check</h3>
-            <p className="hinweis">{ergebnis.datenlage?.bedeutung}</p>
-            {ergebnis.datenlage?.fehlendeFokusDaten?.length > 0 ? (
-              <ul className="checkliste">
-                {ergebnis.datenlage.fehlendeFokusDaten.map(f => (
-                  <li key={f.id}><strong>{f.sektion}</strong>: {f.label}</li>
-                ))}
-              </ul>
-            ) : <p className="okbox">Keine gewichteten Pflichtdaten offen.</p>}
-          </div>
-
-          <div className="karte">
-            <h3>Enthaltener Umfang (Kurz)</h3>
-            <p className="hinweis">{scopeKurz}{gruppen.length > 5 ? ' …' : ''}</p>
           </div>
         </div>
 
         <div className="analyse-umfang">
           <div className="karte">
-            <h3>Enthaltener Umfang und CAPEX-Indikation</h3>
+            <div className="lv-titel-zeile">
+              <h3>Leistungsverzeichnis</h3>
+              <button type="button" className="lv-toggle-all no-print" onClick={() => setLvAlleOffen(o => !o)}>
+                {lvAlleOffen ? 'Alle einklappen' : 'Alle aufklappen'}
+              </button>
+            </div>
             <div className="table-scroll">
               <table className="lv">
                 <thead>
-                  <tr><th>Position</th><th>Menge</th><th>Einheit</th><th>Einzel</th><th>Betrag</th><th>förderfähig</th><th>prüfpflichtig</th></tr>
+                  <tr><th>Position</th><th>Menge</th><th>Einzel</th><th>Betrag</th><th>förderfähig</th><th>prüfpflichtig</th></tr>
                 </thead>
                 <tbody>
                   {gruppen.map(g => (
                     <React.Fragment key={g.name}>
-                      <tr className="gruppe"><td colSpan="7">{g.name}</td></tr>
-                      {g.positionen.map(p => (
-                        <tr key={p.id}>
-                          <td>
-                            <details>
-                              <summary>{p.text}</summary>
-                              <div className="begruendung">Begründung: {p.begruendung}{p.erzwungen ? ` · erzwungen durch ${p.erzwungen}` : ''} · {p.tag.toUpperCase()}</div>
-                            </details>
-                          </td>
-                          <td className="r">{num(p.menge)}</td>
-                          <td>{p.einheit}</td>
-                          <td className="r">{euro(p.einzel)}</td>
-                          <td className="r">{euro(p.betrag)}</td>
-                          <td className="r">{prozent(p.foerderanteil)}</td>
-                          <td>{p.pruefpflichtig ? 'ja' : '–'}</td>
-                        </tr>
-                      ))}
+                      <tr className="gruppe"><td colSpan="6">{g.name}</td></tr>
+                      {g.positionen.map(p => {
+                        const kunde = kundenInfoJeId.get(p.id)
+                        const istPauschal = p.menge === 1
+                        return (
+                          <tr key={p.id}>
+                            <td>
+                              <details open={lvAlleOffen}>
+                                <summary>{p.text}</summary>
+                                <div className="begruendung">
+                                  {kunde && (
+                                    <p className="begruendung-kunde">
+                                      {kunde.hersteller} · {kunde.produkt}{kunde.leistungsklasse ? ` · ${kunde.leistungsklasse}` : ''}
+                                      {kunde.leistungsumfang ? <><br />{kunde.leistungsumfang}</> : null}
+                                    </p>
+                                  )}
+                                  <p className="begruendung-intern">Begründung: {p.begruendung}{p.erzwungen ? ` · erzwungen durch ${p.erzwungen}` : ''} · {p.tag.toUpperCase()}</p>
+                                </div>
+                              </details>
+                            </td>
+                            <td className="r">{istPauschal ? '–' : `${num(p.menge)} ${p.einheit}`}</td>
+                            <td className="r">{istPauschal ? '–' : euro(p.einzel)}</td>
+                            <td className="r">{euro(p.betrag)}</td>
+                            <td className="r">{prozent(p.foerderanteil)}</td>
+                            <td>{p.pruefpflichtig ? 'ja' : '–'}</td>
+                          </tr>
+                        )
+                      })}
                     </React.Fragment>
                   ))}
-                  <tr className="summe"><td colSpan="4">Zwischensumme</td><td className="r">{euro(lv.zwischensumme)}</td><td colSpan="2" /></tr>
-                  <tr><td colSpan="4">Contingency ({Math.round(annahmen.contingency * 100)} %)</td><td className="r">{euro(lv.contingency)}</td><td colSpan="2" /></tr>
-                  <tr className="summe"><td colSpan="4">Brutto-LV-Kosten</td><td className="r">{euro(lv.brutto)}</td><td colSpan="2" /></tr>
-                  <tr><td colSpan="4">Förderung ({prozent(annahmen.foerderquote)} auf förderfähigen Anteil, Demo)</td><td className="r">−{euro(lv.foerderung)}</td><td colSpan="2" /></tr>
-                  <tr className="summe"><td colSpan="4">Netto-CAPEX-Indikation</td><td className="r">{euro(lv.netto)}</td><td colSpan="2" /></tr>
+                  <tr className="summe"><td colSpan="3">Zwischensumme</td><td className="r">{euro(lv.zwischensumme)}</td><td colSpan="2" /></tr>
+                  <tr><td colSpan="3">Contingency ({Math.round(annahmen.contingency * 100)} %)</td><td className="r">{euro(lv.contingency)}</td><td colSpan="2" /></tr>
+                  <tr className="summe"><td colSpan="3">Brutto-LV-Kosten</td><td className="r">{euro(lv.brutto)}</td><td colSpan="2" /></tr>
+                  <tr><td colSpan="3">Förderung ({prozent(annahmen.foerderquote)} auf förderfähigen Anteil, Demo)</td><td className="r">−{euro(lv.foerderung)}</td><td colSpan="2" /></tr>
+                  <tr className="summe"><td colSpan="3">Netto-CAPEX-Indikation</td><td className="r">{euro(lv.netto)}</td><td colSpan="2" /></tr>
                 </tbody>
               </table>
             </div>
@@ -512,7 +494,7 @@ export default function Ergebnis({
                   <tr><td>Nachtgrenzwert ({eingaben.gebietstyp ?? '–'})</td><td>{d.schall_grenzwert ?? '–'} dB(A)</td></tr>
                 </tbody>
               </table>
-              <table className="lv">
+              <table className="lv schall-tabelle">
                 <thead><tr><th>Variante</th><th>Pegel am Immissionsort</th><th>Ampel</th></tr></thead>
                 <tbody>
                   {Object.entries(d.schall_je_variante).map(([v, s]) => (
@@ -542,37 +524,108 @@ export default function Ergebnis({
         </div>
       )}
 
-      <div className="karte gespraech-karte no-print">
-        <h3>Gesprächsergebnis</h3>
-        <div className="gespraech-felder">
-          <div className="gespraech-feld">
-            <label htmlFor="gespraech-status">Status</label>
-            <select
-              id="gespraech-status"
-              value={gespraechsErgebnis?.status ?? 'offen'}
-              onChange={e => setGespraechsErgebnis?.(prev => ({ ...prev, status: e.target.value }))}
-            >
-              <option value="offen">Offen</option>
-              <option value="interessiert">Interessiert</option>
-              <option value="folgetermin">Folgetermin vereinbart</option>
-              <option value="nicht_weiterverfolgt">Nicht weiterverfolgt</option>
-            </select>
-          </div>
-          <div className="gespraech-feld gespraech-feld-kommentar">
-            <label htmlFor="gespraech-kommentar">Kommentar</label>
-            <textarea
-              id="gespraech-kommentar"
-              maxLength={200}
-              rows={3}
-              value={gespraechsErgebnis?.kommentar ?? ''}
-              onChange={e => setGespraechsErgebnis?.(prev => ({ ...prev, kommentar: e.target.value }))}
-              placeholder="Gesprächsnotiz (max. 200 Zeichen)"
-            />
-            <small className="zeichen-zaehler">{(gespraechsErgebnis?.kommentar ?? '').length}/200</small>
-          </div>
-        </div>
-        <p className="hinweis">Wird beim Speichern mit dem Angebot abgelegt. Kein CRM-Ersatz.</p>
       </div>
+
+      <aside className="ergebnis-aktionsspalte no-print">
+        <div className="karte aktionen-karte">
+          <h3>Aktionen</h3>
+          <div className="angebot-speichern-reihe">
+            <input
+              type="text"
+              className="angebot-name-input"
+              value={angebotName}
+              onChange={e => setAngebotName(e.target.value)}
+              placeholder={`Angebot ${new Date().toLocaleDateString('de-DE')}`}
+              aria-label="Angebotsname"
+            />
+            <button onClick={handleSpeichern} className={gespeichert ? 'btn-erfolg btn-icon' : 'btn-icon'}>
+              {gespeichert ? <>✓ Gespeichert</> : <><IconSpeichern /> Speichern</>}
+            </button>
+            <button onClick={onAngebotDuplizieren} className="btn-icon"><IconDuplizieren /> Duplizieren</button>
+            <button onClick={() => window.print()} className="btn-icon"><IconExport /> Als PDF exportieren</button>
+          </div>
+          {angebote.length > 0 && (
+            <div className="angebot-varianten">
+              <strong className="varianten-label">Gespeicherte Varianten ({angebote.length})</strong>
+              <ul className="varianten-liste">
+                {angebote.map(a => (
+                  <li key={a.id} className={`variante-zeile${a.id === aktivesAngebotId ? ' aktiv' : ''}`}>
+                    <span className="variante-name">{a.name}</span>
+                    <small className="variante-datum">{new Date(a.erstelltAm).toLocaleDateString('de-DE')}</small>
+                    <button onClick={() => onAngebotLaden?.(a.id)} disabled={a.id === aktivesAngebotId}>
+                      {a.id === aktivesAngebotId ? 'Aktiv' : 'Laden'}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className={`karte status-karte status-${ergebnis.status ?? 'unbekannt'}`}>
+          <div className="status-zeile">
+            <Ampel status={ergebnis.status} groesse="gross" />
+            <div>
+              <strong>Status: {korridorTitel(ergebnis)}</strong>
+              <div className="hinweis">{summaryDetail}</div>
+            </div>
+          </div>
+          <p className="summary-aktion">{summaryAktion}</p>
+        </div>
+
+        {!istKunde && (
+          <div className="karte">
+            <h3>Datenlage &amp; Prüfaufwand</h3>
+            <table className="fakten">
+              <tbody>
+                <tr><td>Datenlage</td><td className="r">{ergebnis.dq} %</td></tr>
+                <tr><td>Prüfaufwand</td><td className="r">Score {ergebnis.peScore}/5</td></tr>
+              </tbody>
+            </table>
+            <p className="hinweis">{ergebnis.datenlage?.aktion}</p>
+            {ergebnis.datenlage?.fehlendeFokusDaten?.length > 0 ? (
+              <ul className="checkliste">
+                {ergebnis.datenlage.fehlendeFokusDaten.map(f => (
+                  <li key={f.id}><strong>{f.sektion}</strong>: {f.label}</li>
+                ))}
+              </ul>
+            ) : <p className="okbox">Keine gewichteten Pflichtdaten offen.</p>}
+          </div>
+        )}
+
+        <div className="karte gespraech-karte">
+          <h3>Gesprächsergebnis</h3>
+          <div className="gespraech-felder">
+            <div className="gespraech-feld">
+              <label htmlFor="gespraech-status">Status</label>
+              <select
+                id="gespraech-status"
+                value={gespraechsErgebnis?.status ?? 'offen'}
+                onChange={e => setGespraechsErgebnis?.(prev => ({ ...prev, status: e.target.value }))}
+              >
+                <option value="offen">Offen</option>
+                <option value="interessiert">Interessiert</option>
+                <option value="folgetermin">Folgetermin vereinbart</option>
+                <option value="nicht_weiterverfolgt">Nicht weiterverfolgt</option>
+              </select>
+            </div>
+            <div className="gespraech-feld gespraech-feld-kommentar">
+              <label htmlFor="gespraech-kommentar">Kommentar</label>
+              <textarea
+                id="gespraech-kommentar"
+                maxLength={200}
+                rows={3}
+                value={gespraechsErgebnis?.kommentar ?? ''}
+                onChange={e => setGespraechsErgebnis?.(prev => ({ ...prev, kommentar: e.target.value }))}
+                placeholder="Gesprächsnotiz (max. 200 Zeichen)"
+              />
+              <small className="zeichen-zaehler">{(gespraechsErgebnis?.kommentar ?? '').length}/200</small>
+            </div>
+          </div>
+          <p className="hinweis">Wird beim Speichern mit dem Angebot abgelegt. Kein CRM-Ersatz.</p>
+        </div>
+      </aside>
+    </div>
     </div>
   )
 }

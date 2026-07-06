@@ -17,8 +17,8 @@ export const VARIANTEN_NAME = Object.fromEntries(
   Object.entries(AUFSTELLVARIANTEN_META).map(([wert, meta]) => [wert, meta.label])
 )
 
-// Titel des Gesprächskorridors mit Fallback auf das Status-Label – einheitlich
-// für alle Screens, statt den Ausdruck mehrfach inline zu wiederholen.
+// Status-Titel mit Fallback auf das Status-Label – einheitlich für alle
+// Screens, statt den Ausdruck mehrfach inline zu wiederholen.
 export const korridorTitel = (ergebnis) =>
   ergebnis.statusKorridor?.titel ?? STATUS_LABEL[ergebnis.status]
 

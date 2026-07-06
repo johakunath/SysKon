@@ -12,14 +12,10 @@ const MAIN_SCREENS = [
   ['konfiguration', 'Angebot erstellen'],
   ['ergebnis', 'Angebot'],
 ]
-const ADMIN_SCREENS = [
-  ['annahmen', 'Admin'],
-]
 
 export default function App() {
   const [screen, setScreen] = useState('konfiguration')
-  const [adminModus, setAdminModus] = useState(false)
-  const [sichtModus, setSichtModus] = useState('kunde')
+  const [sichtModus, setSichtModus] = useState('intern')
   const [eingaben, setEingaben] = useState(
     () => ({ ...PRESETS.find(p => p.id === DEFAULT_PRESET_ID).eingaben })
   )
@@ -133,8 +129,6 @@ export default function App() {
     onAngebotSpeichern, onAngebotLaden, onAngebotDuplizieren,
   }
 
-  const visibleScreens = adminModus ? [...MAIN_SCREENS, ...ADMIN_SCREENS] : MAIN_SCREENS
-
   return (
     <div className="app">
       <header className="topbar no-print">
@@ -143,8 +137,8 @@ export default function App() {
           <strong>Systempaket-Konfigurator</strong>
         </div>
         <nav className="tabs">
-          {visibleScreens.map(([id, label]) => (
-            <button key={id} className={`tab${screen === id ? ' aktiv' : ''}${ADMIN_SCREENS.some(s => s[0] === id) ? ' tab-admin' : ''}`} onClick={() => setScreen(id)}>
+          {MAIN_SCREENS.map(([id, label]) => (
+            <button key={id} className={`tab${screen === id ? ' aktiv' : ''}`} onClick={() => setScreen(id)}>
               {label}
             </button>
           ))}
@@ -166,14 +160,11 @@ export default function App() {
           </button>
         </div>
         <button
-          className={`admin-toggle no-print${adminModus ? ' aktiv' : ''}`}
-          onClick={() => {
-            setAdminModus(m => !m)
-            if (adminModus && ADMIN_SCREENS.some(s => s[0] === screen)) setScreen('konfiguration')
-          }}
-          title="Admin-Bereich ein-/ausblenden"
+          className={`admin-toggle no-print${screen === 'annahmen' ? ' aktiv' : ''}`}
+          onClick={() => setScreen('annahmen')}
+          title="Admin-Bereich öffnen"
         >
-          ⚙
+          ⚙ Admin
         </button>
       </header>
 

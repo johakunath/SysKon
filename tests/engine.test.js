@@ -123,7 +123,7 @@ describe('Status-Verschlechterung', () => {
   it('liefert eine Gesprächskorridor-Semantik zum Status', () => {
     const erg = berechne({ anzahl_heizkreise: 4 })
     expect(erg.status).toBe('rot')
-    expect(erg.statusKorridor.titel).toBe('Kein Standardfit im MVP')
+    expect(erg.statusKorridor.titel).toBe('Kein Standardfit')
     expect(erg.statusKorridor.aktion).toContain('Sonderfall')
   })
 })

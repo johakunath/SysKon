@@ -48,16 +48,19 @@ Ziel: Die modulare Configure-to-Order-Logik bleibt als belastbarer Kern erhalten
 
 ## Stage 3: Contracting-Angebotslogik
 
-Späterer Ausbau, bewusst nicht MVP.
+**Kernengine bereits implementiert** (SK-70, als interne Guardrail-Fähigkeit hinter `sichtModus='intern'`,
+seither erweitert um SK-101): GP/AP-Logik mit iterativer Arbeitspreismarge bis zur Ziel-IRR (13 %,
+Ambition 15 %), Marge ausschließlich auf den Arbeitspreis (keine Marge auf CapEx/Grundpreis),
+AVBFernwärme-orientierte §24-Preisgleitformel. Vertragstyp-Weiche (SK-101): AVB-Fernwärme bindet
+die Laufzeit fest auf 10 Jahre und nutzt die §24-Formel; Individualvertrag erlaubt 10/15/20 Jahre
+und eine frei ausgehandelte Preisanpassung. Ein AVB-Angebot muss dabei immer verfügbar sein,
+Individualvertrag wird mit dem Kunden verhandelt.
 
-- Vertragslaufzeiten 10, 15 und 20 Jahre.
-- Ziel-IRR 13 Prozent, Ambitionsszenario 15 Prozent.
-- Marge nur auf Arbeitspreis.
-- Keine Marge auf CapEx und keine Marge auf Grundpreis.
-- Grundpreis-/Arbeitspreis-Logik mit iterativer Arbeitspreismarge bis zur Ziel-IRR.
-- Opex, Finanzierung, Preisentwicklung und Erlöslogik.
-- AVBFernwärme-orientierte Preisgleitformeln mit Markt- und Kostenelementen.
-- Recherche zu Indizes wie Lohn, Strom, Gas und Inflation; rechtliche Prüfung bleibt nötig.
+Weiterhin späterer Ausbau (bewusst nicht MVP):
+
+- Opex, Finanzierung, Preisentwicklung und Erlöslogik als primärer statt interner Bestandteil.
+- Recherche zu Indizes wie Lohn, Strom, Gas und Inflation (aktuell Basisjahr-Platzhalter, Faktor 1).
+- Finale AVBFernwärme-/Rechtsfreigabe – ersetzt weiterhin keine juristische Prüfung.
 
 ## Parallel: Regressionstest-Umgebung
 
@@ -77,6 +80,13 @@ Kein linearer Stage-Gate, sondern Produktqualitätsmechanismus.
 - Export zurück in CRM, internen Angebotsprozess und später Installation/Operations.
 - Skalierung auf weitere Technologien.
 - Governance: Product owns; PE, Engineering, Procurement, Finance und Legal unterstützen.
+- **Moonshot-Idee: Visuelle Systemvorschau.** Statt reiner Tabellen/Listen ein zusammengesetztes
+  Bild der gewählten Komponenten in der Live-Preview zeigen (z. B. Aufstellvariante-Szene +
+  Icons für Modulanzahl, Hydraulik, Monitoring). Entscheidung: vorgefertigte/handgezeichnete
+  Illustrationen (ein Satz Szenen je Aufstellvariante + Icon-Set), programmatisch je nach
+  Konfiguration zusammengesetzt – **keine** KI-Bildgenerierung (Konsistenz- und Kostenrisiko,
+  neue Abhängigkeit). Bleibt eine schematische Illustration, keine Standort-/3D-Berechnung
+  (siehe Schutzplanke unten). Aufwand: Design-Vorlauf für die Basis-Assets nötig.
 
 ## Qualitäts- und Hygienethemen (aus PR-Review Juni 2026)
 

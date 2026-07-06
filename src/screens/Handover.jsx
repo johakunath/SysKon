@@ -10,7 +10,7 @@ const EMPFEHLUNG = {
   gruen: 'Analyse plausibel. Annahmen, Aufstellvariante und Vor-Ort-Aufnahme intern weiter prüfen.',
   gelb: 'Interne Prüfung: offene Punkte klären (siehe Prüfliste), bevor Umfang oder CAPEX nach außen genutzt werden.',
   orange: 'Fachprüfung erforderlich, bevor ein belastbarer Richtumfang möglich ist. Fall nicht im Standardprozess weiterführen.',
-  rot: 'Nicht standardfähig im MVP. Als Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
+  rot: 'Nicht standardfähig. Als Sonderfall behandeln oder zurückstellen; Begründung siehe Statusregeln.',
 }
 
 const FOTOS_DOKUMENTE = [
@@ -49,7 +49,7 @@ export default function Handover({ ergebnis, sektionen = DEFAULT_SEKTIONEN }) {
         </div>
         <p>
           <Ampel status={ergebnis.status} groesse="klein" />
-          <strong> Gesprächskorridor: {korridorTitel(ergebnis)}</strong> · Datenlage {ergebnis.dq} % ·
+          <strong> Status: {korridorTitel(ergebnis)}</strong> · Datenlage {ergebnis.dq} % ·
           Interner Prüfaufwand: {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
           Netto-LV {euro(ergebnis.lv.netto)} (Demo)
         </p>
