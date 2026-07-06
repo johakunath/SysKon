@@ -17,7 +17,7 @@ const OPTION_FALLBACKS = {
 
 const OPTION_HINTS = {
   gebaeudetyp: {
-    freistehend: 'Typischer MVP-Standardfall mit besser prüfbarer Aufstellung.',
+    freistehend: 'Typischer Standardfall mit besser prüfbarer Aufstellung.',
     innenstadt: 'Mehr Schall-, Platz- und Nachbarschaftsrisiko.',
     sonstig: 'Sonderlage; Annahmen im Gespräch sichtbar halten.',
   },
@@ -48,9 +48,9 @@ const OPTION_HINTS = {
     unbekannt: 'Im weiteren Prozess festlegen.',
   },
   technologiepfad: {
-    hybrid: 'Unterstützter MVP-Standardpfad.',
+    hybrid: 'Unterstützter Standardpfad.',
     monoenergetisch: 'Roadmap-Platzhalter, kein Standardfit.',
-    sonstig: 'Außerhalb des aktuellen MVP.',
+    sonstig: 'Außerhalb des aktuellen Standards.',
   },
   kessel_zustand: {
     gut: 'Weiterbetrieb wirkt plausibel.',
@@ -65,7 +65,7 @@ const OPTION_HINTS = {
     '56-60': 'Grenznaher, aber typischer Hybridkorridor.',
     '61-65': 'Erhöhte Effizienz- und Prüfanforderung.',
     '66-70': 'Mit modernem R290-Setup standardfähig; interne Klärung.',
-    '>70': 'Über 70 °C: Fachprüfung, MVP-Sonderfall.',
+    '>70': 'Über 70 °C: Fachprüfung, Sonderfall.',
     unbekannt: 'Temperaturniveau nachfassen.',
   },
   aussenflaeche_typ: {
@@ -142,8 +142,8 @@ const SEKTIONEN_ROH = [
       hinweisKurz: 'Bezugsgröße für Kennzahlen pro WE. Sehr kleine oder sehr große Objekte können außerhalb des Contracting-Korridors liegen.',
       tooltip: 'Bezugsgröße für Kennzahlen (€/WE) und Heizlast-Notbehelf.' },
     { id: 'anzahl_gebaeude', label: 'Wie viele Gebäude soll die Anlage versorgen?', typ: 'zahl', einheit: 'Gebäude', dq: 0, min: 1, max: 50,
-      hinweisKurz: 'MVP versorgt genau ein Gebäude. Mehr als eines ist kein Standardfit – als Sonderfall markieren.',
-      tooltip: 'MVP-Systempaket versorgt genau ein Gebäude; mehr als eines ist kein Standardfit (R19). Leer = Annahme „ein Gebäude".' },
+      hinweisKurz: 'Das Systempaket versorgt genau ein Gebäude. Mehr als eines ist kein Standardfit – als Sonderfall markieren.',
+      tooltip: 'Das Systempaket versorgt genau ein Gebäude; mehr als eines ist kein Standardfit (R19). Leer = Annahme „ein Gebäude".' },
     { id: 'flaeche', label: 'Wie groß ist die beheizte Fläche?', typ: 'zahl', einheit: 'm²', dq: 2, min: 50, max: 50000,
       hinweisKurz: 'Bezugsgröße für Richtwerte pro m². Schätzwerte klar als Annahme führen, wenn kein Verbrauch vorliegt.',
       tooltip: 'Bezugsgröße für €/m² und Heizlast-Proxy, falls kein Verbrauch vorliegt.' },
@@ -168,8 +168,8 @@ const SEKTIONEN_ROH = [
       hinweisKurz: 'Heizraum nimmt Speicher, Hydraulik und Regelung auf. Kein Heizraum lenkt früh Richtung Containerprüfung.',
       tooltip: 'Heizraum nimmt Speicher, Hydraulik und Regelung auf (außer bei Containern).' },
     { id: 'aussenflaeche_vorhanden', label: 'Ist eine Außenfläche oder ein Hof verfügbar?', typ: 'select', optionen: JN, dq: 3,
-      hinweisKurz: 'MVP braucht eine Außenaufstellung. Keine belastbare Außenfläche → kein Standardfit im aktuellen Prototyp.',
-      tooltip: 'MVP setzt Außenaufstellung der WP voraus – ohne Außenfläche Ausschluss (R16).' },
+      hinweisKurz: 'Das Systempaket braucht eine Außenaufstellung. Keine belastbare Außenfläche → kein Standardfit im aktuellen Prototyp.',
+      tooltip: 'Das Systempaket setzt Außenaufstellung der WP voraus – ohne Außenfläche Ausschluss (R16).' },
   ]},
 
   { id: 'B', titel: 'Wärmebedarf & Datenlage', fragen: [
@@ -216,9 +216,9 @@ const SEKTIONEN_ROH = [
   { id: 'C', titel: 'Bestandssystem & Hybridfähigkeit', fragen: [
     { id: 'technologiepfad', label: 'Welcher Technologiepfad soll geprüft werden?', typ: 'select', dq: 2,
       optionen: [
-        { wert: 'hybrid', label: 'Hybrid: Luft-Wasser-WP + Gas-Bestandskessel (MVP)' },
+        { wert: 'hybrid', label: 'Hybrid: Luft-Wasser-WP + Gas-Bestandskessel (Standard)' },
         { wert: 'monoenergetisch', label: 'monoenergetische WP (Roadmap-Platzhalter)' },
-        { wert: 'sonstig', label: 'anderer Pfad (außerhalb MVP)' },
+        { wert: 'sonstig', label: 'anderer Pfad (außerhalb des Standards)' },
       ],
       hinweisKurz: 'Hybrid ist der einzige vollständig unterstützte Pfad. Andere Pfade zeigen keinen Standardfit.',
       tooltip: 'v0.1 unterstützt nur den Hybridpfad; andere Pfade sind nicht standardfähig (R17).' },
@@ -241,8 +241,8 @@ const SEKTIONEN_ROH = [
       hinweisKurz: 'Kernkriterium für den Hybrid-Standardpfad. Unklar oder nein verändert Scope und Standardfähigkeit.',
       tooltip: 'Grün-Kriterium: der Hybridpfad braucht einen nutzbaren Bestandskessel.' },
     { id: 'anzahl_heizkreise', label: 'Wie viele Raumheizkreise sind vorhanden?', typ: 'zahl', einheit: 'Stk', dq: 3, min: 1, max: 10,
-      hinweisKurz: 'Mehr als zwei Heizkreise ist im MVP kein Standardfall – als hydraulischen Sonderfall markieren.',
-      tooltip: 'Nur Raumheizkreise zählen (TWW-Kreis wird separat geplant). MVP: max. 2 Raumheizkreise; mehr ist Ausschluss (R04).' },
+      hinweisKurz: 'Mehr als zwei Heizkreise ist kein Standardfall – als hydraulischen Sonderfall markieren.',
+      tooltip: 'Nur Raumheizkreise zählen (TWW-Kreis wird separat geplant). Standard: max. 2 Raumheizkreise; mehr ist Ausschluss (R04).' },
     { id: 'pufferspeicher_vorhanden', label: 'Ist bereits ein Pufferspeicher vorhanden?', typ: 'select', optionen: JNU, dq: 1,
       hinweisKurz: 'Informativ für die Hydraulikplanung. Keine Kosteneinsparung einplanen, wenn Größe oder Zustand unklar.',
       tooltip: 'Information für die Hydraulikplanung (WP speist zuerst in den Puffer).' },
@@ -303,7 +303,7 @@ const SEKTIONEN_ROH = [
         { wert: 'unbekannt', label: 'unbekannt' },
       ],
       hinweisKurz: 'Befestigte Hof- und Stellflächen stützen den Standard. Dach oder Garage braucht Fachprüfung.',
-      tooltip: 'Grobe Flächenart für die MVP-Placement-Einschätzung; ersetzt keine Statik- oder Ortsprüfung.' },
+      tooltip: 'Grobe Flächenart für die Placement-Einschätzung; ersetzt keine Statik- oder Ortsprüfung.' },
     { id: 'aussenflaeche_laenge_m', label: 'Wie lang ist die nutzbare Außenfläche ungefähr?', typ: 'zahl', einheit: 'm', dq: 1, min: 1, max: 100,
       sichtbar: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'ja' },
       hinweisKurz: 'Container brauchen mehr zusammenhängende Länge, als eine reine Flächenangabe zeigt.',
@@ -436,22 +436,29 @@ const SEKTIONEN_ROH = [
   ]},
 
   { id: 'K', titel: 'Vertrag & Angebot', fragen: [
+    { id: 'vertragstyp', label: 'AVB-Fernwärme oder Individualvertrag?', typ: 'select', dq: 0,
+      optionen: [
+        { wert: 'avb', label: 'AVB-Fernwärme-konform (Demo-Standard)', hinweis: 'Vorgeschriebene §24-Preisgleitformel; rechtssicherer Standardweg.' },
+        { wert: 'individual', label: 'Individualvertrag', hinweis: 'Freiere Preisanpassung statt §24-Formel; meist der günstigste Weg.' },
+      ],
+      hinweisKurz: 'AVB-konform ist Demo-Standard (vorgeschrieben). Individualvertrag ersetzt die §24-Preisgleitformel durch eine freiere Anpassung.',
+      tooltip: 'Bestimmt nur die Preisanpassungsstruktur (Demo); Grundpreis/Arbeitspreis-Berechnung bleibt gleich. Leer = AVB-konform.' },
     { id: 'vertragslaufzeit', label: 'Welche Vertragslaufzeit soll angesetzt werden?', typ: 'select', dq: 0,
       optionen: [
-        { wert: '10', label: '10 Jahre', hinweis: 'Höherer Grundpreis, schnellere Amortisation.' },
-        { wert: '15', label: '15 Jahre (Demo-Standard)', hinweis: 'Ausgewogener Demo-Standard.' },
+        { wert: '10', label: '10 Jahre (AVB-konform, Demo-Standard)', hinweis: 'AVB-Fernwärme-konforme Laufzeit; höherer Grundpreis, schnellere Amortisation.' },
+        { wert: '15', label: '15 Jahre', hinweis: 'Ausgewogener Mittelweg.' },
         { wert: '20', label: '20 Jahre', hinweis: 'Niedrigerer Grundpreis, längere Bindung.' },
       ],
-      hinweisKurz: '15 Jahre ist Demo-Standard. Kürzere Laufzeit treibt den Grundpreis; längere Laufzeit senkt ihn.',
-      tooltip: 'Bestimmt die Grundpreis-Annuität (Demo). Leer = 15 Jahre Default.' },
+      hinweisKurz: '10 Jahre (AVB-konform) ist Demo-Standard. Kürzere Laufzeit treibt den Grundpreis; längere Laufzeit senkt ihn.',
+      tooltip: 'Bestimmt die Grundpreis-Annuität (Demo). Leer = 10 Jahre Default.' },
     { id: 'effizienzrisiko', label: 'Wer trägt das Effizienzrisiko der Wärmepumpe?', typ: 'select', dq: 0,
       optionen: [
-        { wert: 'techem', label: 'Techem trägt das Risiko (Demo-Standard)', hinweis: 'Contracting-Wertversprechen: Effizienz liegt bei Techem.' },
+        { wert: 'contractor', label: 'Contractor trägt das Risiko (Demo-Standard)', hinweis: 'Contracting-Wertversprechen: Effizienz liegt beim Contractor.' },
         { wert: 'geteilt', label: 'Risiko geteilt', hinweis: 'Effizienzabweichungen werden zwischen den Parteien geteilt.' },
         { wert: 'kunde', label: 'Kunde trägt das Risiko', hinweis: 'Kunde trägt Effizienzabweichungen, meist günstigerer Preis.' },
       ],
-      hinweisKurz: 'Techem übernimmt das Effizienzrisiko – das ist das Contracting-Kernversprechen. Abweichungen früh besprechen.',
-      tooltip: 'Strukturierter Vertragsparameter (Demo). Leer = Techem trägt das Risiko.' },
+      hinweisKurz: 'Der Contractor übernimmt das Effizienzrisiko – das ist das Contracting-Kernversprechen. Abweichungen früh besprechen.',
+      tooltip: 'Strukturierter Vertragsparameter (Demo). Leer = Contractor trägt das Risiko.' },
   ]},
 ]
 
@@ -487,7 +494,7 @@ const PLAYBOOKS = {
     einordnung: 'Ja unterstützt den Standardpfad; Nein verschiebt das Gespräch früh Richtung Aufstell- und Platzprüfung.',
   },
   aussenflaeche_vorhanden: {
-    warum: 'Die Wärmepumpe braucht im MVP eine tragfähige Außenaufstellung.',
+    warum: 'Die Wärmepumpe braucht eine tragfähige Außenaufstellung.',
     warnsignale: 'Keine Außenfläche ist ein klarer Standardfit-Blocker im aktuellen Prototyp.',
     einordnung: 'Ja öffnet die Standortfragen; Nein erklärt direkt, warum kein Standardvorschlag entsteht.',
   },
@@ -522,7 +529,7 @@ const PLAYBOOKS = {
     einordnung: 'Der Wert verbessert die Richtindikation, ersetzt aber keine finale technische Auslegung.',
   },
   technologiepfad: {
-    warum: 'Der Technologiepfad grenzt das MVP klar auf den aktuell unterstützten Standardfall ein.',
+    warum: 'Der Technologiepfad grenzt den Umfang klar auf den aktuell unterstützten Standardfall ein.',
     warnsignale: 'Monoenergetische oder sonstige Pfade sind Roadmap- bzw. Sonderfälle.',
     einordnung: 'Hybrid ist der Standardpfad. Andere Pfade erklären, warum die Demo keinen Standardfit ausgibt.',
   },
@@ -543,7 +550,7 @@ const PLAYBOOKS = {
   },
   anzahl_heizkreise: {
     warum: 'Die Zahl der Heizkreise ist ein einfacher Indikator für hydraulische Komplexität.',
-    warnsignale: 'Mehr als zwei Heizkreise ist im MVP kein Standardfall.',
+    warnsignale: 'Mehr als zwei Heizkreise ist kein Standardfall.',
     einordnung: 'Bis zwei bleibt im Standardkorridor; mehr als zwei erklärt einen technischen Sonderfall.',
   },
   pufferspeicher_vorhanden: {
@@ -609,7 +616,7 @@ const PLAYBOOKS = {
   zugang_logistik: {
     warum: 'Anlieferung und Montage bestimmen, ob größere oder vorkonfektionierte Varianten realistisch sind.',
     warnsignale: 'Schwierige Zufahrt, Innenhöfe, enge Straßen oder fehlende Kranstellung können Container blockieren.',
-    einordnung: 'Einfacher Zugang stützt alle Varianten; schwierige Logistik spricht gegen Container im MVP.',
+    einordnung: 'Einfacher Zugang stützt alle Varianten; schwierige Logistik spricht gegen Container.',
   },
   platz_prioritaet: {
     warum: 'Die Priorität macht transparent, ob Sales Kosten, Schall oder Heizraumentlastung stärker gewichtet.',
@@ -624,7 +631,7 @@ const PLAYBOOKS = {
   schallhaube: {
     warum: 'Die Schallhaube ist eine einfache Maßnahme für Fundamentaufstellung.',
     warnsignale: 'Sie ersetzt keine belastbare Schallprüfung und hilft nicht bei jedem Standort.',
-    einordnung: 'Ja erhöht Scope/Kosten, kann aber den Gesprächskorridor stabilisieren.',
+    einordnung: 'Ja erhöht Scope/Kosten, kann aber den Status stabilisieren.',
   },
   entfernung_heizraum: {
     warum: 'Die Entfernung beeinflusst Trassen, Umfeldmaßnahmen und praktische Umsetzung.',
@@ -693,12 +700,12 @@ const p = (warum, warnsignale, einordnung) => ({ warum, warnsignale, einordnung 
 const PLAYBOOKS_KURZ = {
   gebaeudetyp: p('Setzt den Rahmen für Platz, Schall und Standardfit.', 'Innenstadt, enge Höfe oder direkte Nachbarn.', 'Freistehend ist Standard; verdichtet braucht Prüfung.'),
   wohneinheiten: p('Ordnet Objektgröße und Richtwerte pro WE ein.', 'Sehr kleine oder sehr große Objekte.', 'Erklärt Kennzahlen, ist allein kein Ausschluss.'),
-  anzahl_gebaeude: p('Klärt früh, ob nur ein Gebäude versorgt wird.', 'Mehr als ein Gebäude ist im MVP kein Standardfit.', 'Ein Gebäude ist Standard; mehrere sind Sonderfall.'),
+  anzahl_gebaeude: p('Klärt früh, ob nur ein Gebäude versorgt wird.', 'Mehr als ein Gebäude ist kein Standardfit.', 'Ein Gebäude ist Standard; mehrere sind Sonderfall.'),
   flaeche: p('Stützt Heizlastproxy und Kosten pro m².', 'Fläche passt nicht zu WE oder Verbrauch.', 'Schätzwert klar als Annahme führen.'),
   baujahrklasse: p('Gibt eine schnelle energetische Einordnung.', 'Modernisierung passt nicht zur Baujahrklasse.', 'Nur Gesprächsanker, keine Berechnung.'),
   sanierungsstand: p('Beeinflusst den Heizlastproxy im Demo-Modell.', 'Unklare Dämmung, Fenster oder Dachzustand.', 'Besser saniert stärkt Temperatur- und Leistungsfit.'),
   heizraum_vorhanden: p('Klärt Platz für Hydraulik, Speicher und Regelung.', 'Kein oder sehr knapper Heizraum.', 'Ja stützt Standard; nein lenkt zu Standortprüfung.'),
-  aussenflaeche_vorhanden: p('MVP braucht eine Außenaufstellung.', 'Keine belastbare Außenfläche.', 'Ja öffnet Standortfragen; nein blockiert Standardfit.'),
+  aussenflaeche_vorhanden: p('Das Systempaket braucht eine Außenaufstellung.', 'Keine belastbare Außenfläche.', 'Ja öffnet Standortfragen; nein blockiert Standardfit.'),
   jahresverbrauch: p('Beste schnelle Basis für Bedarf und Energiekosten.', 'Schätzung, Leerwert oder klarer Ausreißer.', 'Gemessen stärkt die Richtindikation.'),
   verbrauchsquelle: p('Bewertet die Belastbarkeit des Verbrauchs.', 'Schätzung oder unklare Abrechnungsgrenze.', 'Messung ist stark; unbekannt bleibt offen.'),
   ww_enthalten: p('Steuert den Heizlastproxy über Vollbenutzungsstunden.', 'Warmwasseranteil unbekannt.', 'Bekannte Einordnung macht Annahmen erklärbar.'),
@@ -706,11 +713,11 @@ const PLAYBOOKS_KURZ = {
   ww_speicher_typ: p('Bestimmt die WW-Modulvariante im zentralen Scope.', 'Hygieneanforderungen und unbekannte Speicherlage früh klären.', 'Speicher ist Fallback; FWS ist hygienischer Durchflussbetrieb.'),
   heizlast_bekannt: p('Verbessert die Leistungsauswahl gegenüber Proxy.', 'Keine Heizlast als Auslegung verkaufen.', 'Ja nutzt Eingabe; nein bleibt Richtindikation.'),
   heizlast_kw: p('Steuert WP-Modulanzahl und Leistungskorridor.', 'Wert passt nicht zu Fläche oder Verbrauch.', 'Hilft stark, ersetzt keine finale Auslegung.'),
-  technologiepfad: p('Grenzt den unterstützten MVP-Pfad ab.', 'Alles außerhalb Hybrid ist Sonderfall.', 'Hybrid ist Standard; andere Pfade blockieren MVP-Fit.'),
+  technologiepfad: p('Grenzt den unterstützten Pfad ab.', 'Alles außerhalb Hybrid ist Sonderfall.', 'Hybrid ist Standard; andere Pfade blockieren den Standardfit.'),
   gaskessel_vorhanden: p('Hybrid braucht den Kessel als Spitzenlast.', 'Kein oder ungeklärter Bestandskessel.', 'Ja stützt Hybrid; nein ist Sonderfall.'),
   kessel_zustand: p('Prüft, ob der Bestand glaubwürdig weiterläuft.', 'Schlecht, alt oder Zustand unbekannt.', 'Gut/mittel ist besprechbar; unbekannt klären.'),
   kessel_nutzbar: p('Kernkriterium für den Hybrid-Standardpfad.', 'Nein oder unklar verändert Scope und Fit.', 'Ja stützt Vorschlag; unbekannt bleibt Prüfpunkt.'),
-  anzahl_heizkreise: p('Zeigt hydraulische Komplexität früh.', 'Mehr als zwei Heizkreise.', 'Bis zwei Standard; darüber MVP-Sonderfall.'),
+  anzahl_heizkreise: p('Zeigt hydraulische Komplexität früh.', 'Mehr als zwei Heizkreise.', 'Bis zwei Standard; darüber Sonderfall.'),
   pufferspeicher_vorhanden: p('Hilft bei der späteren Hydraulikbewertung.', 'Größe oder Zustand unbekannt.', 'Informativ; Demo bleibt vorsichtig.'),
   vorlauftemp_klasse: p('Treiber für Effizienz und Machbarkeit.', 'Über 65 °C oder unbekannt.', 'Niedrig stärkt Fit; hoch braucht Prüfung.'),
   heizkoerper_ausreichend: p('Zeigt, ob niedrige Temperaturen plausibel sind.', 'Zu kleine Heizflächen.', 'Ja stützt Fit; nein bleibt Annahme.'),
@@ -740,8 +747,9 @@ const PLAYBOOKS_KURZ = {
   smartcontrol_variante: p('SmartControl steuert die Wärmepumpenanlage und integriert Betriebsdaten.', 'KI-Variante nur ansetzen, wenn Bedarf an adaptiver Optimierung besteht.', 'Standard ist Demo-Default; KI ist Aufpreis-Option für gehobenen Bedarf.'),
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
-  vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '15 Jahre ist Demo-Standard; 10 oder 20 Jahre verschieben den Grundpreis.'),
-  effizienzrisiko: p('Klärt, wer Abweichungen von der erwarteten WP-Effizienz wirtschaftlich trägt.', 'Unklare Risikoverteilung führt später zu Streit über Wärmekosten und JAZ.', 'Techem-Übernahme ist das Contracting-Standardversprechen; Alternativen prüfen.'),
+  vertragstyp: p('Klärt, ob die vorgeschriebene AVB-Preisgleitformel oder eine freie Anpassung gilt.', 'Individualvertrag ohne Abstimmung erschwert später die Preisanpassung.', 'AVB-konform ist Demo-Standard; Individualvertrag ist meist der günstigste Weg.'),
+  vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '10 Jahre (AVB-konform) ist Demo-Standard; 15 oder 20 Jahre senken den Grundpreis.'),
+  effizienzrisiko: p('Klärt, wer Abweichungen von der erwarteten WP-Effizienz wirtschaftlich trägt.', 'Unklare Risikoverteilung führt später zu Streit über Wärmekosten und JAZ.', 'Contractor-Übernahme ist das Contracting-Standardversprechen; Alternativen prüfen.'),
 }
 
 const mitPlaybook = (frage) => ({

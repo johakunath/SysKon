@@ -267,7 +267,7 @@ Exportiert aus `src/data/annahmen.js`. Keine Rechenlogik – verknüpft die drei
 - `preisgleitformel_anteil: 'pg_strom'` → 27 % Stromkostenanteil in der AVBFernwärme §24-Preisgleitformel
 - `messkonzept_voraussetzung: 'messkonzept_basis'` → separater WP-Zähler als technische Voraussetzung für WP-Sondertarif-Abrechnung und JAZ-Messung
 
-Modell `'wp_sondertarif'`: Techem beschafft WP-Strom über WP-Sondertarif (HTT/NTT). Strombeschaffung ist kein direkter BEG-Fördergegenstand (`foerderung: 'keine_direkte'`).
+Modell `'wp_sondertarif'`: Der Contractor beschafft WP-Strom über WP-Sondertarif (HTT/NTT). Strombeschaffung ist kein direkter BEG-Fördergegenstand (`foerderung: 'keine_direkte'`).
 
 ### BEG-Förderannahme
 

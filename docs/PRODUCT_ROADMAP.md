@@ -77,6 +77,13 @@ Kein linearer Stage-Gate, sondern Produktqualitätsmechanismus.
 - Export zurück in CRM, internen Angebotsprozess und später Installation/Operations.
 - Skalierung auf weitere Technologien.
 - Governance: Product owns; PE, Engineering, Procurement, Finance und Legal unterstützen.
+- **Moonshot-Idee: Visuelle Systemvorschau.** Statt reiner Tabellen/Listen ein zusammengesetztes
+  Bild der gewählten Komponenten in der Live-Preview zeigen (z. B. Aufstellvariante-Szene +
+  Icons für Modulanzahl, Hydraulik, Monitoring). Entscheidung: vorgefertigte/handgezeichnete
+  Illustrationen (ein Satz Szenen je Aufstellvariante + Icon-Set), programmatisch je nach
+  Konfiguration zusammengesetzt – **keine** KI-Bildgenerierung (Konsistenz- und Kostenrisiko,
+  neue Abhängigkeit). Bleibt eine schematische Illustration, keine Standort-/3D-Berechnung
+  (siehe Schutzplanke unten). Aufwand: Design-Vorlauf für die Basis-Assets nötig.
 
 ## Qualitäts- und Hygienethemen (aus PR-Review Juni 2026)
 

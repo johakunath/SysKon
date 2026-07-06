@@ -5,12 +5,12 @@
 export const QUELLENTYPEN = {
   tes_abrechnung: {
     label: 'TES-Abrechnung',
-    beschreibung: 'Verbrauchs- und Abrechnungsdaten aus bestehenden Techem-Heizkostenerfassungsverträgen.',
+    beschreibung: 'Verbrauchs- und Abrechnungsdaten aus bestehenden Heizkostenerfassungsverträgen mit einem Messdienstleister.',
     skalierbar: true,
   },
   asset_manager: {
     label: 'Asset Manager',
-    beschreibung: 'Stamm- und Betriebsdaten aus dem Techem Asset Manager. Skalierbare Zielquelle für automatisierte Befüllung.',
+    beschreibung: 'Stamm- und Betriebsdaten aus dem Asset-Management-System des Messdienstleisters. Skalierbare Zielquelle für automatisierte Befüllung.',
     skalierbar: true,
   },
   stammdaten: {

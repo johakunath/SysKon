@@ -59,7 +59,7 @@ export const KATALOG = [
       { id: 'hydraulik_basis', text: 'Hydraulikpaket (max. 2 Heizkreise, Pumpengruppen, Abgleich, Regelung)',
         menge: 1, einheit: 'pausch.',
         kosten: { typ: 'fix', annahme: 'k_hydraulik' }, foerder: 'f_hydraulik', tag: 'capex',
-        begruendung: 'Pflichtbaustein: Einbindung in den vorhandenen Heizkreis (MVP ≤ 2 Heizkreise).',
+        begruendung: 'Pflichtbaustein: Einbindung in den vorhandenen Heizkreis (Standard ≤ 2 Heizkreise).',
         kunde: {
           titel: 'Hydraulikpaket',
           hersteller: 'systemseitig',

@@ -25,11 +25,11 @@ export const BERECHNUNGS_DOMAENEN = {
   },
 }
 
-// Servicegrenze-Default: Techem-Leistungsumfang endet standardmäßig vor dem
+// Servicegrenze-Default: Contractor-Leistungsumfang endet standardmäßig vor dem
 // Heizkreisverteiler. Sekundärheizkreise sind Sonderfall / separater Scope.
 export const SERVICEGRENZE = {
   typ: 'vor_heizkreisverteiler',
-  beschreibung: 'Techem-Leistungsumfang bis vor den Heizkreisverteiler; Sekundärheizkreise nicht im Standard-Scope.',
+  beschreibung: 'Contractor-Leistungsumfang bis vor den Heizkreisverteiler; Sekundärheizkreise nicht im Standard-Scope.',
   optionen: ['vor_heizkreisverteiler', 'inkl_heizkreisverteiler'],
 }
 
@@ -192,7 +192,7 @@ export function aufstellungEmpfehlung(e, a, derived, gesperrteVarianten = []) {
       aufstellung_viable: [],
       aufstellung_empfohlen: null,
       aufstellung_empfohlen_label: null,
-      aufstellung_begruendung: 'Keine Außenfläche erfasst; im MVP entsteht keine Standard-Aufstellungsempfehlung.',
+      aufstellung_begruendung: 'Keine Außenfläche erfasst; es entsteht keine Standard-Aufstellungsempfehlung.',
       aufstellung_abweichung: null,
       aufstellung_blockierte_varianten: Object.fromEntries(AUFSTELLVARIANTEN.map(v => [v, ['keine Außenfläche erfasst']])),
     }
@@ -214,7 +214,7 @@ export function aufstellungEmpfehlung(e, a, derived, gesperrteVarianten = []) {
     if (flaeche !== null && flaeche < meta.flaecheMin) gruende.push(`mindestens ${meta.flaecheMin} m² zusammenhängende Fläche ansetzen`)
     if (laenge !== null && laenge < meta.laengeMin) gruende.push(`nutzbare Länge unter ${meta.laengeMin} m`)
     if (breite !== null && breite < meta.breiteMin) gruende.push(`nutzbare Breite unter ${meta.breiteMin} m`)
-    if (dachSonderfall) gruende.push('Dach/Garage braucht Fachprüfung statt MVP-Placement')
+    if (dachSonderfall) gruende.push('Dach/Garage braucht Fachprüfung statt Standard-Placement')
     if (meta.container && containerLogistikBlockiert) gruende.push('Container braucht realistische Anlieferung und Kranstellung')
     if (meta.heizraumAbhaengig && heizraumBlockiert) gruende.push('Heizraum oder Zugang spricht gegen heizraumabhängige Varianten')
     return gruende

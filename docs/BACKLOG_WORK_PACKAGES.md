@@ -34,7 +34,7 @@ doppelten Angaben zu bereits gezeigten Informationen.
 
 ## WP10 – Bestehende Tools & Learnings prüfen (SK-72, Blocked)
 
-Status: **Blocked** – erfordert Zugang zu Techem-Bestandstools durch den PO.
+Status: **Blocked** – erfordert Zugang zu bestehenden Contractor-Tools durch den PO.
 
 | ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
 |---|---|---|---|---|---|---|---|---|

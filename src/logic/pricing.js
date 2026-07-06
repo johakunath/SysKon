@@ -113,16 +113,23 @@ export function preisgleitWert(formel, indexStaende = {}, basiswerte = {}) {
 }
 
 // Effizienzrisiko-Allokation (Vertragsparameter, kundensicher). Konfigurierbar
-// über die Frage `effizienzrisiko`; Default: Techem trägt das Risiko.
+// über die Frage `effizienzrisiko`; Default: Contractor trägt das Risiko.
 export const EFFIZIENZRISIKO_TEXT = {
-  techem: 'Techem trägt das WP-Effizienzrisiko (Demo-Annahme)',
-  geteilt: 'Effizienzrisiko zwischen Techem und Kunde geteilt (Demo-Annahme)',
+  contractor: 'Contractor trägt das WP-Effizienzrisiko (Demo-Annahme)',
+  geteilt: 'Effizienzrisiko zwischen Contractor und Kunde geteilt (Demo-Annahme)',
   kunde: 'Kunde trägt das Effizienzrisiko (Demo-Annahme)',
 }
 
 // Hauptfunktion: erzeugt {kunde, intern} aus der internen Kostensicht.
 export function contractingPreise({ lv, opex, energie, derived, eingaben, annahmen }) {
-  const laufzeit = zahl(eingaben?.vertragslaufzeit) ?? annahmen.vertragslaufzeit_default
+  // Vertragstyp (Frage `vertragstyp`, Default AVB-konform): AVB-Fernwärme bindet
+  // die Laufzeit fest auf annahmen.vertragslaufzeit_default (10 Jahre, Demo) – ein
+  // AVB-Angebot muss immer verfügbar sein. Andere Laufzeiten sind nur im
+  // individuell mit dem Kunden ausgehandelten Vertrag möglich.
+  const istIndividualvertrag = eingaben?.vertragstyp === 'individual'
+  const laufzeit = istIndividualvertrag
+    ? (zahl(eingaben?.vertragslaufzeit) ?? annahmen.vertragslaufzeit_default)
+    : annahmen.vertragslaufzeit_default
   const capex = lv?.netto ?? 0
   const opexPa = opex?.summe_pa ?? 0
 
@@ -169,14 +176,18 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
     })
     : []
 
-  const preisgleitformel = preisgleitformelBauen(annahmen)
-  const effizienzrisiko = EFFIZIENZRISIKO_TEXT[eingaben?.effizienzrisiko] ?? EFFIZIENZRISIKO_TEXT.techem
+  // Preisanpassungsstruktur: Individualvertrag ersetzt die §24-Preisgleitformel
+  // durch eine freiere Anpassung; Grundpreis/Arbeitspreis-Berechnung bleibt gleich.
+  const preisgleitformel = istIndividualvertrag ? null : preisgleitformelBauen(annahmen)
+  const effizienzrisiko = EFFIZIENZRISIKO_TEXT[eingaben?.effizienzrisiko] ?? EFFIZIENZRISIKO_TEXT.contractor
 
   // Vertragsparameter (strukturiert, kundensicher).
   const vertragsparameter = {
     servicegrenze: 'bis Heizkreisverteiler (Demo-Standard)',
     effizienzrisiko,
-    preisanpassung: 'jährlich nach Preisgleitformel (AVBFernwärme-orientiert, Demo)',
+    preisanpassung: istIndividualvertrag
+      ? 'individuell vereinbart (frei, ohne §24-Bezug, Demo)'
+      : 'jährlich nach Preisgleitformel (AVBFernwärme-orientiert, Demo)',
   }
 
   return {

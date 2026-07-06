@@ -34,7 +34,7 @@ erstellt — sehr langsam, nicht skalierbar. Das Ziel ist mittelfristig 10×
 Skalierung, mit 1–2 Personen, die das Tool gemeinsam mit Supply Chain,
 Sales und Management warten.
 
-**Primäres Vorbild**: „Manfred" bei Temondo/Techem — ein CPQ-Konfigurator
+**Primäres Vorbild**: ein bestehender CPQ-Konfigurator eines Wettbewerbers
 für ähnliche Anwendungsfälle. SysKon soll zeigen, dass dieses Konzept für
 SmartZero umsetzbar ist — ob mit AI-Unterstützung, Eigenentwicklung oder
 einer bestehenden CPQ-Lösung.

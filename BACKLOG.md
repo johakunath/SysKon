@@ -50,7 +50,7 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 | 4 | SK-98 Inline-Fragenkontext | Alle Infos zur Fragenbeantwortung inline neben der Frage sichtbar | – | P2 | M | Done |
 | 5 | SK-99 Admin Demo-Reife | Admin auf 3 klare Bereiche vereinfachen; zeigt Pflegbarkeit durch 1–2 Personen | – | P2 | S | Done |
 | 6 | SK-100 Angebot als Dokument | Kundensicht dokumentähnlich (Logo, Name, Datum, klare Sektionen) | – | P3 | M | Done |
-| 7 | SK-72 Bestehende Tools & Learnings | Discovery: Techem-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
+| 7 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
 
 ## Aktueller Fokus
 
