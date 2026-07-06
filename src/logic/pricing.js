@@ -12,6 +12,7 @@
 // und die rechtliche AVBFernwärme-Prüfung bleiben offen (siehe Doc).
 
 import { zahl } from './calc.js'
+import { AVB_LAUFZEIT_JAHRE } from '../data/annahmen.js'
 
 // Annuitätenfaktor (Kapitalwiedergewinnungsfaktor): verteilt eine Investition
 // über n Jahre bei Zinssatz i. Zinssatz 0 ⇒ lineare Verteilung (1/n).
@@ -123,13 +124,14 @@ export const EFFIZIENZRISIKO_TEXT = {
 // Hauptfunktion: erzeugt {kunde, intern} aus der internen Kostensicht.
 export function contractingPreise({ lv, opex, energie, derived, eingaben, annahmen }) {
   // Vertragstyp (Frage `vertragstyp`, Default AVB-konform): AVB-Fernwärme bindet
-  // die Laufzeit fest auf annahmen.vertragslaufzeit_default (10 Jahre, Demo) – ein
-  // AVB-Angebot muss immer verfügbar sein. Andere Laufzeiten sind nur im
-  // individuell mit dem Kunden ausgehandelten Vertrag möglich.
+  // die Laufzeit fest auf AVB_LAUFZEIT_JAHRE (10 Jahre, Demo, nicht admin-editierbar)
+  // – ein AVB-Angebot muss immer verfügbar sein, unabhängig von lokal gespeicherten
+  // Admin-Annahmen. Andere Laufzeiten sind nur im individuell mit dem Kunden
+  // ausgehandelten Vertrag möglich (Fallback: annahmen.vertragslaufzeit_default).
   const istIndividualvertrag = eingaben?.vertragstyp === 'individual'
   const laufzeit = istIndividualvertrag
     ? (zahl(eingaben?.vertragslaufzeit) ?? annahmen.vertragslaufzeit_default)
-    : annahmen.vertragslaufzeit_default
+    : AVB_LAUFZEIT_JAHRE
   const capex = lv?.netto ?? 0
   const opexPa = opex?.summe_pa ?? 0
 

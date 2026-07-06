@@ -113,6 +113,11 @@ export const ANNAHMEN = {
 // daher eigener Export (nicht über Admin editierbar).
 export const FOERDERUNG_ART_LABEL = 'Bundesförderung für effiziente Gebäude – Einzelmaßnahmen (BEG EM)'
 
+// Feste AVB-Fernwärme-Laufzeit (Demo). Bewusst kein ANNAHMEN-Feld: Admin darf
+// vertragslaufzeit_default (Individualvertrag-Fallback) ändern, ohne dass ein
+// zuvor lokal gespeicherter Admin-Stand die AVB-Bindung auf 10 Jahre aufweicht.
+export const AVB_LAUFZEIT_JAHRE = 10
+
 // SK-77: WP-Produktstamm Demo-Referenz (nicht editierbar).
 // Buderus/Dreammaker ist der aktuelle Referenzstand; Alternativhersteller sind nach
 // technischer Prüfung möglich. Felder dokumentieren die Zielstruktur für später

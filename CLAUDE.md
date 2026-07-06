@@ -37,4 +37,4 @@ Read order: `BACKLOG.md` → this file → only referenced source files. Product
 - Status order: `gruen < gelb < orange < rot`; engine keeps worst status.
 - Prefer short docs with links over duplicated explanations.
 - Keep active backlog docs token-light: move completed Work Packages and completed child tickets out of `BACKLOG.md` / `docs/BACKLOG_WORK_PACKAGES.md` into `docs/BACKLOG_ARCHIVE.md`.
-- Never mention "Techem" (or any other specific real vendor/company name) anywhere in code, data, comments, or docs — not even as a placeholder or example. Use generic terms instead (e.g. "Contractor", "Messdienstleister"). (Added Jul 2026, PO instruction.)
+- Never name a specific real vendor/company anywhere in code, data, comments, or docs — not even as a placeholder or example. Use generic terms instead (e.g. "Contractor", "Messdienstleister"). (Added Jul 2026, PO instruction; a previously used real metering-services vendor name was scrubbed repo-wide for this reason — do not reintroduce it.)

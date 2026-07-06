@@ -438,7 +438,7 @@ const SEKTIONEN_ROH = [
   { id: 'K', titel: 'Vertrag & Angebot', fragen: [
     { id: 'vertragstyp', label: 'AVB-Fernwärme oder Individualvertrag?', typ: 'select', dq: 0,
       optionen: [
-        { wert: 'avb', label: 'AVB-Fernwärme-konform (Demo-Standard)', hinweis: 'Vorgeschriebene §24-Preisgleitformel; rechtssicherer Standardweg.' },
+        { wert: 'avb', label: 'AVB-Fernwärme-konform (Demo-Standard)', hinweis: 'Vorgeschriebene §24-Preisgleitformel; üblicher Standardweg (Demo, keine Rechtsprüfung).' },
         { wert: 'individual', label: 'Individualvertrag', hinweis: 'Freiere Preisanpassung statt §24-Formel; meist der günstigste Weg.' },
       ],
       hinweisKurz: 'AVB-konform ist Demo-Standard (vorgeschrieben). Individualvertrag ersetzt die §24-Preisgleitformel durch eine freiere Anpassung.',
