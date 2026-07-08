@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react'
 import { ANNAHMEN_META } from '../data/annahmen.js'
-import { ADMIN_STORAGE_KEY, makeDefaultAdminConfig, mergeWithDefaults, validateAdminConfig } from '../data/adminConfig.js'
+import { ADMIN_STORAGE_KEY, applyDatanormDemoImport, makeDefaultAdminConfig, mergeWithDefaults, validateAdminConfig } from '../data/adminConfig.js'
+import { LIEFERANTEN } from '../data/artikel.js'
+import { artikelKalkulation } from '../logic/artikelPreise.js'
 import { REGELN } from '../data/regeln.js'
-import { bedingungText, wirkungText } from './format.js'
+import { bedingungText, euro, prozent, wirkungText } from './format.js'
 import Testfaelle from './Testfaelle.jsx'
 
 const PRIMARY_TABS = [
   ['fragen', 'Fragen & Playbook', 'Fragetexte, Optionshinweise und Sales-Playbook-Texte bearbeiten.'],
+  ['artikel', 'Artikeldatenbank', 'Artikelstamm mit Listenpreisen und Rabattgruppen je Lieferant; DATANORM-Import als Demo-Simulation.'],
   ['katalog_preise', 'Katalog & Preise', 'Leistungsumfang und Demo-Richtpreise pflegen: Pakettexte, Kundentitel, Preisannahmen.'],
   ['regeln', 'Regeln & Annahmen', 'Aktive Entscheidungsregeln einsehen; Governance-Felder verwalten.'],
 ]
@@ -68,6 +71,165 @@ function AnnahmenTab({ adminConfig, setAdminConfig }) {
           </table>
         </div>
       ))}
+    </div>
+  )
+}
+
+// SK-102: Artikeldatenbank (CPQ-Demo). Artikelstamm je Lieferant mit
+// Listenpreis/Rabattgruppe (editierbar) und berechneter EK/VK-Kette; dazu der
+// simulierte DATANORM-Import (kein echter Parser – wendet das Demo-Update an).
+function ArtikelTab({ adminConfig, setAdminConfig, artikel, rabattgruppen, datanorm, annahmen }) {
+  const [dateiname, setDateiname] = useState('')
+  const [importLog, setImportLog] = useState(null)
+
+  const setArtikel = (nummer, field, value) => updateNested(setAdminConfig, next => {
+    (next.artikel[nummer] ??= {})[field] = value
+  })
+  const setGeneralrabatt = (lieferantId, value) => updateNested(setAdminConfig, next => {
+    next.rabattgruppen[lieferantId].generalrabatt = value
+  })
+  const setGruppenrabatt = (lieferantId, gruppe, value) => updateNested(setAdminConfig, next => {
+    next.rabattgruppen[lieferantId].gruppen[gruppe] = value
+  })
+
+  const prozentWert = (satz) => Math.round((satz ?? 0) * 10000) / 100
+  const importieren = () => {
+    const ergebnis = applyDatanormDemoImport(adminConfig, undefined, dateiname || null)
+    setAdminConfig(ergebnis.config)
+    setImportLog({ ...ergebnis.log, unveraendert: ergebnis.unveraendert, dateiname: dateiname || ergebnis.log.quelle })
+  }
+
+  return (
+    <div className="admin-stack">
+      <div className="karte">
+        <h3>DATANORM-Import (Demo-Simulation)</h3>
+        <p className="hinweis">
+          Simuliert den Upload einer DATANORM-Datei von Hersteller/Großhändler: Listenpreise werden
+          überschrieben, neue Artikel ergänzt, Rabattgruppen aktualisiert. Es wird KEINE echte Datei
+          geparst – der Import spielt ein vordefiniertes Demo-Update ein. Aktueller Preisstand: <strong>{datanorm?.preisstand ?? '–'}</strong>
+          {datanorm?.letzterImport ? ` · letzter Import: ${new Date(datanorm.letzterImport).toLocaleString('de-DE')}` : ''}
+        </p>
+        <div className="zeile">
+          <input
+            type="file"
+            aria-label="DATANORM-Datei (Demo)"
+            onChange={e => setDateiname(e.target.files?.[0]?.name ?? '')}
+          />
+          <button className="primaer" onClick={importieren}>DATANORM-Import ausführen (Demo)</button>
+        </div>
+        {importLog ? (
+          importLog.unveraendert ? (
+            <p className="okbox">Keine Änderungen – der Artikelstamm ist bereits auf Preisstand {importLog.preisstand}.</p>
+          ) : (
+            <div className="okbox">
+              Import übernommen ({importLog.dateiname}): {importLog.aktualisiert.length} Listenpreise überschrieben,{' '}
+              {importLog.neu.length} Artikel neu angelegt, {importLog.rabattgruppenGeaendert.length} Rabattgruppen aktualisiert.
+              Neuer Preisstand: {importLog.preisstand}.
+              {importLog.neu.length > 0 && (
+                <div className="hinweis">Neu: {importLog.neu.map(n => `${n.artikelnummer} (${n.kurztext})`).join(', ')}</div>
+              )}
+            </div>
+          )
+        ) : null}
+      </div>
+
+      {LIEFERANTEN.map(lieferant => {
+        const eigeneArtikel = artikel.filter(a => a.lieferant === lieferant.id)
+        const konditionen = rabattgruppen[lieferant.id] ?? { generalrabatt: 0, gruppen: {} }
+        const gruppenNamen = Object.keys(konditionen.gruppen ?? {})
+        return (
+          <details key={lieferant.id} className="karte admin-akkordeon" open>
+            <summary className="admin-akkordeon-kopf">
+              <strong>{lieferant.name}</strong>
+              <span>{eigeneArtikel.length} Artikel · Generalrabatt {prozent(konditionen.generalrabatt)}</span>
+            </summary>
+            <p className="hinweis">{lieferant.hinweis}</p>
+
+            <div className="admin-editor-grid">
+              <label className="admin-field">
+                <span>Generalrabatt (%)</span>
+                <input
+                  className="inline-zahl" type="number" step="any" min="0" max="100"
+                  value={prozentWert(konditionen.generalrabatt)}
+                  onChange={e => setGeneralrabatt(lieferant.id, (parseFloat(e.target.value) || 0) / 100)}
+                />
+              </label>
+              {gruppenNamen.map(gruppe => (
+                <label className="admin-field" key={gruppe}>
+                  <span>Rabattgruppe {gruppe} (%)</span>
+                  <input
+                    className="inline-zahl" type="number" step="any" min="0" max="100"
+                    value={prozentWert(konditionen.gruppen[gruppe])}
+                    onChange={e => setGruppenrabatt(lieferant.id, gruppe, (parseFloat(e.target.value) || 0) / 100)}
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="table-scroll">
+              <table className="lv">
+                <thead>
+                  <tr><th>Artikelnummer</th><th>Kurztext</th><th>Listenpreis (€)</th><th>Rabattgruppe</th><th>EK</th><th>VK ({prozent(annahmen.vk_aufschlag_material)} Aufschlag)</th></tr>
+                </thead>
+                <tbody>
+                  {eigeneArtikel.map(a => {
+                    const kalk = artikelKalkulation(a.artikelnummer, artikel, rabattgruppen, annahmen.vk_aufschlag_material)
+                    return (
+                      <tr key={a.artikelnummer}>
+                        <td><code>{a.artikelnummer}</code></td>
+                        <td>
+                          <details>
+                            <summary>{a.kurztext}{a.verwendung === 'opex' ? ' · p.a.' : ''}</summary>
+                            <p className="hinweis">{a.langtext || 'Kein Langtext gepflegt.'} · Preisstand: {a.preisstand ?? '–'}</p>
+                          </details>
+                        </td>
+                        <td className="r">
+                          <input
+                            className="inline-zahl" type="number" step="any" min="0"
+                            value={a.listenpreis}
+                            onChange={e => setArtikel(a.artikelnummer, 'listenpreis', parseFloat(e.target.value) || 0)}
+                          />
+                        </td>
+                        <td>
+                          <select
+                            value={a.rabattgruppe ?? ''}
+                            onChange={e => setArtikel(a.artikelnummer, 'rabattgruppe', e.target.value || null)}
+                          >
+                            <option value="">Generalrabatt ({prozent(konditionen.generalrabatt)})</option>
+                            {gruppenNamen.map(gruppe => (
+                              <option key={gruppe} value={gruppe}>{gruppe} ({prozent(konditionen.gruppen[gruppe])})</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="r">{kalk ? euro(kalk.ek) : '–'}</td>
+                        <td className="r"><strong>{kalk ? euro(kalk.vk) : '–'}</strong></td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        )
+      })}
+
+      <div className="karte">
+        <h3>Import-Historie</h3>
+        {(datanorm?.log ?? []).length > 0 ? (
+          <table className="fakten">
+            <tbody>
+              {datanorm.log.map((eintrag, i) => (
+                <tr key={i}>
+                  <td>{new Date(eintrag.zeitpunkt).toLocaleString('de-DE')} · {eintrag.dateiname}</td>
+                  <td className="r">{eintrag.unveraendert
+                    ? 'keine Änderungen'
+                    : `${eintrag.aktualisiert} Preise, ${eintrag.neu} neu, ${eintrag.rabattgruppenGeaendert} Rabattgruppen`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : <p className="hinweis">Noch kein Demo-Import ausgeführt.</p>}
+      </div>
     </div>
   )
 }
@@ -330,6 +492,9 @@ export default function Annahmen({
   ergebnis,
   sektionen = [],
   katalog = [],
+  artikel = [],
+  rabattgruppen = {},
+  datanorm = null,
   eingaben = {},
   setEingaben = () => {},
   annahmen = {},
@@ -365,6 +530,16 @@ export default function Annahmen({
       </div>
 
       {tab === 'fragen' && <FragenTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} sektionen={sektionen} />}
+      {tab === 'artikel' && (
+        <ArtikelTab
+          adminConfig={adminConfig}
+          setAdminConfig={setAdminConfig}
+          artikel={artikel}
+          rabattgruppen={rabattgruppen}
+          datanorm={datanorm}
+          annahmen={annahmen}
+        />
+      )}
       {tab === 'katalog_preise' && (
         <>
           <p className="admin-bereich-label">Preise & Demo-Annahmen</p>
@@ -383,6 +558,8 @@ export default function Annahmen({
           setScreen={setScreen}
           katalog={katalog}
           sektionen={sektionen}
+          artikel={artikel}
+          rabattgruppen={rabattgruppen}
         />
       )}
       {tab === 'import' && <ImportExportTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} resetAdminConfig={resetAdminConfig} />}

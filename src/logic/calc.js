@@ -2,6 +2,9 @@
 // Schall-Demo-Abschätzung, Energieindikation. Wird von engine.js orchestriert.
 // Alle Formeln sind Demo-Logik gemäß HANDOVER §2.7/§2.8, §4 (R18), §5.
 
+import { fahrstreckeKm } from './entfernung.js'
+import { findeInstallationspartner } from '../data/partner.js'
+
 const log10 = Math.log10
 
 // SK-81: Die vier Berechnungsdomänen – explizite Grenzziehung vor WP8-Pricing-Aufbau.
@@ -311,6 +314,22 @@ export function energieIndikation(bedarf, a, vlKlasse) {
   }
 }
 
+// Anfahrt-Demo (SK-102): Fahrstrecke gewählter Installationspartner → Projekt-PLZ
+// (Ersatz für eine Google-Maps-Distance-Abfrage). Ohne PLZ oder Partner greift
+// der Fallback aus den Annahmen; die Quelle bleibt für die Anzeige sichtbar.
+export function anfahrtAbleitung(e, a) {
+  const partner = findeInstallationspartner(e.installationspartner)
+  const kmEinfach = fahrstreckeKm(partner, e.projekt_plz, a.anfahrt_strassenfaktor)
+  const quelle = kmEinfach != null ? 'plz_demo' : 'fallback'
+  const einfach = kmEinfach ?? a.anfahrt_fallback_km
+  return {
+    anfahrt_km_einfach: einfach,
+    anfahrt_km_gesamt: Math.round(einfach * 2 * a.anfahrt_fahrten),
+    anfahrt_partner_label: partner?.name ?? null,
+    anfahrt_quelle: quelle,
+  }
+}
+
 // Alle Zwischenergebnisse für die Regel-Engine (Felder sind in Bedingungen nutzbar)
 export function ableiten(e, a) {
   const hl = heizlastAbleitung(e, a)
@@ -339,5 +358,6 @@ export function ableiten(e, a) {
     wp_volllaststunden: energie && wp.wp_kw ? Math.round((energie.wp_waerme * 1000) / wp.wp_kw) : null,
     // Puffer-Sizing: Richtwert auf Basis kleinster WP-Einheit in homogener Kaskade
     puffer_empfehlung_liter: a.puffer_liter_je_kw * a.wp_modul_kw,
+    ...anfahrtAbleitung(e, a),
   }
 }

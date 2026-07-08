@@ -32,7 +32,7 @@ const FELDER = [
   ['warnungen', 'Hinweise', v => v],
 ]
 
-export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, setScreen, katalog, sektionen }) {
+export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, setScreen, katalog, sektionen, artikel, rabattgruppen }) {
   const [faelle, setFaelle] = useState(lade)
   const [name, setName] = useState('')
   const [lauf, setLauf] = useState(null) // { datum, ergebnisse: {id: snapshot} }
@@ -55,7 +55,7 @@ export default function Testfaelle({ eingaben, setEingaben, annahmen, ergebnis, 
     const ergebnisse = {}
     const fragen = sektionen?.flatMap(s => s.fragen.map(f => ({ ...f, sektion: s.id })))
     for (const f of faelle) {
-      const erg = berechne(f.eingaben, { annahmen, katalog, fragen })
+      const erg = berechne(f.eingaben, { annahmen, katalog, fragen, artikel, rabattgruppen })
       ergebnisse[f.id] = snapshot(erg, f.eingaben)
     }
     setLauf({ datum: new Date().toLocaleString('de-DE'), ergebnisse })

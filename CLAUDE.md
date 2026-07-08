@@ -24,6 +24,7 @@ Read order: `BACKLOG.md` → this file → only referenced source files. Product
 | Questions/tooltips/DQ weights | `src/data/fragen.js` |
 | Rules/status | `src/data/regeln.js`, `src/logic/engine.js` |
 | Assumptions/prices/catalog | `src/data/annahmen.js`, `src/data/katalog.js` |
+| Article DB/rebates/travel (SK-102) | `src/data/artikel.js`, `src/logic/artikelPreise.js`, `src/data/partner.js`, `src/logic/entfernung.js` |
 | Calculations | `src/logic/calc.js` |
 | Presets/tests | `src/data/presets.js`, `tests/*.js`, `tests/*.jsx` |
 

@@ -27,6 +27,24 @@ war, vollständig entfernen (siehe CLAUDE.md-Hard-Rule).
 
 ---
 
+## SK-102 – Katalog- & Kostendatenbank (CPQ-Demo)
+
+Ziel: Die Kostenlogik demonstriert eine CPQ-typische Katalog-/Preisdatenbank,
+wie der PO sie aus früheren Configure-Price-Quote-Tools kennt: Artikelstamm
+mit Artikelnummern, Kurz-/Langtexten, Listenpreisen und Rabattgruppen je
+Lieferant, gepflegt über (simulierte) DATANORM-Uploads. Nicht-Katalog-Kosten
+(Fundament, Netzanschluss, Hydraulikpaket, Umfeld) bleiben Annahmen-basiert.
+PO-Entscheidungen: Import nur simuliert (kein Parser); Anfahrt als
+Demo-Distanzrechnung statt Google-Maps-API; volle EK/VK-Kette; Servicevertrag
+als Artikelpreis je WP-Modul p.a.; Installations-Einzelkomponenten in Summe
+nahe der früheren 60-k€-Pauschale.
+
+| ID | Type | Area | Title | Description | Acceptance Criteria | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| SK-102 | Epic | Katalog/Kosten | Artikelstamm, DATANORM-Demo-Import, Rabattgruppen, Installations-Einzelpositionen, Anfahrtskalkulation | Neuer Artikelstamm `src/data/artikel.js` (fiktive Lieferanten, Hard Rule beachtet) + EK/VK-Kette `src/logic/artikelPreise.js` (Listenpreis − Rabattgruppe/Generalrabatt = EK; × `vk_aufschlag_material` = VK). Katalog-Hardware (WP-Modul, Speicher/FWS, Schallzubehör, Monitoring, Messkonzept, SmartControl) und Serviceverträge (je WP-Modul p.a., OpEx) preisen über `kosten.typ='artikel'`; Engine reichert LV-Positionen mit Artikel-Kalkulation an (nur Internsicht/CSV; Kundensicht zeigt Artikelnummer ohne Preise). Installation in 13 Einzelpositionen (`k_inst_*`) inkl. bedingter Demontagen (Öltank-Frage `oeltank_vorhanden`, Kessel nicht nutzbar) über neue Positions-Bedingungen. Anfahrt als km-Position: Fahrstrecke Installationspartner (fiktiv, `src/data/partner.js`) → Projekt-PLZ (`projekt_plz`) über PLZ-Leitzonen-Zentroide × Straßenfaktor (`src/logic/entfernung.js`, Demo-Ersatz für Google-Maps-Distanz, Fallback ohne PLZ/Partner); €/km = km-Satz + Stundensatz ÷ Ø-Geschwindigkeit, × 2 × Fahrten. Admin-Tab „Artikeldatenbank": Artikel/Listenpreise/Rabattgruppen editierbar, simulierter DATANORM-Import (`applyDatanormDemoImport`, idempotent, Import-Historie), Persistenz in `syskon_admin_config_v1`. | 160 Tests grün (`tests/artikel.test.js`, `tests/entfernung.test.js`, SK-102-Engine-Tests); Referenzfall bleibt im gewohnten Korridor (Installationsgruppe ≈ 60 k€, WP-Modul-VK ≈ 22 k€); Rabattgruppen-Änderung wirkt live auf LV; zweiter Demo-Import meldet „keine Änderungen"; keine realen Firmennamen bei neuen Lieferanten/Partnern. | P1 | XL | Done |
+
+---
+
 ## WP10 – Bestehende Tools & Learnings prüfen (SK-72, Blocked)
 
 Status: **Blocked** – erfordert Zugang zu bestehenden Contractor-Tools durch den PO.

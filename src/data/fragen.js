@@ -3,6 +3,8 @@
 // `dq` = Gewicht im Datenqualitätsscore (0 = optionale Frage). Antworten mit
 // Wert 'unbekannt' gelten als unzureichend und liefern KEINE DQ-Punkte.
 
+import { INSTALLATIONSPARTNER } from './partner.js'
+
 const JN = [
   { wert: 'ja', label: 'ja' },
   { wert: 'nein', label: 'nein' },
@@ -144,6 +146,9 @@ const SEKTIONEN_ROH = [
     { id: 'anzahl_gebaeude', label: 'Wie viele Gebäude soll die Anlage versorgen?', typ: 'zahl', einheit: 'Gebäude', dq: 0, min: 1, max: 50,
       hinweisKurz: 'Das Systempaket versorgt genau ein Gebäude. Mehr als eines ist kein Standardfit – als Sonderfall markieren.',
       tooltip: 'Das Systempaket versorgt genau ein Gebäude; mehr als eines ist kein Standardfit (R19). Leer = Annahme „ein Gebäude".' },
+    { id: 'projekt_plz', label: 'Welche Postleitzahl hat der Projektstandort?', typ: 'zahl', einheit: 'PLZ', dq: 1, min: 1000, max: 99999,
+      hinweisKurz: 'Basis der Demo-Anfahrtskalkulation (Fahrstrecke Installationspartner → Projekt). Ohne PLZ greift eine Fallback-Distanz.',
+      tooltip: 'Demo-Ersatz für eine Google-Maps-Fahrstreckenabfrage: PLZ-Leitzone → Distanz zum gewählten Installationspartner (SK-102). Vierstellige Eingabe wird als PLZ mit führender Null gelesen.' },
     { id: 'flaeche', label: 'Wie groß ist die beheizte Fläche?', typ: 'zahl', einheit: 'm²', dq: 2, min: 50, max: 50000,
       hinweisKurz: 'Bezugsgröße für Richtwerte pro m². Schätzwerte klar als Annahme führen, wenn kein Verbrauch vorliegt.',
       tooltip: 'Bezugsgröße für €/m² und Heizlast-Proxy, falls kein Verbrauch vorliegt.' },
@@ -240,6 +245,9 @@ const SEKTIONEN_ROH = [
       sichtbar: { feld: 'gaskessel_vorhanden', op: '=', wert: 'ja' },
       hinweisKurz: 'Kernkriterium für den Hybrid-Standardpfad. Unklar oder nein verändert Scope und Standardfähigkeit.',
       tooltip: 'Grün-Kriterium: der Hybridpfad braucht einen nutzbaren Bestandskessel.' },
+    { id: 'oeltank_vorhanden', label: 'Ist ein stillgelegter Öltank oder Ölkessel zur Demontage vorhanden?', typ: 'select', optionen: JNU, dq: 1,
+      hinweisKurz: 'Ein Alt-Öltank erzeugt eine eigene Demontage-/Stilllegungsposition im Installationsumfang (SK-102).',
+      tooltip: 'Bei „ja" erscheint die Position „Demontage/Stilllegung Öltank" im Leistungsverzeichnis (Demo-Pauschale).' },
     { id: 'anzahl_heizkreise', label: 'Wie viele Raumheizkreise sind vorhanden?', typ: 'zahl', einheit: 'Stk', dq: 3, min: 1, max: 10,
       hinweisKurz: 'Mehr als zwei Heizkreise ist kein Standardfall – als hydraulischen Sonderfall markieren.',
       tooltip: 'Nur Raumheizkreise zählen (TWW-Kreis wird separat geplant). Standard: max. 2 Raumheizkreise; mehr ist Ausschluss (R04).' },
@@ -436,6 +444,14 @@ const SEKTIONEN_ROH = [
   ]},
 
   { id: 'K', titel: 'Vertrag & Angebot', fragen: [
+    { id: 'installationspartner', label: 'Welcher Installationspartner soll das Projekt umsetzen?', typ: 'select', dq: 1,
+      optionen: INSTALLATIONSPARTNER.map(p => ({
+        wert: p.id,
+        label: p.name,
+        hinweis: `Standort PLZ ${p.plz}; Basis der Demo-Anfahrtskalkulation.`,
+      })),
+      hinweisKurz: 'Der Partnerstandort bestimmt die Anfahrtskosten (Demo-Fahrstrecke zur Projekt-PLZ). Ohne Auswahl greift eine Fallback-Distanz.',
+      tooltip: 'Fiktive Partnerbetriebe (SK-102). Anfahrt = Fahrstrecke Partner → Projekt-PLZ × 2 × Fahrten; €/km aus Fahrzeugkosten + Stundensatz ÷ Ø-Geschwindigkeit.' },
     { id: 'vertragstyp', label: 'AVB-Fernwärme oder Individualvertrag?', typ: 'select', dq: 0,
       optionen: [
         { wert: 'avb', label: 'AVB-Fernwärme-konform (Demo-Standard)', hinweis: 'Vorgeschriebene §24-Preisgleitformel; üblicher Standardweg (Demo, keine Rechtsprüfung).' },
@@ -700,6 +716,7 @@ const p = (warum, warnsignale, einordnung) => ({ warum, warnsignale, einordnung 
 const PLAYBOOKS_KURZ = {
   gebaeudetyp: p('Setzt den Rahmen für Platz, Schall und Standardfit.', 'Innenstadt, enge Höfe oder direkte Nachbarn.', 'Freistehend ist Standard; verdichtet braucht Prüfung.'),
   wohneinheiten: p('Ordnet Objektgröße und Richtwerte pro WE ein.', 'Sehr kleine oder sehr große Objekte.', 'Erklärt Kennzahlen, ist allein kein Ausschluss.'),
+  projekt_plz: p('Bestimmt die Demo-Anfahrtskalkulation zum Partnerstandort.', 'Fehlende PLZ führt zur Fallback-Distanz statt Standortbezug.', 'PLZ erfassen; Distanz bleibt Demo-Schätzung, keine Routenplanung.'),
   anzahl_gebaeude: p('Klärt früh, ob nur ein Gebäude versorgt wird.', 'Mehr als ein Gebäude ist kein Standardfit.', 'Ein Gebäude ist Standard; mehrere sind Sonderfall.'),
   flaeche: p('Stützt Heizlastproxy und Kosten pro m².', 'Fläche passt nicht zu WE oder Verbrauch.', 'Schätzwert klar als Annahme führen.'),
   baujahrklasse: p('Gibt eine schnelle energetische Einordnung.', 'Modernisierung passt nicht zur Baujahrklasse.', 'Nur Gesprächsanker, keine Berechnung.'),
@@ -717,6 +734,7 @@ const PLAYBOOKS_KURZ = {
   gaskessel_vorhanden: p('Hybrid braucht den Kessel als Spitzenlast.', 'Kein oder ungeklärter Bestandskessel.', 'Ja stützt Hybrid; nein ist Sonderfall.'),
   kessel_zustand: p('Prüft, ob der Bestand glaubwürdig weiterläuft.', 'Schlecht, alt oder Zustand unbekannt.', 'Gut/mittel ist besprechbar; unbekannt klären.'),
   kessel_nutzbar: p('Kernkriterium für den Hybrid-Standardpfad.', 'Nein oder unklar verändert Scope und Fit.', 'Ja stützt Vorschlag; unbekannt bleibt Prüfpunkt.'),
+  oeltank_vorhanden: p('Klärt, ob eine Öltank-Demontage in den Umfang gehört.', 'Alte Tanks, unklare Stilllegung oder Ölreste.', 'Ja ergänzt die Demontageposition; unbekannt vor Ort klären.'),
   anzahl_heizkreise: p('Zeigt hydraulische Komplexität früh.', 'Mehr als zwei Heizkreise.', 'Bis zwei Standard; darüber Sonderfall.'),
   pufferspeicher_vorhanden: p('Hilft bei der späteren Hydraulikbewertung.', 'Größe oder Zustand unbekannt.', 'Informativ; Demo bleibt vorsichtig.'),
   vorlauftemp_klasse: p('Treiber für Effizienz und Machbarkeit.', 'Über 65 °C oder unbekannt.', 'Niedrig stärkt Fit; hoch braucht Prüfung.'),
@@ -747,6 +765,7 @@ const PLAYBOOKS_KURZ = {
   smartcontrol_variante: p('SmartControl steuert die Wärmepumpenanlage und integriert Betriebsdaten.', 'KI-Variante nur ansetzen, wenn Bedarf an adaptiver Optimierung besteht.', 'Standard ist Demo-Default; KI ist Aufpreis-Option für gehobenen Bedarf.'),
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
+  installationspartner: p('Der Partnerstandort bestimmt Anfahrtsdistanz und -kosten.', 'Weit entfernte Partner treiben die Anfahrtskosten sichtbar.', 'Nächstgelegenen Partner wählen; Distanz ist Demo-Schätzung.'),
   vertragstyp: p('Klärt, ob die vorgeschriebene AVB-Preisgleitformel oder eine freie Anpassung gilt.', 'Individualvertrag ohne Abstimmung erschwert später die Preisanpassung.', 'AVB-konform ist Demo-Standard; Individualvertrag ist meist der günstigste Weg.'),
   vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '10 Jahre (AVB-konform) ist Demo-Standard; 15 oder 20 Jahre senken den Grundpreis.'),
   effizienzrisiko: p('Klärt, wer Abweichungen von der erwarteten WP-Effizienz wirtschaftlich trägt.', 'Unklare Risikoverteilung führt später zu Streit über Wärmekosten und JAZ.', 'Contractor-Übernahme ist das Contracting-Standardversprechen; Alternativen prüfen.'),
