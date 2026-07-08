@@ -1,6 +1,8 @@
 import { ANNAHMEN } from './annahmen.js'
 import { SEKTIONEN, ALLE_FRAGEN } from './fragen.js'
 import { KATALOG } from './katalog.js'
+import { ARTIKEL, RABATTGRUPPEN, DATANORM_UPDATE_DEMO } from './artikel.js'
+import { wendeDatanormUpdateAn } from '../logic/artikelPreise.js'
 
 export const ADMIN_STORAGE_KEY = 'syskon_admin_config_v1'
 export const ADMIN_CONFIG_VERSION = 1
@@ -81,6 +83,18 @@ function extractFragenConfig(sektionen = SEKTIONEN) {
   return Object.fromEntries(entries)
 }
 
+// SK-102: Artikelstamm-Overrides (Kurz-/Langtext, Listenpreis, Rabattgruppe)
+// je Artikelnummer; Struktur analog zu fragen/katalog.
+function extractArtikelConfig(artikel = ARTIKEL) {
+  return Object.fromEntries(artikel.map(a => [a.artikelnummer, {
+    kurztext: a.kurztext,
+    langtext: a.langtext ?? '',
+    listenpreis: a.listenpreis,
+    rabattgruppe: a.rabattgruppe ?? null,
+    preisstand: a.preisstand ?? null,
+  }]))
+}
+
 export function makeDefaultAdminConfig() {
   return {
     version: ADMIN_CONFIG_VERSION,
@@ -88,6 +102,12 @@ export function makeDefaultAdminConfig() {
     annahmen: clone(ANNAHMEN),
     fragen: extractFragenConfig(),
     katalog: extractKatalogConfig(),
+    artikel: extractArtikelConfig(),
+    // Über den simulierten DATANORM-Import neu angelegte Artikel (vollständige
+    // Artikelobjekte, damit der Import-Stand lokal persistiert).
+    artikelNeu: [],
+    rabattgruppen: clone(RABATTGRUPPEN),
+    datanorm: { preisstand: '2026-01-15', letzterImport: null, log: [] },
     governance: { ...GOVERNANCE_DEFAULTS },
   }
 }
@@ -146,11 +166,29 @@ export function applyAdminConfig(config = makeDefaultAdminConfig()) {
     }
   })
 
+  // SK-102: effektiver Artikelstamm = Code-Defaults + lokale Overrides
+  // + per Demo-Import neu angelegte Artikel.
+  const bekannt = new Set(ARTIKEL.map(a => a.artikelnummer))
+  const artikel = [
+    ...ARTIKEL,
+    ...(safe.artikelNeu ?? []).filter(a => a?.artikelnummer && !bekannt.has(a.artikelnummer)),
+  ].map(a => {
+    const edit = safe.artikel[a.artikelnummer]
+    return edit
+      ? { ...a, kurztext: edit.kurztext ?? a.kurztext, langtext: edit.langtext ?? a.langtext,
+          listenpreis: edit.listenpreis ?? a.listenpreis, rabattgruppe: edit.rabattgruppe ?? a.rabattgruppe,
+          preisstand: edit.preisstand ?? a.preisstand }
+      : { ...a }
+  })
+
   return {
     annahmen: clone(safe.annahmen),
     sektionen,
     alleFragen: sektionen.flatMap(s => s.fragen.map(f => ({ ...f, sektion: s.id }))),
     katalog,
+    artikel,
+    rabattgruppen: clone(safe.rabattgruppen),
+    datanorm: clone(safe.datanorm),
     governance: { ...safe.governance },
   }
 }
@@ -164,7 +202,22 @@ export function mergeWithDefaults(config) {
     annahmen: { ...defaults.annahmen, ...(incoming.annahmen ?? {}) },
     fragen: { ...defaults.fragen },
     katalog: { ...defaults.katalog },
+    artikel: { ...defaults.artikel },
+    artikelNeu: Array.isArray(incoming.artikelNeu) ? clone(incoming.artikelNeu) : [],
+    rabattgruppen: { ...defaults.rabattgruppen },
+    datanorm: { ...defaults.datanorm, ...(incoming.datanorm ?? {}) },
     governance: { ...defaults.governance, ...(incoming.governance ?? {}) },
+  }
+
+  for (const [nummer, artikelEdit] of Object.entries(incoming.artikel ?? {})) {
+    merged.artikel[nummer] = { ...(defaults.artikel[nummer] ?? {}), ...artikelEdit }
+  }
+  for (const [lieferantId, konditionen] of Object.entries(incoming.rabattgruppen ?? {})) {
+    merged.rabattgruppen[lieferantId] = {
+      ...(defaults.rabattgruppen[lieferantId] ?? { generalrabatt: 0, gruppen: {} }),
+      ...konditionen,
+      gruppen: { ...(defaults.rabattgruppen[lieferantId]?.gruppen ?? {}), ...(konditionen.gruppen ?? {}) },
+    }
   }
 
   for (const [id, frage] of Object.entries(incoming.fragen ?? {})) {
@@ -227,6 +280,23 @@ export function validateAdminConfig(config) {
     }
   }
 
+  // SK-102: Artikelstamm und Rabattgruppen validieren.
+  for (const [nummer, artikelEdit] of Object.entries(merged.artikel ?? {})) {
+    if (typeof artikelEdit?.listenpreis !== 'number' || !Number.isFinite(artikelEdit.listenpreis) || artikelEdit.listenpreis < 0) {
+      errors.push(`Artikel "${nummer}" braucht einen Listenpreis ≥ 0.`)
+    }
+    if (typeof artikelEdit?.kurztext !== 'string' || !artikelEdit.kurztext.trim()) {
+      errors.push(`Artikel "${nummer}" braucht einen Kurztext.`)
+    }
+  }
+  const rabattOk = (satz) => typeof satz === 'number' && Number.isFinite(satz) && satz >= 0 && satz <= 1
+  for (const [lieferantId, konditionen] of Object.entries(merged.rabattgruppen ?? {})) {
+    if (!rabattOk(konditionen?.generalrabatt)) errors.push(`Rabattgruppen "${lieferantId}": Generalrabatt muss zwischen 0 und 1 liegen.`)
+    for (const [gruppe, satz] of Object.entries(konditionen?.gruppen ?? {})) {
+      if (!rabattOk(satz)) errors.push(`Rabattgruppe "${lieferantId}.${gruppe}" muss zwischen 0 und 1 liegen.`)
+    }
+  }
+
   const positionIds = new Set()
   for (const paket of KATALOG) {
     const edit = merged.katalog[paket.id]
@@ -249,6 +319,44 @@ export function validateAdminConfig(config) {
   }
 
   return errors
+}
+
+// SK-102: simulierter DATANORM-Import auf eine Admin-Konfiguration anwenden.
+// Kein echter Parser – die „Datei" ist DATANORM_UPDATE_DEMO. Preise werden
+// überschrieben, neue Artikel ergänzt, Konditionen aktualisiert und der Lauf
+// im Import-Log protokolliert (idempotent: zweiter Lauf meldet keine Änderungen).
+export function applyDatanormDemoImport(config, update = DATANORM_UPDATE_DEMO, dateiname = null) {
+  const safe = mergeWithDefaults(config)
+  const effective = applyAdminConfig(safe)
+  const ergebnis = wendeDatanormUpdateAn(effective.artikel, effective.rabattgruppen, update)
+
+  const next = clone(safe)
+  for (const eintrag of ergebnis.log.aktualisiert) {
+    const edit = (next.artikel[eintrag.artikelnummer] ??= {})
+    edit.listenpreis = eintrag.neu
+    edit.preisstand = update.preisstand
+  }
+  for (const neu of update.neueArtikel ?? []) {
+    if (!ergebnis.log.neu.some(n => n.artikelnummer === neu.artikelnummer)) continue
+    next.artikelNeu = [...(next.artikelNeu ?? []), clone(neu)]
+    next.artikel[neu.artikelnummer] = {
+      kurztext: neu.kurztext, langtext: neu.langtext ?? '', listenpreis: neu.listenpreis,
+      rabattgruppe: neu.rabattgruppe ?? null, preisstand: neu.preisstand ?? update.preisstand,
+    }
+  }
+  next.rabattgruppen = ergebnis.rabattgruppen
+  next.datanorm = {
+    preisstand: ergebnis.unveraendert ? safe.datanorm.preisstand : update.preisstand,
+    letzterImport: new Date().toISOString(),
+    log: [
+      { zeitpunkt: new Date().toISOString(), dateiname: dateiname ?? update.quelle,
+        aktualisiert: ergebnis.log.aktualisiert.length, neu: ergebnis.log.neu.length,
+        rabattgruppenGeaendert: ergebnis.log.rabattgruppenGeaendert.length,
+        unveraendert: ergebnis.unveraendert },
+      ...(safe.datanorm.log ?? []).slice(0, 9),
+    ],
+  }
+  return { config: next, log: ergebnis.log, unveraendert: ergebnis.unveraendert }
 }
 
 export function loadAdminConfig() {

@@ -9,6 +9,7 @@ import { KATALOG } from '../src/data/katalog.js'
 import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE, AUFSTELLVARIANTEN, AUFSTELLUNG_VARIANTEN_MAPPING } from '../src/logic/calc.js'
 import { QUELLENTYPEN, FELD_PROVENIENZ, VERTRAUEN_WERTE, AKTUALITAET_WERTE } from '../src/data/provenienz.js'
 import { ALLE_FRAGEN } from '../src/data/fragen.js'
+import { ARTIKEL } from '../src/data/artikel.js'
 
 describe('pruefeBedingung', () => {
   it('!= trifft nicht bei undefiniert, null oder leerem Feld', () => {
@@ -177,7 +178,7 @@ describe('exclude > require', () => {
         bedingung: { feld: 'require_testmodul', op: '=', wert: true },
         positionen: [
           { id: 'test_position', text: 'Konfliktposition', menge: 1, einheit: 'pausch.',
-            kosten: { typ: 'fix', annahme: 'k_install' }, foerder: 'f_install', tag: 'capex',
+            kosten: { typ: 'fix', annahme: 'k_hydraulik' }, foerder: 'f_install', tag: 'capex',
             begruendung: 'Darf bei exclude-Konflikt nicht im LV landen.' },
         ] },
     ]
@@ -710,18 +711,21 @@ describe('WP12 SK-80: Messkonzept & Strombeschaffung', () => {
     expect(paket.gruppe).toBe('Messkonzept')
   })
 
-  it('messkonzept_basis Position existiert im messkonzept-Paket', () => {
+  it('messkonzept_basis Position existiert im messkonzept-Paket (SK-102: Artikelpreis)', () => {
     const paket = KATALOG.find(p => p.id === 'messkonzept')
     const pos = paket.positionen.find(p => p.id === 'messkonzept_basis')
     expect(pos).toBeDefined()
-    expect(pos.kosten.annahme).toBe('k_messkonzept_basis')
+    expect(pos.kosten.typ).toBe('artikel')
+    expect(pos.kosten.artikel).toBe('GH-MK-Z2R')
     expect(pos.foerder).toBe('f_messkonzept')
     expect(pos.tag).toBe('capex')
   })
 
-  it('ANNAHMEN.k_messkonzept_basis ist eine positive Zahl', () => {
-    expect(typeof ANNAHMEN.k_messkonzept_basis).toBe('number')
-    expect(ANNAHMEN.k_messkonzept_basis).toBeGreaterThan(0)
+  it('Messkonzept-Zählerset ist als Artikel mit positivem Listenpreis gepflegt (SK-102)', () => {
+    const artikel = ARTIKEL.find(a => a.artikelnummer === 'GH-MK-Z2R')
+    expect(artikel).toBeDefined()
+    expect(typeof artikel.listenpreis).toBe('number')
+    expect(artikel.listenpreis).toBeGreaterThan(0)
   })
 
   it('ANNAHMEN.f_messkonzept ist 0 (kein BEG-Fördergegenstand)', () => {
@@ -741,5 +745,96 @@ describe('WP12 SK-80: Messkonzept & Strombeschaffung', () => {
     const result = berechne(preset.eingaben)
     const posIds = result.lv.positionen.map(p => p.id)
     expect(posIds).toContain('messkonzept_basis')
+  })
+})
+
+describe('SK-102: Artikelpreise, Installations-Einzelpositionen & Anfahrt', () => {
+  const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+
+  it('Artikel-Position trägt VK als Einzelpreis und die Kalkulationsfelder', () => {
+    const erg = berechne(referenz)
+    const wp = erg.lv.positionen.find(p => p.id === 'wp_modul')
+    expect(wp.artikel).toBeTruthy()
+    expect(wp.artikel.artikelnummer).toBe('WT-WP20-R290')
+    // Listenpreis − 30 % (Gruppe WP) = EK; × 18 % Aufschlag = VK
+    expect(wp.einzel).toBeCloseTo(26600 * 0.7 * (1 + ANNAHMEN.vk_aufschlag_material), 4)
+    expect(wp.artikel.ek).toBeCloseTo(26600 * 0.7, 4)
+    expect(wp.betrag).toBeCloseTo(wp.einzel * erg.derived.wp_module, 4)
+  })
+
+  it('unbekannte Artikelnummer: 0 € und KAT-Warnung', () => {
+    const katalog = [{
+      id: 'test', pakettyp: 'Basis', gruppe: 'Test',
+      positionen: [{ id: 'test_pos', text: 'Test', menge: 1, einheit: 'Stk',
+        kosten: { typ: 'artikel', artikel: 'GIBT-ES-NICHT' }, foerder: 'f_wp', tag: 'capex' }],
+    }]
+    const erg = berechne({}, { regeln: [], katalog })
+    const pos = erg.lv.positionen.find(p => p.id === 'test_pos')
+    expect(pos.einzel).toBe(0)
+    expect(erg.warnungen.some(w => w.regelId === 'KAT' && w.text.includes('GIBT-ES-NICHT'))).toBe(true)
+  })
+
+  it('Anfahrt: Menge = km gesamt, Einzelpreis = km-Satz + Stundensatz ÷ Geschwindigkeit', () => {
+    const erg = berechne(referenz)
+    const anfahrt = erg.lv.positionen.find(p => p.id === 'anfahrt')
+    expect(anfahrt).toBeDefined()
+    expect(anfahrt.menge).toBe(erg.derived.anfahrt_km_gesamt)
+    expect(anfahrt.einzel).toBeCloseTo(
+      ANNAHMEN.anfahrt_km_satz + ANNAHMEN.monteur_stundensatz / ANNAHMEN.anfahrt_geschwindigkeit_kmh, 6)
+    expect(anfahrt.anfahrt.quelle).toBe('plz_demo')
+    expect(anfahrt.anfahrt.partner).toContain('Nord')
+  })
+
+  it('Installations-Einzelpositionen ersetzen die Pauschale; WP-Montage skaliert je Modul', () => {
+    const erg = berechne(referenz)
+    const ids = erg.lv.positionen.map(p => p.id)
+    for (const id of ['inst_baustelle', 'inst_wp_montage', 'inst_hydraulik', 'inst_elektro',
+      'inst_kleinmaterial', 'inst_ibn', 'inst_doku', 'inst_projektierung', 'inst_einweisung', 'inst_vertrieb']) {
+      expect(ids, id).toContain(id)
+    }
+    expect(ids).not.toContain('install_ibn')
+    const montage = erg.lv.positionen.find(p => p.id === 'inst_wp_montage')
+    expect(montage.menge).toBe(erg.derived.wp_module)
+    expect(montage.betrag).toBeCloseTo(ANNAHMEN.k_inst_wp_montage_je_modul * erg.derived.wp_module, 4)
+  })
+
+  it('bedingte Demontagen: Öltank nur bei oeltank_vorhanden=ja, Kessel nur bei kessel_nutzbar=nein', () => {
+    const ohne = berechne(referenz)
+    expect(ohne.lv.positionen.some(p => p.id === 'inst_demontage_oeltank')).toBe(false)
+    expect(ohne.lv.positionen.some(p => p.id === 'inst_demontage_gaskessel')).toBe(false)
+
+    const mit = berechne({ ...referenz, oeltank_vorhanden: 'ja', kessel_nutzbar: 'nein' })
+    const oeltank = mit.lv.positionen.find(p => p.id === 'inst_demontage_oeltank')
+    expect(oeltank.betrag).toBe(ANNAHMEN.k_inst_demontage_oeltank)
+    expect(mit.lv.positionen.some(p => p.id === 'inst_demontage_gaskessel')).toBe(true)
+    expect(mit.lv.positionen.some(p => p.id === 'inst_demontage_abgas')).toBe(true)
+  })
+
+  it('Service-OpEx: Wartungsvertrag = Artikel-VK je WP-Modul × Modulanzahl', () => {
+    const erg = berechne(referenz)
+    const service = erg.opex.positionen.find(p => p.id === 'om_basis')
+    expect(service.artikel.artikelnummer).toBe('WT-SV-BASIS')
+    expect(service.menge).toBe(erg.derived.wp_module)
+    // Listenpreis 1410 − 10 % (Gruppe SERVICE) = EK; × 18 % Aufschlag = VK
+    expect(service.betrag).toBeCloseTo(1410 * 0.9 * (1 + ANNAHMEN.vk_aufschlag_material) * erg.derived.wp_module, 4)
+  })
+
+  it('ohne PLZ/Partner: Anfahrt über Fallback-Distanz, Position bleibt im LV', () => {
+    const eingaben = { ...referenz }
+    delete eingaben.projekt_plz
+    delete eingaben.installationspartner
+    const erg = berechne(eingaben)
+    const anfahrt = erg.lv.positionen.find(p => p.id === 'anfahrt')
+    expect(anfahrt.anfahrt.quelle).toBe('fallback')
+    expect(anfahrt.menge).toBe(Math.round(ANNAHMEN.anfahrt_fallback_km * 2 * ANNAHMEN.anfahrt_fahrten))
+  })
+
+  it('Referenzfall: Installationsgruppe liegt nahe der früheren 60-k€-Pauschale', () => {
+    const erg = berechne(referenz)
+    const summe = erg.lv.positionen
+      .filter(p => p.gruppe === 'Installation / Inbetriebnahme')
+      .reduce((s, p) => s + p.betrag, 0)
+    expect(summe).toBeGreaterThan(50000)
+    expect(summe).toBeLessThan(75000)
   })
 })

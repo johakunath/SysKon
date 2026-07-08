@@ -15,7 +15,9 @@ import { ANNAHMEN } from '../data/annahmen.js'
 import { REGELN } from '../data/regeln.js'
 import { KATALOG } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
+import { ARTIKEL, RABATTGRUPPEN } from '../data/artikel.js'
 import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
+import { artikelKalkulation } from './artikelPreise.js'
 import { gruppiereNachGruppe } from './lv.js'
 import { contractingPreise } from './pricing.js'
 
@@ -154,7 +156,8 @@ function datenlageEinordnung(dq, fehlendeDaten, schwelle) {
 }
 
 function kundenEinheit(pos) {
-  return pos.tag === 'opex' ? 'p.a.' : pos.einheit
+  if (pos.tag !== 'opex') return pos.einheit
+  return pos.einheit === '€/a' ? 'p.a.' : `${pos.einheit} p.a.`
 }
 
 function kundenLeistungsklasse(pos, ctx, annahmen) {
@@ -192,6 +195,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
         return {
           id: pos.id,
           titel: kunde.titel ?? pos.text,
+          artikelnummer: pos.artikel?.artikelnummer ?? null,
           hersteller: kunde.hersteller ?? 'herstellerneutral',
           produkt: kunde.produkt ?? 'Produkt wird später festgelegt',
           leistungsklasse: kundenLeistungsklasse(pos, derived, annahmen),
@@ -258,6 +262,8 @@ export function berechne(eingaben, opts = {}) {
   const regeln = opts.regeln ?? REGELN
   const katalog = opts.katalog ?? KATALOG
   const fragen = opts.fragen ?? ALLE_FRAGEN
+  const artikel = opts.artikel ?? ARTIKEL
+  const rabattgruppen = opts.rabattgruppen ?? RABATTGRUPPEN
 
   // 1. Zwischenergebnisse + DQ
   const derived = ableiten(eingaben, annahmen)
@@ -347,14 +353,32 @@ export function berechne(eingaben, opts = {}) {
       varianteName = gewaehlt.name
     }
     for (const pos of positionen) {
+      // SK-102: Bedingungen auch auf Positionsebene (z. B. bedingte Demontagen).
+      if (pos.bedingung && !pruefeBedingung(pos.bedingung, ctx, annahmen)) continue
       const menge = zahl(deref(pos.menge, ctx, annahmen)) ?? 0
       let einzel = 0
+      let artikelInfo = null
       if (pos.kosten.typ === 'fix') einzel = pos.kosten.annahme ? annahmen[pos.kosten.annahme] : 0
       else if (pos.kosten.typ === 'je_modul') einzel = annahmen[pos.kosten.annahme] * annahmen.wp_modul_kw
+      else if (pos.kosten.typ === 'artikel') {
+        // SK-102: Preis aus dem Artikelstamm (Listenpreis − Rabattgruppe = EK, × Aufschlag = VK).
+        artikelInfo = artikelKalkulation(pos.kosten.artikel, artikel, rabattgruppen, annahmen.vk_aufschlag_material)
+        if (artikelInfo) einzel = artikelInfo.vk
+        else warnungen.push({ regelId: 'KAT', kategorie: 'katalog', status: null,
+          text: `Artikel „${pos.kosten.artikel}" (Position „${pos.id}") fehlt im Artikelstamm – Position mit 0 € angesetzt, Artikeldatenbank prüfen.` })
+      } else if (pos.kosten.typ === 'anfahrt') {
+        // SK-102: €/km = Fahrzeugkosten + Stundensatz ÷ Ø-Geschwindigkeit; Menge = km gesamt.
+        einzel = annahmen.anfahrt_km_satz + annahmen.monteur_stundensatz / annahmen.anfahrt_geschwindigkeit_kmh
+      }
       const eintrag = {
         id: pos.id, paket: paket.id, pakettyp: paket.pakettyp, gruppe: paket.gruppe,
         variante: varianteName, text: pos.text, menge, einheit: pos.einheit,
         einzel, betrag: einzel * menge,
+        artikel: artikelInfo,
+        anfahrt: pos.kosten.typ === 'anfahrt'
+          ? { km_einfach: ctx.anfahrt_km_einfach, fahrten: annahmen.anfahrt_fahrten,
+              partner: ctx.anfahrt_partner_label, quelle: ctx.anfahrt_quelle }
+          : null,
         foerderanteil: annahmen[pos.foerder] ?? 0, tag: pos.tag,
         bereich: pos.bereich ?? null,
         begruendung: pos.begruendung, pruefpflichtig: !!pos.pruefpflichtig,

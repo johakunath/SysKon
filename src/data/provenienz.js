@@ -78,6 +78,15 @@ export const FELD_PROVENIENZ = {
     kundenAnnahme: 'Beheizte Fläche aus Liegenschaftsdaten oder Kundenangabe',
     followUp: 'Unplausible Fläche im Verhältnis zu WE oder Verbrauch nachfragen',
   },
+  projekt_plz: {
+    quelle: ['stammdaten', 'kunde_manuell'],
+    erfassungsweg: 'CRM/Adressstamm (Ziel) oder Kundenangabe im Gespräch',
+    aktualitaet: 'historisch',
+    vertrauen: 'hoch',
+    skalierbar: true,
+    kundenAnnahme: 'Projektstandort (PLZ) laut Adressdaten; Basis der Demo-Anfahrtskalkulation (SK-102)',
+    followUp: 'Ohne PLZ rechnet die Anfahrt mit einer Fallback-Distanz – Adresse nachtragen',
+  },
   baujahrklasse: {
     quelle: ['stammdaten', 'asset_manager'],
     erfassungsweg: 'Liegenschaftsdaten, Grundbuch oder Asset Manager',
@@ -216,6 +225,15 @@ export const FELD_PROVENIENZ = {
     skalierbar: false,
     kundenAnnahme: 'Kesselverfügbarkeit nach Gesprächsstand',
     followUp: 'Vor Scope-Aussage technisch prüfen lassen',
+  },
+  oeltank_vorhanden: {
+    quelle: ['kunde_manuell', 'sales_manuell'],
+    erfassungsweg: 'Kundenangabe oder Sales-Einschätzung nach Ortsbild',
+    aktualitaet: 'einmalig',
+    vertrauen: 'niedrig',
+    skalierbar: false,
+    kundenAnnahme: 'Alt-Öltank zur Demontage nach Gesprächsstand (SK-102)',
+    followUp: 'Bei unbekannt: Tanklage und Stilllegungsstatus vor Ort klären',
   },
   anzahl_heizkreise: {
     quelle: ['kunde_manuell', 'asset_manager'],
@@ -464,6 +482,15 @@ export const FELD_PROVENIENZ = {
     skalierbar: false,
     kundenAnnahme: 'SmartControl-Variante nach Gesprächswahl (Demo-Referenz: SmartZero)',
     followUp: null,
+  },
+  installationspartner: {
+    quelle: ['sales_manuell', 'stammdaten'],
+    erfassungsweg: 'Sales-Auswahl im Gespräch (Ziel: Partnerzuordnung aus Stammdaten)',
+    aktualitaet: 'einmalig',
+    vertrauen: 'hoch',
+    skalierbar: true,
+    kundenAnnahme: 'Zugeordneter Installationspartner; Standort bestimmt die Demo-Anfahrtskalkulation (SK-102)',
+    followUp: 'Ohne Auswahl rechnet die Anfahrt mit einer Fallback-Distanz',
   },
 }
 

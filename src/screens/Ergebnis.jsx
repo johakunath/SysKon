@@ -7,19 +7,21 @@ import Ampel from '../components/Ampel.jsx'
 import ScopeListe from '../components/ScopeListe.jsx'
 
 function exportLvCsv(lv, annahmen) {
-  const kopf = ['Gruppe', 'Position', 'Menge', 'Einheit', 'Einzelpreis (€)', 'Betrag (€)', 'Förderfähig (%)', 'Prüfpflichtig']
+  const kopf = ['Gruppe', 'Position', 'Artikelnummer', 'Menge', 'Einheit', 'Listenpreis (€)', 'EK (€)', 'Einzelpreis (€)', 'Betrag (€)', 'Förderfähig (%)', 'Prüfpflichtig']
   const zeilen = lv.positionen.map(p => [
-    p.gruppe, p.text, p.menge, p.einheit,
+    p.gruppe, p.text, p.artikel?.artikelnummer ?? '', p.menge, p.einheit,
+    p.artikel ? p.artikel.listenpreis.toFixed(2) : '',
+    p.artikel ? p.artikel.ek.toFixed(2) : '',
     p.einzel.toFixed(2), p.betrag.toFixed(2),
     (p.foerderanteil * 100).toFixed(0),
     p.pruefpflichtig ? 'ja' : ''
   ])
   const summen = [
-    ['', 'Zwischensumme', '', '', '', lv.zwischensumme.toFixed(2), '', ''],
-    ['', `Contingency (${Math.round(annahmen.contingency * 100)} %)`, '', '', '', lv.contingency.toFixed(2), '', ''],
-    ['', 'Brutto-LV-Kosten', '', '', '', lv.brutto.toFixed(2), '', ''],
-    ['', 'Förderung (Demo)', '', '', '', (-lv.foerderung).toFixed(2), '', ''],
-    ['', 'Netto-LV-Kosten', '', '', '', lv.netto.toFixed(2), '', ''],
+    ['', 'Zwischensumme', '', '', '', '', '', '', lv.zwischensumme.toFixed(2), '', ''],
+    ['', `Contingency (${Math.round(annahmen.contingency * 100)} %)`, '', '', '', '', '', '', lv.contingency.toFixed(2), '', ''],
+    ['', 'Brutto-LV-Kosten', '', '', '', '', '', '', lv.brutto.toFixed(2), '', ''],
+    ['', 'Förderung (Demo)', '', '', '', '', '', '', (-lv.foerderung).toFixed(2), '', ''],
+    ['', 'Netto-LV-Kosten', '', '', '', '', '', '', lv.netto.toFixed(2), '', ''],
   ]
   const escape = v => `"${String(v).replace(/"/g, '""')}"`
   const csv = [kopf, ...zeilen, ...summen].map(r => r.map(escape).join(';')).join('\r\n')
@@ -144,6 +146,7 @@ function KundenScope({ scope, foerderart }) {
                       {pos.pruefpflichtig && <span className="kunden-badge warn">prüfen</span>}
                     </div>
                     <dl>
+                      {pos.artikelnummer && <div><dt>Artikelnummer</dt><dd>{pos.artikelnummer}</dd></div>}
                       <div><dt>Hersteller</dt><dd>{pos.hersteller}</dd></div>
                       <div><dt>Produkt</dt><dd>{pos.produkt}</dd></div>
                       <div><dt>Größe / Leistung</dt><dd>{pos.leistungsklasse}</dd></div>
@@ -337,12 +340,25 @@ export default function Ergebnis({
                           <tr key={p.id}>
                             <td>
                               <details open={lvAlleOffen}>
-                                <summary>{p.text}</summary>
+                                <summary>{p.text}{p.artikel ? <> <code className="lv-artikelnummer">{p.artikel.artikelnummer}</code></> : null}</summary>
                                 <div className="begruendung">
                                   {kunde && (
                                     <p className="begruendung-kunde">
                                       {kunde.hersteller} · {kunde.produkt}{kunde.leistungsklasse ? ` · ${kunde.leistungsklasse}` : ''}
                                       {kunde.leistungsumfang ? <><br />{kunde.leistungsumfang}</> : null}
+                                    </p>
+                                  )}
+                                  {p.artikel && (
+                                    <p className="begruendung-intern">
+                                      Artikel {p.artikel.artikelnummer} · {p.artikel.lieferantName} · Listenpreis {euro(p.artikel.listenpreis)}
+                                      {' '}− {prozent(p.artikel.rabatt)} Rabatt{p.artikel.rabattgruppe ? ` (Gruppe ${p.artikel.rabattgruppe})` : ' (Generalrabatt)'} = EK {euro(p.artikel.ek)}
+                                      {' '}× {prozent(p.artikel.aufschlag)} Aufschlag = VK {euro(p.artikel.vk)} · Preisstand {p.artikel.preisstand ?? '–'}
+                                    </p>
+                                  )}
+                                  {p.anfahrt && (
+                                    <p className="begruendung-intern">
+                                      {p.anfahrt.partner ?? 'Kein Partner gewählt'} · {num(p.anfahrt.km_einfach)} km einfach × 2 × {num(p.anfahrt.fahrten)} Fahrten
+                                      {' '}· {p.anfahrt.quelle === 'plz_demo' ? 'PLZ-Distanz (Demo für Kartendienst-Fahrstrecke)' : 'Fallback-Distanz (PLZ/Partner fehlt)'}
                                     </p>
                                   )}
                                   <p className="begruendung-intern">Begründung: {p.begruendung}{p.erzwungen ? ` · erzwungen durch ${p.erzwungen}` : ''} · {p.tag.toUpperCase()}</p>
@@ -450,7 +466,10 @@ export default function Ergebnis({
               <table className="fakten">
                 <tbody>
                   {ergebnis.opex.positionen.map(p => (
-                    <tr key={p.id}><td>{p.text}</td><td className="r">{euro(p.betrag)}</td></tr>
+                    <tr key={p.id}>
+                      <td>{p.text}{p.artikel ? <> <code className="lv-artikelnummer">{p.artikel.artikelnummer}</code></> : null}</td>
+                      <td className="r">{euro(p.betrag)}</td>
+                    </tr>
                   ))}
                   <tr className="summe"><td>Summe OPEX</td><td className="r">{euro(ergebnis.opex.summe_pa)}</td></tr>
                 </tbody>

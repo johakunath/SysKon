@@ -409,6 +409,8 @@ tr.gewaehlt td { background: var(--st-gruen-hell); }
 tr.gewaehlt:hover td { background: var(--st-gruen-hell); }
 tr.diff td { background: var(--st-rot-hell); font-weight: 600; }
 td.code { font-family: var(--mono); font-size: var(--fs-xs); }
+/* SK-102: Artikelnummer-Chip im LV und in OPEX-Listen */
+.lv-artikelnummer { font-family: var(--mono); font-size: var(--fs-2xs); color: var(--muted); background: var(--akzent-hell); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
 details summary { cursor: pointer; }
 details summary:hover { color: var(--akzent); }
 .begruendung { color: var(--muted); font-size: var(--fs-xs); padding: 6px 0 2px 16px; }

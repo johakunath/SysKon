@@ -114,13 +114,18 @@ export default function App() {
     annahmen,
     katalog: effectiveConfig.katalog,
     fragen: effectiveConfig.alleFragen,
-  }), [eingaben, annahmen, effectiveConfig.katalog, effectiveConfig.alleFragen])
+    artikel: effectiveConfig.artikel,
+    rabattgruppen: effectiveConfig.rabattgruppen,
+  }), [eingaben, annahmen, effectiveConfig.katalog, effectiveConfig.alleFragen, effectiveConfig.artikel, effectiveConfig.rabattgruppen])
 
   const props = {
     eingaben, setEingaben, annahmen, setAnnahmen, ergebnis, setScreen,
     sichtModus,
     sektionen: effectiveConfig.sektionen,
     katalog: effectiveConfig.katalog,
+    artikel: effectiveConfig.artikel,
+    rabattgruppen: effectiveConfig.rabattgruppen,
+    datanorm: effectiveConfig.datanorm,
     adminConfig,
     setAdminConfig,
     resetAdminConfig,

@@ -19,6 +19,7 @@ Token-sparsame Orientierung für Agenten. Für Details nur die verlinkten Dateie
 | Technisches Paketmodell | `docs/SYSTEMPAKET_MODELL.md` | WP12-Domäne, Blocker/Korridore, Per-Child-Mapping |
 | Contracting & Pricing | `src/logic/pricing.js`, `docs/PRICING_MODELL.md` | GP/AP/Preisgleitformel, Kundensicht vs. interne Commercial-Sicht (WP8) |
 | Rechenlogik | `src/logic/calc.js`, `src/data/annahmen.js` | Heizlast, Schall, Energie, Demo-Parameter |
+| Artikelstamm & Preise (SK-102) | `src/data/artikel.js`, `src/logic/artikelPreise.js`, `src/data/partner.js`, `src/logic/entfernung.js` | EK/VK-Kette, Rabattgruppen, simulierter DATANORM-Import, Demo-Anfahrt |
 | Tests | `tests/*.js`, `tests/*.jsx` | Statusregeln, Presets, Render-Smoke |
 
 ## Aktuelle Code-Findings

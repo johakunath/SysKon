@@ -60,34 +60,55 @@ export const ANNAHMEN = {
   f_messkonzept: 0,   // Zählerinfrastruktur: kein BEG-Fördergegenstand (Demo)
   f_fossil: 0,
 
-  // Kostenbausteine einmalig (€)
-  k_wp_je_kw: 1100,
+  // Kostenbausteine einmalig (€). Hardware-Preise (WP-Module, Speicher, Schall-
+  // zubehör, MSR, SmartControl) liegen seit SK-102 NICHT mehr hier, sondern als
+  // Artikel mit Listenpreis/Rabattgruppe in src/data/artikel.js (CPQ-Demo).
+  // Hier bleiben nur Nicht-Katalog-Bausteine (Bau-/Projektleistungen).
   k_hybrid: 25000,
   k_hydraulik: 40000,
-  k_speicher_ww: 30000,
-  k_fws: 25000,             // €, Frischwasserstation + Puffer (Demo)
   k_elektro: 25000,
-  k_monitoring_basic: 5000,
-  k_monitoring_plus: 12000,
-  k_messkonzept_basis: 4500,  // €, WP-Eigenstromzähler + Fernablese-Anschluss (Demo, SK-80)
-  k_install: 60000,
   k_umfeld: 30000,
   k_aussen_offen: 3000,
   k_fundament: 15000,
   k_einhausung: 35000,
   k_kompakt_container: 120000,
   k_vollcontainer: 280000,
-  k_schallhaube: 8000,
-  k_schallschutzzaun: 12000,         // €, Rockwool-Schallschutzzaun (Demo-Referenz, SK-79)
   k_atec_schallberechnung: 3500,     // €, ATEC-Schallberechnungsservice Pauschale (Demo, SK-79)
-  k_smartcontrol: 12000,             // €, SmartZero SmartControl Standard (Demo, SK-97)
-  k_smartcontrol_ki: 18000,          // €, SmartZero SmartControl KI-Variante (Demo, SK-97)
   f_smartcontrol: 0,                 // kein BEG-Gegenstand (Demo)
+  f_vertrieb_einweisung: 0,          // Vertrieb/Einweisung/Doku: kein Fördergegenstand (Demo, SK-102)
 
-  // Laufende Kosten & Sonstiges
-  monitoring_pa: 1500,       // €/a
-  om_prozent_pa: 1.5,        // % der Brutto-LV-Kosten p.a. (Service Basis)
-  om_prozent_komfort: 2.2,   // % p.a. (Service Komfort inkl. Störungsdienst)
+  // Installation als Einzelkomponenten (SK-102, ersetzt die frühere Pauschale
+  // k_install = 60.000 €; Referenzfall 4 Module ohne Demontagen ≈ 59 k€ + Anfahrt).
+  k_inst_baustelle: 3500,            // Baustelleneinrichtung
+  k_inst_wp_montage_je_modul: 4500,  // Montage je WP-Modul (Fundament-Aufsetzen, Anschluss)
+  k_inst_hydraulik_montage: 9000,    // Hydraulische Installation im Heizraum
+  k_inst_elektro_montage: 6000,      // Elektromontage (Verkabelung, Anschlussarbeiten)
+  k_inst_kleinmaterial: 4000,        // Montage-Kleinmaterial (Demo-Pauschale)
+  k_inst_ibn: 4000,                  // Inbetriebnahme inkl. IBN-Protokoll
+  k_inst_doku: 1500,                 // Revisions-/Übergabedokumentation
+  k_inst_projektierung: 6500,        // Projektplanung (Demo-Pauschale)
+  k_inst_einweisung: 1200,           // Einweisung Betreiber/Kunde
+  k_inst_vertrieb: 5000,             // Vertriebs-/Marketingpauschale (Demo)
+  k_inst_demontage_gaskessel: 3500,  // nur bei nicht nutzbarem Bestandskessel
+  k_inst_demontage_abgas: 2500,      // Demontage Abgasanlage (mit Kessel-Demontage)
+  k_inst_demontage_oeltank: 4500,    // Demontage/Stilllegung Öltank (falls vorhanden)
+
+  // Anfahrt (SK-102, Demo-Ersatz für eine externe Kartendienst-Fahrstreckenabfrage):
+  // Fahrstrecke Partner→Projekt-PLZ (Luftlinie × Straßenfaktor), Kosten je km =
+  // Fahrzeug-km-Satz + Stundensatz ÷ Ø-Geschwindigkeit; × 2 (hin/zurück) × Fahrten.
+  anfahrt_geschwindigkeit_kmh: 60,   // Ø-Geschwindigkeit Montagefahrzeug
+  monteur_stundensatz: 85,           // €/h Handwerker-Stundensatz (Demo)
+  anfahrt_km_satz: 0.7,              // €/km Fahrzeugkosten
+  anfahrt_fahrten: 10,               // Anzahl Fahrten (≈ Montagetage, Demo)
+  anfahrt_strassenfaktor: 1.3,       // Luftlinie → Straßenstrecke (Demo)
+  anfahrt_fallback_km: 35,           // km einfach, wenn PLZ/Partner fehlen
+
+  // Beschaffung/Verkauf (SK-102): Zuschlag auf den Artikel-EK → VK im LV.
+  // Getrennt von ap_marge – die Contracting-Regel „Marge nur auf Arbeitspreis"
+  // bleibt unberührt; dies ist ein Material-Gemeinkostenzuschlag (Demo).
+  vk_aufschlag_material: 0.18,
+
+  // Laufende Kosten & Sonstiges (Service-/Monitoring-Jahrespreise: Artikelstamm)
   contingency: 0.10,
   dq_schwelle: 60,           // % – darunter Status-Deckelung auf gelb (R10)
   puffer_liter_je_kw: 30,    // L/kW kleinste WP in Kaskade (Demo-Anhaltswert)
@@ -202,39 +223,48 @@ export const ANNAHMEN_META = [
     ['f_monitoring', 'Förderanteil Monitoring', '0–1'],
     ['f_fossil', 'Förderanteil fossile Einheit', '0–1'],
   ]},
-  { gruppe: 'Kostenbausteine einmalig', felder: [
-    ['k_wp_je_kw', 'WP-Paket', '€/kW'],
+  { gruppe: 'Kostenbausteine einmalig (Nicht-Katalog; Hardware: Artikeldatenbank)', felder: [
     ['k_hybrid', 'Hybrid-Einbindung', '€'],
     ['k_hydraulik', 'Hydraulikpaket', '€'],
-    ['k_speicher_ww', 'Speicher-/WW-Modul (Brauchwasserspeicher)', '€'],
-    ['k_fws', 'Frischwasserstation + Puffer', '€'],
     ['k_elektro', 'Elektro/Netzanschluss', '€'],
-    ['k_monitoring_basic', 'Monitoring Basic', '€'],
-    ['k_monitoring_plus', 'Monitoring Plus (Aufpreis)', '€'],
-    ['k_install', 'Installation/Inbetriebnahme', '€'],
     ['k_umfeld', 'Umfeldmaßnahmen', '€'],
     ['k_aussen_offen', 'Aufstellung offen (kein Wetterschutz)', '€'],
     ['k_fundament', 'Aufstellung Fundament', '€'],
     ['k_einhausung', 'Aufstellung Einhausung / Schallschutzzaun', '€'],
     ['k_kompakt_container', 'Aufstellung Kompakt-Container', '€'],
     ['k_vollcontainer', 'Aufstellung Vollcontainer', '€'],
-    ['k_schallhaube', 'Schallhaube', '€'],
-    ['k_schallschutzzaun', 'Schallschutzzaun (Rockwool – Demo)', '€'],
     ['k_atec_schallberechnung', 'ATEC-Schallberechnung (Demo-Pauschale)', '€'],
   ]},
-  { gruppe: 'Messkonzept (Demo, SK-80)', felder: [
-    ['k_messkonzept_basis', 'Messkonzept Basis (WP-Eigenstromzähler, Fernablesung)', '€'],
-    ['f_messkonzept', 'Förderanteil Messkonzept (kein BEG-Gegenstand)', '0–1'],
+  { gruppe: 'Installation – Einzelkomponenten (SK-102)', felder: [
+    ['k_inst_baustelle', 'Baustelleneinrichtung', '€'],
+    ['k_inst_wp_montage_je_modul', 'WP-Montage je Modul', '€/Modul'],
+    ['k_inst_hydraulik_montage', 'Hydraulische Installation', '€'],
+    ['k_inst_elektro_montage', 'Elektromontage', '€'],
+    ['k_inst_kleinmaterial', 'Montage-Kleinmaterial', '€'],
+    ['k_inst_ibn', 'Inbetriebnahme inkl. Protokoll', '€'],
+    ['k_inst_doku', 'Revisions-/Übergabedokumentation', '€'],
+    ['k_inst_projektierung', 'Projektplanung (Pauschale)', '€'],
+    ['k_inst_einweisung', 'Einweisung Betreiber/Kunde', '€'],
+    ['k_inst_vertrieb', 'Vertriebs-/Marketingpauschale', '€'],
+    ['k_inst_demontage_gaskessel', 'Demontage Bestandskessel (falls nicht nutzbar)', '€'],
+    ['k_inst_demontage_abgas', 'Demontage Abgasanlage', '€'],
+    ['k_inst_demontage_oeltank', 'Demontage/Stilllegung Öltank', '€'],
   ]},
-  { gruppe: 'SmartControl (Demo, SK-97)', felder: [
-    ['k_smartcontrol', 'SmartControl Standard', '€'],
-    ['k_smartcontrol_ki', 'SmartControl KI-Variante', '€'],
+  { gruppe: 'Anfahrt (SK-102, Demo-Distanzrechnung)', felder: [
+    ['anfahrt_geschwindigkeit_kmh', 'Ø-Geschwindigkeit', 'km/h'],
+    ['monteur_stundensatz', 'Handwerker-Stundensatz', '€/h'],
+    ['anfahrt_km_satz', 'Fahrzeugkosten', '€/km'],
+    ['anfahrt_fahrten', 'Anzahl Fahrten (≈ Montagetage)', 'Stk'],
+    ['anfahrt_strassenfaktor', 'Straßenfaktor (Luftlinie → Strecke)', '–'],
+    ['anfahrt_fallback_km', 'Fallback-Distanz ohne PLZ/Partner', 'km'],
+  ]},
+  { gruppe: 'Artikel-Kalkulation & Förderung Sonstiges (SK-102)', felder: [
+    ['vk_aufschlag_material', 'VK-Aufschlag auf Artikel-EK (Materialgemeinkosten)', '0–1'],
+    ['f_messkonzept', 'Förderanteil Messkonzept (kein BEG-Gegenstand)', '0–1'],
     ['f_smartcontrol', 'Förderanteil SmartControl (kein BEG-Gegenstand)', '0–1'],
+    ['f_vertrieb_einweisung', 'Förderanteil Vertrieb/Einweisung/Doku', '0–1'],
   ]},
   { gruppe: 'Laufend & Sonstiges', felder: [
-    ['monitoring_pa', 'Monitoring p.a.', '€/a'],
-    ['om_prozent_pa', 'O&M p.a. (Service Basis)', '% Brutto-LV'],
-    ['om_prozent_komfort', 'O&M p.a. (Service Komfort)', '% Brutto-LV'],
     ['contingency', 'Contingency', '0–1'],
     ['dq_schwelle', 'DQ-Schwelle für Status-Deckelung', '%'],
     ['flaeche_min_container', 'Mindest-Außenfläche für Container', 'm²'],

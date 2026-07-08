@@ -45,11 +45,12 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 | Order | Epic | Outcome | Hängt ab von | Priority | Effort | Status |
 |---:|---|---|---|---|---|---|
 | 1 | SK-101 Sidebar-/Ergebnis-Konsolidierung & Vertragstyp | Konfiguration-Sidebar entschlackt, Ergebnis in Info/Aktionen gesplittet, Vertragstyp-Frage (AVB/Individual), Vendor-Namen-Bereinigung | SK-95 (Angebots-Snapshot Sidebar, Done) | P1 | L | Done |
-| 2 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
+| 2 | SK-102 Katalog- & Kostendatenbank (CPQ-Demo) | Artikelstamm mit Rabattgruppen + simulierter DATANORM-Import, EK/VK-Kette im LV, Installations-Einzelpositionen, Anfahrt aus PLZ-Demo-Distanz, Service als Vertragsartikel (OpEx) | – | P1 | XL | Done |
+| 3 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
 
 ## Aktueller Fokus
 
-SK-101 ist abgeschlossen (PR #32): Konfiguration-Sidebar konsolidiert (Snapshot-Redundanzen entfernt, ein "Offene Punkte"-Block statt Datenqualität+Gesprächsrisiken), Ergebnis-Screen in Informationen/Aktionen gesplittet, neue Frage "AVB-Fernwärme oder Individualvertrag?" mit fester 10-Jahres-AVB-Laufzeit, vollständige Bereinigung eines real existierenden Vendor-Namens (siehe CLAUDE.md-Hard-Rule). SK-72 bleibt geblockt.
+SK-102 ist umgesetzt: Artikeldatenbank (fiktive Lieferanten, Listenpreis → Rabattgruppe → EK → VK-Aufschlag) speist Hardware- und Servicevertragspreise im LV; Admin-Tab „Artikeldatenbank" mit simuliertem DATANORM-Import (Preise überschreiben, Artikel ergänzen, Konditionen aktualisieren – kein echter Parser); Installation als ~13 Einzelpositionen inkl. bedingter Demontagen (Öltank, nicht nutzbarer Kessel); Anfahrt als km-Position (Installationspartner → Projekt-PLZ, Demo-Distanz statt einer externen Kartendienst-API). Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
 
 ## Child-Tickets
 
