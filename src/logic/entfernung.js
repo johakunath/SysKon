@@ -1,5 +1,5 @@
 // Reine Demo-Distanzlogik (kein React, SK-102). Ersatz für eine echte
-// Google-Maps-Distance-Matrix-Anfrage: deterministische Fahrstrecken-Schätzung
+// externe Kartendienst-Distanzabfrage: deterministische Fahrstrecken-Schätzung
 // aus PLZ-Leitzonen-Zentroiden (Luftlinie × Straßenfaktor). Bewusst offline,
 // ohne API-Key und ohne neue Abhängigkeit – zeigt nur, WIE eine CPQ-Anfahrts-
 // kalkulation auf Basis der Fahrstrecke Partner → Projektadresse aussieht.

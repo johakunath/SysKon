@@ -148,7 +148,7 @@ const SEKTIONEN_ROH = [
       tooltip: 'Das Systempaket versorgt genau ein Gebäude; mehr als eines ist kein Standardfit (R19). Leer = Annahme „ein Gebäude".' },
     { id: 'projekt_plz', label: 'Welche Postleitzahl hat der Projektstandort?', typ: 'zahl', einheit: 'PLZ', dq: 1, min: 1000, max: 99999,
       hinweisKurz: 'Basis der Demo-Anfahrtskalkulation (Fahrstrecke Installationspartner → Projekt). Ohne PLZ greift eine Fallback-Distanz.',
-      tooltip: 'Demo-Ersatz für eine Google-Maps-Fahrstreckenabfrage: PLZ-Leitzone → Distanz zum gewählten Installationspartner (SK-102). Vierstellige Eingabe wird als PLZ mit führender Null gelesen.' },
+      tooltip: 'Demo-Ersatz für eine externe Kartendienst-Fahrstreckenabfrage: PLZ-Leitzone → Distanz zum gewählten Installationspartner (SK-102). Vierstellige Eingabe wird als PLZ mit führender Null gelesen.' },
     { id: 'flaeche', label: 'Wie groß ist die beheizte Fläche?', typ: 'zahl', einheit: 'm²', dq: 2, min: 50, max: 50000,
       hinweisKurz: 'Bezugsgröße für Richtwerte pro m². Schätzwerte klar als Annahme führen, wenn kein Verbrauch vorliegt.',
       tooltip: 'Bezugsgröße für €/m² und Heizlast-Proxy, falls kein Verbrauch vorliegt.' },

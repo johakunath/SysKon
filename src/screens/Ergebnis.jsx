@@ -358,7 +358,7 @@ export default function Ergebnis({
                                   {p.anfahrt && (
                                     <p className="begruendung-intern">
                                       {p.anfahrt.partner ?? 'Kein Partner gewählt'} · {num(p.anfahrt.km_einfach)} km einfach × 2 × {num(p.anfahrt.fahrten)} Fahrten
-                                      {' '}· {p.anfahrt.quelle === 'plz_demo' ? 'PLZ-Distanz (Demo für Google-Maps-Fahrstrecke)' : 'Fallback-Distanz (PLZ/Partner fehlt)'}
+                                      {' '}· {p.anfahrt.quelle === 'plz_demo' ? 'PLZ-Distanz (Demo für Kartendienst-Fahrstrecke)' : 'Fallback-Distanz (PLZ/Partner fehlt)'}
                                     </p>
                                   )}
                                   <p className="begruendung-intern">Begründung: {p.begruendung}{p.erzwungen ? ` · erzwungen durch ${p.erzwungen}` : ''} · {p.tag.toUpperCase()}</p>

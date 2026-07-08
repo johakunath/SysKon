@@ -93,7 +93,7 @@ export const ANNAHMEN = {
   k_inst_demontage_abgas: 2500,      // Demontage Abgasanlage (mit Kessel-Demontage)
   k_inst_demontage_oeltank: 4500,    // Demontage/Stilllegung Öltank (falls vorhanden)
 
-  // Anfahrt (SK-102, Demo-Ersatz für eine Google-Maps-Fahrstreckenabfrage):
+  // Anfahrt (SK-102, Demo-Ersatz für eine externe Kartendienst-Fahrstreckenabfrage):
   // Fahrstrecke Partner→Projekt-PLZ (Luftlinie × Straßenfaktor), Kosten je km =
   // Fahrzeug-km-Satz + Stundensatz ÷ Ø-Geschwindigkeit; × 2 (hin/zurück) × Fahrten.
   anfahrt_geschwindigkeit_kmh: 60,   // Ø-Geschwindigkeit Montagefahrzeug

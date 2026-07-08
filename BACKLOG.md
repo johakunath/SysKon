@@ -50,7 +50,7 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 
 ## Aktueller Fokus
 
-SK-102 ist umgesetzt: Artikeldatenbank (fiktive Lieferanten, Listenpreis → Rabattgruppe → EK → VK-Aufschlag) speist Hardware- und Servicevertragspreise im LV; Admin-Tab „Artikeldatenbank" mit simuliertem DATANORM-Import (Preise überschreiben, Artikel ergänzen, Konditionen aktualisieren – kein echter Parser); Installation als ~13 Einzelpositionen inkl. bedingter Demontagen (Öltank, nicht nutzbarer Kessel); Anfahrt als km-Position (Installationspartner → Projekt-PLZ, Demo-Distanz statt Google-Maps-API). Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
+SK-102 ist umgesetzt: Artikeldatenbank (fiktive Lieferanten, Listenpreis → Rabattgruppe → EK → VK-Aufschlag) speist Hardware- und Servicevertragspreise im LV; Admin-Tab „Artikeldatenbank" mit simuliertem DATANORM-Import (Preise überschreiben, Artikel ergänzen, Konditionen aktualisieren – kein echter Parser); Installation als ~13 Einzelpositionen inkl. bedingter Demontagen (Öltank, nicht nutzbarer Kessel); Anfahrt als km-Position (Installationspartner → Projekt-PLZ, Demo-Distanz statt einer externen Kartendienst-API). Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
 
 ## Child-Tickets
 

@@ -315,7 +315,7 @@ export function energieIndikation(bedarf, a, vlKlasse) {
 }
 
 // Anfahrt-Demo (SK-102): Fahrstrecke gewählter Installationspartner → Projekt-PLZ
-// (Ersatz für eine Google-Maps-Distance-Abfrage). Ohne PLZ oder Partner greift
+// (Ersatz für eine externe Kartendienst-Distanzabfrage). Ohne PLZ oder Partner greift
 // der Fallback aus den Annahmen; die Quelle bleibt für die Anzeige sichtbar.
 export function anfahrtAbleitung(e, a) {
   const partner = findeInstallationspartner(e.installationspartner)

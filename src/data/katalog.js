@@ -484,7 +484,7 @@ export const KATALOG = [
       { id: 'anfahrt', text: 'Anfahrt Installationspartner (Demo-Fahrstrecke)',
         menge: '@anfahrt_km_gesamt', einheit: 'km',
         kosten: { typ: 'anfahrt' }, foerder: 'f_install', tag: 'capex',
-        begruendung: 'Fahrstrecke Partner → Projekt-PLZ (Demo für Google-Maps-Distanz) × 2 × Fahrten; €/km = Fahrzeugkosten + Stundensatz ÷ Ø-Geschwindigkeit.',
+        begruendung: 'Fahrstrecke Partner → Projekt-PLZ (Demo für externe Kartendienst-Distanz) × 2 × Fahrten; €/km = Fahrzeugkosten + Stundensatz ÷ Ø-Geschwindigkeit.',
         kunde: {
           titel: 'Anfahrt',
           hersteller: 'Serviceleistung',
