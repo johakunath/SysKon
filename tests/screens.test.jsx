@@ -14,6 +14,7 @@ import Ergebnis from '../src/screens/Ergebnis.jsx'
 import Handover from '../src/screens/Handover.jsx'
 import Annahmen from '../src/screens/Annahmen.jsx'
 import Testfaelle from '../src/screens/Testfaelle.jsx'
+import Strategie from '../src/screens/Strategie.jsx'
 
 const noop = () => {}
 
@@ -22,6 +23,24 @@ describe('Screens rendern mit jedem Preset', () => {
     const html = renderToString(<App />)
     expect(html).toContain('Systempaket-Konfigurator')
     expect(html).not.toContain('Handover</button>')
+    expect(html).toContain('Strategie</button>')
+  })
+
+  it('Strategie-Deck rendert 4 Slides mit Navigation und ohne echte Vendor-Namen', () => {
+    const erste = renderToString(<Strategie />)
+    expect(erste).toContain('Warum SysKon?')
+    expect(erste).toContain('1 / 4')
+    expect(erste).toContain('Slide 2: Iterationsstufen')
+
+    const alle = [0, 1, 2, 3].map(i => renderToString(<Strategie start={i} />)).join('\n')
+    expect(alle).toContain('Iterationsstufen')
+    expect(alle).toContain('Scope: ist / ist nicht')
+    expect(alle).toContain('Architektur')
+    // Hard rule: keine realen Firmennamen – die Quell-Notizen nennen einen
+    // Messdienstleister und einen Kartendienst; hier nur die generische Wortwahl
+    // prüfen (die Namen selbst dürfen auch im Test nicht stehen).
+    expect(alle).toContain('Messdienstleister-Bestand')
+    expect(alle).toContain('Karten-/Luftbild')
   })
 
   it('Konfiguration rendert Auswahlfragen als erklärte Radio-Liste mit kompaktem Gesprächshinweis', () => {

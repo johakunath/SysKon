@@ -67,7 +67,7 @@ describe('Presets gegen HANDOVER-Erwartungen', () => {
     const erg = berechne(eingaben)
     expect(erg.gefeuert).not.toContain('R17')
     expect(erg.status).not.toBe('rot')
-    // aber: explizit gewählter Pfad außerhalb MVP bleibt rot
+    // aber: explizit gewählter Pfad außerhalb des aktuellen Standards bleibt rot
     const rot = berechne({ ...eingaben, technologiepfad: 'monoenergetisch' })
     expect(rot.gefeuert).toContain('R17')
     expect(rot.status).toBe('rot')
