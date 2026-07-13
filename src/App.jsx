@@ -7,6 +7,7 @@ import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
 import Annahmen from './screens/Annahmen.jsx'
+import Strategie from './screens/Strategie.jsx'
 
 const MAIN_SCREENS = [
   ['konfiguration', 'Angebot erstellen'],
@@ -165,6 +166,13 @@ export default function App() {
           </button>
         </div>
         <button
+          className={`admin-toggle no-print${screen === 'strategie' ? ' aktiv' : ''}`}
+          onClick={() => setScreen('strategie')}
+          title="Warum SysKon: Einordnung, Scope und Architektur"
+        >
+          Strategie
+        </button>
+        <button
           className={`admin-toggle no-print${screen === 'annahmen' ? ' aktiv' : ''}`}
           onClick={() => setScreen('annahmen')}
           title="Admin-Bereich öffnen"
@@ -176,6 +184,7 @@ export default function App() {
       {screen === 'konfiguration' && <Konfiguration {...props} />}
       {screen === 'ergebnis' && <Ergebnis {...props} />}
       {screen === 'annahmen' && <Annahmen {...props} />}
+      {screen === 'strategie' && <Strategie />}
 
       <footer className="fussnote no-print">{DEMO_FOOTER}</footer>
     </div>

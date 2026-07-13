@@ -660,6 +660,84 @@ details summary:hover { color: var(--akzent); }
 
 .fussnote { padding: 10px 20px 18px; color: var(--muted); font-size: var(--fs-xs); }
 
+/* Strategie-Deck (Jul 2026): vollflächige Slides mit Pfeil-/Dot-Navigation */
+.strategie {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 32px 24px 16px;
+}
+.slide {
+  flex: 1; width: 100%; max-width: 1100px; margin: 0 auto;
+  display: flex; flex-direction: column; justify-content: center; gap: 18px;
+  animation: slide-rein var(--t);
+}
+@keyframes slide-rein {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: none; }
+}
+.slide-kicker {
+  margin: 0; color: var(--akzent); font-size: var(--fs-sm);
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.slide h2 { margin: 0; font-size: 28px; line-height: var(--lh-eng); }
+.slide-these {
+  margin: 0; max-width: 860px; font-size: var(--fs-lg); line-height: 1.5;
+  color: var(--text);
+}
+.slide-karten { display: grid; gap: 14px; align-items: stretch; }
+.slide-karten.drei { grid-template-columns: repeat(3, 1fr); }
+.slide-karten.zwei { grid-template-columns: repeat(2, 1fr); }
+.slide-karte h3 { margin: 0 0 8px; font-size: var(--fs-base); }
+.slide-karte p { margin: 0 0 8px; color: var(--muted); font-size: var(--fs-sm); line-height: 1.5; }
+.slide-karte p:last-child { margin-bottom: 0; }
+.slide-karte ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: var(--fs-sm); line-height: 1.6; }
+.slide-stufen {
+  display: grid; grid-template-columns: 1fr auto 1.4fr auto 1fr;
+  gap: 10px; align-items: stretch;
+}
+.stufe-pfeil { align-self: center; color: var(--rand-stark); font-size: 22px; }
+.stufe-label {
+  display: inline-block; margin-bottom: 8px; padding: 2px 8px;
+  border-radius: var(--radius-pill); background: var(--akzent-hell); color: var(--akzent-tief);
+  font-size: var(--fs-2xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.stufe-ziel { border-color: var(--akzent); box-shadow: var(--fokus-ring); }
+.stufe-hinweis { color: var(--text); }
+.scope-ist h3 { color: var(--st-gruen); }
+.scope-nicht h3 { color: var(--st-rot); }
+.slide-kernaussage {
+  margin: 0; padding: 10px 14px; border-left: 3px solid var(--akzent);
+  background: var(--akzent-hell); border-radius: var(--radius-klein);
+  font-size: var(--fs-sm); color: var(--text);
+}
+.slide-nav {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  padding-top: 18px;
+}
+.slide-pfeil {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--rand-stark); background: var(--karte); color: var(--text);
+  font-size: 18px; line-height: 1; cursor: pointer;
+  transition: background-color var(--t), border-color var(--t);
+}
+.slide-pfeil:hover:not(:disabled) { background: var(--akzent-hell); border-color: var(--akzent); }
+.slide-pfeil:disabled { opacity: 0.35; cursor: default; }
+.slide-dots { display: flex; gap: 8px; }
+.slide-dot {
+  width: 10px; height: 10px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--rand-stark); background: var(--karte); cursor: pointer;
+  transition: background-color var(--t), border-color var(--t);
+}
+.slide-dot.aktiv { background: var(--akzent); border-color: var(--akzent); }
+.slide-zaehler { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+  .slide-karten.drei, .slide-karten.zwei { grid-template-columns: 1fr; }
+  .slide-stufen { grid-template-columns: 1fr; }
+  .stufe-pfeil { transform: rotate(90deg); justify-self: center; }
+  .slide h2 { font-size: 22px; }
+  /* Nur der erste Topbar-Toggle (Strategie) rückt nach rechts, der zweite bleibt daneben */
+  .admin-toggle + .admin-toggle { margin-left: 0; }
+}
 
 @media (max-width: 900px) {
   .topbar { flex-wrap: wrap; gap: 8px 12px; padding: 10px 12px 0; }
