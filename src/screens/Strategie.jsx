@@ -64,7 +64,7 @@ const SLIDES = [
           <div className="stufe-pfeil" aria-hidden="true">→</div>
           <div className="karte slide-karte stufe">
             <span className="stufe-label">Stufe 1</span>
-            <h3>Schnell-Check (frühe MVP-Phase)</h3>
+            <h3>Schnell-Check (frühe Phase)</h3>
             <p>
               Machbarkeits-Kurzcheck mit minimalen Daten: Im Messdienstleister-Bestand
               VL-/RL-Temperaturen aus den Wärmemengenzählern auslesen. Bei neuen Objekten
