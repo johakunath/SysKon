@@ -755,8 +755,9 @@ describe('SK-102: Artikelpreise, Installations-Einzelpositionen & Anfahrt', () =
   it('Artikel-Position trägt VK als Einzelpreis und die Kalkulationsfelder', () => {
     const erg = berechne(referenz)
     const wp = erg.lv.positionen.find(p => p.id === 'wp_modul')
-    // wp_modul nutzt jetzt typ:'komponente'; artikel ist null, komponente trägt die Infos
-    expect(wp.artikel).toBeNull()
+    // wp_modul nutzt typ:'komponente'; artikel wird für EK/VK-Rückverfolgung befüllt
+    expect(wp.artikel).toBeTruthy()
+    expect(wp.artikel.artikelnummer).toBe('WT-WP20-R290')
     expect(wp.komponente).toBeTruthy()
     expect(wp.komponente.gewaehlt.artikelnummer).toBe('WT-WP20-R290')
     // Günstigste Komponente (wt_aero_20): Listenpreis 26.600, WP-Gruppe 30 %, Aufschlag 18 %

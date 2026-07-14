@@ -94,7 +94,7 @@ const OPTION_HINTS = {
   aufstellvariante: {
     aussen_offen: 'Günstigste Variante ohne Wetterschutz – nur für geeignete Mikrolage.',
     fundament: 'Günstig mit Witterungsschutz, aber stärker vom Heizraum abhängig.',
-    einhausung: 'Mehr Schallschutz bei mittlerem Zusatz-CAPEX (AkuTherm-Referenz).',
+    einhausung: 'Mehr Schallschutz bei mittlerem Zusatz-CAPEX (Demo-Referenz Schallschutzwand).',
     kompakt_container: 'Entlastet Heizraum, braucht Logistik und Fläche.',
     vollcontainer: 'Maximal integriert, teuer und flächenintensiv.',
   },

@@ -96,7 +96,7 @@ export const AUFSTELLUNG_VARIANTEN_MAPPING = {
   },
   einhausung: {
     roberts_draft: 'outside with fence / Schallschutzzaun',
-    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". AkuTherm-Schallschutzzaun als Demo-Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
+    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". Absorptiver Schallschutzzaun als Demo-Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
   },
   kompakt_container: {
     roberts_draft: 'in Container (kompakt)',

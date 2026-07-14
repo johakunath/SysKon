@@ -40,7 +40,7 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 | **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (§5). R04/R16/R17 mit Sales-sicheren Warn-Texten ergänzt (§9). Nicht-Luft/Wasser über R17 abgedeckt. |
 | **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition zeigt Dreammaker-Referenz (fiktiver Hersteller); Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
 | **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
-| **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | **Umgesetzt** (§13): 5. Variante `aussen_offen` ergänzt; `einhausung` als AkuTherm-Referenz (fiktiv); Container-Entscheidung (2 Größen bleiben); Schallgutachten + Schallschutzzaun als Katalog-Scope-Lines. Schallformel bleibt Demo-Vorprüfung. |
+| **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | **Umgesetzt** (§13): 5. Variante `aussen_offen` ergänzt; `einhausung` mit absorptiver Schallschutzwand (Demo-Referenz); Container-Entscheidung (2 Größen bleiben); Schallgutachten + Schallschutzzaun als Katalog-Scope-Lines. Schallformel bleibt Demo-Vorprüfung. |
 | **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | **Umgesetzt** (§15): Messkonzept-Paket getrennt von Monitoring; `STROMBESCHAFFUNG_MODELL` verknüpft Strompreisannahme, Preisgleit-Gewicht und Messkonzept-Voraussetzung. |
 | **SK-81** Berechnungs-/Output-Grenzen | `ableiten()` mischt Sizing/Energie/Placement/Schall; Engine baut LV + interne Kennzahlen | **Umgesetzt** (§12): `BERECHNUNGS_DOMAENEN` + `SERVICEGRENZE` in `calc.js`; `bereich`-Tags auf opex-Katalogpositionen; `bereichsSummen` im Engine-Return. |
 | **SK-82** Elektroanschluss | `elektro_grundpaket`, `zaehlerschrank`, `kabelweg_*` (generisch) | **Umgesetzt** (§16): Elektro-Paket bleibt generisch (`k_elektro: 25000`); Scope-Grenze und Entscheidungsrahmen für Kevin-W./Patrick-L.-Notiz dokumentiert. |
@@ -204,15 +204,15 @@ Mapping Robert's-Draft-Kategorien auf SysKon-Varianten und getroffene Produktent
 |---|---|---|
 | `aussen_offen` *(neu)* | outside unprotected | **Neu**: günstigste Low-CAPEX-Variante ohne Wetterschutz. Nur für standortgeeignete Mikrolage. |
 | `fundament` | Fundament | **Halten**: Standardaufstellung mit Fundament und Witterungsschutz; breitester Anwendungsbereich. |
-| `einhausung` | outside with fence / Schallschutzzaun | **Halten + Präzisieren**: entspricht Robert's "outside with fence". Demo-Referenzprodukt: AkuTherm-Schallschutzzaun (fiktiv). Schall und Vandalismusschutz ohne Container. |
+| `einhausung` | outside with fence / Schallschutzzaun | **Halten + Präzisieren**: entspricht Robert's "outside with fence". Demo-Referenzprodukt: absorptiver Schallschutzzaun (Demo-Referenz). Schall und Vandalismusschutz ohne Container. |
 | `kompakt_container` | in Container (compact) | **Halten**: vorkonfektionierte Kompakt-Container-Lösung (~30 m²). Zwei Container-Größen bleiben − Platzbedarf und Budget differieren signifikant. |
 | `vollcontainer` | in Container (full) | **Halten**: begehbarer Vollcontainer mit integrierter Technik (~45 m²). Höchste Standardisierung, minimale Heizraumabhängigkeit. |
 
 Codeumsetzung:
 
 - `src/logic/calc.js`: `AUFSTELLVARIANTEN` hat 5 Einträge; `AUFSTELLVARIANTEN_META` ergänzt um `aussen_offen`; `AUFSTELLUNG_VARIANTEN_MAPPING` dokumentiert Entscheidungen je Variante.
-- `src/data/katalog.js`: `aussen_offen`-Variante im Aufstellungspaket; `einhausung`-Beschreibung verweist auf AkuTherm-Demo-Referenz (fiktiv); zwei neue Pakete:
-  - `schall_zaun`: AkuTherm-Schallschutzzaun (bei `schallsensibilitaet=hoch` + offener/Fundament-Variante)
+- `src/data/katalog.js`: `aussen_offen`-Variante im Aufstellungspaket; `einhausung`-Beschreibung verweist auf absorptive Schallschutzwand (Demo-Referenz); zwei neue Pakete:
+  - `schall_zaun`: absorptiver Schallschutzzaun (Demo-Referenz, bei `schallsensibilitaet=hoch` + offener/Fundament-Variante)
   - `schall_gutachten`: Schallberechnungsservice Fachplaner (bei `schallsensibilitaet=hoch`)
 - `src/data/fragen.js`: `aufstellvariante`-Frage hat 5 Optionen; `schallhaube`-Frage sichtbar für `['fundament', 'aussen_offen']`.
 - `src/data/annahmen.js`: `k_aussen_offen`, `k_schallschutzzaun`, `k_schallberechnung` als editierbare Demo-Annahmen.

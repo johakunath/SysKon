@@ -209,9 +209,10 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
       }),
     }))
 
+  const pfadEffektiv = derived.technologiepfad_effektiv ?? eingaben.technologiepfad
   const annahmenTexte = [
     'Vorläufiger Kundenumfang mit Richtpreisen für das Sales-Gespräch.',
-    `Technologiepfad: ${eingaben.technologiepfad === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen Standards'}.`,
+    `Technologiepfad: ${pfadEffektiv === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen Standards'}.`,
     derived.aufstellung_begruendung,
     `Datenlage: ${annahmen.dq_schwelle}%-Schwelle intern, aktuell ${derived.heizlast_geschaetzt ? 'mit Heizlast-Annahme' : 'mit angegebener Heizlast'}.`,
   ].filter(Boolean)
@@ -222,7 +223,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
       titel: 'Aufstellvariante ausgeschlossen',
       text: `${v}: aktuell nicht tragfähig im Demo-Korridor.`,
     })),
-    ...(eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
+    ...(pfadEffektiv && pfadEffektiv !== 'hybrid'
       ? [{ titel: 'Technologiepfad außerhalb des Standards', text: 'Der gewählte Pfad ist noch nicht als Standardumfang abbildbar.' }]
       : []),
   ]
@@ -398,6 +399,8 @@ export function berechne(eingaben, opts = {}) {
             text: `Keine geeignete Komponente (${typ}) gefunden – Position mit 0 € angesetzt.` })
         } else {
           einzel = komponentenInfo.gewaehlt.vk
+          // Artikel-Kalkulation anhängen für EK/VK-Rückverfolgung im internen LV.
+          artikelInfo = artikelKalkulation(komponentenInfo.gewaehlt.artikelnummer, artikel, rabattgruppen, annahmen.vk_aufschlag_material)
           if (komponentenInfo.ungueltigeWahl) {
             warnungen.push({ regelId: 'KOMP', kategorie: 'katalog', status: null,
               text: `Gewählte Komponente (${typ}) nicht geeignet – automatisch auf günstigste geeignete zurückgestellt.` })
