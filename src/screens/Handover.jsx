@@ -51,7 +51,7 @@ export default function Handover({ ergebnis, sektionen = DEFAULT_SEKTIONEN }) {
           <Ampel status={ergebnis.status} groesse="klein" />
           <strong> Status: {korridorTitel(ergebnis)}</strong> · Datenlage {ergebnis.dq} % ·
           Interner Prüfaufwand: {ergebnis.peScore}/5 (keine LV-Kostenposition) ·
-          Netto-LV {euro(ergebnis.lv.netto)} (Demo)
+          Netto-LV {euro(ergebnis.lv.netto)}
         </p>
         <div className="naechster-schritt">
           <span className="ns-label">Nächster Schritt</span>

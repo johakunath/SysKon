@@ -153,7 +153,7 @@ function Frage({ frage, wert, onChange, gesperrt, zeigeHilfe }) {
           )}
           {invalide && (
             <span className="input-hinweis">
-              Plausibilitätsbereich: {frage.min}-{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Demo-Annahme)
+              Plausibilitätsbereich: {frage.min}-{frage.max?.toLocaleString('de-DE')} {frage.einheit} (Annahme)
             </span>
           )}
         </div>
@@ -425,7 +425,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               )}
               {s.id === 'K' && parseInt(eingaben.vertragslaufzeit) > 10 && (
                 <p className="warnbox">
-                  Laufzeit über 10 Jahre impliziert Individualvertrag (AVB-Standard, Demo). Das Angebot zeigt beide Varianten – als Prüfpunkt R22 sichtbar.
+                  Laufzeit über 10 Jahre impliziert Individualvertrag (AVB-Standard). Das Angebot zeigt beide Varianten – als Prüfpunkt R22 sichtbar.
                 </p>
               )}
             </div>

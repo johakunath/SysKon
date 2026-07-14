@@ -452,12 +452,13 @@ describe('WP12 SK-77: WP-Produktstamm Referenz', () => {
     expect(typeof WP_PRODUKT_REFERENZ.sizing_korridor).toBe('string')
   })
 
-  it('wp_modul Katalog-Position hat Dreammaker-Referenz (fiktiver Hersteller)', () => {
+  it('wp_modul Katalog-Position ist herstellerneutral (Komponenten-Layer wählt die WP)', () => {
     const wp = KATALOG.find(p => p.id === 'wp')
     const pos = wp?.positionen.find(p => p.id === 'wp_modul')
     expect(pos).toBeDefined()
-    expect(pos.kunde.hersteller).toContain('Dreammaker')
-    expect(pos.kunde.produkt).toContain('AeroTherm')
+    expect(pos.kosten.typ).toBe('komponente')
+    expect(pos.kosten.komponentenTyp).toBe('waermepumpe')
+    expect(pos.kunde.hersteller).toBe('herstellerneutral')
   })
 
   it('wp_modul kundenScope leistungsumfang enthält abgeleiteten Korridor aus Annahmen', () => {
@@ -848,7 +849,7 @@ describe('Monitoring-Gruppen-Merge: eine gemeinsame Anzeige-Gruppe', () => {
     expect(LV_GRUPPEN).toContain('Steuerung & Monitoring')
   })
 
-  it('Referenz-LV: mon_basic und smartcontrol_std liegen in einer Gruppe Steuerung & Monitoring', () => {
+  it('Referenz-LV: Monitoring und Regelung liegen in einer Gruppe Steuerung & Monitoring', () => {
     const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
     const erg = berechne(referenz)
     const gruppen = gruppiereNachGruppe(erg.lv.positionen)
@@ -856,7 +857,7 @@ describe('Monitoring-Gruppen-Merge: eine gemeinsame Anzeige-Gruppe', () => {
     expect(monitoringGruppen).toHaveLength(1)
     expect(monitoringGruppen[0].name).toBe('Steuerung & Monitoring')
     const ids = monitoringGruppen[0].positionen.map(p => p.id)
-    expect(ids).toContain('mon_basic')
-    expect(ids).toContain('smartcontrol_std')
+    expect(ids).toContain('monitoring_modul')
+    expect(ids).toContain('regelung_modul')
   })
 })

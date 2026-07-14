@@ -14,7 +14,7 @@ const SLIDES = [
     inhalt: (
       <>
         <p className="slide-these">
-          Der größte Engpass bei der Skalierung von SmartZero Contracting ist nicht der Markt,
+          Der größte Engpass bei der Skalierung von Wärmepumpen-Contracting ist nicht der Markt,
           sondern die eigene Organisation: Product-Operations-Fit und die Fähigkeit,
           schnell valide Angebote zu erstellen.
         </p>
@@ -116,7 +116,7 @@ const SLIDES = [
             <li>ein Planungstool — keine Standort-, LiDAR- oder 3D-Placement-Berechnung</li>
             <li>eine Customer-Self-Service-Bestellstrecke ohne Sales-/interne Prüfung</li>
             <li>eine Rechts-, Förder- oder Schallgarantie</li>
-            <li>eine Quelle produktiver Kalkulationswerte — nur Demo-Annahmen und Richtpreise</li>
+            <li>eine Quelle produktiver Kalkulationswerte — nur Annahmen und Richtpreise</li>
           </ul>
         </div>
       </div>

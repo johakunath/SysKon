@@ -33,7 +33,7 @@ export default function Pruefpunkte({ eingaben, ergebnis }) {
         </div>
 
         <div className="karte">
-          <h3>Schall-Vorprüfung (Demo-Abschätzung)</h3>
+          <h3>Schall-Vorprüfung (Abschätzung)</h3>
           <p className="hinweis">Lp = LW<sub>Kaskade</sub> − 20·log₁₀(r) − 8 − Abschlag · keine rechtsverbindliche Schallberechnung.</p>
           <div className="table-scroll">
             <table className="fakten">
@@ -66,7 +66,7 @@ export default function Pruefpunkte({ eingaben, ergebnis }) {
                 <li key={v.variante}>{v.label}: {euro(v.kosten)} Zusatz-CAPEX · Schall {v.schall}</li>
               ))}
             </ul>
-          ) : <p className="warnbox">Keine tragfähige Aufstellvariante im aktuellen Demo-Korridor.</p>}
+          ) : <p className="warnbox">Keine tragfähige Aufstellvariante im aktuellen Korridor.</p>}
         </div>
       </div>
     </div>

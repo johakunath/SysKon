@@ -47,11 +47,12 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 | 1 | SK-101 Sidebar-/Ergebnis-Konsolidierung & Vertragstyp | Konfiguration-Sidebar entschlackt, Ergebnis in Info/Aktionen gesplittet, Vertragstyp-Frage (AVB/Individual), Vendor-Namen-Bereinigung | SK-95 (Angebots-Snapshot Sidebar, Done) | P1 | L | Done |
 | 2 | SK-102 Katalog- & Kostendatenbank (CPQ-Demo) | Artikelstamm mit Rabattgruppen + simulierter DATANORM-Import, EK/VK-Kette im LV, Installations-Einzelpositionen, Anfahrt aus PLZ-Demo-Distanz, Service als Vertragsartikel (OpEx) | – | P1 | XL | Done |
 | 3 | SK-103 Offer-Config-Workflow-Bundle | Monitoring-Merge, Prüfpunkte-Nav-Step, AVB-Dual-Offer (15/20 J), Komponenten-Layer Phase 1 (WP+Speicher), Vendor-Scrub | SK-102 | P1 | XL | Done |
-| 4 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
+| 4 | SK-104 Angebotsseite-Redesign & Komponenten-Layer Phase 2 | Angebotsseite 3-Spalten-Layout (Rahmendaten links, Auswahl mittig, Vorschau rechts ab 50 %), Komponenten-Typen Regelung + Monitoring, „Demo"- und Platzhalter-Namen aus der UI | SK-103 | P1 | L | Done |
+| 5 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
 
 ## Aktueller Fokus
 
-SK-103 ist umgesetzt: (1) Monitoring-Gruppe zusammengeführt zu „Steuerung & Monitoring"; (2) Prüfpunkte als eigenständiger mittlerer Nav-Schritt (intern-only); (3) AVB-Dual-Offer: Laufzeiten 15/20 J immer wählbar, Angebot zeigt AVB-Variante (10 J) + Individual-Variante nebeneinander; (4) Komponenten-Layer Phase 1 (WP + Speicher): Engine wählt günstigste geeignete Komponente je Typ, LV-Dropdown in Ergebnis.jsx erlaubt manuellen Override; (5) `technologiepfad: 'unentschieden'` → Demo rechnet Hybrid (R23 gelb); (6) Vendor-Name-Scrub repo-weit. Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
+SK-104 ist umgesetzt: (1) Angebotsseite (intern) als 3-Spalten-Layout — Rahmendaten links (Gebäudeparameter, Status-Ampel, „Warum dieser Status", Datenlage), Bearbeitung/Auswahl mittig (Empfehlung + Komponenten-Auswahl), Angebotsvorschau/Ergebnisse rechts ab 50 % (LV, CAPEX, Pricing, Energie, OPEX, dann Aktionen + Gesprächsergebnis); Kundensicht bleibt 2-spaltig; (2) Komponenten-Layer um Typen Regelung + Monitoring erweitert (SmartControl-/Monitoring-Pakete in den Komponenten-Layer überführt, Varianten-Fragen entfallen); (3) „Demo" aus allen sichtbaren UI-Texten entfernt (Kommentare/Konstanten-Namen bleiben); (4) Herstellernamen bereinigt: „Dreammaker"→„Systemtechnik Süd" (realer Hersteller), „SmartZero" entfernt (interner Produktname), Suffixe „(fiktiver Hersteller)"/„(Demo-Referenz)" raus. Davor: SK-103 (Monitoring-Merge, Prüfpunkte-Nav, AVB-Dual-Offer, Komponenten-Layer Phase 1). Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
 
 ## Child-Tickets
 

@@ -38,7 +38,7 @@ Katalog-Kategorien (Ist): `waermepumpe`, `kaskade`, `hydraulik`, `warmwasser`, `
 |---|---|---|
 | **SK-75** Datenherkunft & Provenienz | Proto-Signale: `dq`-Gewichte (`fragen.js`), `verbrauchsquelle`, `heizlast_geschaetzt` (`calc.js`), `*_bekannt`/`unbekannt`-Muster | **Umgesetzt** (§14): `QUELLENTYPEN` + `FELD_PROVENIENZ` in `src/data/provenienz.js`; alle dq>0-Felder haben Zielattribute (Quelle, Erfassungsweg, Aktualität, Vertrauen, kundensichtbare Annahme); manuell vs. skalierbar getrennt; `followUp` erzeugt Sales-Folgeaktion. Referenz: `docs/PROVENIENZ_MODELL.md`. |
 | **SK-76** Ausschluss-/Standardfit-Logik | Blocker R04 (>2 Heizkreise), R16 (keine Außenfläche), R17 (Nicht-Hybrid) in `regeln.js` | **Umgesetzt:** Mehr-Gebäude-Blocker **R19** + Frage `anzahl_gebaeude` (§5). R04/R16/R17 mit Sales-sicheren Warn-Texten ergänzt (§9). Nicht-Luft/Wasser über R17 abgedeckt. |
-| **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition zeigt Dreammaker-Referenz (fiktiver Hersteller); Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
+| **SK-77** WP-Produktstamm, Sizing & Kaskade | `wp_luft_wasser` (Preis/kW), `wp_modul_kw: 20`, `wp_module = ceil(kw/20)` in `annahmen.js`/`calc.js` | **Umgesetzt** (§11): `WP_PRODUKT_REFERENZ` in `annahmen.js`; `wp_modul`-Katalogposition ist herstellerneutral (Komponenten-Layer wählt die WP); Kaskadenlimits, COP-Referenz, Einsatzgrenzen dokumentiert. |
 | **SK-78** Standardhydraulik, WW & Regelung | `hydraulik_grundpaket`, `pufferspeicher`, `heizkreis_erweiterung`, `speicher_ww`, `frischwasserstation` | **Umgesetzt:** Vorlauftemperatur-Korridor (§6), Raumheizkreis-Klärung, FWS/Speicher-Varianten-Split und Puffer-Sizing-Feld (§10). Herstellerregelung/potentialfreier Kontakt: noch Konzept. |
 | **SK-79** Aufstellung & Schall | 4 Varianten `fundament`, `einhausung`, `kompakt_container`, `vollcontainer`; `schallhaube`, `schallschutzwand` + Schall-Demoformel | **Umgesetzt** (§13): 5. Variante `aussen_offen` ergänzt; `einhausung` mit absorptiver Schallschutzwand (Demo-Referenz); Container-Entscheidung (2 Größen bleiben); Schallgutachten + Schallschutzzaun als Katalog-Scope-Lines. Schallformel bleibt Demo-Vorprüfung. |
 | **SK-80** Messkonzept, Monitoring, Strombezug, Förderung | `messkonzept_basis`, `monitoring_basis`/`_plus`, BEG-Förderannahmen | **Umgesetzt** (§15): Messkonzept-Paket getrennt von Monitoring; `STROMBESCHAFFUNG_MODELL` verknüpft Strompreisannahme, Preisgleit-Gewicht und Messkonzept-Voraussetzung. |
@@ -89,7 +89,7 @@ Umgesetzt in `src/data/regeln.js` (R09 umgewidmet, R20/R21 ergänzt), Tooltip + 
 
 ## 7. Offene Produktentscheidungen
 
-- **SK-77 Produktstamm:** Dreammaker (fiktiver Hersteller) als Referenz-Default, ohne Alternativen zu blockieren. (Umgesetzt §11)
+- **SK-77 Produktstamm:** Systemtechnik Süd als Referenz-Default, ohne Alternativen zu blockieren. (Umgesetzt §11)
 - **SK-81 Servicegrenze:** vor Heizkreisverteiler als strukturierter Parameter umgesetzt. (Umgesetzt §12)
 
 ## 8. Abhängigkeiten
@@ -140,13 +140,13 @@ Tests in `tests/engine.test.js` (`WP12 SK-78: FWS/Speicher-Varianten und Puffer-
 
 ## 11. Umgesetzt: WP-Produktstamm Referenz (SK-77)
 
-`src/data/annahmen.js` exportiert `WP_PRODUKT_REFERENZ` — die strukturierte Demo-Referenz für das
-aktuelle Dreammaker-Produkt (fiktiver Hersteller):
+`src/data/annahmen.js` exportiert `WP_PRODUKT_REFERENZ` — die strukturierte Referenz für das
+aktuelle Referenzprodukt:
 
 | Feld | Wert | Bedeutung |
 |---|---|---|
-| `hersteller` | Dreammaker (fiktiver Hersteller) | Demo-Referenzstand |
-| `produktfamilie` | AeroTherm Luft-Wasser-WP-Kaskade | |
+| `hersteller` | Systemtechnik Süd | Referenzstand |
+| `produktfamilie` | Luft-Wasser-WP-Kaskade | |
 | `leistungsklasse_je_modul_kw` | 20 | stimmt mit `ANNAHMEN.wp_modul_kw` überein |
 | `kaskade_min` / `kaskade_max` | 1 / 6 | stimmt mit `ANNAHMEN.wp_module_max` überein |
 | `cop_referenz_a2w35` | 3,5 | Demo-Referenzwert |
@@ -157,7 +157,7 @@ aktuelle Dreammaker-Produkt (fiktiver Hersteller):
 | `sizing_methode` | Leistungsanteil × Heizlast ÷ Modulleistung | Demo-Heuristik |
 
 Der `wp_modul`-Katalogeintrag (`src/data/katalog.js`) zeigt in der `kunde`-Sektion jetzt
-Dreammaker als Referenzhersteller (fiktiv), AeroTherm als Produktfamilie und den
+Systemtechnik Süd als Referenzhersteller, die Luft-Wasser-WP-Kaskade als Produktfamilie und den
 Kaskadenkorridor „1–6 Module à 20 kW, max. 120 kW". Der Hinweis „Alternativhersteller nach
 technischer Prüfung möglich" ist Pflichtbestandteil des Textes.
 

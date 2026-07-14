@@ -29,9 +29,9 @@ describe('Komponenten-Layer (SK-103)', () => {
   })
 
   it('valide Override hebt günstigste Wahl auf und setzt ueberschrieben', () => {
-    const erg = berechne({ ...referenz, komponente_waermepumpe: 'dm_silent_20' })
+    const erg = berechne({ ...referenz, komponente_waermepumpe: 'st_silent_20' })
     const wp = erg.lv.positionen.find(p => p.id === 'wp_modul')
-    expect(wp.komponente.gewaehlt.id).toBe('dm_silent_20')
+    expect(wp.komponente.gewaehlt.id).toBe('st_silent_20')
     expect(wp.komponente.ueberschrieben).toBe(true)
     const vkSilent = 31500 * 0.75 * (1 + ANNAHMEN.vk_aufschlag_material)
     expect(wp.einzel).toBeCloseTo(vkSilent, 2)
@@ -96,9 +96,43 @@ describe('Komponenten-Layer (SK-103)', () => {
     const aufschlag = ANNAHMEN.vk_aufschlag_material
     const bwsGK = artikelKalkulation('WT-PS-BWS800', ARTIKEL, RABATTGRUPPEN, aufschlag)
     const fwsGK = artikelKalkulation('WT-FWS-40', ARTIKEL, RABATTGRUPPEN, aufschlag)
-    const dmBws = artikelKalkulation('DM-BWS-900', ARTIKEL, RABATTGRUPPEN, aufschlag)
-    const dmFws = artikelKalkulation('DM-FWS-45', ARTIKEL, RABATTGRUPPEN, aufschlag)
+    const dmBws = artikelKalkulation('ST-BWS-900', ARTIKEL, RABATTGRUPPEN, aufschlag)
+    const dmFws = artikelKalkulation('ST-FWS-45', ARTIKEL, RABATTGRUPPEN, aufschlag)
     expect(bwsGK.vk).toBeLessThan(dmBws.vk)
     expect(fwsGK.vk).toBeLessThan(dmFws.vk)
+  })
+
+  it('Regelung: günstigste Auto-Wahl ist Standard, Override auf KI teurer', () => {
+    const erg = berechne(referenz)
+    const reg = erg.lv.positionen.find(p => p.id === 'regelung_modul')
+    expect(reg.komponente.gewaehlt.id).toBe('regelung_std')
+    const ka = erg.komponentenAuswahl.regelung
+    expect(ka).toBeTruthy()
+    expect(ka.kandidaten.length).toBe(2)
+    expect(ka.kandidaten[0].delta_vk).toBe(0)
+
+    const ergKi = berechne({ ...referenz, komponente_regelung: 'regelung_ki' })
+    const regKi = ergKi.lv.positionen.find(p => p.id === 'regelung_modul')
+    expect(regKi.komponente.gewaehlt.id).toBe('regelung_ki')
+    expect(regKi.komponente.ueberschrieben).toBe(true)
+    expect(regKi.einzel).toBeGreaterThan(reg.einzel)
+  })
+
+  it('Monitoring: günstigste Auto-Wahl ist Basic, Override auf Plus teurer', () => {
+    const erg = berechne(referenz)
+    const mon = erg.lv.positionen.find(p => p.id === 'monitoring_modul')
+    expect(mon.komponente.gewaehlt.id).toBe('mon_basic')
+
+    const ergPlus = berechne({ ...referenz, komponente_monitoring: 'mon_plus' })
+    const monPlus = ergPlus.lv.positionen.find(p => p.id === 'monitoring_modul')
+    expect(monPlus.komponente.gewaehlt.id).toBe('mon_plus')
+    expect(monPlus.einzel).toBeGreaterThan(mon.einzel)
+  })
+
+  it('ungültige Regelung-Override → Fallback auf günstigste + KOMP-Warnung', () => {
+    const erg = berechne({ ...referenz, komponente_regelung: 'gibt_es_nicht' })
+    const reg = erg.lv.positionen.find(p => p.id === 'regelung_modul')
+    expect(reg.komponente.gewaehlt.id).toBe('regelung_std')
+    expect(erg.warnungen.some(w => w.regelId === 'KOMP')).toBe(true)
   })
 })

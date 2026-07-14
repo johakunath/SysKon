@@ -449,6 +449,23 @@ details summary:hover { color: var(--akzent); }
   max-height: calc(100vh - 84px); overflow: auto;
 }
 .ergebnis-aktionsspalte .karte { margin-bottom: 0; }
+
+/* Angebotsseite intern: 3 Spalten – Rahmendaten | Auswahl | Vorschau (ab 50 %) */
+.angebot-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--sp-4); align-items: start;
+}
+.angebot-links, .angebot-mitte, .angebot-rechts {
+  min-width: 0; display: grid; gap: var(--sp-4); align-content: start;
+}
+.angebot-links .karte, .angebot-mitte .karte, .angebot-rechts .karte { margin-bottom: 0; }
+.komponenten-feld { margin-bottom: var(--sp-3); }
+.komponenten-feld:last-child { margin-bottom: 0; }
+.komponenten-label { display: block; font-weight: 600; margin-bottom: 4px; }
+.komponenten-feld select { width: 100%; }
+.komponenten-hinweis { display: block; margin-top: 4px; color: var(--muted); }
+.komponenten-warn { color: var(--st-rot); margin-top: 4px; }
 .status-karte { border-left: 4px solid var(--akzent); }
 .status-karte.status-gruen { border-left-color: var(--st-gruen); }
 .status-karte.status-gelb { border-left-color: var(--st-gelb); }
@@ -753,12 +770,16 @@ details summary:hover { color: var(--akzent); }
   .analyse-hauptkarte { grid-column: auto; }
   .ergebnis-layout { grid-template-columns: 1fr; }
   .ergebnis-aktionsspalte { position: static; max-height: none; overflow: visible; }
+  .angebot-layout { grid-template-columns: 1fr; }
   .tooltip-text { left: auto; right: 0; transform: none; }
   .tooltip-text::after { left: auto; right: 8px; transform: none; }
 }
 
 @media (min-width: 901px) and (max-width: 1180px) {
   .drei-spalten { grid-template-columns: minmax(0, 1fr) 300px; gap: var(--sp-3); padding: 12px; }
+  /* Mittlere Breite: Rahmendaten + Auswahl links, Vorschau rechts (2 Spalten). */
+  .angebot-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+  .angebot-rechts { grid-column: 2; grid-row: 1 / span 2; }
   .spalte-links {
     grid-column: 1 / -1;
     position: static;
@@ -899,6 +920,8 @@ details summary:hover { color: var(--akzent); }
   .seite { padding: 0; animation: none; }
   .drei-spalten { display: block; }
   .ergebnis-layout { display: block; }
+  .angebot-layout { display: block; }
+  .angebot-links, .angebot-mitte, .angebot-rechts { display: block; }
   .karte {
     border: 1px solid #ccc;
     box-shadow: none;

@@ -10,12 +10,12 @@ export const ADMIN_CONFIG_VERSION = 1
 
 
 const GOVERNANCE_DEFAULTS = {
-  versionLabel: 'Demo-Konfiguration v0.1',
+  versionLabel: 'Konfiguration v0.1',
   datenquelleStandard: 'Code-Default / lokale Admin-Überschreibung',
   confidenceStandard: 'Demo',
   kundensicht: 'Nur freigegebene Scope-, Annahmen- und offene-Punkte-Texte anzeigen.',
   internsicht: 'Kosten, Regeln, CAPEX/OPEX und technische Prüflogik bleiben intern.',
-  notizen: 'Lokale Demo-Konfiguration ohne Backend, Rechtekonzept oder Freigabeprozess.',
+  notizen: 'Lokale Konfiguration ohne Backend, Rechtekonzept oder Freigabeprozess.',
 }
 
 const clone = (value) => JSON.parse(JSON.stringify(value))
