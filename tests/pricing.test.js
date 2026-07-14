@@ -94,13 +94,22 @@ describe('Pricing / Contracting (WP8)', () => {
     expect(berechne({ ...referenz, vertragstyp: 'individual' }).pricing.laufzeit).toBe(ANNAHMEN.vertragslaufzeit_default)
   })
 
-  it('AVB-Fernwärme bindet die Laufzeit fest auf AVB_LAUFZEIT_JAHRE, unabhängig von vertragslaufzeit und Admin-Annahmen', () => {
-    const avb10 = berechne({ ...referenz, vertragslaufzeit: '10' }).pricing.laufzeit
-    const avb20 = berechne({ ...referenz, vertragslaufzeit: '20' }).pricing.laufzeit
-    expect(avb10).toBe(AVB_LAUFZEIT_JAHRE)
-    expect(avb20).toBe(AVB_LAUFZEIT_JAHRE)
-    // Auch mit abweichendem (z. B. veraltet persistiertem) Admin-Default bleibt AVB fest auf 10.
-    const avbMitAbweichendemDefault = berechne(referenz, { annahmen: { ...ANNAHMEN, vertragslaufzeit_default: 15 } }).pricing.laufzeit
+  it('15/20-Jahre-Laufzeit impliziert Individualvertrag; AVB-Invariante liegt in pricingVarianten.avb', () => {
+    // Laufzeit 10 (AVB-Standard): nur eine Variante, kein dual
+    const erg10 = berechne({ ...referenz, vertragslaufzeit: '10' })
+    expect(erg10.pricing.laufzeit).toBe(AVB_LAUFZEIT_JAHRE)
+    expect(erg10.pricingVarianten.individual).toBeNull()
+    expect(erg10.pricingVarianten.dual).toBe(false)
+    // Laufzeit 20: Individual wird aktiv, dual=true; AVB immer in pricingVarianten.avb
+    const erg20 = berechne({ ...referenz, vertragslaufzeit: '20' })
+    expect(erg20.pricing.laufzeit).toBe(20)
+    expect(erg20.pricingVarianten.dual).toBe(true)
+    expect(erg20.pricingVarianten.avb.laufzeit).toBe(AVB_LAUFZEIT_JAHRE)
+    expect(erg20.pricingVarianten.individual).not.toBeNull()
+    // Längere Laufzeit = niedrigerer Grundpreis (Annuität sinkt)
+    expect(erg20.pricingVarianten.individual.grundpreisPa).toBeLessThan(erg20.pricingVarianten.avb.grundpreisPa)
+    // Auch mit abweichendem (veraltet persistiertem) Admin-Default bleibt AVB in pricingVarianten.avb fest auf 10.
+    const avbMitAbweichendemDefault = berechne(referenz, { annahmen: { ...ANNAHMEN, vertragslaufzeit_default: 15 } }).pricingVarianten.avb.laufzeit
     expect(avbMitAbweichendemDefault).toBe(AVB_LAUFZEIT_JAHRE)
   })
 
@@ -117,6 +126,18 @@ describe('Pricing / Contracting (WP8)', () => {
       preisgleitformel: expect.any(Object),
       vertragsparameter: expect.any(Object),
       enthalteneServices: expect.any(Array),
+    }))
+    // avbAlternative (Dual-Fall: laufzeit 20) muss ebenfalls kundensicher sein
+    const cDual = berechne({ ...referenz, vertragslaufzeit: '20' }).kundenScope.contracting
+    const flachDual = JSON.stringify(cDual).toLowerCase()
+    for (const key of ['marge', 'capex', 'irr', 'rendite', 'einkauf']) {
+      expect(flachDual, `avbAlternative darf "${key}" nicht enthalten`).not.toContain(key)
+    }
+    expect(cDual.avbAlternative).toEqual(expect.objectContaining({
+      laufzeit: AVB_LAUFZEIT_JAHRE,
+      grundpreis_pa: expect.any(Number),
+      grundpreis_monat: expect.any(Number),
+      arbeitspreis_mwh: expect.any(Number),
     }))
   })
 

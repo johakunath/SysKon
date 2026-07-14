@@ -5,7 +5,8 @@ import { describe, it, expect } from 'vitest'
 import { berechne, dqScore, pruefeBedingung, STATUS_ORDER } from '../src/logic/engine.js'
 import { PRESETS } from '../src/data/presets.js'
 import { WP_PRODUKT_REFERENZ, STROMBESCHAFFUNG_MODELL, ANNAHMEN } from '../src/data/annahmen.js'
-import { KATALOG } from '../src/data/katalog.js'
+import { KATALOG, LV_GRUPPEN } from '../src/data/katalog.js'
+import { gruppiereNachGruppe } from '../src/logic/lv.js'
 import { BERECHNUNGS_DOMAENEN, SERVICEGRENZE, AUFSTELLVARIANTEN, AUFSTELLUNG_VARIANTEN_MAPPING } from '../src/logic/calc.js'
 import { QUELLENTYPEN, FELD_PROVENIENZ, VERTRAUEN_WERTE, AKTUALITAET_WERTE } from '../src/data/provenienz.js'
 import { ALLE_FRAGEN } from '../src/data/fragen.js'
@@ -451,12 +452,12 @@ describe('WP12 SK-77: WP-Produktstamm Referenz', () => {
     expect(typeof WP_PRODUKT_REFERENZ.sizing_korridor).toBe('string')
   })
 
-  it('wp_modul Katalog-Position hat Buderus/Dreammaker-Referenz', () => {
+  it('wp_modul Katalog-Position hat Dreammaker-Referenz (fiktiver Hersteller)', () => {
     const wp = KATALOG.find(p => p.id === 'wp')
     const pos = wp?.positionen.find(p => p.id === 'wp_modul')
     expect(pos).toBeDefined()
-    expect(pos.kunde.hersteller).toContain('Buderus')
-    expect(pos.kunde.produkt).toContain('Logatherm')
+    expect(pos.kunde.hersteller).toContain('Dreammaker')
+    expect(pos.kunde.produkt).toContain('AeroTherm')
   })
 
   it('wp_modul kundenScope leistungsumfang enthält abgeleiteten Korridor aus Annahmen', () => {
@@ -584,23 +585,23 @@ describe('WP12 SK-79: Aufstellung & Schallschutzkonzept', () => {
     expect(posIds).not.toContain('aufst_fundament')
   })
 
-  it('Rockwool-Schallschutzzaun und ATEC-Schallberechnung sind als Katalog-Positionen vorhanden', () => {
+  it('Schallschutzzaun und Schallberechnung sind als Katalog-Positionen vorhanden', () => {
     const ids = KATALOG.flatMap(p =>
       p.positionen?.map(pos => pos.id) ??
       p.varianten?.flatMap(v => v.positionen.map(pos => pos.id)) ?? []
     )
     expect(ids).toContain('schallschutzzaun_pos')
-    expect(ids).toContain('atec_schall_pos')
+    expect(ids).toContain('schall_gutachten_pos')
   })
 
-  it('ATEC und Rockwool-Zaun erscheinen im LV bei hoher Schallsensibilität + offener Aufstellung', () => {
+  it('Schallgutachten und Schallschutzzaun erscheinen im LV bei hoher Schallsensibilität + offener Aufstellung', () => {
     const erg = berechne({
       ...basis,
       aufstellvariante: 'aussen_offen',
       schallsensibilitaet: 'hoch',
     })
     const posIds = erg.lv.positionen.map(p => p.id)
-    expect(posIds).toContain('atec_schall_pos')
+    expect(posIds).toContain('schall_gutachten_pos')
     expect(posIds).toContain('schallschutzzaun_pos')
   })
 
@@ -754,11 +755,12 @@ describe('SK-102: Artikelpreise, Installations-Einzelpositionen & Anfahrt', () =
   it('Artikel-Position trägt VK als Einzelpreis und die Kalkulationsfelder', () => {
     const erg = berechne(referenz)
     const wp = erg.lv.positionen.find(p => p.id === 'wp_modul')
-    expect(wp.artikel).toBeTruthy()
-    expect(wp.artikel.artikelnummer).toBe('WT-WP20-R290')
-    // Listenpreis − 30 % (Gruppe WP) = EK; × 18 % Aufschlag = VK
+    // wp_modul nutzt jetzt typ:'komponente'; artikel ist null, komponente trägt die Infos
+    expect(wp.artikel).toBeNull()
+    expect(wp.komponente).toBeTruthy()
+    expect(wp.komponente.gewaehlt.artikelnummer).toBe('WT-WP20-R290')
+    // Günstigste Komponente (wt_aero_20): Listenpreis 26.600, WP-Gruppe 30 %, Aufschlag 18 %
     expect(wp.einzel).toBeCloseTo(26600 * 0.7 * (1 + ANNAHMEN.vk_aufschlag_material), 4)
-    expect(wp.artikel.ek).toBeCloseTo(26600 * 0.7, 4)
     expect(wp.betrag).toBeCloseTo(wp.einzel * erg.derived.wp_module, 4)
   })
 
@@ -836,5 +838,24 @@ describe('SK-102: Artikelpreise, Installations-Einzelpositionen & Anfahrt', () =
       .reduce((s, p) => s + p.betrag, 0)
     expect(summe).toBeGreaterThan(50000)
     expect(summe).toBeLessThan(75000)
+  })
+})
+
+describe('Monitoring-Gruppen-Merge: eine gemeinsame Anzeige-Gruppe', () => {
+  it('LV_GRUPPEN enthält keine eigenständige Gruppe Monitoring mehr', () => {
+    expect(LV_GRUPPEN).not.toContain('Monitoring')
+    expect(LV_GRUPPEN).toContain('Steuerung & Monitoring')
+  })
+
+  it('Referenz-LV: mon_basic und smartcontrol_std liegen in einer Gruppe Steuerung & Monitoring', () => {
+    const referenz = PRESETS.find(p => p.id === 'referenz').eingaben
+    const erg = berechne(referenz)
+    const gruppen = gruppiereNachGruppe(erg.lv.positionen)
+    const monitoringGruppen = gruppen.filter(g => g.name.includes('Monitoring') && !g.name.includes('p.a.'))
+    expect(monitoringGruppen).toHaveLength(1)
+    expect(monitoringGruppen[0].name).toBe('Steuerung & Monitoring')
+    const ids = monitoringGruppen[0].positionen.map(p => p.id)
+    expect(ids).toContain('mon_basic')
+    expect(ids).toContain('smartcontrol_std')
   })
 })

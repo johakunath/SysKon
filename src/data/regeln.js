@@ -207,4 +207,22 @@ export const REGELN = [
     ],
     begruendung: 'Über 70 °C ist Sonderfall jenseits gängiger R290-Hybrid-Auslegung – Fachprüfung erforderlich.',
   },
+  {
+    id: 'R23',
+    wenn: { feld: 'technologiepfad_offen', op: '=', wert: true },
+    dann: [
+      { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad noch offen: Demo rechnet den Hybrid-Standardpfad als aktuell günstigste modellierte Option.' },
+      { typ: 'status', wert: 'gelb' },
+    ],
+    begruendung: 'Demo rechnet unentschieden → hybrid; Hinweis damit Gesprächspartner den angenommenen Pfad sehen.',
+  },
+  {
+    id: 'R22',
+    wenn: { feld: 'vertragslaufzeit', op: 'in', wert: ['15', '20'] },
+    dann: [
+      { typ: 'warn', kategorie: 'hinweis', text: 'Laufzeit über 10 Jahre setzt Individualvertrag voraus (AVB-Fernwärme, Demo). Das Angebot zeigt beide Varianten (AVB 10 J + Individual). Keine Rechtsprüfung.' },
+      { typ: 'status', wert: 'gelb' },
+    ],
+    begruendung: 'AVB-Fernwärme begrenzt Standardverträge auf 10 Jahre; 15/20 Jahre sind nur im Individualvertrag möglich – das Angebot zeigt daher beide Varianten.',
+  },
 ]

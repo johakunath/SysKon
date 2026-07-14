@@ -10,6 +10,7 @@ import { PRESETS } from '../src/data/presets.js'
 import { berechne } from '../src/logic/engine.js'
 import App from '../src/App.jsx'
 import Konfiguration from '../src/screens/Konfiguration.jsx'
+import Pruefpunkte from '../src/screens/Pruefpunkte.jsx'
 import Ergebnis from '../src/screens/Ergebnis.jsx'
 import Handover from '../src/screens/Handover.jsx'
 import Annahmen from '../src/screens/Annahmen.jsx'
@@ -24,6 +25,8 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Systempaket-Konfigurator')
     expect(html).not.toContain('Handover</button>')
     expect(html).toContain('Strategie</button>')
+    // Prüfpunkte ist ein eigener Hauptschritt (Default-Sichtmodus ist intern)
+    expect(html).toContain('Prüfpunkte</button>')
   })
 
   it('Strategie-Deck rendert 4 Slides mit Navigation und ohne echte Vendor-Namen', () => {
@@ -153,7 +156,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(htmlKi).toContain('SmartControl KI')
   })
 
-  it('Angebot-Internsicht zeigt konsolidierte Vorlösung, LV/CAPEX und Prüfpunkte ohne Binding-Offer-Disclaimer', () => {
+  it('Angebot-Internsicht zeigt konsolidierte Vorlösung und LV/CAPEX ohne Binding-Offer-Disclaimer', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -165,15 +168,23 @@ describe('Screens rendern mit jedem Preset', () => {
       />
     )
 
-    // SK-86: zwei konsolidierte Tabs statt vier
-    expect(html).toContain('Lösung &amp; Umfang')
-    expect(html).toContain('Prüfpunkte')
+    // Prüfpunkte ist jetzt ein eigener Hauptschritt – keine Sub-Tabs mehr
+    expect(html).not.toContain('tabs-sekundaer')
     // Internsicht zeigt CAPEX-Detail
     expect(html).toContain('CAPEX-Kennzahlen')
     expect(html).toMatch(/CAPEX|Netto/)
     // WP16: Richtpreis-Reframe – kein „kein Angebot/keine Zusage"-Disclaimer mehr
     expect(html).not.toContain('Nicht als Zusage lesen')
     expect(html).not.toMatch(/kein Angebot|Angebotscharakter|kein Kundenangebot/)
+  })
+
+  it('Prüfpunkte-Screen rendert Regelhinweise, Schall-Vorprüfung und Placement-Korridor', () => {
+    const eingaben = { ...PRESETS[0].eingaben }
+    const ergebnis = berechne(eingaben)
+    const html = renderToString(<Pruefpunkte eingaben={eingaben} ergebnis={ergebnis} />)
+    expect(html).toContain('Prüfpunkte und Hinweise')
+    expect(html).toContain('Schall-Vorprüfung')
+    expect(html).toContain('Placement-Korridor')
   })
 
   it('Admin-Konfiguration rendert Tabs, Import/Export und read-only Regeln', () => {
@@ -235,7 +246,7 @@ describe('Screens rendern mit jedem Preset', () => {
   })
 
   for (const preset of PRESETS) {
-    it(`alle 5 Screens rendern fehlerfrei: ${preset.id}`, () => {
+    it(`alle 6 Screens rendern fehlerfrei: ${preset.id}`, () => {
       const eingaben = { ...preset.eingaben }
       const ergebnis = berechne(eingaben)
       const props = {
@@ -243,7 +254,7 @@ describe('Screens rendern mit jedem Preset', () => {
         annahmen: { ...ANNAHMEN }, setAnnahmen: noop,
         ergebnis, setScreen: noop,
       }
-      for (const Screen of [Konfiguration, Ergebnis, Handover, Annahmen, Testfaelle]) {
+      for (const Screen of [Konfiguration, Pruefpunkte, Ergebnis, Handover, Annahmen, Testfaelle]) {
         const html = renderToString(<Screen {...props} />)
         expect(html.length).toBeGreaterThan(100)
       }

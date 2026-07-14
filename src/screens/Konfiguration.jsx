@@ -10,6 +10,7 @@ const TECHNOLOGIEPFAD_PREVIEW = {
   hybrid: 'Hybrid',
   monoenergetisch: 'monoenergetisch',
   sonstig: 'anderer Pfad',
+  unentschieden: 'noch offen (Hybrid angenommen)',
 }
 
 const SEKTION_KURZ = {
@@ -340,10 +341,6 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
   }, [])
 
   const gesperrteVarianten = ergebnis.excluded.aufstellvariante ?? []
-  // AVB-Fernwärme bindet die Laufzeit fest auf 10 Jahre – ein AVB-Angebot muss
-  // immer verfügbar sein. Andere Laufzeiten nur im individuell mit dem Kunden
-  // ausgehandelten Vertrag (siehe logic/pricing.js: contractingPreise).
-  const vertragslaufzeitGesperrt = eingaben.vertragstyp === 'individual' ? [] : ['15', '20']
   const d = ergebnis.derived
   const scope = ergebnis.kundenScope
   const offenePunkteKombiniert = kombiniereOffenePunkte(ergebnis, scope)
@@ -401,9 +398,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
                   frage={f}
                   wert={eingaben[f.id]}
                   gesperrt={
-                    f.id === 'aufstellvariante' ? gesperrteVarianten
-                      : f.id === 'vertragslaufzeit' ? vertragslaufzeitGesperrt
-                      : null
+                    f.id === 'aufstellvariante' ? gesperrteVarianten : null
                   }
                   zeigeHilfe={sichtModus === 'intern'}
                   onChange={(wert) => setEingaben({ ...eingaben, [f.id]: wert })}
@@ -428,9 +423,9 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
               {s.id === 'C' && eingaben.technologiepfad === 'monoenergetisch' && (
                 <p className="warnbox">Monoenergetischer Pfad ist in v0.1 nur ein Roadmap-Platzhalter (Status rot, R17).</p>
               )}
-              {s.id === 'K' && vertragslaufzeitGesperrt.length > 0 && (
+              {s.id === 'K' && parseInt(eingaben.vertragslaufzeit) > 10 && (
                 <p className="warnbox">
-                  AVB-Fernwärme bindet die Laufzeit fest auf 10 Jahre. 15/20 Jahre nur im individuell mit dem Kunden ausgehandelten Vertrag.
+                  Laufzeit über 10 Jahre impliziert Individualvertrag (AVB-Standard, Demo). Das Angebot zeigt beide Varianten – als Prüfpunkt R22 sichtbar.
                 </p>
               )}
             </div>

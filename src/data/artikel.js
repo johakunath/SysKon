@@ -28,6 +28,12 @@ export const LIEFERANTEN = [
     typ: 'eigenfertigung',
     hinweis: 'Eigenprodukte zu internen Verrechnungspreisen; kein Lieferantenrabatt.',
   },
+  {
+    id: 'dreammaker',
+    name: 'Dreammaker (fiktiver Hersteller)',
+    typ: 'hersteller',
+    hinweis: 'Fiktiver Zweithersteller für WP-Module und Speicher; SK-103 Komponenten-Layer Demo.',
+  },
 ]
 
 // Rabattgruppen je Lieferant: individueller Gruppenrabatt, sonst Generalrabatt.
@@ -45,6 +51,10 @@ export const RABATTGRUPPEN = {
   smartzero: {
     generalrabatt: 0,
     gruppen: {},
+  },
+  dreammaker: {
+    generalrabatt: 0.10,
+    gruppen: { WP: 0.25, SPEICHER: 0.20 },
   },
 }
 
@@ -184,6 +194,47 @@ export const ARTIKEL = [
     listenpreis: 1270,
     einheit: 'pausch./a',
     verwendung: 'opex',
+    preisstand: '2026-01-15',
+  },
+  // SK-103: Dreammaker-Artikel für Komponenten-Layer Phase 1
+  {
+    artikelnummer: 'DM-WP20-BASIC',
+    lieferant: 'dreammaker',
+    rabattgruppe: 'WP',
+    kurztext: 'Luft-Wasser-WP-Modul 20 kW Basic (Dreammaker)',
+    langtext: 'Luft-Wasser-Wärmepumpenmodul 20 kW thermisch, Kältemittel R290, kaskadierbar 1–6 Module. Demo-Artikel eines fiktiven Herstellers.',
+    listenpreis: 28000,
+    einheit: 'Stk',
+    preisstand: '2026-01-15',
+  },
+  {
+    artikelnummer: 'DM-WP20-SILENT',
+    lieferant: 'dreammaker',
+    rabattgruppe: 'WP',
+    kurztext: 'Luft-Wasser-WP-Modul 20 kW Silent (Dreammaker)',
+    langtext: 'Schalloptimiertes Luft-Wasser-Wärmepumpenmodul 20 kW (62 dBA Schallleistungspegel), Kältemittel R290, kaskadierbar. Demo-Artikel eines fiktiven Herstellers.',
+    listenpreis: 31500,
+    einheit: 'Stk',
+    preisstand: '2026-01-15',
+  },
+  {
+    artikelnummer: 'DM-BWS-900',
+    lieferant: 'dreammaker',
+    rabattgruppe: 'SPEICHER',
+    kurztext: 'Brauchwasserspeicher-Paket 900 l (Dreammaker)',
+    langtext: 'Brauchwasserspeicher 900 l mit Pufferspeicher, Sicherheitsgruppe und Anschlusszubehör für zentrale Warmwasserbereitung im MFH. Demo-Artikel eines fiktiven Herstellers.',
+    listenpreis: 38000,
+    einheit: 'Stk',
+    preisstand: '2026-01-15',
+  },
+  {
+    artikelnummer: 'DM-FWS-45',
+    lieferant: 'dreammaker',
+    rabattgruppe: 'SPEICHER',
+    kurztext: 'Frischwasserstation 45 l/min (Dreammaker)',
+    langtext: 'Frischwasserstation für hygienische Durchfluss-Warmwasserbereitung (bis 45 l/min) inkl. Pufferspeicher und erweitertem Regelungsset. Demo-Artikel eines fiktiven Herstellers.',
+    listenpreis: 32000,
+    einheit: 'Stk',
     preisstand: '2026-01-15',
   },
 ]

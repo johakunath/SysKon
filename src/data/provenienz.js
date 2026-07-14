@@ -394,7 +394,7 @@ export const FELD_PROVENIENZ = {
     vertrauen: 'niedrig',
     skalierbar: false,
     kundenAnnahme: 'Abstandsangabe nach Gesprächsstand (Demo-Vorprüfung)',
-    followUp: 'Bei Grenzwertnähe: ATEC-Schallberechnung beauftragen',
+    followUp: 'Bei Grenzwertnähe: Schallberechnung durch Fachplaner beauftragen',
   },
   gebietstyp: {
     quelle: ['stammdaten', 'sales_manuell'],

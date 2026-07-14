@@ -96,7 +96,7 @@ export const AUFSTELLUNG_VARIANTEN_MAPPING = {
   },
   einhausung: {
     roberts_draft: 'outside with fence / Schallschutzzaun',
-    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". Rockwool-Schallschutzzaun als Demo-Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
+    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". AkuTherm-Schallschutzzaun als Demo-Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
   },
   kompakt_container: {
     roberts_draft: 'in Container (kompakt)',
@@ -341,6 +341,8 @@ export function ableiten(e, a) {
     heizlast_effektiv: hl.heizlast ? Math.round(hl.heizlast) : null,
     heizlast_geschaetzt: hl.geschaetzt,
     heizlast_methode: hl.methode,
+    technologiepfad_effektiv: e.technologiepfad === 'unentschieden' ? 'hybrid' : (e.technologiepfad ?? null),
+    technologiepfad_offen: e.technologiepfad === 'unentschieden',
     wp_module: wp.wp_module,
     wp_kw: wp.wp_kw,
     waermebedarf_mwh: bedarf ? Math.round(bedarf) : null,

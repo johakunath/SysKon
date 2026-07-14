@@ -100,7 +100,7 @@ Jedes fachlich wichtige Eingabefeld hat fünf Zielattribute:
 
 | Feld | Quelle (Ziel → Fallback) | Aktualität | Vertrauen | Skalierbar | Sales-Folgeaktion |
 |---|---|---|---|---|---|
-| `abstand_fenster` | sales_manuell → kunde_manuell | einmalig | **niedrig** | nein | Bei Grenzwertnähe: ATEC-Schallberechnung beauftragen |
+| `abstand_fenster` | sales_manuell → kunde_manuell | einmalig | **niedrig** | nein | Bei Grenzwertnähe: Schallberechnung durch Fachplaner beauftragen |
 | `gebietstyp` | stammdaten → sales_manuell | historisch | mittel | ja | Bebauungsplan-Auszug bei Grenzwertnähe |
 | `schallsensibilitaet` | sales_manuell | einmalig | **niedrig** | nein | – |
 

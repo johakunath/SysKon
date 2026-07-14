@@ -73,7 +73,7 @@ export const ANNAHMEN = {
   k_einhausung: 35000,
   k_kompakt_container: 120000,
   k_vollcontainer: 280000,
-  k_atec_schallberechnung: 3500,     // €, ATEC-Schallberechnungsservice Pauschale (Demo, SK-79)
+  k_schallberechnung: 3500,          // €, Schallberechnungsservice Fachplaner Pauschale (Demo, SK-79)
   f_smartcontrol: 0,                 // kein BEG-Gegenstand (Demo)
   f_vertrieb_einweisung: 0,          // Vertrieb/Einweisung/Doku: kein Fördergegenstand (Demo, SK-102)
 
@@ -140,12 +140,12 @@ export const FOERDERUNG_ART_LABEL = 'Bundesförderung für effiziente Gebäude �
 export const AVB_LAUFZEIT_JAHRE = 10
 
 // SK-77: WP-Produktstamm Demo-Referenz (nicht editierbar).
-// Buderus/Dreammaker ist der aktuelle Referenzstand; Alternativhersteller sind nach
-// technischer Prüfung möglich. Felder dokumentieren die Zielstruktur für später
+// Dreammaker (fiktiver Hersteller) ist der aktuelle Referenzstand; Alternativhersteller
+// sind nach technischer Prüfung möglich. Felder dokumentieren die Zielstruktur für später
 // ergänzte Produktstammdaten.
 export const WP_PRODUKT_REFERENZ = {
-  hersteller: 'Buderus / Dreammaker',
-  produktfamilie: 'Logatherm WLW / Luft-Wasser-WP-Kaskade',
+  hersteller: 'Dreammaker (fiktiver Hersteller)',
+  produktfamilie: 'AeroTherm Luft-Wasser-WP-Kaskade',
   modell_hinweis: 'Demo-Referenzstand; finales Produkt wird im Angebot festgelegt',
   kuehlmittel: 'R290',
   leistungsklasse_je_modul_kw: 20,
@@ -158,7 +158,7 @@ export const WP_PRODUKT_REFERENZ = {
   aussentemp_min_c: -20,
   sizing_methode: 'Leistungsanteil × Heizlast-Proxy ÷ Modulleistung (Demo-Heuristik)',
   sizing_korridor: '1–6 Module à 20 kW (20–120 kW thermisch)',
-  anmerkung: 'Demo-Referenzstand Buderus/Dreammaker; Alternativhersteller nach technischer Prüfung möglich.',
+  anmerkung: 'Demo-Referenzstand Dreammaker (fiktiv); Alternativhersteller nach technischer Prüfung möglich.',
 }
 
 // SK-80: Strombeschaffungs-Modell (Dokumentationskonstante, keine Rechenlogik).
@@ -233,7 +233,7 @@ export const ANNAHMEN_META = [
     ['k_einhausung', 'Aufstellung Einhausung / Schallschutzzaun', '€'],
     ['k_kompakt_container', 'Aufstellung Kompakt-Container', '€'],
     ['k_vollcontainer', 'Aufstellung Vollcontainer', '€'],
-    ['k_atec_schallberechnung', 'ATEC-Schallberechnung (Demo-Pauschale)', '€'],
+    ['k_schallberechnung', 'Schallberechnung Fachplaner (Demo-Pauschale)', '€'],
   ]},
   { gruppe: 'Installation – Einzelkomponenten (SK-102)', felder: [
     ['k_inst_baustelle', 'Baustelleneinrichtung', '€'],
