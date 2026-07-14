@@ -20,14 +20,14 @@ export const KATALOG = [
   {
     id: 'wp', pakettyp: 'Wärmepumpe', gruppe: 'Wärmepumpenpaket',
     positionen: [
-      { id: 'wp_modul', text: 'Luft-Wasser-WP-Modul 20 kW (Demo-Referenz: Buderus/Dreammaker)',
+      { id: 'wp_modul', text: 'Luft-Wasser-WP-Modul 20 kW (Demo-Referenz: Dreammaker)',
         menge: '@wp_module', einheit: 'Stk',
-        kosten: { typ: 'artikel', artikel: 'WT-WP20-R290' }, foerder: 'f_wp', tag: 'capex',
+        kosten: { typ: 'komponente', komponentenTyp: 'waermepumpe' }, foerder: 'f_wp', tag: 'capex',
         begruendung: 'Kaskadenauslegung: WP-Leistung ≈ Leistungsanteil × Heizlast, gerundet auf 20-kW-Module (1–6).',
         kunde: {
           titel: 'Luft-Wasser-Wärmepumpen-Kaskade',
-          hersteller: 'Buderus / Dreammaker (Demo-Referenz)',
-          produkt: 'Logatherm WLW / Luft-Wasser-WP-Modul – finales Produkt im Angebot',
+          hersteller: 'Dreammaker (Demo-Referenz, fiktiver Hersteller)',
+          produkt: 'AeroTherm Luft-Wasser-WP-Modul – finales Produkt im Angebot',
           leistungsumfang: 'Außengeräte als modularer Wärmepumpen-Verbund für den ermittelten Lösungskorridor. Kältemittel R290, JAZ laut Betriebsannahme. Alternativhersteller nach technischer Prüfung möglich.',
         } },
     ],
@@ -82,7 +82,7 @@ export const KATALOG = [
         positionen: [
           { id: 'speicher_ww_modul', text: 'Brauchwasserspeicher + Puffer (zentrale WW-Bereitung)',
             menge: 1, einheit: 'pausch.',
-            kosten: { typ: 'artikel', artikel: 'WT-PS-BWS800' }, foerder: 'f_speicher', tag: 'capex',
+            kosten: { typ: 'komponente', komponentenTyp: 'speicher' }, foerder: 'f_speicher', tag: 'capex',
             begruendung: 'Durch Regel erzwungen (R03: zentrale WW-Bereitung). Klassische Speicherlösung.',
             kunde: {
               titel: 'Brauchwasserspeicher',
@@ -95,7 +95,7 @@ export const KATALOG = [
         positionen: [
           { id: 'fws_modul', text: 'Frischwasserstation + Puffer (hygienische Durchfluss-WW)',
             menge: 1, einheit: 'pausch.',
-            kosten: { typ: 'artikel', artikel: 'WT-FWS-40' }, foerder: 'f_speicher', tag: 'capex',
+            kosten: { typ: 'komponente', komponentenTyp: 'speicher' }, foerder: 'f_speicher', tag: 'capex',
             begruendung: 'Frischwasserstation für hygienisch einwandfreie WW-Bereitung ohne stehende Speicherinhalte.',
             kunde: {
               titel: 'Frischwasserstation',
@@ -141,12 +141,12 @@ export const KATALOG = [
           { id: 'aufst_einhausung', text: 'Einhausung inkl. Schallschutzwand und Vandalismusschutz',
             menge: 1, einheit: 'pausch.',
             kosten: { typ: 'fix', annahme: 'k_einhausung' }, foerder: 'f_aufstellung', tag: 'capex',
-            begruendung: 'Mittlerer CapEx, adressiert Schall- und Vandalismusrisiken (−12 dB Demo). Schallschutzwand: Demo-Referenz Rockwool.',
+            begruendung: 'Mittlerer CapEx, adressiert Schall- und Vandalismusrisiken (−12 dB Demo). Schallschutzwand: Demo-Referenz absorptive Schallschutzwand.',
             kunde: {
               titel: 'Schutz- und Schall-Einhausung',
               hersteller: 'systemseitig',
-              produkt: 'Einhausung mit Schallschutzwand (Demo-Referenz: Rockwool)',
-              leistungsumfang: 'Einhausung zur wettergeschützten Aufstellung mit Schall- und Objektschutzwirkung (Demo-Abschlag −12 dB). Schallschutzwand auf Basis absorptiver Elemente (Demo-Referenz: Rockwool).',
+              produkt: 'Einhausung mit Schallschutzwand (Demo-Referenz)',
+              leistungsumfang: 'Einhausung zur wettergeschützten Aufstellung mit Schall- und Objektschutzwirkung (Demo-Abschlag −12 dB). Schallschutzwand auf Basis absorptiver Elemente (Demo-Referenz).',
             } },
         ]},
       { wert: 'kompakt_container', name: 'Kompakt-Container',
@@ -197,37 +197,37 @@ export const KATALOG = [
     ],
   },
   {
-    id: 'schall_rockwool', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
+    id: 'schall_zaun', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
     bedingung: { und: [
       { feld: 'schallsensibilitaet', op: '=', wert: 'hoch' },
       { feld: 'aufstellvariante', op: 'in', wert: ['aussen_offen', 'fundament'] },
     ]},
     positionen: [
-      { id: 'schallschutzzaun_pos', text: 'Schallschutzzaun (Rockwool – Demo-Referenz)',
+      { id: 'schallschutzzaun_pos', text: 'Schallschutzzaun (absorptiv, Demo-Referenz)',
         menge: 1, einheit: 'pausch.',
         kosten: { typ: 'artikel', artikel: 'GH-SSZ-ABS' }, foerder: 'f_aufstellung', tag: 'capex',
-        begruendung: 'Absorptiver Schallschutzzaun für Fundament-/Offenvarianten bei hoher Schallsensibilität; Rockwool als Demo-Referenzprodukt (SK-79).',
+        begruendung: 'Absorptiver Schallschutzzaun für Fundament-/Offenvarianten bei hoher Schallsensibilität; Demo-Referenz absorptiver Schallschutzzaun (SK-79).',
         kunde: {
           titel: 'Schallschutzzaun',
-          hersteller: 'Rockwool (Demo-Referenz)',
+          hersteller: 'herstellerneutral',
           produkt: 'Absorptiver Schallschutzzaun für Außenaufstellung',
-          leistungsumfang: 'Absorptiver Schallschutzzaun (Demo-Referenz: Rockwool) als ergänzende Maßnahme zur Fundament- oder offenen Außenaufstellung bei erhöhter Schallsensibilität.',
+          leistungsumfang: 'Absorptiver Schallschutzzaun (Demo-Referenz) als ergänzende Maßnahme zur Fundament- oder offenen Außenaufstellung bei erhöhter Schallsensibilität.',
         } },
     ],
   },
   {
-    id: 'schall_atec', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
+    id: 'schall_gutachten', pakettyp: 'Aufstellung', gruppe: 'Schallmaßnahmen',
     bedingung: { feld: 'schallsensibilitaet', op: '=', wert: 'hoch' },
     positionen: [
-      { id: 'atec_schall_pos', text: 'ATEC-Schallberechnungsservice (Demo-Pauschale)',
+      { id: 'schall_gutachten_pos', text: 'Schallberechnungsservice Fachplaner (Demo-Pauschale)',
         menge: 1, einheit: 'pausch.',
-        kosten: { typ: 'fix', annahme: 'k_atec_schallberechnung' }, foerder: 'f_aufstellung', tag: 'capex',
-        begruendung: 'Fachplanerische Schallberechnung und Schutzkonzept (ATEC als Demo-Referenzanbieter). Löst die Demo-Vorprüfung durch rechtsverbindlichen Nachweis ab (SK-79).',
+        kosten: { typ: 'fix', annahme: 'k_schallberechnung' }, foerder: 'f_aufstellung', tag: 'capex',
+        begruendung: 'Fachplanerische Schallberechnung und Schutzkonzept (Schallplan Nord als Demo-Referenzanbieter, fiktives Ingenieurbüro). Löst die Demo-Vorprüfung durch rechtsverbindlichen Nachweis ab (SK-79).',
         kunde: {
           titel: 'Schallberechnung & Schutzkonzept',
-          hersteller: 'ATEC (Demo-Referenz)',
+          hersteller: 'Schallplan Nord (Demo-Referenz, fiktives Ingenieurbüro)',
           produkt: 'Fachplanerische Schallberechnung',
-          leistungsumfang: 'Schallberechnung und Schutzkonzept durch Fachplaner (Demo-Referenz: ATEC). Ablöst die Demo-Vorprüfung durch rechtsverbindlichen Nachweis für den Standort.',
+          leistungsumfang: 'Schallberechnung und Schutzkonzept durch Fachplaner (Demo-Referenz: Schallplan Nord). Ablöst die Demo-Vorprüfung durch rechtsverbindlichen Nachweis für den Standort.',
         } },
     ],
   },
@@ -264,7 +264,9 @@ export const KATALOG = [
     ],
   },
   {
-    id: 'monitoring', pakettyp: 'Monitoring', gruppe: 'Monitoring',
+    // Anzeige-Gruppe mit smartcontrol zusammengelegt: 'Monitoring' und
+    // 'Steuerung & Monitoring' wirkten im LV wie Duplikate.
+    id: 'monitoring', pakettyp: 'Monitoring', gruppe: 'Steuerung & Monitoring',
     variantenFeld: 'monitoring_variante',
     varianten: [
       { wert: 'basic', name: 'Monitoring Basic',
@@ -563,7 +565,7 @@ export const KATALOG = [
 // Anzeige-Reihenfolge der LV-Gruppen (HANDOVER §15 B)
 export const LV_GRUPPEN = [
   'Wärmepumpenpaket', 'Hybrid-Einbindung', 'Hydraulik', 'Speicher / Warmwasser',
-  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Messkonzept', 'Monitoring',
+  'Aufstellung', 'Schallmaßnahmen', 'Elektro / Netzanschluss', 'Messkonzept',
   'Steuerung & Monitoring',
   'Installation / Inbetriebnahme', 'Umfeldmaßnahmen',
 ]

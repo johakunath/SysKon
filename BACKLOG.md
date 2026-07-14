@@ -46,11 +46,12 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 |---:|---|---|---|---|---|---|
 | 1 | SK-101 Sidebar-/Ergebnis-Konsolidierung & Vertragstyp | Konfiguration-Sidebar entschlackt, Ergebnis in Info/Aktionen gesplittet, Vertragstyp-Frage (AVB/Individual), Vendor-Namen-Bereinigung | SK-95 (Angebots-Snapshot Sidebar, Done) | P1 | L | Done |
 | 2 | SK-102 Katalog- & Kostendatenbank (CPQ-Demo) | Artikelstamm mit Rabattgruppen + simulierter DATANORM-Import, EK/VK-Kette im LV, Installations-Einzelpositionen, Anfahrt aus PLZ-Demo-Distanz, Service als Vertragsartikel (OpEx) | – | P1 | XL | Done |
-| 3 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
+| 3 | SK-103 Offer-Config-Workflow-Bundle | Monitoring-Merge, Prüfpunkte-Nav-Step, AVB-Dual-Offer (15/20 J), Komponenten-Layer Phase 1 (WP+Speicher), Vendor-Scrub | SK-102 | P1 | XL | Done |
+| 4 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
 
 ## Aktueller Fokus
 
-SK-102 ist umgesetzt: Artikeldatenbank (fiktive Lieferanten, Listenpreis → Rabattgruppe → EK → VK-Aufschlag) speist Hardware- und Servicevertragspreise im LV; Admin-Tab „Artikeldatenbank" mit simuliertem DATANORM-Import (Preise überschreiben, Artikel ergänzen, Konditionen aktualisieren – kein echter Parser); Installation als ~13 Einzelpositionen inkl. bedingter Demontagen (Öltank, nicht nutzbarer Kessel); Anfahrt als km-Position (Installationspartner → Projekt-PLZ, Demo-Distanz statt einer externen Kartendienst-API). Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
+SK-103 ist umgesetzt: (1) Monitoring-Gruppe zusammengeführt zu „Steuerung & Monitoring"; (2) Prüfpunkte als eigenständiger mittlerer Nav-Schritt (intern-only); (3) AVB-Dual-Offer: Laufzeiten 15/20 J immer wählbar, Angebot zeigt AVB-Variante (10 J) + Individual-Variante nebeneinander; (4) Komponenten-Layer Phase 1 (WP + Speicher): Engine wählt günstigste geeignete Komponente je Typ, LV-Dropdown in Ergebnis.jsx erlaubt manuellen Override; (5) `technologiepfad: 'unentschieden'` → Demo rechnet Hybrid (R23 gelb); (6) Vendor-Name-Scrub repo-weit. Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
 
 ## Child-Tickets
 

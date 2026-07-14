@@ -16,10 +16,12 @@ import { REGELN } from '../data/regeln.js'
 import { KATALOG } from '../data/katalog.js'
 import { ALLE_FRAGEN } from '../data/fragen.js'
 import { ARTIKEL, RABATTGRUPPEN } from '../data/artikel.js'
+import { KOMPONENTEN } from '../data/komponenten.js'
 import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
 import { artikelKalkulation } from './artikelPreise.js'
+import { komponentenAuswahl } from './komponenten.js'
 import { gruppiereNachGruppe } from './lv.js'
-import { contractingPreise } from './pricing.js'
+import { contractingVarianten } from './pricing.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
 export const STATUS_LABEL = {
@@ -185,7 +187,7 @@ function kundenWarntext(warnung) {
   return warnung.text
 }
 
-function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded, contractingKunde }) {
+function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded, contractingKunde, avbAlternativeKunde = null }) {
   const allePositionen = [...lvPositionen, ...opexPositionen]
   const gruppen = gruppiereNachGruppe(allePositionen, ['Service / Betrieb (p.a.)'])
     .map(gruppe => ({
@@ -207,9 +209,10 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
       }),
     }))
 
+  const pfadEffektiv = derived.technologiepfad_effektiv ?? eingaben.technologiepfad
   const annahmenTexte = [
     'Vorläufiger Kundenumfang mit Richtpreisen für das Sales-Gespräch.',
-    `Technologiepfad: ${eingaben.technologiepfad === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen Standards'}.`,
+    `Technologiepfad: ${pfadEffektiv === 'hybrid' ? 'Hybrid mit Luft-Wasser-Wärmepumpe und Gas-Bestandskessel' : 'außerhalb des aktuellen Standards'}.`,
     derived.aufstellung_begruendung,
     `Datenlage: ${annahmen.dq_schwelle}%-Schwelle intern, aktuell ${derived.heizlast_geschaetzt ? 'mit Heizlast-Annahme' : 'mit angegebener Heizlast'}.`,
   ].filter(Boolean)
@@ -220,7 +223,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
       titel: 'Aufstellvariante ausgeschlossen',
       text: `${v}: aktuell nicht tragfähig im Demo-Korridor.`,
     })),
-    ...(eingaben.technologiepfad && eingaben.technologiepfad !== 'hybrid'
+    ...(pfadEffektiv && pfadEffektiv !== 'hybrid'
       ? [{ titel: 'Technologiepfad außerhalb des Standards', text: 'Der gewählte Pfad ist noch nicht als Standardumfang abbildbar.' }]
       : []),
   ]
@@ -245,6 +248,17 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
       preisgleitformel: contractingKunde.preisgleitformel,
       vertragsparameter: contractingKunde.vertragsparameter,
       enthalteneServices: opexPositionen.map(pos => pos.kunde?.titel ?? pos.text),
+      // Bei Laufzeit über 10 Jahren: das immer verfügbare AVB-Angebot als
+      // kundensichere Alternative (nur GP/AP/Laufzeit, keine Interna).
+      avbAlternative: avbAlternativeKunde
+        ? {
+          laufzeit: avbAlternativeKunde.laufzeit,
+          grundpreis_pa: avbAlternativeKunde.grundpreis_pa,
+          grundpreis_monat: avbAlternativeKunde.grundpreis_monat,
+          arbeitspreis_mwh: avbAlternativeKunde.arbeitspreis_mwh,
+          preisanpassung: avbAlternativeKunde.vertragsparameter?.preisanpassung ?? null,
+        }
+        : null,
     }
     : null
 
@@ -264,11 +278,15 @@ export function berechne(eingaben, opts = {}) {
   const fragen = opts.fragen ?? ALLE_FRAGEN
   const artikel = opts.artikel ?? ARTIKEL
   const rabattgruppen = opts.rabattgruppen ?? RABATTGRUPPEN
+  const komponentenStamm = opts.komponenten ?? KOMPONENTEN
 
   // 1. Zwischenergebnisse + DQ
   const derived = ableiten(eingaben, annahmen)
   const dq = dqScore(eingaben, annahmen, fragen)
   const ctx = { ...derived, ...eingaben, dq_score: dq }
+  // Überschreibe ctx.technologiepfad mit dem effektiven Pfad ('unentschieden' → 'hybrid'),
+  // damit Regeln und Komponenten-Eignung den aufgelösten Pfad sehen.
+  ctx.technologiepfad = derived.technologiepfad_effektiv ?? ctx.technologiepfad
 
   // 2. Regel-Fixpunkt
   let status = 'gruen'
@@ -341,6 +359,7 @@ export function berechne(eingaben, opts = {}) {
   // 3. LV bauen
   const lvPositionen = []
   const opexPositionen = []
+  const komponentenAuswahlMap = {}
   for (const paket of katalog) {
     if (paket.bedingung && !pruefeBedingung(paket.bedingung, ctx, annahmen)) continue
     let positionen = paket.positionen
@@ -358,6 +377,7 @@ export function berechne(eingaben, opts = {}) {
       const menge = zahl(deref(pos.menge, ctx, annahmen)) ?? 0
       let einzel = 0
       let artikelInfo = null
+      let komponentenInfo = null
       if (pos.kosten.typ === 'fix') einzel = pos.kosten.annahme ? annahmen[pos.kosten.annahme] : 0
       else if (pos.kosten.typ === 'je_modul') einzel = annahmen[pos.kosten.annahme] * annahmen.wp_modul_kw
       else if (pos.kosten.typ === 'artikel') {
@@ -366,6 +386,27 @@ export function berechne(eingaben, opts = {}) {
         if (artikelInfo) einzel = artikelInfo.vk
         else warnungen.push({ regelId: 'KAT', kategorie: 'katalog', status: null,
           text: `Artikel „${pos.kosten.artikel}" (Position „${pos.id}") fehlt im Artikelstamm – Position mit 0 € angesetzt, Artikeldatenbank prüfen.` })
+      } else if (pos.kosten.typ === 'komponente') {
+        // SK-103: günstigste geeignete Komponente aus dem Komponenten-Stamm wählen.
+        const typ = pos.kosten.komponentenTyp
+        const override = eingaben['komponente_' + typ]
+        komponentenInfo = komponentenAuswahl({
+          typ, komponenten: komponentenStamm, ctx, override,
+          artikel, rabattgruppen, aufschlag: annahmen.vk_aufschlag_material,
+        })
+        if (!komponentenInfo) {
+          warnungen.push({ regelId: 'KOMP', kategorie: 'katalog', status: null,
+            text: `Keine geeignete Komponente (${typ}) gefunden – Position mit 0 € angesetzt.` })
+        } else {
+          einzel = komponentenInfo.gewaehlt.vk
+          // Artikel-Kalkulation anhängen für EK/VK-Rückverfolgung im internen LV.
+          artikelInfo = artikelKalkulation(komponentenInfo.gewaehlt.artikelnummer, artikel, rabattgruppen, annahmen.vk_aufschlag_material)
+          if (komponentenInfo.ungueltigeWahl) {
+            warnungen.push({ regelId: 'KOMP', kategorie: 'katalog', status: null,
+              text: `Gewählte Komponente (${typ}) nicht geeignet – automatisch auf günstigste geeignete zurückgestellt.` })
+          }
+          komponentenAuswahlMap[typ] ??= komponentenInfo
+        }
       } else if (pos.kosten.typ === 'anfahrt') {
         // SK-102: €/km = Fahrzeugkosten + Stundensatz ÷ Ø-Geschwindigkeit; Menge = km gesamt.
         einzel = annahmen.anfahrt_km_satz + annahmen.monteur_stundensatz / annahmen.anfahrt_geschwindigkeit_kmh
@@ -375,6 +416,7 @@ export function berechne(eingaben, opts = {}) {
         variante: varianteName, text: pos.text, menge, einheit: pos.einheit,
         einzel, betrag: einzel * menge,
         artikel: artikelInfo,
+        komponente: komponentenInfo ? { gewaehlt: komponentenInfo.gewaehlt, ueberschrieben: komponentenInfo.ueberschrieben } : null,
         anfahrt: pos.kosten.typ === 'anfahrt'
           ? { km_einfach: ctx.anfahrt_km_einfach, fahrten: annahmen.anfahrt_fahrten,
               partner: ctx.anfahrt_partner_label, quelle: ctx.anfahrt_quelle }
@@ -382,7 +424,9 @@ export function berechne(eingaben, opts = {}) {
         foerderanteil: annahmen[pos.foerder] ?? 0, tag: pos.tag,
         bereich: pos.bereich ?? null,
         begruendung: pos.begruendung, pruefpflichtig: !!pos.pruefpflichtig,
-        kunde: pos.kunde,
+        kunde: komponentenInfo?.gewaehlt
+          ? { ...pos.kunde, hersteller: komponentenInfo.gewaehlt.hersteller, produkt: komponentenInfo.gewaehlt.modell }
+          : pos.kunde,
         erzwungen: paket.bedingung?.feld?.startsWith?.('require_') ? 'R03' : null,
       }
       if (pos.tag === 'opex') opexPositionen.push({ ...eintrag, prozent: pos.kosten.typ === 'prozent_lv' ? annahmen[pos.kosten.annahme] : null })
@@ -450,14 +494,18 @@ export function berechne(eingaben, opts = {}) {
   // Contracting-/Pricing-Layer (WP8): aus interner Kostensicht GP/AP/Preisgleit-
   // formel ableiten. `pricing.kunde` ist kundensicher, `pricing.intern` trägt die
   // Commercial-Interna (Marge, CAPEX, Zielrendite/IRR) hinter dem Sales-Toggle.
-  const pricing = contractingPreise({
+  // Bei Laufzeit >10 Jahre (implizierter Individualvertrag) wird zusätzlich immer
+  // die AVB-Variante (10 Jahre) gerechnet – ein AVB-Angebot muss verfügbar sein.
+  const varianten = contractingVarianten({
     lv: { positionen: lvPositionen, zwischensumme, contingency, brutto, foerderfaehig, foerderung, netto },
     opex: { positionen: opexPositionen, summe_pa: opexSumme },
     energie, derived, eingaben, annahmen,
   })
+  const pricing = varianten.aktiv
   const kundenScope = kundenScopeBauen({
     eingaben, annahmen, derived, lvPositionen, opexPositionen, warnungen, fehlendeDaten, excluded,
     contractingKunde: pricing.kunde,
+    avbAlternativeKunde: varianten.dual ? varianten.avb.kunde : null,
   })
 
   return {
@@ -471,5 +519,11 @@ export function berechne(eingaben, opts = {}) {
     bereichsSummen,
     energie, kennzahlen, peScore, gruenKriterien, standardKriterien: gruenKriterien, fehlendeDaten,
     pricing: pricing.intern,
+    pricingVarianten: {
+      avb: varianten.avb.intern,
+      individual: varianten.individual?.intern ?? null,
+      dual: varianten.dual,
+    },
+    komponentenAuswahl: komponentenAuswahlMap,
   }
 }

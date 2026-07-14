@@ -5,12 +5,15 @@ import { PRESETS, DEFAULT_PRESET_ID } from './data/presets.js'
 import { DEMO_FOOTER } from './data/texte.js'
 import { berechne } from './logic/engine.js'
 import Konfiguration from './screens/Konfiguration.jsx'
+import Pruefpunkte from './screens/Pruefpunkte.jsx'
 import Ergebnis from './screens/Ergebnis.jsx'
 import Annahmen from './screens/Annahmen.jsx'
 import Strategie from './screens/Strategie.jsx'
 
+// Prüfpunkte ist ein interner Zwischenschritt und wird in der Kundensicht ausgeblendet.
 const MAIN_SCREENS = [
   ['konfiguration', 'Angebot erstellen'],
+  ['pruefpunkte', 'Prüfpunkte'],
   ['ergebnis', 'Angebot'],
 ]
 
@@ -117,7 +120,8 @@ export default function App() {
     fragen: effectiveConfig.alleFragen,
     artikel: effectiveConfig.artikel,
     rabattgruppen: effectiveConfig.rabattgruppen,
-  }), [eingaben, annahmen, effectiveConfig.katalog, effectiveConfig.alleFragen, effectiveConfig.artikel, effectiveConfig.rabattgruppen])
+    komponenten: effectiveConfig.komponenten,
+  }), [eingaben, annahmen, effectiveConfig.katalog, effectiveConfig.alleFragen, effectiveConfig.artikel, effectiveConfig.rabattgruppen, effectiveConfig.komponenten])
 
   const props = {
     eingaben, setEingaben, annahmen, setAnnahmen, ergebnis, setScreen,
@@ -126,6 +130,7 @@ export default function App() {
     katalog: effectiveConfig.katalog,
     artikel: effectiveConfig.artikel,
     rabattgruppen: effectiveConfig.rabattgruppen,
+    komponenten: effectiveConfig.komponenten,
     datanorm: effectiveConfig.datanorm,
     adminConfig,
     setAdminConfig,
@@ -143,16 +148,21 @@ export default function App() {
           <strong>Systempaket-Konfigurator</strong>
         </div>
         <nav className="tabs">
-          {MAIN_SCREENS.map(([id, label]) => (
-            <button key={id} className={`tab${screen === id ? ' aktiv' : ''}`} onClick={() => setScreen(id)}>
-              {label}
-            </button>
-          ))}
+          {MAIN_SCREENS
+            .filter(([id]) => id !== 'pruefpunkte' || sichtModus === 'intern')
+            .map(([id, label]) => (
+              <button key={id} className={`tab${screen === id ? ' aktiv' : ''}`} onClick={() => setScreen(id)}>
+                {label}
+              </button>
+            ))}
         </nav>
         <div className="sicht-toggle no-print" role="group" aria-label="Sichtmodus">
           <button
             className={sichtModus === 'kunde' ? 'aktiv' : ''}
-            onClick={() => setSichtModus('kunde')}
+            onClick={() => {
+              setSichtModus('kunde')
+              if (screen === 'pruefpunkte') setScreen('ergebnis')
+            }}
             title="Kundensicht: Umfang für das Kundengespräch – ohne interne Kalkulation"
           >
             Kundensicht
@@ -182,6 +192,7 @@ export default function App() {
       </header>
 
       {screen === 'konfiguration' && <Konfiguration {...props} />}
+      {screen === 'pruefpunkte' && (sichtModus === 'intern' ? <Pruefpunkte {...props} /> : <Ergebnis {...props} />)}
       {screen === 'ergebnis' && <Ergebnis {...props} />}
       {screen === 'annahmen' && <Annahmen {...props} />}
       {screen === 'strategie' && <Strategie />}

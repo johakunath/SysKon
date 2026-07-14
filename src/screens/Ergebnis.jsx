@@ -75,6 +75,7 @@ function ContractingKarte({ contracting, foerderart }) {
   if (!contracting) return null
   const c = contracting
   const pg = c.preisgleitformel
+  const avb = c.avbAlternative
   return (
     <div className="karte analyse-hauptkarte">
       <h3>Richtpreis-Angebot (Demo)</h3>
@@ -85,6 +86,19 @@ function ContractingKarte({ contracting, foerderart }) {
         <AnalyseKpi label="Vertragslaufzeit" value={`${c.laufzeit} Jahre`} />
         {foerderart && <AnalyseKpi label="Förderung" value={foerderart} note="Indikativ, kein Rechtsanspruch" />}
       </div>
+      {avb && (
+        <div className="karte" style={{ marginTop: '0.75rem' }}>
+          <h4>AVB-Variante (10 Jahre, immer verfügbar)</h4>
+          <table className="fakten">
+            <tbody>
+              <tr><td>Grundpreis</td><td className="r">{euro(avb.grundpreis_monat)} / Monat ({euro(avb.grundpreis_pa)} p.a.)</td></tr>
+              <tr><td>Arbeitspreis</td><td className="r">{avb.arbeitspreis_mwh != null ? `${euro(avb.arbeitspreis_mwh)} / MWh` : '–'}</td></tr>
+              <tr><td>Laufzeit</td><td className="r">{avb.laufzeit} Jahre</td></tr>
+            </tbody>
+          </table>
+          <p className="hinweis">AVB-Fernwärme-konforme Alternative (Demo). Angebot zeigt beide Varianten – keine Rechtsprüfung.</p>
+        </div>
+      )}
       <div className="karten-reihe">
         <div className="karte">
           <h4>Preisgleitformel (Demo)</h4>
@@ -195,12 +209,11 @@ function AngebotDokumentKopf({ name, datum }) {
 }
 
 export default function Ergebnis({
-  eingaben, annahmen, ergebnis, sichtModus = 'kunde',
+  eingaben, setEingaben, annahmen, ergebnis, sichtModus = 'kunde', setScreen,
   angebote = [], aktivesAngebotId = null,
   gespraechsErgebnis, setGespraechsErgebnis,
   onAngebotSpeichern, onAngebotLaden, onAngebotDuplizieren,
 }) {
-  const [internTab, setInternTab] = useState('loesung')
   const [gespeichert, setGespeichert] = useState(false)
   const [lvAlleOffen, setLvAlleOffen] = useState(true)
   const [angebotName, setAngebotName] = useState(() => {
@@ -263,15 +276,7 @@ export default function Ergebnis({
         </>
       )}
 
-      {!istKunde && (
-        <div className="tabs-sekundaer no-print">
-          {[['loesung', 'Lösung & Umfang'], ['pruefpunkte', 'Prüfpunkte']].map(([id, label]) => (
-            <button key={id} className={internTab === id ? 'tab aktiv' : 'tab'} onClick={() => setInternTab(id)}>{label}</button>
-          ))}
-        </div>
-      )}
-
-      {!istKunde && internTab === 'loesung' && (<>
+      {!istKunde && (<>
         <div className="analyse-grid">
           <div className="karte analyse-hauptkarte">
             <h3>Vorlösung für Sales</h3>
@@ -313,8 +318,54 @@ export default function Ergebnis({
               {blocker.length > 0 && <div><span className="sh-label">Blocker</span><span className="sh-wert">{blocker.length} Prüfpunkte</span></div>}
               {hinweise.length > 0 && <div><span className="sh-label">Hinweise</span><span className="sh-wert">{hinweise.length} Hinweise</span></div>}
             </div>
+            {(blocker.length > 0 || hinweise.length > 0) && setScreen ? (
+              <button type="button" className="link-button no-print" onClick={() => setScreen('pruefpunkte')}>
+                Zu den Prüfpunkten →
+              </button>
+            ) : null}
           </div>
         </div>
+
+        {ergebnis.komponentenAuswahl && Object.keys(ergebnis.komponentenAuswahl).length > 0 && (
+          <div className="karte">
+            <h3>Komponenten-Auswahl (Demo)</h3>
+            <p className="hinweis">Die Engine wählt die günstigste geeignete Komponente. Auswahl hier überschreibt die Position im LV und die Preisberechnung live.</p>
+            {Object.entries(ergebnis.komponentenAuswahl).map(([typ, auswahl]) => {
+              const { gewaehlt, kandidaten, ueberschrieben, ungueltigeWahl } = auswahl
+              const aktuellerWert = eingaben?.['komponente_' + typ] ?? 'auto'
+              const tk = gewaehlt.technik
+              const technikHinweis = [
+                tk.leistung_kw ? `${tk.leistung_kw} kW` : null,
+                tk.schallleistung_dba ? `${tk.schallleistung_dba} dB(A)` : null,
+                tk.volumen_l ? `${tk.volumen_l} l` : null,
+                tk.durchfluss_l_min ? `${tk.durchfluss_l_min} l/min` : null,
+              ].filter(Boolean).join(' · ')
+              return (
+                <div key={typ} style={{ marginBottom: '0.75rem' }}>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.25rem' }}>
+                    {typ === 'waermepumpe' ? 'Wärmepumpe' : 'Speicher / Warmwasser'}
+                  </label>
+                  <select
+                    value={aktuellerWert}
+                    onChange={e => setEingaben?.({ ...eingaben, ['komponente_' + typ]: e.target.value })}
+                    style={{ width: '100%' }}
+                  >
+                    <option value="auto">Automatisch (günstigste): {gewaehlt.titel} – {euro(gewaehlt.vk)}</option>
+                    {kandidaten.filter(k => k.id !== 'auto').map(k => (
+                      <option key={k.id} value={k.id}>
+                        {k.hersteller.split(' (')[0]} {k.modell} – {euro(k.vk)}{k.delta_vk > 0 ? ` (+${euro(k.delta_vk)})` : ''} · {
+                          [k.technik.leistung_kw ? `${k.technik.leistung_kw} kW` : null, k.technik.schallleistung_dba ? `${k.technik.schallleistung_dba} dB(A)` : null, k.technik.volumen_l ? `${k.technik.volumen_l} l` : null, k.technik.durchfluss_l_min ? `${k.technik.durchfluss_l_min} l/min` : null].filter(Boolean).join(' · ')
+                        }
+                      </option>
+                    ))}
+                  </select>
+                  {technikHinweis && <small style={{ color: 'var(--c-hinweis, #888)' }}>{ueberschrieben ? 'Manuell: ' : 'Automatisch: '}{gewaehlt.hersteller.split(' (')[0]} {gewaehlt.modell} · {technikHinweis}</small>}
+                  {ungueltigeWahl && <p className="hinweis" style={{ color: 'var(--c-warn)' }}>Vorherige Wahl nicht geeignet – auf günstigste zurückgestellt.</p>}
+                </div>
+              )
+            })}
+          </div>
+        )}
 
         <div className="analyse-umfang">
           <div className="karte">
@@ -477,71 +528,33 @@ export default function Ergebnis({
               <p className="hinweis">CAPEX-/OPEX-Tags bereiten Stufe 2 vor; Werte bleiben Demo-Indikationen.</p>
             </div>
           </div>
+
+          {ergebnis.pricingVarianten?.dual && ergebnis.pricingVarianten.individual && (
+            <div className="karte">
+              <h3>Angebotsvarianten (intern, Demo)</h3>
+              <p className="hinweis">Laufzeit über 10 Jahre impliziert Individualvertrag. Beide Varianten sind dem Kunden gegenüber zeigbar (Demo, keine Rechtsprüfung).</p>
+              <div className="table-scroll">
+                <table className="fakten">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th className="r">AVB-Fernwärme ({ergebnis.pricingVarianten.avb.laufzeit} J)</th>
+                      <th className="r">Individualvertrag ({ergebnis.pricingVarianten.individual.laufzeit} J)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Grundpreis p.a.</td><td className="r">{euro(ergebnis.pricingVarianten.avb.grundpreisPa)}</td><td className="r">{euro(ergebnis.pricingVarianten.individual.grundpreisPa)}</td></tr>
+                    <tr><td>Grundpreis / Monat</td><td className="r">{euro(ergebnis.pricingVarianten.avb.grundpreisMonat)}</td><td className="r">{euro(ergebnis.pricingVarianten.individual.grundpreisMonat)}</td></tr>
+                    <tr><td>Arbeitspreis / MWh</td><td className="r">{ergebnis.pricingVarianten.avb.arbeitspreisMwh != null ? euro(ergebnis.pricingVarianten.avb.arbeitspreisMwh) : '–'}</td><td className="r">{ergebnis.pricingVarianten.individual.arbeitspreisMwh != null ? euro(ergebnis.pricingVarianten.individual.arbeitspreisMwh) : '–'}</td></tr>
+                    <tr><td>Preisanpassung</td><td className="r">AVBFernwärme §24 (Demo)</td><td className="r">individuell vereinbart (Demo)</td></tr>
+                    <tr><td>Ziel-IRR</td><td className="r">{ergebnis.pricingVarianten.avb.erreichteIrr != null ? prozent(ergebnis.pricingVarianten.avb.erreichteIrr) : '–'}</td><td className="r">{ergebnis.pricingVarianten.individual.erreichteIrr != null ? prozent(ergebnis.pricingVarianten.individual.erreichteIrr) : '–'}</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </>)}
-
-      {!istKunde && internTab === 'pruefpunkte' && (
-        <div className="analyse-grid">
-          <div className="karte">
-            <h3>Prüfpunkte und Hinweise</h3>
-            {ergebnis.warnungen.length > 0 ? (
-              <ul className="warnliste">
-                {ergebnis.warnungen.map((w, i) => (
-                  <li key={i}><strong>{w.regelId}</strong>: {w.text}</li>
-                ))}
-              </ul>
-            ) : <p className="okbox">Keine Regelhinweise in dieser Konfiguration.</p>}
-            {ergebnis.statusQuellen.length > 0 && (
-              <details className="regel-nachweis">
-                <summary>Regel-Nachweis ({ergebnis.statusQuellen.length})</summary>
-                <ul className="warnliste">
-                  {ergebnis.statusQuellen.map((q, i) => (
-                    <li key={i}><strong>{q.regelId} → {q.wert}</strong>: {q.begruendung}</li>
-                  ))}
-                </ul>
-              </details>
-            )}
-          </div>
-
-          <div className="karte">
-            <h3>Schall-Vorprüfung (Demo-Abschätzung)</h3>
-            <p className="hinweis">Lp = LW<sub>Kaskade</sub> − 20·log₁₀(r) − 8 − Abschlag · keine rechtsverbindliche Schallberechnung.</p>
-            <div className="table-scroll">
-              <table className="fakten">
-                <tbody>
-                  <tr><td>LW Kaskade ({d.wp_module} Module)</td><td>{num(d.schall_lw_kaskade, 1)} dB(A)</td></tr>
-                  <tr><td>Nachtgrenzwert ({eingaben.gebietstyp ?? '–'})</td><td>{d.schall_grenzwert ?? '–'} dB(A)</td></tr>
-                </tbody>
-              </table>
-              <table className="lv schall-tabelle">
-                <thead><tr><th>Variante</th><th>Pegel am Immissionsort</th><th>Ampel</th></tr></thead>
-                <tbody>
-                  {Object.entries(d.schall_je_variante).map(([v, s]) => (
-                    <tr key={v} className={v === eingaben.aufstellvariante ? 'gewaehlt' : ''}>
-                      <td>{VARIANTEN_NAME[v]}{v === eingaben.aufstellvariante ? ' (gewählt)' : ''}</td>
-                      <td>{num(s.lp, 1)} dB(A) (−{s.abschlag} dB)</td>
-                      <td><Ampel status={s.ampel} groesse="klein" /> {s.ampel}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="karte">
-            <h3>Placement-Korridor</h3>
-            <p className="hinweis">{d.aufstellung_begruendung}</p>
-            {d.aufstellung_viable?.length > 0 ? (
-              <ul className="checkliste">
-                {d.aufstellung_viable.map(v => (
-                  <li key={v.variante}>{v.label}: {euro(v.kosten)} Zusatz-CAPEX · Schall {v.schall}</li>
-                ))}
-              </ul>
-            ) : <p className="warnbox">Keine tragfähige Aufstellvariante im aktuellen Demo-Korridor.</p>}
-          </div>
-
-        </div>
-      )}
 
       </div>
 

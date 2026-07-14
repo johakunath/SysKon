@@ -2,6 +2,7 @@ import { ANNAHMEN } from './annahmen.js'
 import { SEKTIONEN, ALLE_FRAGEN } from './fragen.js'
 import { KATALOG } from './katalog.js'
 import { ARTIKEL, RABATTGRUPPEN, DATANORM_UPDATE_DEMO } from './artikel.js'
+import { KOMPONENTEN } from './komponenten.js'
 import { wendeDatanormUpdateAn } from '../logic/artikelPreise.js'
 
 export const ADMIN_STORAGE_KEY = 'syskon_admin_config_v1'
@@ -83,6 +84,14 @@ function extractFragenConfig(sektionen = SEKTIONEN) {
   return Object.fromEntries(entries)
 }
 
+// SK-103: Komponenten-Text-Overrides (titel/beschreibung) je Komponenten-ID.
+function extractKomponentenConfig(komponenten = KOMPONENTEN) {
+  return Object.fromEntries(komponenten.map(k => [k.id, {
+    titel: k.titel,
+    beschreibung: k.beschreibung ?? '',
+  }]))
+}
+
 // SK-102: Artikelstamm-Overrides (Kurz-/Langtext, Listenpreis, Rabattgruppe)
 // je Artikelnummer; Struktur analog zu fragen/katalog.
 function extractArtikelConfig(artikel = ARTIKEL) {
@@ -107,6 +116,7 @@ export function makeDefaultAdminConfig() {
     // Artikelobjekte, damit der Import-Stand lokal persistiert).
     artikelNeu: [],
     rabattgruppen: clone(RABATTGRUPPEN),
+    komponenten: extractKomponentenConfig(),
     datanorm: { preisstand: '2026-01-15', letzterImport: null, log: [] },
     governance: { ...GOVERNANCE_DEFAULTS },
   }
@@ -166,6 +176,12 @@ export function applyAdminConfig(config = makeDefaultAdminConfig()) {
     }
   })
 
+  // SK-103: Komponenten mit Text-Overrides anwenden.
+  const komponenten = KOMPONENTEN.map(k => {
+    const edit = safe.komponenten?.[k.id]
+    return edit ? { ...k, titel: edit.titel ?? k.titel, beschreibung: edit.beschreibung ?? k.beschreibung } : { ...k }
+  })
+
   // SK-102: effektiver Artikelstamm = Code-Defaults + lokale Overrides
   // + per Demo-Import neu angelegte Artikel.
   const bekannt = new Set(ARTIKEL.map(a => a.artikelnummer))
@@ -188,6 +204,7 @@ export function applyAdminConfig(config = makeDefaultAdminConfig()) {
     katalog,
     artikel,
     rabattgruppen: clone(safe.rabattgruppen),
+    komponenten,
     datanorm: clone(safe.datanorm),
     governance: { ...safe.governance },
   }
@@ -205,6 +222,7 @@ export function mergeWithDefaults(config) {
     artikel: { ...defaults.artikel },
     artikelNeu: Array.isArray(incoming.artikelNeu) ? clone(incoming.artikelNeu) : [],
     rabattgruppen: { ...defaults.rabattgruppen },
+    komponenten: { ...defaults.komponenten },
     datanorm: { ...defaults.datanorm, ...(incoming.datanorm ?? {}) },
     governance: { ...defaults.governance, ...(incoming.governance ?? {}) },
   }
@@ -218,6 +236,10 @@ export function mergeWithDefaults(config) {
       ...konditionen,
       gruppen: { ...(defaults.rabattgruppen[lieferantId]?.gruppen ?? {}), ...(konditionen.gruppen ?? {}) },
     }
+  }
+
+  for (const [id, komp] of Object.entries(incoming.komponenten ?? {})) {
+    merged.komponenten[id] = { ...(defaults.komponenten[id] ?? {}), ...komp }
   }
 
   for (const [id, frage] of Object.entries(incoming.fragen ?? {})) {

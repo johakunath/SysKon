@@ -121,15 +121,23 @@ export const EFFIZIENZRISIKO_TEXT = {
   kunde: 'Kunde trägt das Effizienzrisiko (Demo-Annahme)',
 }
 
+// Individualvertrag gilt, wenn er explizit gewählt ist ODER eine Laufzeit über
+// der AVB-Grenze angesetzt wird: >10 Jahre sind nach AVB-Fernwärme nicht in
+// Standardbedingungen möglich, sondern nur individuell ausgehandelt.
+export function istIndividualvertrag(eingaben) {
+  return eingaben?.vertragstyp === 'individual'
+    || (zahl(eingaben?.vertragslaufzeit) ?? 0) > AVB_LAUFZEIT_JAHRE
+}
+
 // Hauptfunktion: erzeugt {kunde, intern} aus der internen Kostensicht.
 export function contractingPreise({ lv, opex, energie, derived, eingaben, annahmen }) {
   // Vertragstyp (Frage `vertragstyp`, Default AVB-konform): AVB-Fernwärme bindet
   // die Laufzeit fest auf AVB_LAUFZEIT_JAHRE (10 Jahre, Demo, nicht admin-editierbar)
   // – ein AVB-Angebot muss immer verfügbar sein, unabhängig von lokal gespeicherten
-  // Admin-Annahmen. Andere Laufzeiten sind nur im individuell mit dem Kunden
-  // ausgehandelten Vertrag möglich (Fallback: annahmen.vertragslaufzeit_default).
-  const istIndividualvertrag = eingaben?.vertragstyp === 'individual'
-  const laufzeit = istIndividualvertrag
+  // Admin-Annahmen. Andere Laufzeiten (15/20) implizieren den individuell mit dem
+  // Kunden ausgehandelten Vertrag (Fallback: annahmen.vertragslaufzeit_default).
+  const individual = istIndividualvertrag(eingaben)
+  const laufzeit = individual
     ? (zahl(eingaben?.vertragslaufzeit) ?? annahmen.vertragslaufzeit_default)
     : AVB_LAUFZEIT_JAHRE
   const capex = lv?.netto ?? 0
@@ -180,14 +188,14 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
 
   // Preisanpassungsstruktur: Individualvertrag ersetzt die §24-Preisgleitformel
   // durch eine freiere Anpassung; Grundpreis/Arbeitspreis-Berechnung bleibt gleich.
-  const preisgleitformel = istIndividualvertrag ? null : preisgleitformelBauen(annahmen)
+  const preisgleitformel = individual ? null : preisgleitformelBauen(annahmen)
   const effizienzrisiko = EFFIZIENZRISIKO_TEXT[eingaben?.effizienzrisiko] ?? EFFIZIENZRISIKO_TEXT.contractor
 
   // Vertragsparameter (strukturiert, kundensicher).
   const vertragsparameter = {
     servicegrenze: 'bis Heizkreisverteiler (Demo-Standard)',
     effizienzrisiko,
-    preisanpassung: istIndividualvertrag
+    preisanpassung: individual
       ? 'individuell vereinbart (frei, ohne §24-Bezug, Demo)'
       : 'jährlich nach Preisgleitformel (AVBFernwärme-orientiert, Demo)',
   }
@@ -222,5 +230,25 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
       zielIrrAmbition: annahmen.ziel_irr_ambition,
       sensitivitaet,
     },
+  }
+}
+
+// Angebotsvarianten: das AVB-Angebot (10 Jahre, §24-Formel) muss immer verfügbar
+// sein. Ist ein Individualvertrag gewählt oder durch Laufzeit >10 Jahre impliziert,
+// wird zusätzlich die Individual-Variante gerechnet; `aktiv` ist das Angebot zur
+// gewählten Konfiguration. `dual` markiert den Fall "beide Varianten zeigen".
+export function contractingVarianten(kosten) {
+  const avb = contractingPreise({
+    ...kosten,
+    eingaben: { ...kosten.eingaben, vertragstyp: 'avb', vertragslaufzeit: String(AVB_LAUFZEIT_JAHRE) },
+  })
+  const individual = istIndividualvertrag(kosten.eingaben)
+    ? contractingPreise({ ...kosten, eingaben: { ...kosten.eingaben, vertragstyp: 'individual' } })
+    : null
+  return {
+    avb,
+    individual,
+    aktiv: individual ?? avb,
+    dual: !!individual && individual.kunde.laufzeit > AVB_LAUFZEIT_JAHRE,
   }
 }
