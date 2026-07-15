@@ -178,7 +178,7 @@ export default function App() {
         <button
           className={`admin-toggle no-print${screen === 'strategie' ? ' aktiv' : ''}`}
           onClick={() => setScreen('strategie')}
-          title="Warum SysKon: Einordnung, Scope und Architektur"
+          title="CPQ für TS: Nutzen, Scope und Machbarkeitsnachweis"
         >
           Strategie
         </button>

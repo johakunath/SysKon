@@ -29,21 +29,18 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Prüfpunkte</button>')
   })
 
-  it('Strategie-Deck rendert 4 Slides mit Navigation und ohne echte Vendor-Namen', () => {
+  it('Strategie-Deck rendert 5 CPQ-Slides mit Navigation und TS als Unternehmensbezeichnung', () => {
     const erste = renderToString(<Strategie />)
-    expect(erste).toContain('Warum SysKon?')
-    expect(erste).toContain('1 / 4')
-    expect(erste).toContain('Slide 2: Iterationsstufen')
+    expect(erste).toContain('CPQ für TS')
+    expect(erste).toContain('1 / 5')
+    expect(erste).toContain('Slide 2: Ein Datenfluss vom Erstkontakt bis zum Betrieb')
 
-    const alle = [0, 1, 2, 3].map(i => renderToString(<Strategie start={i} />)).join('\n')
-    expect(alle).toContain('Iterationsstufen')
-    expect(alle).toContain('Scope: ist / ist nicht')
-    expect(alle).toContain('Architektur')
-    // Hard rule: keine realen Firmennamen – die Quell-Notizen nennen einen
-    // Messdienstleister und einen Kartendienst; hier nur die generische Wortwahl
-    // prüfen (die Namen selbst dürfen auch im Test nicht stehen).
-    expect(alle).toContain('Messdienstleister-Bestand')
-    expect(alle).toContain('Karten-/Luftbild')
+    const alle = [0, 1, 2, 3, 4].map(i => renderToString(<Strategie start={i} />)).join('\n')
+    expect(alle).toContain('Nutzen für TS entsteht vor allem im Datenfluss')
+    expect(alle).toContain('Automatisierung mit Engineering-Guardrails')
+    expect(alle).toContain('SysKon beweist das Prinzip')
+    expect(alle).toContain('176 bestandene Tests')
+    expect(alle).not.toContain('Solutions')
   })
 
   it('Konfiguration rendert Auswahlfragen als erklärte Radio-Liste mit kompaktem Gesprächshinweis', () => {

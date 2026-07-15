@@ -1,163 +1,204 @@
 import React, { useEffect, useState } from 'react'
 
-// Strategie-Deck (Jul 2026, PO-Anweisung): 4 Slides zur Einordnung von SysKon —
-// warum ein Konfigurator, Iterationsstufen (Schnell-Check vs. SysKon), Scope,
-// Architektur. Reiner Präsentationsinhalt, daher lebt der Text hier in der View
+// Strategie-Deck (Jul 2026, PO-Anweisung): 5 Slides zur Einordnung von CPQ bei TS —
+// Entscheidungsthese, durchgängiger Datenfluss, Nutzen, Scope/Governance und
+// SysKon als Machbarkeitsnachweis. Reiner Präsentationsinhalt, daher lebt der Text hier in der View
 // und nicht in src/data/. Format-Vorbild: Full-Screen-Slides mit Pfeiltasten,
 // Vor/Zurück-Buttons und Punkt-Indikator.
 
 const SLIDES = [
   {
     id: 'warum',
-    kicker: 'Executive Summary',
-    titel: 'Warum SysKon?',
+    kicker: 'Entscheidungsthese',
+    titel: 'CPQ für TS: vom Einzelwissen zum skalierbaren Prozess',
     inhalt: (
       <>
         <p className="slide-these">
-          Der größte Engpass bei der Skalierung von Wärmepumpen-Contracting ist nicht der Markt,
-          sondern die eigene Organisation: Product-Operations-Fit und die Fähigkeit,
-          schnell valide Angebote zu erstellen.
+          Ein CPQ macht wiederkehrende technische und kaufmännische Entscheidungen nutzbar,
+          ohne Engineering-Freigaben oder Expertenurteil zu ersetzen.
         </p>
         <div className="slide-karten drei">
           <div className="karte slide-karte">
-            <h3>Heute: Excel</h3>
+            <h3>Heute: verteiltes Wissen</h3>
             <p>
-              Angebote entstehen über selbst gepflegte Excel-Sheets — langsam, fehleranfällig
-              und nicht skalierbar. Jedes Angebot ist Handarbeit einzelner Wissensträger.
+              Angebots- und Konfigurationswissen liegt in Excel-Dateien, Köpfen und
+              Einzelfallabstimmungen. Daten werden mehrfach erfasst; Quelle, Version und
+              Freigabestatus sind nicht immer eindeutig.
             </p>
           </div>
           <div className="karte slide-karte">
-            <h3>Warum keine starren Systempakete?</h3>
+            <h3>Zielbild: gemeinsame Logik</h3>
             <p>
-              Gebäude und Verträge sind heterogen: Statische Pakete sind zu starr, volle
-              Handarbeit zu langsam. Ein regelbasierter Konfigurator strukturiert und
-              beschleunigt individuelle Entscheidungen, statt sie zu ersetzen.
+              Fragen, Regeln, Artikel, Kosten und Preislogik bilden eine versionierte Basis.
+              Standardfälle werden reproduzierbar bearbeitet; Abweichungen sichtbar an die
+              richtige Fachstelle übergeben.
             </p>
           </div>
           <div className="karte slide-karte">
-            <h3>Ziel</h3>
+            <h3>Entscheidung</h3>
             <p>
-              10× schnellerer Angebotsprozess ohne Verlust von Kalkulationstiefe und
-              Kontrolle — wartbar durch 1–2 Personen gemeinsam mit Supply Chain, Sales
-              und Management.
-            </p>
-          </div>
-        </div>
-      </>
-    ),
-  },
-  {
-    id: 'iterationen',
-    kicker: 'Vom Kurzcheck zur skalierbaren Version',
-    titel: 'Iterationsstufen',
-    inhalt: (
-      <>
-        <div className="slide-stufen">
-          <div className="karte slide-karte stufe">
-            <span className="stufe-label">Stufe 0</span>
-            <h3>Excel heute</h3>
-            <p>
-              Manuell gepflegte Sheets je Angebot. Funktioniert für einzelne Projekte,
-              skaliert aber nicht.
-            </p>
-          </div>
-          <div className="stufe-pfeil" aria-hidden="true">→</div>
-          <div className="karte slide-karte stufe">
-            <span className="stufe-label">Stufe 1</span>
-            <h3>Schnell-Check (frühe Phase)</h3>
-            <p>
-              Machbarkeits-Kurzcheck mit minimalen Daten: Im Messdienstleister-Bestand
-              VL-/RL-Temperaturen aus den Wärmemengenzählern auslesen. Bei neuen Objekten
-              pauschal prüfen — Heizkörper? Fußbodenheizung? Warmwasser? — plus
-              kWh/m²-Abschätzung, Aufstellfläche grob per Karten-/Luftbild vorqualifizieren
-              und die Wirtschaftlichkeit grob einschätzen.
-            </p>
-            <p className="stufe-hinweis">
-              Bewusst <strong>nicht</strong> als „Simple-Modus" in SysKon gebaut —
-              der Schnell-Check ist die Excel-Vorstufe zur schnellen Vorqualifizierung.
-            </p>
-          </div>
-          <div className="stufe-pfeil" aria-hidden="true">→</div>
-          <div className="karte slide-karte stufe stufe-ziel">
-            <span className="stufe-label">Stufe 2</span>
-            <h3>SysKon</h3>
-            <p>
-              Die langfristig skalierbare Version: geführtes Kundengespräch, Regelwerk und
-              Katalog, Artikeldatenbank mit EK-/VK-Kette, Contracting-Preislogik
-              (GP/AP, Ziel-IRR) — vollständig konfigurierbar über den Admin-Bereich.
+              CPQ als gemeinsame TS-Fähigkeit aufbauen und zunächst an einem klar begrenzten
+              Produkt- und Anwendungskorridor mit realen Fällen validieren.
             </p>
           </div>
         </div>
         <p className="slide-kernaussage">
-          Schnell-Check und SysKon konkurrieren nicht: Der Schnell-Check qualifiziert
-          Objekte vor, SysKon macht daraus ein valides Richtpreis-Angebot.
+          Nicht weniger Engineering, sondern Engineering dort, wo fachliche Beurteilung
+          tatsächlich erforderlich ist.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: 'datenfluss',
+    kicker: 'Zielprozess',
+    titel: 'Ein Datenfluss vom Erstkontakt bis zum Betrieb',
+    inhalt: (
+      <>
+        <div className="slide-prozess">
+          <div className="karte slide-karte prozess-schritt">
+            <span className="stufe-label">1 · Qualifizieren</span>
+            <p>Kunden-, Objekt- und Messdaten strukturiert mit Quelle und Aktualität erfassen.</p>
+          </div>
+          <div className="karte slide-karte prozess-schritt">
+            <span className="stufe-label">2 · Konfigurieren</span>
+            <p>Regeln erzeugen Lösungskorridor, Ausschlüsse und notwendige Prüfschritte.</p>
+          </div>
+          <div className="karte slide-karte prozess-schritt">
+            <span className="stufe-label">3 · Kalkulieren</span>
+            <p>Versionierte Artikel-, Kosten- und Preislogik liefert interne und externe Sicht.</p>
+          </div>
+          <div className="karte slide-karte prozess-schritt">
+            <span className="stufe-label">4 · Prüfen & übergeben</span>
+            <p>Standardfälle laufen weiter; Ausnahmen, Annahmen und offene Punkte werden geroutet.</p>
+          </div>
+          <div className="karte slide-karte prozess-schritt">
+            <span className="stufe-label">5 · Lernen</span>
+            <p>Erkenntnisse aus Umsetzung und Betrieb verbessern Regeln, Katalog und Kalkulation.</p>
+          </div>
+        </div>
+        <p className="slide-kernaussage">
+          CPQ ist keine weitere isolierte Oberfläche, sondern die Orchestrierungsschicht
+          zwischen bestehenden Daten, Fachlogik und Prozessen.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: 'nutzen',
+    kicker: 'Wertschöpfung',
+    titel: 'Nutzen für TS entsteht vor allem im Datenfluss',
+    inhalt: (
+      <>
+        <div className="slide-karten vier">
+          <div className="karte slide-karte">
+            <h3>Sales & Qualifizierung</h3>
+            <p>Vollständigere Eingangsdaten, frühere No-fit-Erkennung und weniger Rückfragen vor der Übergabe.</p>
+          </div>
+          <div className="karte slide-karte">
+            <h3>Product Engineering & Engineering</h3>
+            <p>Wiederkehrende Prüfungen als Regeln; nachvollziehbare Annahmen und Fokus auf echte Ausnahmen.</p>
+          </div>
+          <div className="karte slide-karte">
+            <h3>Supply Chain & Umsetzung</h3>
+            <p>Regelbasierter Scope und Artikelbezug, konsistentere Übergaben und weniger späte Änderungen.</p>
+          </div>
+          <div className="karte slide-karte">
+            <h3>Betrieb & Management</h3>
+            <p>Rückfluss von Umsetzungs- und Betriebsdaten; messbare Prozessqualität, Risiken und Engpässe.</p>
+          </div>
+        </div>
+        <p className="slide-kpi">
+          <strong>Messbar über:</strong> Angebotsdurchlaufzeit · Klärschleifen · Engineering-Stunden je
+          qualifiziertem Fall · manuelle Datenübertragungen · späte Scope-Änderungen · Kalkulationsabweichungen
+        </p>
+        <p className="slide-kernaussage">
+          Der größte Nutzen entsteht nicht nur durch schnellere Angebote, sondern durch weniger
+          Medienbrüche, Doppelarbeit und Reibung entlang der gesamten Wertschöpfung.
         </p>
       </>
     ),
   },
   {
     id: 'scope',
-    kicker: 'Erwartungsmanagement',
-    titel: 'Scope: ist / ist nicht',
-    inhalt: (
-      <div className="slide-karten zwei">
-        <div className="karte slide-karte scope-ist">
-          <h3>SysKon ist …</h3>
-          <ul>
-            <li>ein Sales-Co-Creation- und Vorqualifizierungs-Tool fürs Kundengespräch</li>
-            <li>Richtpreis, Lösungskorridor und nächster sinnvoller Schritt</li>
-            <li>PE-/Engineering-Logik als interne Guardrails unter der Sales-Experience</li>
-            <li>vollständig konfigurierbar: Fragen, Regeln, Katalog und Preisannahmen</li>
-          </ul>
-        </div>
-        <div className="karte slide-karte scope-nicht">
-          <h3>SysKon ist nicht …</h3>
-          <ul>
-            <li>ein Planungstool — keine Standort-, LiDAR- oder 3D-Placement-Berechnung</li>
-            <li>eine Customer-Self-Service-Bestellstrecke ohne Sales-/interne Prüfung</li>
-            <li>eine Rechts-, Förder- oder Schallgarantie</li>
-            <li>eine Quelle produktiver Kalkulationswerte — nur Annahmen und Richtpreise</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'architektur',
-    kicker: 'Drei Schichten, ein Berechnungspfad',
-    titel: 'Architektur',
+    kicker: 'Scope & Governance',
+    titel: 'Automatisierung mit Engineering-Guardrails',
     inhalt: (
       <>
         <div className="slide-karten drei">
-          <div className="karte slide-karte schicht">
-            <span className="stufe-label">Daten</span>
-            <h3>Deklarativ, React-frei</h3>
-            <p>
-              Fragen, Regeln, Katalog, Artikel und Annahmen sind reine Daten.
-              Neue Regeln, Preise oder Artikel sind Daten-Edits, kein Code.
-            </p>
+          <div className="karte slide-karte scope-ist">
+            <h3>CPQ soll …</h3>
+            <ul>
+              <li>qualifizieren, konfigurieren und Preis- sowie Lösungskorridor erzeugen</li>
+              <li>Quellen, Annahmen, Versionen und offene Punkte dokumentieren</li>
+              <li>Standardfälle, Prüfbedarf und Ausschlüsse unterscheiden</li>
+              <li>Freigaben und Übergaben strukturiert unterstützen</li>
+            </ul>
           </div>
-          <div className="karte slide-karte schicht">
-            <span className="stufe-label">Logik</span>
-            <h3>Ein Einstieg: berechne()</h3>
-            <p>
-              Regel-Engine mit Status-Eskalation (grün &lt; gelb &lt; orange &lt; rot) und
-              Contracting-Kalkulation mit struktureller Trennung von Kunden- und Internsicht.
-            </p>
+          <div className="karte slide-karte scope-nicht">
+            <h3>CPQ soll nicht …</h3>
+            <ul>
+              <li>Detailplanung, technische Freigabe oder Expertenurteil ersetzen</li>
+              <li>Rechts-, Förder-, Schall- oder Standortnachweise garantieren</li>
+              <li>Ausnahmen ohne Fachprüfung freigeben</li>
+              <li>bestehende führende Systeme ersetzen</li>
+            </ul>
           </div>
-          <div className="karte slide-karte schicht">
-            <span className="stufe-label">UI</span>
-            <h3>Screens als reine Darstellung</h3>
-            <p>
-              Konfiguration, Angebot und Admin-Bereich rendern das eine memoisierte
-              Ergebnis — keine parallelen Rechenpfade.
-            </p>
+          <div className="karte slide-karte">
+            <h3>Dafür braucht es Governance</h3>
+            <ul>
+              <li>benannte Owner für Fragen, Regeln, Artikel, Kosten und Preise</li>
+              <li>Versionierung, Vier-Augen-Freigabe, Tests und Release-Prozess</li>
+              <li>klare Daten- und Schnittstellenverantwortung</li>
+              <li>definierte Schwellen für automatische Bearbeitung und Review</li>
+            </ul>
           </div>
         </div>
         <p className="slide-kernaussage">
-          Querschnitt: Admin-Override-Schicht macht alles konfigurierbar (Demo via
-          localStorage), über 120 Regressionstests sichern Regeln und Preise ab,
-          keine Abhängigkeiten außer React.
+          Den Standard standardisieren, Ausnahmen sichtbar machen und kontrolliert zu den
+          richtigen Experten routen.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: 'machbarkeit',
+    kicker: 'Machbarkeitsnachweis',
+    titel: 'SysKon beweist das Prinzip — nicht das Produktionssystem',
+    inhalt: (
+      <>
+        <div className="slide-karten drei">
+          <div className="karte slide-karte scope-ist">
+            <h3>Im Prototyp belegt</h3>
+            <ul>
+              <li>geführter Prozess über elf Themenblöcke</li>
+              <li>datengetriebene Fragen, Regeln, Artikel und Preislogik</li>
+              <li>ein Berechnungspfad mit Status-Eskalation</li>
+              <li>getrennte Kunden- und Internsicht; 176 bestandene Tests</li>
+            </ul>
+          </div>
+          <div className="karte slide-karte scope-nicht">
+            <h3>Noch nicht belegt</h3>
+            <ul>
+              <li>produktive, fachlich freigegebene Stammdaten</li>
+              <li>Schnittstellen, zentrale Persistenz, IAM und Audit Trail</li>
+              <li>Security, Skalierung, Betrieb und Supportmodell</li>
+              <li>Validierung der Regeln und Werte an realen Fällen</li>
+            </ul>
+          </div>
+          <div className="karte slide-karte">
+            <h3>Nächster sinnvoller Schritt</h3>
+            <ul>
+              <li>einen Produkt- und Anwendungskorridor auswählen</li>
+              <li>Daten-, Regel- und Freigabeverantwortung festlegen</li>
+              <li>Ausgangs-KPIs erheben und reale Fälle pilotieren</li>
+              <li>erst nach messbarer Wirkung gezielt erweitern</li>
+            </ul>
+          </div>
+        </div>
+        <p className="slide-kernaussage">
+          SysKon reduziert das technische Machbarkeitsrisiko. Die nächste Aufgabe ist,
+          Datenqualität, Governance, Integration und Prozesswirkung nachzuweisen.
         </p>
       </>
     ),
