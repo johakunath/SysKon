@@ -53,7 +53,7 @@ const OPTION_HINTS = {
     hybrid: 'Unterstützter Standardpfad.',
     monoenergetisch: 'Roadmap-Platzhalter, kein Standardfit.',
     sonstig: 'Außerhalb des aktuellen Standards.',
-    unentschieden: 'Demo rechnet Hybrid als günstigsten modellierten Pfad; Angebot zeigt diesen Pfad.',
+    unentschieden: 'Berechnung nutzt Hybrid als günstigsten modellierten Pfad; Angebot zeigt diesen Pfad.',
   },
   kessel_zustand: {
     gut: 'Weiterbetrieb wirkt plausibel.',
@@ -94,12 +94,12 @@ const OPTION_HINTS = {
   aufstellvariante: {
     aussen_offen: 'Günstigste Variante ohne Wetterschutz – nur für geeignete Mikrolage.',
     fundament: 'Günstig mit Witterungsschutz, aber stärker vom Heizraum abhängig.',
-    einhausung: 'Mehr Schallschutz bei mittlerem Zusatz-CAPEX (Demo-Referenz Schallschutzwand).',
+    einhausung: 'Mehr Schallschutz bei mittlerem Zusatz-CAPEX (Referenz Schallschutzwand).',
     kompakt_container: 'Entlastet Heizraum, braucht Logistik und Fläche.',
     vollcontainer: 'Maximal integriert, teuer und flächenintensiv.',
   },
   gebietstyp: {
-    WR: 'Strengster Nachtgrenzwert im Demo-Modell.',
+    WR: 'Strengster Nachtgrenzwert im Modell.',
     WA: 'Typischer Wohngebietskorridor.',
     MI: 'Höherer Grenzwert, trotzdem nur Vorprüfung.',
   },
@@ -114,13 +114,9 @@ const OPTION_HINTS = {
     schwierig: 'Zusatzaufwand und Prüfung erwarten.',
   },
   foerderung_annahme: {
-    ja: 'Demo rechnet mit Förderannahme.',
+    ja: 'Berechnung nutzt eine Förderannahme.',
     nein: 'Konservativer Netto-Korridor ohne Förderung.',
     unsicher: 'Förderprüfung als nächsten Schritt setzen.',
-  },
-  monitoring_variante: {
-    basic: 'Pflichtnaher Standardumfang.',
-    plus: 'Mehr Sensorik und Reportingbedarf.',
   },
   service_variante: {
     basis: 'Schlanker OPEX-Standard.',
@@ -148,8 +144,8 @@ const SEKTIONEN_ROH = [
       hinweisKurz: 'Das Systempaket versorgt genau ein Gebäude. Mehr als eines ist kein Standardfit – als Sonderfall markieren.',
       tooltip: 'Das Systempaket versorgt genau ein Gebäude; mehr als eines ist kein Standardfit (R19). Leer = Annahme „ein Gebäude".' },
     { id: 'projekt_plz', label: 'Welche Postleitzahl hat der Projektstandort?', typ: 'zahl', einheit: 'PLZ', dq: 1, min: 1000, max: 99999,
-      hinweisKurz: 'Basis der Demo-Anfahrtskalkulation (Fahrstrecke Installationspartner → Projekt). Ohne PLZ greift eine Fallback-Distanz.',
-      tooltip: 'Demo-Ersatz für eine externe Kartendienst-Fahrstreckenabfrage: PLZ-Leitzone → Distanz zum gewählten Installationspartner (SK-102). Vierstellige Eingabe wird als PLZ mit führender Null gelesen.' },
+      hinweisKurz: 'Basis der Anfahrtskalkulation (Fahrstrecke Installationspartner → Projekt). Ohne PLZ greift eine Fallback-Distanz.',
+      tooltip: 'Ersatz für eine externe Kartendienst-Fahrstreckenabfrage: PLZ-Leitzone → Distanz zum gewählten Installationspartner (SK-102). Vierstellige Eingabe wird als PLZ mit führender Null gelesen.' },
     { id: 'flaeche', label: 'Wie groß ist die beheizte Fläche?', typ: 'zahl', einheit: 'm²', dq: 2, min: 50, max: 50000,
       hinweisKurz: 'Bezugsgröße für Richtwerte pro m². Schätzwerte klar als Annahme führen, wenn kein Verbrauch vorliegt.',
       tooltip: 'Bezugsgröße für €/m² und Heizlast-Proxy, falls kein Verbrauch vorliegt.' },
@@ -168,8 +164,8 @@ const SEKTIONEN_ROH = [
         { wert: 'teilsaniert', label: 'teilsaniert' },
         { wert: 'vollsaniert', label: 'vollsaniert' },
       ],
-      hinweisKurz: 'Steuert den Heizlastproxy im Demo-Modell. Besser saniert → niedrigere Vorlauftemperatur wahrscheinlicher.',
-      tooltip: 'Steuert die spezifische Heizlast im Proxy (Demo: 100/75/50 W/m²).' },
+      hinweisKurz: 'Steuert den Heizlastproxy im Modell. Besser saniert → niedrigere Vorlauftemperatur wahrscheinlicher.',
+      tooltip: 'Steuert die spezifische Heizlast im Proxy (100/75/50 W/m²).' },
     { id: 'heizraum_vorhanden', label: 'Gibt es einen nutzbaren Heizraum oder Keller?', typ: 'select', optionen: JN, dq: 2,
       hinweisKurz: 'Heizraum nimmt Speicher, Hydraulik und Regelung auf. Kein Heizraum lenkt früh Richtung Containerprüfung.',
       tooltip: 'Heizraum nimmt Speicher, Hydraulik und Regelung auf (außer bei Containern).' },
@@ -227,8 +223,8 @@ const SEKTIONEN_ROH = [
         { wert: 'sonstig', label: 'anderer Pfad (außerhalb des Standards)' },
         { wert: 'unentschieden', label: 'noch offen (günstigste Option prüfen)' },
       ],
-      hinweisKurz: 'Hybrid ist der einzige vollständig modellierte Pfad. Unentschieden rechnet Demo als Hybrid.',
-      tooltip: 'Hybrid ist Demo-Standard (R17). Unentschieden rechnet Hybrid als günstigste modellierte Option (R23).' },
+      hinweisKurz: 'Hybrid ist der einzige vollständig modellierte Pfad. Unentschieden rechnet die App als Hybrid.',
+      tooltip: 'Hybrid ist Standard (R17). Unentschieden rechnet Hybrid als günstigste modellierte Option (R23).' },
     { id: 'gaskessel_vorhanden', label: 'Ist ein Gas-Bestandskessel vorhanden?', typ: 'select', optionen: JN, dq: 2,
       sichtbar: { feld: 'technologiepfad', op: 'in', wert: ['hybrid', 'unentschieden'] },
       hinweisKurz: 'Hybridpfad braucht einen Bestandskessel als Spitzenlast- und Backup-Komponente.',
@@ -249,7 +245,7 @@ const SEKTIONEN_ROH = [
       tooltip: 'Grün-Kriterium: der Hybridpfad braucht einen nutzbaren Bestandskessel.' },
     { id: 'oeltank_vorhanden', label: 'Ist ein stillgelegter Öltank oder Ölkessel zur Demontage vorhanden?', typ: 'select', optionen: JNU, dq: 1,
       hinweisKurz: 'Ein Alt-Öltank erzeugt eine eigene Demontage-/Stilllegungsposition im Installationsumfang (SK-102).',
-      tooltip: 'Bei „ja" erscheint die Position „Demontage/Stilllegung Öltank" im Leistungsverzeichnis (Demo-Pauschale).' },
+      tooltip: 'Bei „ja" erscheint die Position „Demontage/Stilllegung Öltank" im Leistungsverzeichnis (Pauschale).' },
     { id: 'anzahl_heizkreise', label: 'Wie viele Raumheizkreise sind vorhanden?', typ: 'zahl', einheit: 'Stk', dq: 3, min: 1, max: 10,
       hinweisKurz: 'Mehr als zwei Heizkreise ist kein Standardfall – als hydraulischen Sonderfall markieren.',
       tooltip: 'Nur Raumheizkreise zählen (TWW-Kreis wird separat geplant). Standard: max. 2 Raumheizkreise; mehr ist Ausschluss (R04).' },
@@ -294,15 +290,15 @@ const SEKTIONEN_ROH = [
       hinweisKurz: 'Relevant bei zentraler Warmwasserbereitung. Unklaren Platzbedarf vor jeder Scope-Aussage klären.',
       tooltip: 'Relevant für das Speicher-/WW-Modul.' },
     { id: 'rueckbau_noetig', label: 'Ist ein Rückbau der Altanlage nötig?', typ: 'select', optionen: JNU, dq: 0,
-      hinweisKurz: 'Beeinflusst Umfeldmaßnahmen. Asbest oder Sonderrückbau als offenen Punkt führen, nicht im Demo-Scope.',
+      hinweisKurz: 'Beeinflusst Umfeldmaßnahmen. Asbest oder Sonderrückbau als offenen Punkt führen, nicht im aktuellen Scope.',
       tooltip: 'Information für Umfeldmaßnahmen und spätere interne Prüfung.' },
   ]},
 
   { id: 'F', titel: 'Außenaufstellung & Standort', fragen: [
     { id: 'aussenflaeche_m2', label: 'Wie viel Außenfläche ist ungefähr verfügbar?', typ: 'zahl', einheit: 'm²', dq: 2, min: 10, max: 10000,
       sichtbar: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'ja' },
-      hinweisKurz: 'Unter 30 m² (Demo-Annahme) sperrt Containervarianten. Fluchtwege und Eigentumsgrenzen früh klären.',
-      tooltip: 'Unter 30 m² (Demo-Annahme) sind Container-Varianten gesperrt (R05).' },
+      hinweisKurz: 'Unter 30 m² (Annahme) sperrt Containervarianten. Fluchtwege und Eigentumsgrenzen früh klären.',
+      tooltip: 'Unter 30 m² (Annahme) sind Container-Varianten gesperrt (R05).' },
     { id: 'aussenflaeche_typ', label: 'Welche Art von Außenfläche steht zur Verfügung?', typ: 'select', dq: 1,
       sichtbar: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'ja' },
       optionen: [
@@ -356,8 +352,8 @@ const SEKTIONEN_ROH = [
       tooltip: 'Zentrale Konfigurationsachse: CapEx vs. Schallschutz vs. Heizraumabhängigkeit.' },
     { id: 'schallhaube', label: 'Soll eine Standard-Schallhaube vorgesehen werden?', typ: 'select', optionen: JN, dq: 0,
       sichtbar: { feld: 'aufstellvariante', op: 'in', wert: ['fundament', 'aussen_offen'] },
-      hinweisKurz: '−8 dB (Demo-Annahme). Erhöht Scope und Kosten, kann aber den Schallkorridor stabilisieren.',
-      tooltip: 'Bei Fundament- oder offener Aufstellung: −8 dB (Demo) gegen Aufpreis.' },
+      hinweisKurz: '−8 dB (Annahme). Erhöht Scope und Kosten, kann aber den Schallkorridor stabilisieren.',
+      tooltip: 'Bei Fundament- oder offener Aufstellung: −8 dB gegen Aufpreis.' },
     { id: 'entfernung_heizraum', label: 'Wie weit ist der WP-Standort vom Heizraum entfernt?', typ: 'zahl', einheit: 'm', dq: 1, min: 1, max: 500,
       sichtbar: { feld: 'aussenflaeche_vorhanden', op: '=', wert: 'ja' },
       hinweisKurz: 'Lange Trassen können Umfeldaufwand treiben – in v0.1 informativ, als Annahme sichtbar halten.',
@@ -370,16 +366,16 @@ const SEKTIONEN_ROH = [
 
   { id: 'G', titel: 'Schall & Umfeld', fragen: [
     { id: 'abstand_fenster', label: 'Wie groß ist der Abstand zum nächsten Fenster oder Immissionsort?', typ: 'zahl', einheit: 'm', dq: 3, min: 0, max: 100,
-      hinweisKurz: 'Wichtigster Schnellinput für die Demo-Schallabschätzung. Kleine Abstände führen zu Prüfbedarf.',
-      tooltip: 'Geht direkt in die Pegelabschätzung ein: −20·log10(r) (R18, Demo-Formel).' },
+      hinweisKurz: 'Wichtigster Schnellinput für die Schallabschätzung. Kleine Abstände führen zu Prüfbedarf.',
+      tooltip: 'Geht direkt in die Pegelabschätzung ein: −20·log10(r) (R18, Formel).' },
     { id: 'gebietstyp', label: 'Welcher Gebietstyp gilt für den Nachtgrenzwert?', typ: 'select', dq: 2,
       optionen: [
         { wert: 'WR', label: 'reines Wohngebiet (35 dB(A) nachts)' },
         { wert: 'WA', label: 'allgemeines Wohngebiet (40 dB(A) nachts)' },
         { wert: 'MI', label: 'Mischgebiet (45 dB(A) nachts)' },
       ],
-      hinweisKurz: 'Bestimmt den Demo-Nachtgrenzwert. Nur Vorprüfung – keine rechtsverbindliche Schallbewertung.',
-      tooltip: 'Demo-Grenzwerte; keine rechtsverbindliche Schallberechnung.' },
+      hinweisKurz: 'Bestimmt den Nachtgrenzwert. Nur Vorprüfung – keine rechtsverbindliche Schallbewertung.',
+      tooltip: 'Grenzwerte; keine rechtsverbindliche Schallberechnung.' },
     { id: 'schallsensibilitaet', label: 'Wie geräuschsensibel ist das Umfeld?', typ: 'select', dq: 0,
       optionen: [
         { wert: 'hoch', label: 'hoch' },
@@ -410,39 +406,27 @@ const SEKTIONEN_ROH = [
   { id: 'I', titel: 'Förderannahme', fragen: [
     { id: 'foerderung_annahme', label: 'Soll eine BEG-Förderung angenommen werden?', typ: 'select', dq: 2,
       optionen: [
-        { wert: 'ja', label: 'ja (Contractor-Modell, 35 % Demo)' },
+        { wert: 'ja', label: 'ja (Contractor-Modell, 35 %)' },
         { wert: 'nein', label: 'nein' },
         { wert: 'unsicher', label: 'unsicher' },
       ],
-      hinweisKurz: 'Demo-Annahme, keine Förderberatung. Unsicher löst interne Prüfung aus; nein zeigt konservativeres Netto.',
-      tooltip: 'Demo-Förderlogik, keine Förderberatung. „unsicher" löst Förderprüfung aus (R13).' },
+      hinweisKurz: 'Annahme, keine Förderberatung. Unsicher löst interne Prüfung aus; nein zeigt konservativeres Netto.',
+      tooltip: 'Förderlogik, keine Förderberatung. „unsicher" löst Förderprüfung aus (R13).' },
   ]},
 
   { id: 'J', titel: 'Betrieb & Monitoring', fragen: [
-    { id: 'monitoring_variante', label: 'Welches Monitoring-Paket soll angesetzt werden?', typ: 'select', dq: 1,
-      optionen: [
-        { wert: 'basic', label: 'Monitoring Basic (verpflichtend)' },
-        { wert: 'plus', label: 'Monitoring Plus (Basic + Erweiterung)' },
-      ],
-      hinweisKurz: 'Basic ist verpflichtend. Plus ergänzt Sensorik und Reporting für höheren Informationsbedarf.',
-      tooltip: 'Basic ist verpflichtend; Plus ergänzt Sensorik und Reporting.' },
-    { id: 'smartcontrol_variante', label: 'Welche SmartControl-Variante soll angesetzt werden?', typ: 'select', dq: 1,
-      optionen: [
-        { wert: 'standard', label: 'SmartControl Standard', hinweis: 'Digitales Steuergerät für die Wärmepumpenanlage.' },
-        { wert: 'ki', label: 'SmartControl KI', hinweis: 'KI-gestützte adaptive Betriebsführung (Demo-Aufpreis).' },
-      ],
-      hinweisKurz: 'SmartControl steuert die Wärmepumpenanlage. KI-Variante nur bei Bedarf an adaptiver Optimierung.',
-      tooltip: 'SmartZero SmartControl: digitales Steuergerät im Contracting-Modell. KI-Variante mit adaptiver Regellogik (Demo, SK-97).' },
+    // Monitoring- und Regelungsvariante werden über den Komponenten-Layer
+    // (Dropdowns auf der Angebotsseite) gewählt, nicht mehr über eigene Fragen.
     { id: 'service_variante', label: 'Welches Servicepaket soll angesetzt werden?', typ: 'select', dq: 1,
       optionen: [
-        { wert: 'basis', label: 'Service Basis (O&M 1,5 %/a Demo)' },
-        { wert: 'komfort', label: 'Service Komfort (O&M 2,2 %/a Demo)' },
+        { wert: 'basis', label: 'Service Basis (O&M 1,5 %/a)' },
+        { wert: 'komfort', label: 'Service Komfort (O&M 2,2 %/a)' },
       ],
       hinweisKurz: 'Basis hält OPEX schlank. Komfort erhöht laufende Kosten, stärkt aber Betriebssicherheit.',
       tooltip: 'Laufende Kosten, gehen nicht ins einmalige LV ein (Opex).' },
     { id: 'fernablesung', label: 'Ist Fernablesung erforderlich?', typ: 'select', optionen: JNU, dq: 0,
-      hinweisKurz: 'In Monitoring Basic enthalten (Demo). Im Gespräch Kundenerwartung an Ablesung und Reporting klären.',
-      tooltip: 'In Monitoring Basic enthalten (Demo).' },
+      hinweisKurz: 'In Monitoring Basic enthalten. Im Gespräch Kundenerwartung an Ablesung und Reporting klären.',
+      tooltip: 'In Monitoring Basic enthalten.' },
   ]},
 
   { id: 'K', titel: 'Vertrag & Angebot', fragen: [
@@ -450,33 +434,33 @@ const SEKTIONEN_ROH = [
       optionen: INSTALLATIONSPARTNER.map(p => ({
         wert: p.id,
         label: p.name,
-        hinweis: `Standort PLZ ${p.plz}; Basis der Demo-Anfahrtskalkulation.`,
+        hinweis: `Standort PLZ ${p.plz}; Basis der Anfahrtskalkulation.`,
       })),
-      hinweisKurz: 'Der Partnerstandort bestimmt die Anfahrtskosten (Demo-Fahrstrecke zur Projekt-PLZ). Ohne Auswahl greift eine Fallback-Distanz.',
+      hinweisKurz: 'Der Partnerstandort bestimmt die Anfahrtskosten (Fahrstrecke zur Projekt-PLZ). Ohne Auswahl greift eine Fallback-Distanz.',
       tooltip: 'Fiktive Partnerbetriebe (SK-102). Anfahrt = Fahrstrecke Partner → Projekt-PLZ × 2 × Fahrten; €/km aus Fahrzeugkosten + Stundensatz ÷ Ø-Geschwindigkeit.' },
     { id: 'vertragstyp', label: 'AVB-Fernwärme oder Individualvertrag?', typ: 'select', dq: 0,
       optionen: [
-        { wert: 'avb', label: 'AVB-Fernwärme-konform (Demo-Standard)', hinweis: 'Vorgeschriebene §24-Preisgleitformel; üblicher Standardweg (Demo, keine Rechtsprüfung).' },
+        { wert: 'avb', label: 'AVB-Fernwärme-konform (Standard)', hinweis: 'Vorgeschriebene §24-Preisgleitformel; üblicher Standardweg (keine Rechtsprüfung).' },
         { wert: 'individual', label: 'Individualvertrag', hinweis: 'Freiere Preisanpassung statt §24-Formel; meist der günstigste Weg.' },
       ],
-      hinweisKurz: 'AVB-konform ist Demo-Standard (vorgeschrieben). Individualvertrag ersetzt die §24-Preisgleitformel durch eine freiere Anpassung.',
-      tooltip: 'Bestimmt nur die Preisanpassungsstruktur (Demo); Grundpreis/Arbeitspreis-Berechnung bleibt gleich. Leer = AVB-konform.' },
+      hinweisKurz: 'AVB-konform ist Standard (vorgeschrieben). Individualvertrag ersetzt die §24-Preisgleitformel durch eine freiere Anpassung.',
+      tooltip: 'Bestimmt nur die Preisanpassungsstruktur; Grundpreis/Arbeitspreis-Berechnung bleibt gleich. Leer = AVB-konform.' },
     { id: 'vertragslaufzeit', label: 'Welche Vertragslaufzeit soll angesetzt werden?', typ: 'select', dq: 0,
       optionen: [
-        { wert: '10', label: '10 Jahre (AVB-konform, Demo-Standard)', hinweis: 'AVB-Fernwärme-konforme Laufzeit; höherer Grundpreis, schnellere Amortisation.' },
-        { wert: '15', label: '15 Jahre', hinweis: 'Impliziert Individualvertrag (>10 J); Angebot zeigt AVB- und Individual-Variante (Demo).' },
-        { wert: '20', label: '20 Jahre', hinweis: 'Niedrigster Grundpreis, längste Bindung; Individualvertrag erforderlich (Demo).' },
+        { wert: '10', label: '10 Jahre (AVB-konform, Standard)', hinweis: 'AVB-Fernwärme-konforme Laufzeit; höherer Grundpreis, schnellere Amortisation.' },
+        { wert: '15', label: '15 Jahre', hinweis: 'Impliziert Individualvertrag (>10 J); Angebot zeigt AVB- und Individual-Variante.' },
+        { wert: '20', label: '20 Jahre', hinweis: 'Niedrigster Grundpreis, längste Bindung; Individualvertrag erforderlich.' },
       ],
       hinweisKurz: '10 Jahre (AVB-Standard). 15/20 Jahre implizieren Individualvertrag – Angebot zeigt dann beide Varianten.',
-      tooltip: 'Bestimmt die Grundpreis-Annuität (Demo). 15/20 J: Individualvertrag, Angebot zeigt AVB- und Individual-Variante. Leer = 10 J Default.' },
+      tooltip: 'Bestimmt die Grundpreis-Annuität. 15/20 J: Individualvertrag, Angebot zeigt AVB- und Individual-Variante. Leer = 10 J Default.' },
     { id: 'effizienzrisiko', label: 'Wer trägt das Effizienzrisiko der Wärmepumpe?', typ: 'select', dq: 0,
       optionen: [
-        { wert: 'contractor', label: 'Contractor trägt das Risiko (Demo-Standard)', hinweis: 'Contracting-Wertversprechen: Effizienz liegt beim Contractor.' },
+        { wert: 'contractor', label: 'Contractor trägt das Risiko (Standard)', hinweis: 'Contracting-Wertversprechen: Effizienz liegt beim Contractor.' },
         { wert: 'geteilt', label: 'Risiko geteilt', hinweis: 'Effizienzabweichungen werden zwischen den Parteien geteilt.' },
         { wert: 'kunde', label: 'Kunde trägt das Risiko', hinweis: 'Kunde trägt Effizienzabweichungen, meist günstigerer Preis.' },
       ],
       hinweisKurz: 'Der Contractor übernimmt das Effizienzrisiko – das ist das Contracting-Kernversprechen. Abweichungen früh besprechen.',
-      tooltip: 'Strukturierter Vertragsparameter (Demo). Leer = Contractor trägt das Risiko.' },
+      tooltip: 'Strukturierter Vertragsparameter. Leer = Contractor trägt das Risiko.' },
   ]},
 ]
 
@@ -502,7 +486,7 @@ const PLAYBOOKS = {
     einordnung: 'Die Antwort ist ein Gesprächsanker, ersetzt aber keine Energie- oder Heizlastberechnung.',
   },
   sanierungsstand: {
-    warum: 'Der Sanierungsstand beeinflusst die angenommene spezifische Heizlast im Demo-Modell.',
+    warum: 'Der Sanierungsstand beeinflusst die angenommene spezifische Heizlast im Modell.',
     warnsignale: 'Unklare oder widersprüchliche Angaben zu Dämmung, Fenstern und Dach sollten als Annahme markiert werden.',
     einordnung: 'Je besser der Sanierungsstand, desto plausibler werden niedrigere Vorlauftemperaturen und kleinere Leistung.',
   },
@@ -549,7 +533,7 @@ const PLAYBOOKS = {
   technologiepfad: {
     warum: 'Der Technologiepfad grenzt den Umfang klar auf den aktuell unterstützten Standardfall ein.',
     warnsignale: 'Monoenergetische oder sonstige Pfade sind Roadmap- bzw. Sonderfälle.',
-    einordnung: 'Hybrid ist der Standardpfad. Andere Pfade erklären, warum die Demo keinen Standardfit ausgibt.',
+    einordnung: 'Hybrid ist der Standardpfad. Andere Pfade erklären, warum das Angebot keinen Standardfit ausgibt.',
   },
   gaskessel_vorhanden: {
     warum: 'Der Hybridpfad braucht einen Bestandskessel als Spitzenlast- und Backup-Komponente.',
@@ -574,7 +558,7 @@ const PLAYBOOKS = {
   pufferspeicher_vorhanden: {
     warum: 'Ein vorhandener Puffer kann die spätere Hydraulikbewertung beeinflussen.',
     warnsignale: 'Unbekannte Speichergrößen oder Zustände nicht als belastbare Einsparung verkaufen.',
-    einordnung: 'Die Antwort ist informativ; der Demo-Scope bleibt vorsichtig.',
+    einordnung: 'Die Antwort ist informativ; die Kalkulation bleibt vorsichtig.',
   },
   vorlauftemp_klasse: {
     warum: 'Das Temperaturniveau entscheidet stark über Effizienz und technische Machbarkeit.',
@@ -589,7 +573,7 @@ const PLAYBOOKS = {
   hydraulischer_abgleich: {
     warum: 'Ein hydraulischer Abgleich ist relevant für Effizienz und Umsetzungsumfang.',
     warnsignale: 'Fehlender oder unbekannter Abgleich kann Zusatzaufwand bedeuten.',
-    einordnung: 'Die Demo nimmt Aufwand im Hydraulikpaket auf, aber Sales sollte den Punkt benennen.',
+    einordnung: 'Das Angebot nimmt Aufwand im Hydraulikpaket auf, aber Sales sollte den Punkt benennen.',
   },
   heizraum_groesse_ok: {
     warum: 'Die Raumgröße entscheidet, ob Speicher und Hydraulik praktisch untergebracht werden können.',
@@ -608,7 +592,7 @@ const PLAYBOOKS = {
   },
   rueckbau_noetig: {
     warum: 'Rückbau beeinflusst Umfeldmaßnahmen und spätere Aufwandsschätzung.',
-    warnsignale: 'Asbest, sehr alte Anlagen oder enge Räume sind nicht im Demo-Modell abgedeckt.',
+    warnsignale: 'Asbest, sehr alte Anlagen oder enge Räume sind nicht im Modell abgedeckt.',
     einordnung: 'Die Antwort ist informativ und sollte als offener Punkt dokumentiert werden.',
   },
   aussenflaeche_m2: {
@@ -662,12 +646,12 @@ const PLAYBOOKS = {
     einordnung: 'Ja macht Container plausibler; unbekannt muss vor Variantenentscheidung geklärt werden.',
   },
   abstand_fenster: {
-    warum: 'Der Abstand ist der wichtigste schnelle Input für die Demo-Schallabschätzung.',
+    warum: 'Der Abstand ist der wichtigste schnelle Input für die Schallabschätzung.',
     warnsignale: 'Sehr geringe Abstände oder mehrere Immissionsorte erhöhen das Risiko deutlich.',
     einordnung: 'Größerer Abstand entspannt den Korridor; kleine Werte führen zu Prüfbedarf.',
   },
   gebietstyp: {
-    warum: 'Der Gebietstyp bestimmt den verwendeten Nachtgrenzwert in der Demo.',
+    warum: 'Der Gebietstyp bestimmt den verwendeten Nachtgrenzwert im Modell.',
     warnsignale: 'Unklare Gebietseinstufung oder sensible Nachbarschaft nicht rechtlich zusagen.',
     einordnung: 'Die Auswahl ist eine Vorprüfung, keine rechtsverbindliche Schallbewertung.',
   },
@@ -694,17 +678,12 @@ const PLAYBOOKS = {
   foerderung_annahme: {
     warum: 'Die Förderannahme verändert die Netto-Richtindikation sichtbar.',
     warnsignale: 'Unsicher oder nein darf nicht als Förderberatung missverstanden werden.',
-    einordnung: 'Ja ist Demo-Annahme; unsicher löst Förderprüfung aus; nein zeigt konservativeres Netto.',
-  },
-  monitoring_variante: {
-    warum: 'Monitoring ist Teil des betreibbaren Systempakets und unterstützt spätere Betriebsqualität.',
-    warnsignale: 'Zusatzwünsche oder Reporting-Erwartungen können über Basic hinausgehen.',
-    einordnung: 'Basic ist Standard; Plus ist ein Gesprächspunkt für höheren Informationsbedarf.',
+    einordnung: 'Ja ist Annahme; unsicher löst Förderprüfung aus; nein zeigt konservativeres Netto.',
   },
   service_variante: {
     warum: 'Service beeinflusst laufende Kosten und Erwartung an Betriebssicherheit.',
     warnsignale: 'Komfortwünsche nicht mit einmaligem CAPEX vermischen.',
-    einordnung: 'Basis hält die Demo schlank; Komfort erhöht OPEX-Indikation.',
+    einordnung: 'Basis hält die Kalkulation schlank; Komfort erhöht OPEX-Indikation.',
   },
   fernablesung: {
     warum: 'Fernablesung klärt, ob zusätzliche Betriebs- oder Messanforderungen erwartet werden.',
@@ -718,11 +697,11 @@ const p = (warum, warnsignale, einordnung) => ({ warum, warnsignale, einordnung 
 const PLAYBOOKS_KURZ = {
   gebaeudetyp: p('Setzt den Rahmen für Platz, Schall und Standardfit.', 'Innenstadt, enge Höfe oder direkte Nachbarn.', 'Freistehend ist Standard; verdichtet braucht Prüfung.'),
   wohneinheiten: p('Ordnet Objektgröße und Richtwerte pro WE ein.', 'Sehr kleine oder sehr große Objekte.', 'Erklärt Kennzahlen, ist allein kein Ausschluss.'),
-  projekt_plz: p('Bestimmt die Demo-Anfahrtskalkulation zum Partnerstandort.', 'Fehlende PLZ führt zur Fallback-Distanz statt Standortbezug.', 'PLZ erfassen; Distanz bleibt Demo-Schätzung, keine Routenplanung.'),
+  projekt_plz: p('Bestimmt die Anfahrtskalkulation zum Partnerstandort.', 'Fehlende PLZ führt zur Fallback-Distanz statt Standortbezug.', 'PLZ erfassen; Distanz bleibt Schätzung, keine Routenplanung.'),
   anzahl_gebaeude: p('Klärt früh, ob nur ein Gebäude versorgt wird.', 'Mehr als ein Gebäude ist kein Standardfit.', 'Ein Gebäude ist Standard; mehrere sind Sonderfall.'),
   flaeche: p('Stützt Heizlastproxy und Kosten pro m².', 'Fläche passt nicht zu WE oder Verbrauch.', 'Schätzwert klar als Annahme führen.'),
   baujahrklasse: p('Gibt eine schnelle energetische Einordnung.', 'Modernisierung passt nicht zur Baujahrklasse.', 'Nur Gesprächsanker, keine Berechnung.'),
-  sanierungsstand: p('Beeinflusst den Heizlastproxy im Demo-Modell.', 'Unklare Dämmung, Fenster oder Dachzustand.', 'Besser saniert stärkt Temperatur- und Leistungsfit.'),
+  sanierungsstand: p('Beeinflusst den Heizlastproxy im Modell.', 'Unklare Dämmung, Fenster oder Dachzustand.', 'Besser saniert stärkt Temperatur- und Leistungsfit.'),
   heizraum_vorhanden: p('Klärt Platz für Hydraulik, Speicher und Regelung.', 'Kein oder sehr knapper Heizraum.', 'Ja stützt Standard; nein lenkt zu Standortprüfung.'),
   aussenflaeche_vorhanden: p('Das Systempaket braucht eine Außenaufstellung.', 'Keine belastbare Außenfläche.', 'Ja öffnet Standortfragen; nein blockiert Standardfit.'),
   jahresverbrauch: p('Beste schnelle Basis für Bedarf und Energiekosten.', 'Schätzung, Leerwert oder klarer Ausreißer.', 'Gemessen stärkt die Richtindikation.'),
@@ -738,7 +717,7 @@ const PLAYBOOKS_KURZ = {
   kessel_nutzbar: p('Kernkriterium für den Hybrid-Standardpfad.', 'Nein oder unklar verändert Scope und Fit.', 'Ja stützt Vorschlag; unbekannt bleibt Prüfpunkt.'),
   oeltank_vorhanden: p('Klärt, ob eine Öltank-Demontage in den Umfang gehört.', 'Alte Tanks, unklare Stilllegung oder Ölreste.', 'Ja ergänzt die Demontageposition; unbekannt vor Ort klären.'),
   anzahl_heizkreise: p('Zeigt hydraulische Komplexität früh.', 'Mehr als zwei Heizkreise.', 'Bis zwei Standard; darüber Sonderfall.'),
-  pufferspeicher_vorhanden: p('Hilft bei der späteren Hydraulikbewertung.', 'Größe oder Zustand unbekannt.', 'Informativ; Demo bleibt vorsichtig.'),
+  pufferspeicher_vorhanden: p('Hilft bei der späteren Hydraulikbewertung.', 'Größe oder Zustand unbekannt.', 'Informativ; Kalkulation bleibt vorsichtig.'),
   vorlauftemp_klasse: p('Treiber für Effizienz und Machbarkeit.', 'Über 65 °C oder unbekannt.', 'Niedrig stärkt Fit; hoch braucht Prüfung.'),
   heizkoerper_ausreichend: p('Zeigt, ob niedrige Temperaturen plausibel sind.', 'Zu kleine Heizflächen.', 'Ja stützt Fit; nein bleibt Annahme.'),
   hydraulischer_abgleich: p('Relevant für Effizienz und Hydraulik-Scope.', 'Fehlend oder unbekannt.', 'Im Paket mitdenken, im Gespräch benennen.'),
@@ -757,19 +736,17 @@ const PLAYBOOKS_KURZ = {
   entfernung_heizraum: p('Zeigt Trassen- und Umfeldaufwand.', 'Lange Wege oder schwierige Durchbrüche.', 'Kurze Wege stützen Standard; lange als Annahme.'),
   kran_zugang: p('Container brauchen Anlieferung und Kranstellung.', 'Kein Zugang, enge Straße oder Innenhof.', 'Ja stützt Container; unbekannt vorher klären.'),
   abstand_fenster: p('Wichtigster Schnellinput für Schall.', 'Kleine Abstände oder mehrere Immissionsorte.', 'Mehr Abstand entspannt den Korridor.'),
-  gebietstyp: p('Setzt den Demo-Nachtgrenzwert.', 'Gebietseinstufung unklar.', 'Vorprüfung, keine Rechtsaussage.'),
+  gebietstyp: p('Setzt den Nachtgrenzwert.', 'Gebietseinstufung unklar.', 'Vorprüfung, keine Rechtsaussage.'),
   schallsensibilitaet: p('Erfasst Gesprächsrisiko im Umfeld.', 'Beschwerden, Innenhöfe, sensible Nachbarn.', 'Weiches Kriterium für Erwartungsmanagement.'),
   netzanschluss_bekannt: p('Früher Elektro-Blocker oder Prüfpunkt.', 'Anschlussleistung unbekannt.', 'Ja stützt; nein löst Elektroklärung aus.'),
   zaehlerschrank_ok: p('Zeigt Aufwand für Tarif und Messkonzept.', 'Altanlage, Platzmangel oder unklarer Zustand.', 'Ja senkt Unsicherheit; unbekannt vor Ort klären.'),
   kabelweg: p('Beeinflusst Elektroaufwand und Umsetzung.', 'Lange Wege oder Brandschutzabschnitte.', 'Schwierig als Risiko benennen.'),
-  foerderung_annahme: p('Verändert die Netto-Richtindikation.', 'Nicht als Förderberatung darstellen.', 'Ja ist Demo; unsicher braucht Förderprüfung.'),
-  monitoring_variante: p('Setzt den Betriebsdaten-Umfang.', 'Reportingwünsche über Basic hinaus.', 'Basic ist Standard; Plus bei höherem Bedarf.'),
-  smartcontrol_variante: p('SmartControl steuert die Wärmepumpenanlage und integriert Betriebsdaten.', 'KI-Variante nur ansetzen, wenn Bedarf an adaptiver Optimierung besteht.', 'Standard ist Demo-Default; KI ist Aufpreis-Option für gehobenen Bedarf.'),
+  foerderung_annahme: p('Verändert die Netto-Richtindikation.', 'Nicht als Förderberatung darstellen.', 'Ja ist Annahme; unsicher braucht Förderprüfung.'),
   service_variante: p('Beeinflusst laufende Kosten und Betriebserwartung.', 'Komfort nicht mit CAPEX vermischen.', 'Basis schlank; Komfort erhöht OPEX.'),
   fernablesung: p('Klärt Mess- und Betriebsanforderungen.', 'Unklare Reporting- oder Messwünsche.', 'In Basic angenommen, Erwartung trotzdem klären.'),
-  installationspartner: p('Der Partnerstandort bestimmt Anfahrtsdistanz und -kosten.', 'Weit entfernte Partner treiben die Anfahrtskosten sichtbar.', 'Nächstgelegenen Partner wählen; Distanz ist Demo-Schätzung.'),
-  vertragstyp: p('Klärt, ob die vorgeschriebene AVB-Preisgleitformel oder eine freie Anpassung gilt.', 'Individualvertrag ohne Abstimmung erschwert später die Preisanpassung.', 'AVB-konform ist Demo-Standard; Individualvertrag ist meist der günstigste Weg.'),
-  vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '10 Jahre (AVB-konform) ist Demo-Standard; 15 oder 20 Jahre senken den Grundpreis.'),
+  installationspartner: p('Der Partnerstandort bestimmt Anfahrtsdistanz und -kosten.', 'Weit entfernte Partner treiben die Anfahrtskosten sichtbar.', 'Nächstgelegenen Partner wählen; Distanz ist Schätzung.'),
+  vertragstyp: p('Klärt, ob die vorgeschriebene AVB-Preisgleitformel oder eine freie Anpassung gilt.', 'Individualvertrag ohne Abstimmung erschwert später die Preisanpassung.', 'AVB-konform ist Standard; Individualvertrag ist meist der günstigste Weg.'),
+  vertragslaufzeit: p('Die Laufzeit verteilt die Investition und bestimmt den Grundpreis je Jahr.', 'Sehr kurze Laufzeiten treiben den Grundpreis und können das Angebot kippen.', '10 Jahre (AVB-konform) ist Standard; 15 oder 20 Jahre senken den Grundpreis.'),
   effizienzrisiko: p('Klärt, wer Abweichungen von der erwarteten WP-Effizienz wirtschaftlich trägt.', 'Unklare Risikoverteilung führt später zu Streit über Wärmekosten und JAZ.', 'Contractor-Übernahme ist das Contracting-Standardversprechen; Alternativen prüfen.'),
 }
 

@@ -6,7 +6,7 @@
 export const PRESETS = [
   {
     id: 'referenz',
-    name: 'Demo-Referenzfall (70 WE, Hybrid)',
+    name: 'Referenzfall (70 WE, Hybrid)',
     beschreibung: '70 WE / 4.000 m², teilsaniert, 650 MWh/a inkl. zentralem WW, Heizlast ~300 kW per Proxy, 4 × 20-kW-Module.',
     eingaben: {
       gebaeudetyp: 'freistehend', wohneinheiten: 70, flaeche: 4000, projekt_plz: 24103,
@@ -25,8 +25,8 @@ export const PRESETS = [
       abstand_fenster: 12, gebietstyp: 'WA', schallsensibilitaet: 'mittel',
       netzanschluss_bekannt: 'ja', zaehlerschrank_ok: 'ja', kabelweg: 'mittel',
       foerderung_annahme: 'ja',
-      monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
-      smartcontrol_variante: 'standard', installationspartner: 'partner_nord',
+      service_variante: 'basis', fernablesung: 'ja',
+      installationspartner: 'partner_nord',
     },
     erwartung: {
       status: 'gelb',
@@ -54,8 +54,8 @@ export const PRESETS = [
       abstand_fenster: 12, gebietstyp: 'WA', schallsensibilitaet: 'mittel',
       netzanschluss_bekannt: 'nein', zaehlerschrank_ok: 'unbekannt', kabelweg: 'mittel',
       foerderung_annahme: 'ja',
-      monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
-      smartcontrol_variante: 'standard', installationspartner: 'partner_nord',
+      service_variante: 'basis', fernablesung: 'ja',
+      installationspartner: 'partner_nord',
     },
     erwartung: {
       status: 'gelb',
@@ -84,8 +84,8 @@ export const PRESETS = [
       abstand_fenster: 20, gebietstyp: 'WA', schallsensibilitaet: 'niedrig',
       netzanschluss_bekannt: 'ja', zaehlerschrank_ok: 'ja', kabelweg: 'einfach',
       foerderung_annahme: 'ja',
-      monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
-      smartcontrol_variante: 'standard', installationspartner: 'partner_west',
+      service_variante: 'basis', fernablesung: 'ja',
+      installationspartner: 'partner_west',
     },
     erwartung: {
       status: 'gelb',
@@ -112,8 +112,7 @@ export const PRESETS = [
       abstand_fenster: 5, gebietstyp: 'WR', schallsensibilitaet: 'hoch',
       netzanschluss_bekannt: 'nein', zaehlerschrank_ok: 'unbekannt', kabelweg: 'schwierig',
       foerderung_annahme: 'ja',
-      monitoring_variante: 'basic', service_variante: 'basis',
-      smartcontrol_variante: 'standard',
+      service_variante: 'basis',
     },
     erwartung: {
       status: 'orange',
@@ -141,8 +140,8 @@ export const PRESETS = [
       abstand_fenster: 15, gebietstyp: 'WA', schallsensibilitaet: 'mittel',
       netzanschluss_bekannt: 'ja', zaehlerschrank_ok: 'ja', kabelweg: 'mittel',
       foerderung_annahme: 'ja',
-      monitoring_variante: 'basic', service_variante: 'basis', fernablesung: 'ja',
-      smartcontrol_variante: 'standard', installationspartner: 'partner_sued',
+      service_variante: 'basis', fernablesung: 'ja',
+      installationspartner: 'partner_sued',
     },
     erwartung: {
       status: 'rot',

@@ -118,7 +118,7 @@ describe('Screens rendern mit jedem Preset', () => {
     // WP8/SK-70: Kundensicht zeigt das Richtpreis-Angebot (Grundpreis/Arbeitspreis),
     // aber KEINE internen Commercial-Begriffe (CAPEX, Netto/Brutto-LV, Förderung,
     // Marge, IRR/Zielrendite).
-    expect(html).toContain('Richtpreis-Angebot (Demo)')
+    expect(html).toContain('Richtpreis-Angebot')
     expect(html).toContain('Grundpreis')
     expect(html).toContain('Arbeitspreis')
     // SK-95/SK-96: "Förderung" als Typ-Label "BEG EM" ist in der Kundensicht sichtbar;
@@ -128,7 +128,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).not.toMatch(/CAPEX|Netto|Brutto|Marge|IRR|Zielrendite/)
   })
 
-  it('SK-97: SmartControl erscheint in KundenScope unter Steuerung & Monitoring', () => {
+  it('SK-97/SK-104: Regelung erscheint in KundenScope unter Steuerung & Monitoring', () => {
     const eingaben = { ...PRESETS[0].eingaben }
     const ergebnis = berechne(eingaben)
     const html = renderToString(
@@ -140,10 +140,12 @@ describe('Screens rendern mit jedem Preset', () => {
       />
     )
     expect(html).toContain('Steuerung &amp; Monitoring')
-    expect(html).toContain('SmartControl')
+    expect(html).toContain('Regelung / Steuerung')
+    // Standardauswahl (günstigste Regelung) ist das Standard-Steuergerät
+    expect(html).toContain('Steuergerät Standard')
 
-    // KI-Variante erscheint wenn gewählt
-    const eingabenKi = { ...PRESETS[0].eingaben, smartcontrol_variante: 'ki' }
+    // KI-Variante erscheint, wenn die Komponente manuell gewählt wird
+    const eingabenKi = { ...PRESETS[0].eingaben, komponente_regelung: 'regelung_ki' }
     const ergebnisKi = berechne(eingabenKi)
     const htmlKi = renderToString(
       <Ergebnis
@@ -153,7 +155,7 @@ describe('Screens rendern mit jedem Preset', () => {
         sichtModus="kunde"
       />
     )
-    expect(htmlKi).toContain('SmartControl KI')
+    expect(htmlKi).toContain('Steuergerät KI')
   })
 
   it('Angebot-Internsicht zeigt konsolidierte Vorlösung und LV/CAPEX ohne Binding-Offer-Disclaimer', () => {
@@ -170,9 +172,27 @@ describe('Screens rendern mit jedem Preset', () => {
 
     // Prüfpunkte ist jetzt ein eigener Hauptschritt – keine Sub-Tabs mehr
     expect(html).not.toContain('tabs-sekundaer')
+    // SK-104: 3-Spalten-Layout mit Rahmendaten links, Auswahl mittig, Vorschau rechts
+    expect(html).toContain('angebot-layout')
+    expect(html).toContain('angebot-links')
+    expect(html).toContain('angebot-mitte')
+    expect(html).toContain('angebot-rechts')
+    expect(html).toContain('Gebäudeparameter')
+    expect(html).toContain('Empfehlung')
+    expect(html).toContain('Komponenten-Auswahl')
+    // Alle vier Komponenten-Typen als Dropdown wählbar
+    expect(html).toContain('Wärmepumpe')
+    expect(html).toContain('Regelung / Steuerung')
+    expect(html).toContain('Monitoring')
     // Internsicht zeigt CAPEX-Detail
     expect(html).toContain('CAPEX-Kennzahlen')
     expect(html).toMatch(/CAPEX|Netto/)
+    // SK-104: Aktions- und Gesprächskarte sind im Druck ausgeblendet (keine
+    // editierbaren Felder/Buttons im PDF), aber im Screen sichtbar.
+    expect(html).toMatch(/aktionen-karte no-print/)
+    expect(html).toMatch(/gespraech-karte no-print/)
+    // Kein mechanisches Scrub-Artefakt (doppelte Wörter)
+    expect(html).not.toMatch(/aktuellen aktuellen/)
     // WP16: Richtpreis-Reframe – kein „kein Angebot/keine Zusage"-Disclaimer mehr
     expect(html).not.toContain('Nicht als Zusage lesen')
     expect(html).not.toMatch(/kein Angebot|Angebotscharakter|kein Kundenangebot/)
@@ -215,7 +235,7 @@ describe('Screens rendern mit jedem Preset', () => {
     expect(html).toContain('Import/Export')
     // WP16: Admin ist ein Bereich – Testfälle als eigener Tab eingegliedert
     expect(html).toContain('Testfälle')
-    expect(html).toContain('Demo-Defaults')
+    expect(html).toContain('Standardwerte')
     expect(html).not.toContain('contenteditable')
   })
 

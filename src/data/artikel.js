@@ -3,7 +3,7 @@
 // Artikel mit Artikelnummer, Kurz-/Langtext, Listenpreis und Rabattgruppe
 // je Lieferant – gepflegt über (hier simulierte) DATANORM-Dateien von
 // Herstellern und Großhändlern. Alle Lieferanten, Artikelnummern und Preise
-// sind FIKTIVE Demo-Daten (Hard Rule: keine realen Firmennamen).
+// sind frei erfundene Beispieldaten (Hard Rule: keine realen Firmennamen).
 //
 // Preislogik (src/logic/artikelPreise.js):
 //   Listenpreis − Rabatt (Rabattgruppe, sonst Generalrabatt) = EK
@@ -12,32 +12,32 @@
 export const LIEFERANTEN = [
   {
     id: 'wt_nord',
-    name: 'Wärmetechnik Nord (fiktiver Hersteller)',
+    name: 'Wärmetechnik Nord',
     typ: 'hersteller',
-    hinweis: 'Fiktiver WP-/Speicher-Hersteller; liefert auch Serviceverträge (Demo).',
+    hinweis: 'WP-/Speicher-Hersteller; liefert auch Serviceverträge.',
   },
   {
     id: 'gh_sued',
-    name: 'Haustechnik-Großhandel Süd (fiktiver Großhändler)',
+    name: 'Haustechnik-Großhandel Süd',
     typ: 'grosshaendler',
-    hinweis: 'Fiktiver Großhändler für Zubehör, Schallschutz und MSR-Technik (Demo).',
+    hinweis: 'Großhändler für Zubehör, Schallschutz und MSR-Technik.',
   },
   {
-    id: 'smartzero',
-    name: 'SmartZero (Eigenfertigung, Demo)',
+    id: 'regeltechnik',
+    name: 'Regeltechnik (Eigenfertigung)',
     typ: 'eigenfertigung',
     hinweis: 'Eigenprodukte zu internen Verrechnungspreisen; kein Lieferantenrabatt.',
   },
   {
-    id: 'dreammaker',
-    name: 'Dreammaker (fiktiver Hersteller)',
+    id: 'st_sued',
+    name: 'Systemtechnik Süd',
     typ: 'hersteller',
-    hinweis: 'Fiktiver Zweithersteller für WP-Module und Speicher; SK-103 Komponenten-Layer Demo.',
+    hinweis: 'Zweithersteller für WP-Module und Speicher (Komponenten-Layer).',
   },
 ]
 
 // Rabattgruppen je Lieferant: individueller Gruppenrabatt, sonst Generalrabatt.
-// Werte sind Demo-Konditionen, wie sie typischerweise mit Herstellern und
+// Werte sind Beispiel-Konditionen, wie sie typischerweise mit Herstellern und
 // Großhändlern verhandelt werden (im Admin editierbar).
 export const RABATTGRUPPEN = {
   wt_nord: {
@@ -48,17 +48,17 @@ export const RABATTGRUPPEN = {
     generalrabatt: 0.15,
     gruppen: { SCHALL: 0.25, MSR: 0.20 },
   },
-  smartzero: {
+  regeltechnik: {
     generalrabatt: 0,
     gruppen: {},
   },
-  dreammaker: {
+  st_sued: {
     generalrabatt: 0.10,
     gruppen: { WP: 0.25, SPEICHER: 0.20 },
   },
 }
 
-// Artikelstamm (Demo-Auszug). Felder orientieren sich an DATANORM-Artikelsätzen:
+// Artikelstamm (Auszug). Felder orientieren sich an DATANORM-Artikelsätzen:
 // Artikelnummer, Kurztext, Langtext, Listenpreis, Einheit, Rabattgruppe, Preisstand.
 // `verwendung: 'opex'`-Artikel sind laufende Leistungen (Jahrespreise), alle
 // anderen sind einmalige Hardware-/Leistungsartikel (CapEx).
@@ -68,7 +68,7 @@ export const ARTIKEL = [
     lieferant: 'wt_nord',
     rabattgruppe: 'WP',
     kurztext: 'Luft-Wasser-WP-Modul 20 kW (R290)',
-    langtext: 'Luft-Wasser-Wärmepumpenmodul 20 kW thermisch, Kältemittel R290, kaskadierbar 1–6 Module, inkl. Hydraulik-Anschlussset und Regelungsanbindung. Demo-Artikel eines fiktiven Herstellers.',
+    langtext: 'Luft-Wasser-Wärmepumpenmodul 20 kW thermisch, Kältemittel R290, kaskadierbar 1–6 Module, inkl. Hydraulik-Anschlussset und Regelungsanbindung.',
     listenpreis: 26600,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -78,7 +78,7 @@ export const ARTIKEL = [
     lieferant: 'wt_nord',
     rabattgruppe: 'SPEICHER',
     kurztext: 'Brauchwasserspeicher-Paket 800 l + Puffer',
-    langtext: 'Brauchwasserspeicher 800 l mit Pufferspeicher, Sicherheitsgruppe und Anschlusszubehör für zentrale Warmwasserbereitung im MFH. Demo-Artikel.',
+    langtext: 'Brauchwasserspeicher 800 l mit Pufferspeicher, Sicherheitsgruppe und Anschlusszubehör für zentrale Warmwasserbereitung im MFH.',
     listenpreis: 35300,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -88,7 +88,7 @@ export const ARTIKEL = [
     lieferant: 'wt_nord',
     rabattgruppe: 'SPEICHER',
     kurztext: 'Frischwasserstation 40 l/min + Puffer',
-    langtext: 'Frischwasserstation für hygienische Durchfluss-Warmwasserbereitung (bis 40 l/min) inkl. Pufferspeicher und Regelungsset. Demo-Artikel.',
+    langtext: 'Frischwasserstation für hygienische Durchfluss-Warmwasserbereitung (bis 40 l/min) inkl. Pufferspeicher und Regelungsset.',
     listenpreis: 29400,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -98,7 +98,7 @@ export const ARTIKEL = [
     lieferant: 'wt_nord',
     rabattgruppe: 'SERVICE',
     kurztext: 'Wartungsvertrag Basis je WP-Modul (p.a.)',
-    langtext: 'Jährlicher Wartungs- und Instandhaltungsvertrag je Wärmepumpenmodul: Inspektion, Wartung nach Herstellervorgabe, Verschleißteile-Grundumfang. Jahrespreis je Modul. Demo-Artikel.',
+    langtext: 'Jährlicher Wartungs- und Instandhaltungsvertrag je Wärmepumpenmodul: Inspektion, Wartung nach Herstellervorgabe, Verschleißteile-Grundumfang. Jahrespreis je Modul.',
     listenpreis: 1410,
     einheit: 'Stk/a',
     verwendung: 'opex',
@@ -109,7 +109,7 @@ export const ARTIKEL = [
     lieferant: 'wt_nord',
     rabattgruppe: 'SERVICE',
     kurztext: 'Wartungsvertrag Komfort je WP-Modul (p.a.)',
-    langtext: 'Jährlicher Komfort-Servicevertrag je Wärmepumpenmodul: Wartung, Instandhaltung, Störungsdienst mit Reaktionszeitzusage (Demo). Jahrespreis je Modul. Demo-Artikel.',
+    langtext: 'Jährlicher Komfort-Servicevertrag je Wärmepumpenmodul: Wartung, Instandhaltung, Störungsdienst mit Reaktionszeitzusage. Jahrespreis je Modul.',
     listenpreis: 2070,
     einheit: 'Stk/a',
     verwendung: 'opex',
@@ -120,7 +120,7 @@ export const ARTIKEL = [
     lieferant: 'gh_sued',
     rabattgruppe: 'SCHALL',
     kurztext: 'Schallhaube Typ K2 für WP-Kaskade',
-    langtext: 'Schallmindernde Haube für Außenmodule (Demo-Abschlag −8 dB), witterungsbeständig, inkl. Montagerahmen. Demo-Artikel eines fiktiven Großhändlers.',
+    langtext: 'Schallmindernde Haube für Außenmodule (Abschlag −8 dB), witterungsbeständig, inkl. Montagerahmen.',
     listenpreis: 9000,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -130,7 +130,7 @@ export const ARTIKEL = [
     lieferant: 'gh_sued',
     rabattgruppe: 'SCHALL',
     kurztext: 'Absorptiver Schallschutzzaun (Elementbausatz)',
-    langtext: 'Absorptiver Schallschutzzaun als Elementbausatz für Fundament-/Offenaufstellung bei erhöhter Schallsensibilität, inkl. Pfosten und Fundamentankern. Demo-Artikel.',
+    langtext: 'Absorptiver Schallschutzzaun als Elementbausatz für Fundament-/Offenaufstellung bei erhöhter Schallsensibilität, inkl. Pfosten und Fundamentankern.',
     listenpreis: 13550,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -140,7 +140,7 @@ export const ARTIKEL = [
     lieferant: 'gh_sued',
     rabattgruppe: 'MSR',
     kurztext: 'Monitoring-Set Basic (Datenlogger, Fernablesung)',
-    langtext: 'Datenlogger-Set mit Fernablesungs-Gateway und Grundsensorik für das verpflichtende Betriebsmonitoring. Demo-Artikel.',
+    langtext: 'Datenlogger-Set mit Fernablesungs-Gateway und Grundsensorik für das verpflichtende Betriebsmonitoring.',
     listenpreis: 5300,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -150,8 +150,18 @@ export const ARTIKEL = [
     lieferant: 'gh_sued',
     rabattgruppe: 'MSR',
     kurztext: 'Monitoring-Erweiterung Plus (Sensorik-Paket)',
-    langtext: 'Erweiterte Sensorik (Wärmemengen-, Temperatur- und Stromsensoren) und Reporting-Bausteine für Monitoring Plus. Demo-Artikel.',
+    langtext: 'Erweiterte Sensorik (Wärmemengen-, Temperatur- und Stromsensoren) und Reporting-Bausteine für Monitoring Plus.',
     listenpreis: 12700,
+    einheit: 'Stk',
+    preisstand: '2026-01-15',
+  },
+  {
+    artikelnummer: 'GH-MON-PLUS',
+    lieferant: 'gh_sued',
+    rabattgruppe: 'MSR',
+    kurztext: 'Monitoring-Set Plus (Basic + erweiterte Sensorik)',
+    langtext: 'Komplettpaket Monitoring Plus: Datenlogger-Set mit Fernablesung sowie erweiterte Wärmemengen-, Temperatur- und Stromsensorik inkl. Reporting-Bausteinen.',
+    listenpreis: 18000,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
@@ -160,79 +170,79 @@ export const ARTIKEL = [
     lieferant: 'gh_sued',
     rabattgruppe: 'MSR',
     kurztext: 'Messkonzept-Zählerset (WP-Zähler, Fernablesung)',
-    langtext: 'WP-Eigenstromzähler (Zweirichtungszähler, WP-Sondertarif-fähig) mit Fernablese-Anschluss und Übergabedokumentation. Demo-Artikel.',
+    langtext: 'WP-Eigenstromzähler (Zweirichtungszähler, WP-Sondertarif-fähig) mit Fernablese-Anschluss und Übergabedokumentation.',
     listenpreis: 4770,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
   {
-    artikelnummer: 'SZ-SC-STD',
-    lieferant: 'smartzero',
+    artikelnummer: 'RT-SC-STD',
+    lieferant: 'regeltechnik',
     rabattgruppe: null,
-    kurztext: 'SmartControl Standard (Steuergerät)',
-    langtext: 'Digitales Steuergerät für Betriebsführung, Optimierung und Datenintegration der Wärmepumpenanlage. Eigenprodukt zu internem Verrechnungspreis (Demo).',
+    kurztext: 'Steuergerät Standard (Regelung)',
+    langtext: 'Digitales Steuergerät für Betriebsführung, Optimierung und Datenintegration der Wärmepumpenanlage. Eigenprodukt zu internem Verrechnungspreis.',
     listenpreis: 10170,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
   {
-    artikelnummer: 'SZ-SC-KI',
-    lieferant: 'smartzero',
+    artikelnummer: 'RT-SC-KI',
+    lieferant: 'regeltechnik',
     rabattgruppe: null,
-    kurztext: 'SmartControl KI (KI-gestützte Regelung)',
-    langtext: 'KI-gestütztes Steuergerät mit adaptiver Effizienzoptimierung und lernender Regellogik. Eigenprodukt zu internem Verrechnungspreis (Demo).',
+    kurztext: 'Steuergerät KI (KI-gestützte Regelung)',
+    langtext: 'KI-gestütztes Steuergerät mit adaptiver Effizienzoptimierung und lernender Regellogik. Eigenprodukt zu internem Verrechnungspreis.',
     listenpreis: 15250,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
   {
-    artikelnummer: 'SZ-MON-SRV',
-    lieferant: 'smartzero',
+    artikelnummer: 'RT-MON-SRV',
+    lieferant: 'regeltechnik',
     rabattgruppe: null,
     kurztext: 'Monitoring-Datendienst (p.a.)',
-    langtext: 'Laufender Datendienst für Monitoring und Fernablesung im Betrieb (Hosting, Auswertung, Reporting). Jahrespreis. Eigenleistung (Demo).',
+    langtext: 'Laufender Datendienst für Monitoring und Fernablesung im Betrieb (Hosting, Auswertung, Reporting). Jahrespreis. Eigenleistung.',
     listenpreis: 1270,
     einheit: 'pausch./a',
     verwendung: 'opex',
     preisstand: '2026-01-15',
   },
-  // SK-103: Dreammaker-Artikel für Komponenten-Layer Phase 1
+  // SK-103: Zweithersteller-Artikel für den Komponenten-Layer
   {
-    artikelnummer: 'DM-WP20-BASIC',
-    lieferant: 'dreammaker',
+    artikelnummer: 'ST-WP20-BASIC',
+    lieferant: 'st_sued',
     rabattgruppe: 'WP',
-    kurztext: 'Luft-Wasser-WP-Modul 20 kW Basic (Dreammaker)',
-    langtext: 'Luft-Wasser-Wärmepumpenmodul 20 kW thermisch, Kältemittel R290, kaskadierbar 1–6 Module. Demo-Artikel eines fiktiven Herstellers.',
+    kurztext: 'Luft-Wasser-WP-Modul 20 kW Basic (Systemtechnik Süd)',
+    langtext: 'Luft-Wasser-Wärmepumpenmodul 20 kW thermisch, Kältemittel R290, kaskadierbar 1–6 Module.',
     listenpreis: 28000,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
   {
-    artikelnummer: 'DM-WP20-SILENT',
-    lieferant: 'dreammaker',
+    artikelnummer: 'ST-WP20-SILENT',
+    lieferant: 'st_sued',
     rabattgruppe: 'WP',
-    kurztext: 'Luft-Wasser-WP-Modul 20 kW Silent (Dreammaker)',
-    langtext: 'Schalloptimiertes Luft-Wasser-Wärmepumpenmodul 20 kW (62 dBA Schallleistungspegel), Kältemittel R290, kaskadierbar. Demo-Artikel eines fiktiven Herstellers.',
+    kurztext: 'Luft-Wasser-WP-Modul 20 kW Silent (Systemtechnik Süd)',
+    langtext: 'Schalloptimiertes Luft-Wasser-Wärmepumpenmodul 20 kW (62 dBA Schallleistungspegel), Kältemittel R290, kaskadierbar.',
     listenpreis: 31500,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
   {
-    artikelnummer: 'DM-BWS-900',
-    lieferant: 'dreammaker',
+    artikelnummer: 'ST-BWS-900',
+    lieferant: 'st_sued',
     rabattgruppe: 'SPEICHER',
-    kurztext: 'Brauchwasserspeicher-Paket 900 l (Dreammaker)',
-    langtext: 'Brauchwasserspeicher 900 l mit Pufferspeicher, Sicherheitsgruppe und Anschlusszubehör für zentrale Warmwasserbereitung im MFH. Demo-Artikel eines fiktiven Herstellers.',
+    kurztext: 'Brauchwasserspeicher-Paket 900 l (Systemtechnik Süd)',
+    langtext: 'Brauchwasserspeicher 900 l mit Pufferspeicher, Sicherheitsgruppe und Anschlusszubehör für zentrale Warmwasserbereitung im MFH.',
     listenpreis: 38000,
     einheit: 'Stk',
     preisstand: '2026-01-15',
   },
   {
-    artikelnummer: 'DM-FWS-45',
-    lieferant: 'dreammaker',
+    artikelnummer: 'ST-FWS-45',
+    lieferant: 'st_sued',
     rabattgruppe: 'SPEICHER',
-    kurztext: 'Frischwasserstation 45 l/min (Dreammaker)',
-    langtext: 'Frischwasserstation für hygienische Durchfluss-Warmwasserbereitung (bis 45 l/min) inkl. Pufferspeicher und erweitertem Regelungsset. Demo-Artikel eines fiktiven Herstellers.',
+    kurztext: 'Frischwasserstation 45 l/min (Systemtechnik Süd)',
+    langtext: 'Frischwasserstation für hygienische Durchfluss-Warmwasserbereitung (bis 45 l/min) inkl. Pufferspeicher und erweitertem Regelungsset.',
     listenpreis: 32000,
     einheit: 'Stk',
     preisstand: '2026-01-15',
@@ -244,7 +254,7 @@ export const ARTIKEL = [
 // genug, um den Prozess (Preise überschreiben, Artikel ergänzen, Konditionen
 // aktualisieren) glaubwürdig zu demonstrieren.
 export const DATANORM_UPDATE_DEMO = {
-  quelle: 'DATANORM-v5-Datei (Demo-Simulation, kein echter Parser)',
+  quelle: 'DATANORM-v5-Datei (Simulation, kein echter Parser)',
   preisstand: '2026-07-01',
   // Listenpreis-Überschreibungen (typisch: Preisrunde des Herstellers, ~+3 %).
   preisaenderungen: {
@@ -262,7 +272,7 @@ export const DATANORM_UPDATE_DEMO = {
       lieferant: 'gh_sued',
       rabattgruppe: 'SCHALL',
       kurztext: 'Schallhaube Typ K3 (Nachfolgemodell)',
-      langtext: 'Nachfolgemodell der Schallhaube K2 mit verbessertem Demo-Abschlag und Schnellmontagerahmen. Demo-Artikel.',
+      langtext: 'Nachfolgemodell der Schallhaube K2 mit verbessertem Schallabschlag und Schnellmontagerahmen.',
       listenpreis: 9600,
       einheit: 'Stk',
       preisstand: '2026-07-01',
@@ -272,7 +282,7 @@ export const DATANORM_UPDATE_DEMO = {
       lieferant: 'wt_nord',
       rabattgruppe: 'SPEICHER',
       kurztext: 'Brauchwasserspeicher-Paket 1.000 l + Puffer',
-      langtext: 'Größere Speichervariante für höhere Zapfleistungen, inkl. Puffer und Anschlusszubehör. Demo-Artikel.',
+      langtext: 'Größere Speichervariante für höhere Zapfleistungen, inkl. Puffer und Anschlusszubehör.',
       listenpreis: 41200,
       einheit: 'Stk',
       preisstand: '2026-07-01',

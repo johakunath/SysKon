@@ -96,7 +96,7 @@ export const AUFSTELLUNG_VARIANTEN_MAPPING = {
   },
   einhausung: {
     roberts_draft: 'outside with fence / Schallschutzzaun',
-    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". Absorptiver Schallschutzzaun als Demo-Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
+    entscheidung: 'Halten: entspricht Robert\'s "outside with fence/sound barrier". Absorptiver Schallschutzzaun als Referenzprodukt. Adressiert Schall- und Vandalismusrisiko ohne Container.',
   },
   kompakt_container: {
     roberts_draft: 'in Container (kompakt)',
@@ -273,8 +273,8 @@ export function aufstellungEmpfehlung(e, a, derived, gesperrteVarianten = []) {
     aufstellung_empfohlen: empfohlen?.variante ?? null,
     aufstellung_empfohlen_label: empfohlen?.label ?? null,
     aufstellung_begruendung: empfohlen
-      ? `${empfohlen.label} ist die günstigste tragfähige Variante im aktuellen Demo-Korridor (${prioritaetText}).`
-      : 'Keine Aufstellvariante ist im aktuellen Demo-Korridor tragfähig; Standortdaten schärfen oder Fachprüfung einplanen.',
+      ? `${empfohlen.label} ist die günstigste tragfähige Variante im aktuellen Korridor (${prioritaetText}).`
+      : 'Keine Aufstellvariante ist im aktuellen Korridor tragfähig; Standortdaten schärfen oder Fachprüfung einplanen.',
     aufstellung_abweichung: abweichung,
     aufstellung_blockierte_varianten: blockierte,
   }

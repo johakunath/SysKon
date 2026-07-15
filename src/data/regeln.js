@@ -31,7 +31,7 @@ export const REGELN = [
     id: 'R02',
     wenn: { feld: 'technologiepfad', op: '=', wert: 'hybrid' },
     dann: { typ: 'warn', kategorie: 'foerderung', text: 'Fossile Einheit ist nicht förderfähig (Förderanteil 0 %, im Katalog hinterlegt).' },
-    begruendung: 'BEG-Demo-Logik: nur der erneuerbare Teil ist förderfähig.',
+    begruendung: 'BEG-Logik: nur der erneuerbare Teil ist förderfähig.',
   },
   {
     id: 'R03',
@@ -178,7 +178,7 @@ export const REGELN = [
     id: 'R18',
     wenn: { feld: 'schall_ampel_aktiv', op: 'in', wert: ['gelb', 'orange'] },
     dann: { typ: 'status', wert: '@schall_status' },
-    begruendung: 'Schall-Ampel: Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag; gelb = prüfpflichtig, orange = Fachprüfung. Demo-Abschätzung, keine rechtsverbindliche Schallberechnung.',
+    begruendung: 'Schall-Ampel: Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag; gelb = prüfpflichtig, orange = Fachprüfung. Abschätzung, keine rechtsverbindliche Schallberechnung.',
   },
   {
     id: 'R19',
@@ -211,16 +211,16 @@ export const REGELN = [
     id: 'R23',
     wenn: { feld: 'technologiepfad_offen', op: '=', wert: true },
     dann: [
-      { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad noch offen: Demo rechnet den Hybrid-Standardpfad als aktuell günstigste modellierte Option.' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad noch offen: Berechnung nutzt den Hybrid-Standardpfad als aktuell günstigste modellierte Option.' },
       { typ: 'status', wert: 'gelb' },
     ],
-    begruendung: 'Demo rechnet unentschieden → hybrid; Hinweis damit Gesprächspartner den angenommenen Pfad sehen.',
+    begruendung: 'Berechnung setzt unentschieden → hybrid; Hinweis damit Gesprächspartner den angenommenen Pfad sehen.',
   },
   {
     id: 'R22',
     wenn: { feld: 'vertragslaufzeit', op: 'in', wert: ['15', '20'] },
     dann: [
-      { typ: 'warn', kategorie: 'hinweis', text: 'Laufzeit über 10 Jahre setzt Individualvertrag voraus (AVB-Fernwärme, Demo). Das Angebot zeigt beide Varianten (AVB 10 J + Individual). Keine Rechtsprüfung.' },
+      { typ: 'warn', kategorie: 'hinweis', text: 'Laufzeit über 10 Jahre setzt Individualvertrag voraus (AVB-Fernwärme). Das Angebot zeigt beide Varianten (AVB 10 J + Individual). Keine Rechtsprüfung.' },
       { typ: 'status', wert: 'gelb' },
     ],
     begruendung: 'AVB-Fernwärme begrenzt Standardverträge auf 10 Jahre; 15/20 Jahre sind nur im Individualvertrag möglich – das Angebot zeigt daher beide Varianten.',

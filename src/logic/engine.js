@@ -34,7 +34,7 @@ export const STATUS_LABEL = {
 export const STATUS_KORRIDOR = {
   gruen: {
     titel: 'Gesprächsfähige Richtindikation',
-    bedeutung: 'Der Fall wirkt im Demo-Korridor plausibel; Annahmen und Prüfpunkte bleiben intern sichtbar.',
+    bedeutung: 'Der Fall wirkt im Korridor plausibel; Annahmen und Prüfpunkte bleiben intern sichtbar.',
     aktion: 'Mit Annahmen weiterarbeiten und die nächsten Standort- und Verbrauchsdaten gezielt schärfen.',
   },
   gelb: {
@@ -54,7 +54,7 @@ export const STATUS_KORRIDOR = {
   },
   unbekannt: {
     titel: 'Noch nicht einordenbar',
-    bedeutung: 'Es fehlen Pflichtdaten, bevor die Demo sinnvoll eingeordnet werden kann.',
+    bedeutung: 'Es fehlen Pflichtdaten, bevor das Angebot sinnvoll eingeordnet werden kann.',
     aktion: 'Konfiguration vervollständigen und anschließend erneut einordnen.',
   },
 }
@@ -136,7 +136,7 @@ function datenlageEinordnung(dq, fehlendeDaten, schwelle) {
     },
     arbeitsfaehig: {
       titel: 'arbeitsfähige Datenlage',
-      bedeutung: 'Die Demo ist als interne Orientierung nutzbar, enthält aber noch Annahmen.',
+      bedeutung: 'Das Angebot ist als interne Orientierung nutzbar, enthält aber noch Annahmen.',
       aktion: 'Die nächsten fehlenden Pflichtdaten vor externer Nutzung klären.',
     },
     duenn: {
@@ -177,7 +177,7 @@ function kundenLeistungsumfang(pos, annahmen) {
   }
   if (pos.kunde?.leistungsumfang) return pos.kunde.leistungsumfang
   if (pos.pruefpflichtig) return 'Im Kundengespräch als Prüfpunkt aufnehmen und intern bestätigen lassen.'
-  return 'Im aktuellen Demo-Scope als Leistungsbaustein enthalten.'
+  return 'Im aktuellen Scope als Leistungsbaustein enthalten.'
 }
 
 function kundenWarntext(warnung) {
@@ -221,7 +221,7 @@ function kundenScopeBauen({ eingaben, annahmen, derived, lvPositionen, opexPosit
   const ausschluesse = [
     ...ausgeschlosseneVarianten.map(v => ({
       titel: 'Aufstellvariante ausgeschlossen',
-      text: `${v}: aktuell nicht tragfähig im Demo-Korridor.`,
+      text: `${v}: aktuell nicht tragfähig im Korridor.`,
     })),
     ...(pfadEffektiv && pfadEffektiv !== 'hybrid'
       ? [{ titel: 'Technologiepfad außerhalb des Standards', text: 'Der gewählte Pfad ist noch nicht als Standardumfang abbildbar.' }]
@@ -344,7 +344,7 @@ export function berechne(eingaben, opts = {}) {
     status = schlechter(status, 'orange')
     const blockerText = placementBlocker.length ? ` Gründe: ${placementBlocker.join('; ')}.` : ''
     warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
-      text: `Die gewählte Aufstellvariante ist im aktuellen Demo-Korridor blockiert – Variante wechseln oder Fachprüfung einplanen.${blockerText}` })
+      text: `Die gewählte Aufstellvariante ist im aktuellen Korridor blockiert – Variante wechseln oder Fachprüfung einplanen.${blockerText}` })
   }
 
   // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.

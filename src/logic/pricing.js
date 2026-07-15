@@ -116,9 +116,9 @@ export function preisgleitWert(formel, indexStaende = {}, basiswerte = {}) {
 // Effizienzrisiko-Allokation (Vertragsparameter, kundensicher). Konfigurierbar
 // über die Frage `effizienzrisiko`; Default: Contractor trägt das Risiko.
 export const EFFIZIENZRISIKO_TEXT = {
-  contractor: 'Contractor trägt das WP-Effizienzrisiko (Demo-Annahme)',
-  geteilt: 'Effizienzrisiko zwischen Contractor und Kunde geteilt (Demo-Annahme)',
-  kunde: 'Kunde trägt das Effizienzrisiko (Demo-Annahme)',
+  contractor: 'Contractor trägt das WP-Effizienzrisiko (Annahme)',
+  geteilt: 'Effizienzrisiko zwischen Contractor und Kunde geteilt (Annahme)',
+  kunde: 'Kunde trägt das Effizienzrisiko (Annahme)',
 }
 
 // Individualvertrag gilt, wenn er explizit gewählt ist ODER eine Laufzeit über
@@ -193,11 +193,11 @@ export function contractingPreise({ lv, opex, energie, derived, eingaben, annahm
 
   // Vertragsparameter (strukturiert, kundensicher).
   const vertragsparameter = {
-    servicegrenze: 'bis Heizkreisverteiler (Demo-Standard)',
+    servicegrenze: 'bis Heizkreisverteiler (Standard)',
     effizienzrisiko,
     preisanpassung: individual
-      ? 'individuell vereinbart (frei, ohne §24-Bezug, Demo)'
-      : 'jährlich nach Preisgleitformel (AVBFernwärme-orientiert, Demo)',
+      ? 'individuell vereinbart (frei, ohne §24-Bezug)'
+      : 'jährlich nach Preisgleitformel (AVBFernwärme-orientiert)',
   }
 
   return {

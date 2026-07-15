@@ -30,7 +30,7 @@ export const QUELLENTYPEN = {
   },
   abschaetzung: {
     label: 'Proxy / Abschätzung',
-    beschreibung: 'Aus anderen Feldern berechnet oder per Demo-Heuristik abgeschätzt. Kein reales Quelldokument.',
+    beschreibung: 'Aus anderen Feldern berechnet oder per Heuristik abgeschätzt. Kein reales Quelldokument.',
     skalierbar: false,
   },
 }
@@ -84,7 +84,7 @@ export const FELD_PROVENIENZ = {
     aktualitaet: 'historisch',
     vertrauen: 'hoch',
     skalierbar: true,
-    kundenAnnahme: 'Projektstandort (PLZ) laut Adressdaten; Basis der Demo-Anfahrtskalkulation (SK-102)',
+    kundenAnnahme: 'Projektstandort (PLZ) laut Adressdaten; Basis der Anfahrtskalkulation (SK-102)',
     followUp: 'Ohne PLZ rechnet die Anfahrt mit einer Fallback-Distanz – Adresse nachtragen',
   },
   baujahrklasse: {
@@ -131,7 +131,7 @@ export const FELD_PROVENIENZ = {
     aktualitaet: 'aktuell',
     vertrauen: 'hoch',
     skalierbar: true,
-    kundenAnnahme: 'Jahreswärmeverbrauch aus Abrechnung (Demo-Basis)',
+    kundenAnnahme: 'Jahreswärmeverbrauch aus Abrechnung (Basis)',
     followUp: 'Bei Schätzung: TES-Abrechnung oder Energieausweis anfordern',
   },
   verbrauchsquelle: {
@@ -181,11 +181,11 @@ export const FELD_PROVENIENZ = {
   },
   heizlast_kw: {
     quelle: ['stammdaten', 'abschaetzung'],
-    erfassungsweg: 'Energiebericht / Heizlastberechnung (Ziel) oder Demo-Proxy aus Verbrauch/Fläche',
+    erfassungsweg: 'Energiebericht / Heizlastberechnung (Ziel) oder Proxy aus Verbrauch/Fläche',
     aktualitaet: 'historisch',
     vertrauen: 'mittel',
     skalierbar: true,
-    kundenAnnahme: 'Heizlast aus Berechnungsunterlagen oder Demo-Abschätzung',
+    kundenAnnahme: 'Heizlast aus Berechnungsunterlagen oder Abschätzung',
     followUp: 'Heizlastberechnung EN 12831 anfordern für belastbare Auslegung',
   },
 
@@ -393,7 +393,7 @@ export const FELD_PROVENIENZ = {
     aktualitaet: 'einmalig',
     vertrauen: 'niedrig',
     skalierbar: false,
-    kundenAnnahme: 'Abstandsangabe nach Gesprächsstand (Demo-Vorprüfung)',
+    kundenAnnahme: 'Abstandsangabe nach Gesprächsstand (Vorprüfung)',
     followUp: 'Bei Grenzwertnähe: Schallberechnung durch Fachplaner beauftragen',
   },
   gebietstyp: {
@@ -451,20 +451,13 @@ export const FELD_PROVENIENZ = {
     aktualitaet: 'einmalig',
     vertrauen: 'niedrig',
     skalierbar: false,
-    kundenAnnahme: 'Förderannahme als Demo-Indikation (keine Förderberatung)',
+    kundenAnnahme: 'Förderannahme als Indikation (keine Förderberatung)',
     followUp: 'Bei unsicher: interne Förderprüfung als nächsten Schritt setzen',
   },
 
   // --- Sektion J: Betrieb & Monitoring ---
-  monitoring_variante: {
-    quelle: ['sales_manuell'],
-    erfassungsweg: 'Sales-Auswahl im Gespräch',
-    aktualitaet: 'einmalig',
-    vertrauen: 'hoch',
-    skalierbar: false,
-    kundenAnnahme: 'Monitoring-Umfang nach Gesprächswahl',
-    followUp: null,
-  },
+  // Monitoring- und Regelungsvariante laufen über den Komponenten-Layer,
+  // nicht mehr über eigene Fragen.
   service_variante: {
     quelle: ['sales_manuell'],
     erfassungsweg: 'Sales-Auswahl im Gespräch',
@@ -474,22 +467,13 @@ export const FELD_PROVENIENZ = {
     kundenAnnahme: 'Servicepaket nach Gesprächswahl',
     followUp: null,
   },
-  smartcontrol_variante: {
-    quelle: ['sales_manuell'],
-    erfassungsweg: 'Sales-Auswahl im Gespräch',
-    aktualitaet: 'einmalig',
-    vertrauen: 'hoch',
-    skalierbar: false,
-    kundenAnnahme: 'SmartControl-Variante nach Gesprächswahl (Demo-Referenz: SmartZero)',
-    followUp: null,
-  },
   installationspartner: {
     quelle: ['sales_manuell', 'stammdaten'],
     erfassungsweg: 'Sales-Auswahl im Gespräch (Ziel: Partnerzuordnung aus Stammdaten)',
     aktualitaet: 'einmalig',
     vertrauen: 'hoch',
     skalierbar: true,
-    kundenAnnahme: 'Zugeordneter Installationspartner; Standort bestimmt die Demo-Anfahrtskalkulation (SK-102)',
+    kundenAnnahme: 'Zugeordneter Installationspartner; Standort bestimmt die Anfahrtskalkulation (SK-102)',
     followUp: 'Ohne Auswahl rechnet die Anfahrt mit einer Fallback-Distanz',
   },
 }

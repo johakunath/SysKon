@@ -170,9 +170,9 @@ export default function App() {
           <button
             className={sichtModus === 'intern' ? 'aktiv' : ''}
             onClick={() => setSichtModus('intern')}
-            title="Internsicht: Interne Details, Kalkulation und Prüfpunkte"
+            title="Interne Sicht: Interne Details, Kalkulation und Prüfpunkte"
           >
-            Internsicht
+            Interne Sicht
           </button>
         </div>
         <button

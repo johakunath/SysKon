@@ -9,8 +9,8 @@ import Testfaelle from './Testfaelle.jsx'
 
 const PRIMARY_TABS = [
   ['fragen', 'Fragen & Playbook', 'Fragetexte, Optionshinweise und Sales-Playbook-Texte bearbeiten.'],
-  ['artikel', 'Artikeldatenbank', 'Artikelstamm mit Listenpreisen und Rabattgruppen je Lieferant; DATANORM-Import als Demo-Simulation.'],
-  ['katalog_preise', 'Katalog & Preise', 'Leistungsumfang und Demo-Richtpreise pflegen: Pakettexte, Kundentitel, Preisannahmen.'],
+  ['artikel', 'Artikeldatenbank', 'Artikelstamm mit Listenpreisen und Rabattgruppen je Lieferant; DATANORM-Import als Simulation.'],
+  ['katalog_preise', 'Katalog & Preise', 'Leistungsumfang und Richtpreise pflegen: Pakettexte, Kundentitel, Preisannahmen.'],
   ['regeln', 'Regeln & Annahmen', 'Aktive Entscheidungsregeln einsehen; Governance-Felder verwalten.'],
 ]
 const SECONDARY_TABS = [
@@ -102,20 +102,20 @@ function ArtikelTab({ adminConfig, setAdminConfig, artikel, rabattgruppen, datan
   return (
     <div className="admin-stack">
       <div className="karte">
-        <h3>DATANORM-Import (Demo-Simulation)</h3>
+        <h3>DATANORM-Import (Simulation)</h3>
         <p className="hinweis">
           Simuliert den Upload einer DATANORM-Datei von Hersteller/Großhändler: Listenpreise werden
           überschrieben, neue Artikel ergänzt, Rabattgruppen aktualisiert. Es wird KEINE echte Datei
-          geparst – der Import spielt ein vordefiniertes Demo-Update ein. Aktueller Preisstand: <strong>{datanorm?.preisstand ?? '–'}</strong>
+          geparst – der Import spielt ein vordefiniertes Update ein. Aktueller Preisstand: <strong>{datanorm?.preisstand ?? '–'}</strong>
           {datanorm?.letzterImport ? ` · letzter Import: ${new Date(datanorm.letzterImport).toLocaleString('de-DE')}` : ''}
         </p>
         <div className="zeile">
           <input
             type="file"
-            aria-label="DATANORM-Datei (Demo)"
+            aria-label="DATANORM-Datei"
             onChange={e => setDateiname(e.target.files?.[0]?.name ?? '')}
           />
-          <button className="primaer" onClick={importieren}>DATANORM-Import ausführen (Demo)</button>
+          <button className="primaer" onClick={importieren}>DATANORM-Import ausführen</button>
         </div>
         {importLog ? (
           importLog.unveraendert ? (
@@ -228,7 +228,7 @@ function ArtikelTab({ adminConfig, setAdminConfig, artikel, rabattgruppen, datan
               ))}
             </tbody>
           </table>
-        ) : <p className="hinweis">Noch kein Demo-Import ausgeführt.</p>}
+        ) : <p className="hinweis">Noch kein Import ausgeführt.</p>}
       </div>
     </div>
   )
@@ -247,7 +247,7 @@ function FragenTab({ adminConfig, setAdminConfig, sektionen }) {
 
   return (
     <div className="admin-stack">
-      {/* Demo-Polish: je Sektion einklappbar (natives details, kein aria-expanded),
+      {/* Polish: je Sektion einklappbar (natives details, kein aria-expanded),
           damit die Pflegefläche auf einen Blick scanbar bleibt. */}
       {sektionen.map(sektion => (
         <details key={sektion.id} className="karte admin-akkordeon">
@@ -386,7 +386,7 @@ function GovernanceTab({ adminConfig, setAdminConfig, ergebnis }) {
     <div className="admin-stack">
       <div className="karte">
         <h3>Governance & Sichtbarkeit</h3>
-        <p className="hinweis">Diese Angaben beschreiben lokale Demo-Overrides. Sie ersetzen kein Rollen-, Freigabe- oder Backend-Konzept.</p>
+        <p className="hinweis">Diese Angaben beschreiben lokale Overrides. Sie ersetzen kein Rollen-, Freigabe- oder Backend-Konzept.</p>
         <div className="admin-editor-grid">
           <TextField label="Version" value={adminConfig.governance.versionLabel} onChange={v => setGov('versionLabel', v)} />
           <TextField label="Standard-Datenquelle" value={adminConfig.governance.datenquelleStandard} onChange={v => setGov('datenquelleStandard', v)} />
@@ -462,12 +462,12 @@ function ImportExportTab({ adminConfig, setAdminConfig, resetAdminConfig }) {
     <div className="admin-stack">
       <div className="karte">
         <h3>Import / Export</h3>
-        <p className="hinweis">Speicherort: <code>{ADMIN_STORAGE_KEY}</code>. Exportierte JSON-Dateien sind Demo-Konfigurationen, keine Produktionsfreigabe.</p>
+        <p className="hinweis">Speicherort: <code>{ADMIN_STORAGE_KEY}</code>. Exportierte JSON-Dateien sind Konfigurationen, keine Produktionsfreigabe.</p>
         <div className="zeile">
           <button onClick={() => setText(exportText)}>Aktuelle Konfiguration in Textfeld laden</button>
           <button onClick={herunterladen}>JSON herunterladen</button>
           <button className="primaer" onClick={importieren}>JSON importieren</button>
-          <button onClick={resetAdminConfig}>Auf Demo-Defaults zurücksetzen</button>
+          <button onClick={resetAdminConfig}>Auf Standardwerte zurücksetzen</button>
         </div>
         {meldung ? <p className={meldung.includes('blockiert') ? 'warnbox' : 'okbox'}>{meldung}</p> : null}
         {errors.length ? (
@@ -478,7 +478,7 @@ function ImportExportTab({ adminConfig, setAdminConfig, resetAdminConfig }) {
 
       <div className="karte">
         <h3>Lokaler Reset</h3>
-        <p className="hinweis">Der Reset löscht nur lokale Demo-Overrides im Browser und stellt die Code-Defaults wieder her.</p>
+        <p className="hinweis">Der Reset löscht nur lokale Overrides im Browser und stellt die Code-Defaults wieder her.</p>
         <button onClick={() => setAdminConfig(makeDefaultAdminConfig())}>Defaults anwenden</button>
       </div>
     </div>
@@ -507,7 +507,7 @@ export default function Annahmen({
   return (
     <div className="seite">
       <div className="admin-banner no-print">
-        ⚙ Admin-Bereich · lokale Demo-Konfiguration · Änderungen wirken sofort auf Eingaben, Angebot und Kundenumfang.
+        ⚙ Admin-Bereich · lokale Konfiguration · Änderungen wirken sofort auf Eingaben, Angebot und Kundenumfang.
       </div>
       <div className="karte">
         <div className="druckkopf">
@@ -515,7 +515,7 @@ export default function Annahmen({
             <h2>Admin-Konfiguration & Governance</h2>
             <p className="hinweis">Version: {adminConfig.governance.versionLabel} · Letzte lokale Änderung: {updated}</p>
           </div>
-          <button onClick={resetAdminConfig}>Demo-Defaults</button>
+          <button onClick={resetAdminConfig}>Standardwerte</button>
         </div>
         <div className="tabs-sekundaer admin-tabs no-print">
           {PRIMARY_TABS.map(([id, label]) => (
@@ -542,7 +542,7 @@ export default function Annahmen({
       )}
       {tab === 'katalog_preise' && (
         <>
-          <p className="admin-bereich-label">Preise & Demo-Annahmen</p>
+          <p className="admin-bereich-label">Preise & Annahmen</p>
           <AnnahmenTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} />
           <p className="admin-bereich-label">Katalog & Leistungsumfang</p>
           <KatalogTab adminConfig={adminConfig} setAdminConfig={setAdminConfig} katalog={katalog} />

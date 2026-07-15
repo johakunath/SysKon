@@ -12,7 +12,7 @@ export const ANNAHMEN = {
   jaz_le45: 4.3,             // ≤ 45 °C
   jaz_46_50: 4.0,            // 46–50 °C
   jaz_51_55: 3.7,            // 51–55 °C
-  jaz_56_60: 3.3,            // 56–60 °C (Demo-Referenz, = jaz)
+  jaz_56_60: 3.3,            // 56–60 °C (Referenz, = jaz)
   jaz_61_65: 3.0,            // 61–65 °C
   jaz_66_70: 2.8,            // 66–70 °C
   jaz_gt70: 2.6,             // > 70 °C
@@ -57,11 +57,11 @@ export const ANNAHMEN = {
   f_aufstellung: 0.8,
   f_install: 1.0,
   f_monitoring: 0,
-  f_messkonzept: 0,   // Zählerinfrastruktur: kein BEG-Fördergegenstand (Demo)
+  f_messkonzept: 0,   // Zählerinfrastruktur: kein BEG-Fördergegenstand
   f_fossil: 0,
 
   // Kostenbausteine einmalig (€). Hardware-Preise (WP-Module, Speicher, Schall-
-  // zubehör, MSR, SmartControl) liegen seit SK-102 NICHT mehr hier, sondern als
+  // zubehör, MSR, Regelung) liegen seit SK-102 NICHT mehr hier, sondern als
   // Artikel mit Listenpreis/Rabattgruppe in src/data/artikel.js (CPQ-Demo).
   // Hier bleiben nur Nicht-Katalog-Bausteine (Bau-/Projektleistungen).
   k_hybrid: 25000,
@@ -73,9 +73,9 @@ export const ANNAHMEN = {
   k_einhausung: 35000,
   k_kompakt_container: 120000,
   k_vollcontainer: 280000,
-  k_schallberechnung: 3500,          // €, Schallberechnungsservice Fachplaner Pauschale (Demo, SK-79)
-  f_smartcontrol: 0,                 // kein BEG-Gegenstand (Demo)
-  f_vertrieb_einweisung: 0,          // Vertrieb/Einweisung/Doku: kein Fördergegenstand (Demo, SK-102)
+  k_schallberechnung: 3500,          // €, Schallberechnungsservice Fachplaner Pauschale (SK-79)
+  f_smartcontrol: 0,                 // kein BEG-Gegenstand
+  f_vertrieb_einweisung: 0,          // Vertrieb/Einweisung/Doku: kein Fördergegenstand (SK-102)
 
   // Installation als Einzelkomponenten (SK-102, ersetzt die frühere Pauschale
   // k_install = 60.000 €; Referenzfall 4 Module ohne Demontagen ≈ 59 k€ + Anfahrt).
@@ -83,12 +83,12 @@ export const ANNAHMEN = {
   k_inst_wp_montage_je_modul: 4500,  // Montage je WP-Modul (Fundament-Aufsetzen, Anschluss)
   k_inst_hydraulik_montage: 9000,    // Hydraulische Installation im Heizraum
   k_inst_elektro_montage: 6000,      // Elektromontage (Verkabelung, Anschlussarbeiten)
-  k_inst_kleinmaterial: 4000,        // Montage-Kleinmaterial (Demo-Pauschale)
+  k_inst_kleinmaterial: 4000,        // Montage-Kleinmaterial (Pauschale)
   k_inst_ibn: 4000,                  // Inbetriebnahme inkl. IBN-Protokoll
   k_inst_doku: 1500,                 // Revisions-/Übergabedokumentation
-  k_inst_projektierung: 6500,        // Projektplanung (Demo-Pauschale)
+  k_inst_projektierung: 6500,        // Projektplanung (Pauschale)
   k_inst_einweisung: 1200,           // Einweisung Betreiber/Kunde
-  k_inst_vertrieb: 5000,             // Vertriebs-/Marketingpauschale (Demo)
+  k_inst_vertrieb: 5000,             // Vertriebs-/Marketingpauschale
   k_inst_demontage_gaskessel: 3500,  // nur bei nicht nutzbarem Bestandskessel
   k_inst_demontage_abgas: 2500,      // Demontage Abgasanlage (mit Kessel-Demontage)
   k_inst_demontage_oeltank: 4500,    // Demontage/Stilllegung Öltank (falls vorhanden)
@@ -97,10 +97,10 @@ export const ANNAHMEN = {
   // Fahrstrecke Partner→Projekt-PLZ (Luftlinie × Straßenfaktor), Kosten je km =
   // Fahrzeug-km-Satz + Stundensatz ÷ Ø-Geschwindigkeit; × 2 (hin/zurück) × Fahrten.
   anfahrt_geschwindigkeit_kmh: 60,   // Ø-Geschwindigkeit Montagefahrzeug
-  monteur_stundensatz: 85,           // €/h Handwerker-Stundensatz (Demo)
+  monteur_stundensatz: 85,           // €/h Handwerker-Stundensatz
   anfahrt_km_satz: 0.7,              // €/km Fahrzeugkosten
-  anfahrt_fahrten: 10,               // Anzahl Fahrten (≈ Montagetage, Demo)
-  anfahrt_strassenfaktor: 1.3,       // Luftlinie → Straßenstrecke (Demo)
+  anfahrt_fahrten: 10,               // Anzahl Fahrten (≈ Montagetage)
+  anfahrt_strassenfaktor: 1.3,       // Luftlinie → Straßenstrecke
   anfahrt_fallback_km: 35,           // km einfach, wenn PLZ/Partner fehlen
 
   // Beschaffung/Verkauf (SK-102): Zuschlag auf den Artikel-EK → VK im LV.
@@ -111,14 +111,14 @@ export const ANNAHMEN = {
   // Laufende Kosten & Sonstiges (Service-/Monitoring-Jahrespreise: Artikelstamm)
   contingency: 0.10,
   dq_schwelle: 60,           // % – darunter Status-Deckelung auf gelb (R10)
-  puffer_liter_je_kw: 30,    // L/kW kleinste WP in Kaskade (Demo-Anhaltswert)
+  puffer_liter_je_kw: 30,    // L/kW kleinste WP in Kaskade (Anhaltswert)
 
   // Contracting & Pricing (Demo, WP8/SK-70). Roadmap Stufe 3:
   // Marge NUR auf Arbeitspreis, keine Marge auf CAPEX/Grundpreis.
   vertragslaufzeit_default: 10, // Jahre (10/15/20 wählbar), 10 = AVB-konform
   kapitalkostensatz: 0.06,      // Zinssatz der Grundpreis-Annuität (keine Marge)
   ap_marge: 0.15,               // Marge auf den Arbeitspreis
-  ziel_irr: 0.13,               // Ziel-IRR (Demo)
+  ziel_irr: 0.13,               // Ziel-IRR
   ziel_irr_ambition: 0.15,      // Ambitionsszenario
   // Preisgleitformel-Gewichte (AVBFernwärme §24-orientiert): Festanteil +
   // Index-Gewichte summieren zu 1.
@@ -139,14 +139,14 @@ export const FOERDERUNG_ART_LABEL = 'Bundesförderung für effiziente Gebäude �
 // zuvor lokal gespeicherter Admin-Stand die AVB-Bindung auf 10 Jahre aufweicht.
 export const AVB_LAUFZEIT_JAHRE = 10
 
-// SK-77: WP-Produktstamm Demo-Referenz (nicht editierbar).
-// Dreammaker (fiktiver Hersteller) ist der aktuelle Referenzstand; Alternativhersteller
+// SK-77: WP-Produktstamm Referenz (nicht editierbar).
+// Systemtechnik Süd ist der aktuelle Referenzstand; Alternativhersteller
 // sind nach technischer Prüfung möglich. Felder dokumentieren die Zielstruktur für später
 // ergänzte Produktstammdaten.
 export const WP_PRODUKT_REFERENZ = {
-  hersteller: 'Dreammaker (fiktiver Hersteller)',
-  produktfamilie: 'AeroTherm Luft-Wasser-WP-Kaskade',
-  modell_hinweis: 'Demo-Referenzstand; finales Produkt wird im Angebot festgelegt',
+  hersteller: 'Systemtechnik Süd',
+  produktfamilie: 'Luft-Wasser-WP-Kaskade',
+  modell_hinweis: 'Referenzstand; finales Produkt wird im Angebot festgelegt',
   kuehlmittel: 'R290',
   leistungsklasse_je_modul_kw: 20,
   kaskade_min: 1,
@@ -156,9 +156,9 @@ export const WP_PRODUKT_REFERENZ = {
   vorlauf_max_standard_c: 65,
   vorlauf_max_technisch_c: 70,
   aussentemp_min_c: -20,
-  sizing_methode: 'Leistungsanteil × Heizlast-Proxy ÷ Modulleistung (Demo-Heuristik)',
+  sizing_methode: 'Leistungsanteil × Heizlast-Proxy ÷ Modulleistung (Heuristik)',
   sizing_korridor: '1–6 Module à 20 kW (20–120 kW thermisch)',
-  anmerkung: 'Demo-Referenzstand Dreammaker (fiktiv); Alternativhersteller nach technischer Prüfung möglich.',
+  anmerkung: 'Referenzstand Systemtechnik Süd; Alternativhersteller nach technischer Prüfung möglich.',
 }
 
 // SK-80: Strombeschaffungs-Modell (Dokumentationskonstante, keine Rechenlogik).
@@ -200,7 +200,7 @@ export const ANNAHMEN_META = [
     ['spez_heizlast_vollsaniert', 'spez. Heizlast vollsaniert', 'W/m²'],
     ['kw_je_we', 'Heizlast je Wohneinheit (Notbehelf)', 'kW/WE'],
   ]},
-  { gruppe: 'Schall (Demo-Abschätzung)', felder: [
+  { gruppe: 'Schall (Abschätzung)', felder: [
     ['lw_modul', 'Schallleistungspegel je 20-kW-Modul', 'dB(A)'],
     ['grenze_wr', 'Nachtgrenzwert WR', 'dB(A)'],
     ['grenze_wa', 'Nachtgrenzwert WA', 'dB(A)'],
@@ -210,7 +210,7 @@ export const ANNAHMEN_META = [
     ['abschlag_container', 'Abschlag Container', 'dB'],
     ['schall_toleranz', 'Ampelband um Grenzwert', '±dB'],
   ]},
-  { gruppe: 'Förderung (Demo-Logik, keine Förderberatung)', felder: [
+  { gruppe: 'Förderung (Logik, keine Förderberatung)', felder: [
     ['foerderquote', 'Förderquote auf förderfähigen Anteil', '0–1'],
     ['f_wp', 'Förderanteil WP-Paket', '0–1'],
     ['f_hydraulik', 'Förderanteil Hydraulik', '0–1'],
@@ -233,7 +233,7 @@ export const ANNAHMEN_META = [
     ['k_einhausung', 'Aufstellung Einhausung / Schallschutzzaun', '€'],
     ['k_kompakt_container', 'Aufstellung Kompakt-Container', '€'],
     ['k_vollcontainer', 'Aufstellung Vollcontainer', '€'],
-    ['k_schallberechnung', 'Schallberechnung Fachplaner (Demo-Pauschale)', '€'],
+    ['k_schallberechnung', 'Schallberechnung Fachplaner (Pauschale)', '€'],
   ]},
   { gruppe: 'Installation – Einzelkomponenten (SK-102)', felder: [
     ['k_inst_baustelle', 'Baustelleneinrichtung', '€'],
@@ -250,7 +250,7 @@ export const ANNAHMEN_META = [
     ['k_inst_demontage_abgas', 'Demontage Abgasanlage', '€'],
     ['k_inst_demontage_oeltank', 'Demontage/Stilllegung Öltank', '€'],
   ]},
-  { gruppe: 'Anfahrt (SK-102, Demo-Distanzrechnung)', felder: [
+  { gruppe: 'Anfahrt (SK-102, Distanzrechnung)', felder: [
     ['anfahrt_geschwindigkeit_kmh', 'Ø-Geschwindigkeit', 'km/h'],
     ['monteur_stundensatz', 'Handwerker-Stundensatz', '€/h'],
     ['anfahrt_km_satz', 'Fahrzeugkosten', '€/km'],
@@ -261,16 +261,16 @@ export const ANNAHMEN_META = [
   { gruppe: 'Artikel-Kalkulation & Förderung Sonstiges (SK-102)', felder: [
     ['vk_aufschlag_material', 'VK-Aufschlag auf Artikel-EK (Materialgemeinkosten)', '0–1'],
     ['f_messkonzept', 'Förderanteil Messkonzept (kein BEG-Gegenstand)', '0–1'],
-    ['f_smartcontrol', 'Förderanteil SmartControl (kein BEG-Gegenstand)', '0–1'],
+    ['f_smartcontrol', 'Förderanteil Regelung (kein BEG-Gegenstand)', '0–1'],
     ['f_vertrieb_einweisung', 'Förderanteil Vertrieb/Einweisung/Doku', '0–1'],
   ]},
   { gruppe: 'Laufend & Sonstiges', felder: [
     ['contingency', 'Contingency', '0–1'],
     ['dq_schwelle', 'DQ-Schwelle für Status-Deckelung', '%'],
     ['flaeche_min_container', 'Mindest-Außenfläche für Container', 'm²'],
-    ['puffer_liter_je_kw', 'Puffer: L/kW kleinste WP (Demo-Anhaltswert)', 'L/kW'],
+    ['puffer_liter_je_kw', 'Puffer: L/kW kleinste WP (Anhaltswert)', 'L/kW'],
   ]},
-  { gruppe: 'Contracting & Pricing (Demo)', felder: [
+  { gruppe: 'Contracting & Pricing', felder: [
     ['vertragslaufzeit_default', 'Vertragslaufzeit (Default)', 'Jahre'],
     ['kapitalkostensatz', 'Kapitalkostensatz Grundpreis-Annuität', '0–1'],
     ['ap_marge', 'Marge auf Arbeitspreis', '0–1'],
