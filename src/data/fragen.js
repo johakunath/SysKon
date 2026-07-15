@@ -558,7 +558,7 @@ const PLAYBOOKS = {
   pufferspeicher_vorhanden: {
     warum: 'Ein vorhandener Puffer kann die spätere Hydraulikbewertung beeinflussen.',
     warnsignale: 'Unbekannte Speichergrößen oder Zustände nicht als belastbare Einsparung verkaufen.',
-    einordnung: 'Die Antwort ist informativ; der aktuellen Scope bleibt vorsichtig.',
+    einordnung: 'Die Antwort ist informativ; die Kalkulation bleibt vorsichtig.',
   },
   vorlauftemp_klasse: {
     warum: 'Das Temperaturniveau entscheidet stark über Effizienz und technische Machbarkeit.',

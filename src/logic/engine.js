@@ -177,7 +177,7 @@ function kundenLeistungsumfang(pos, annahmen) {
   }
   if (pos.kunde?.leistungsumfang) return pos.kunde.leistungsumfang
   if (pos.pruefpflichtig) return 'Im Kundengespräch als Prüfpunkt aufnehmen und intern bestätigen lassen.'
-  return 'Im aktuellen aktuellen Scope als Leistungsbaustein enthalten.'
+  return 'Im aktuellen Scope als Leistungsbaustein enthalten.'
 }
 
 function kundenWarntext(warnung) {

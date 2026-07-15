@@ -187,6 +187,12 @@ describe('Screens rendern mit jedem Preset', () => {
     // Internsicht zeigt CAPEX-Detail
     expect(html).toContain('CAPEX-Kennzahlen')
     expect(html).toMatch(/CAPEX|Netto/)
+    // SK-104: Aktions- und Gesprächskarte sind im Druck ausgeblendet (keine
+    // editierbaren Felder/Buttons im PDF), aber im Screen sichtbar.
+    expect(html).toMatch(/aktionen-karte no-print/)
+    expect(html).toMatch(/gespraech-karte no-print/)
+    // Kein mechanisches Scrub-Artefakt (doppelte Wörter)
+    expect(html).not.toMatch(/aktuellen aktuellen/)
     // WP16: Richtpreis-Reframe – kein „kein Angebot/keine Zusage"-Disclaimer mehr
     expect(html).not.toContain('Nicht als Zusage lesen')
     expect(html).not.toMatch(/kein Angebot|Angebotscharakter|kein Kundenangebot/)

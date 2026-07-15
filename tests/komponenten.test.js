@@ -135,4 +135,14 @@ describe('Komponenten-Layer (SK-103)', () => {
     expect(reg.komponente.gewaehlt.id).toBe('regelung_std')
     expect(erg.warnungen.some(w => w.regelId === 'KOMP')).toBe(true)
   })
+
+  it('veraltete Eingabefelder (smartcontrol_variante/monitoring_variante) brechen die Berechnung nicht', () => {
+    // Gespeicherte ältere Angebote können diese entfernten Felder noch enthalten.
+    const alt = { ...referenz, smartcontrol_variante: 'ki', monitoring_variante: 'plus' }
+    const erg = berechne(alt)
+    // Berechnung läuft normal; Regelung/Monitoring fallen auf die günstigste Auto-Wahl zurück.
+    expect(erg.lv.positionen.find(p => p.id === 'regelung_modul').komponente.gewaehlt.id).toBe('regelung_std')
+    expect(erg.lv.positionen.find(p => p.id === 'monitoring_modul').komponente.gewaehlt.id).toBe('mon_basic')
+    expect(Number.isFinite(erg.lv.netto)).toBe(true)
+  })
 })

@@ -14,6 +14,12 @@ const KOMPONENTEN_TYP_LABEL = {
   monitoring: 'Monitoring',
 }
 
+function pruefaufwandLabel(score) {
+  if (score <= 2) return 'niedrig'
+  if (score === 3) return 'mittel'
+  return 'hoch'
+}
+
 function technikText(tk) {
   return [
     tk.leistung_kw ? `${tk.leistung_kw} kW` : null,
@@ -244,7 +250,7 @@ function KomponentenAuswahl({ ergebnis, eingaben, setEingaben }) {
               value={aktuellerWert}
               onChange={e => setEingaben?.({ ...eingaben, ['komponente_' + typ]: e.target.value })}
             >
-              <option value="auto">Automatisch (günstigste): {gewaehlt.modell} – {euro(gewaehlt.vk)}</option>
+              <option value="auto">Automatisch (immer günstigste): {gewaehlt.modell} – {euro(gewaehlt.vk)}</option>
               {kandidaten.filter(k => k.id !== 'auto').map(k => (
                 <option key={k.id} value={k.id}>
                   {k.hersteller} {k.modell} – {euro(k.vk)}{k.delta_vk > 0 ? ` (+${euro(k.delta_vk)})` : ''}{technikText(k.technik) ? ` · ${technikText(k.technik)}` : ''}
@@ -302,7 +308,7 @@ export default function Ergebnis({
 
   // Karten, die in Kundensicht (Sidebar) und Internsicht (Spalten) geteilt werden.
   const aktionenKarte = (
-    <div className="karte aktionen-karte">
+    <div className="karte aktionen-karte no-print">
       <h3>Aktionen</h3>
       <div className="angebot-speichern-reihe">
         <input
@@ -352,7 +358,7 @@ export default function Ergebnis({
   )
 
   const gespraechKarte = (
-    <div className="karte gespraech-karte">
+    <div className="karte gespraech-karte no-print">
       <h3>Gesprächsergebnis</h3>
       <div className="gespraech-felder">
         <div className="gespraech-feld">
@@ -387,11 +393,11 @@ export default function Ergebnis({
 
   const datenlageKarte = (
     <div className="karte">
-      <h3>Datenlage &amp; Prüfaufwand</h3>
+      <h3>Datenvollständigkeit &amp; Prüfaufwand</h3>
       <table className="fakten">
         <tbody>
-          <tr><td>Datenlage</td><td className="r">{ergebnis.dq} %</td></tr>
-          <tr><td>Prüfaufwand</td><td className="r">Score {ergebnis.peScore}/5</td></tr>
+          <tr><td>Datenvollständigkeit</td><td className="r">{ergebnis.dq} %</td></tr>
+          <tr><td>Prüfaufwand</td><td className="r">{pruefaufwandLabel(ergebnis.peScore)} ({ergebnis.peScore}/5)</td></tr>
         </tbody>
       </table>
       <p className="hinweis">{ergebnis.datenlage?.aktion}</p>
@@ -493,7 +499,7 @@ export default function Ergebnis({
               <table className="fakten">
                 <tbody>
                   <tr><td>WP-Deckungsanteil</td><td>{prozent(annahmen.wp_deckungsanteil)} der Wärmemenge, Rest Gas-Bestandskessel</td></tr>
-                  <tr><td>Placement-Empfehlung</td><td>{d.aufstellung_begruendung ?? 'noch nicht ableitbar'}</td></tr>
+                  <tr><td>Aufstellungsempfehlung</td><td>{d.aufstellung_begruendung ?? 'noch nicht ableitbar'}</td></tr>
                   {d.aufstellung_abweichung ? (
                     <tr><td>Aufstell-Abweichung</td><td>
                       Gewählt: {d.aufstellung_abweichung.gewaehlt_label}; empfohlen: {d.aufstellung_abweichung.empfohlen_label}
@@ -519,7 +525,7 @@ export default function Ergebnis({
             <div className="table-scroll">
               <table className="lv">
                 <thead>
-                  <tr><th>Position</th><th>Menge</th><th>Einzel</th><th>Betrag</th><th>förderfähig</th><th>prüfpflichtig</th></tr>
+                  <tr><th>Position</th><th>Menge</th><th>Einzel</th><th>Betrag</th><th>Förderfähig</th><th>Prüfpflichtig</th></tr>
                 </thead>
                 <tbody>
                   {gruppen.map(g => (
