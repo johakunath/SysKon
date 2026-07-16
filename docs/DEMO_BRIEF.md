@@ -1,4 +1,4 @@
-# Demo Brief – SysKon / Passion SmartZero
+# Demo Brief – SysKon
 
 Erfasst Jun 2026. Referenz für zukünftige Agent-Sessions, damit der Demo-Kontext
 nicht neu erarbeitet werden muss.
@@ -7,7 +7,7 @@ nicht neu erarbeitet werden muss.
 
 ## Produkt
 
-**Passion SmartZero Contracting** — Wärmepumpen-Contracting zur Dekarbonisierung
+**Das Pilotprodukt** — Wärmepumpen-Contracting zur Dekarbonisierung
 von kleineren Mehrfamilienhäusern. Technologiepfade:
 - Hybrid (WP + bestehender Gas- oder Ölkessel)
 - Monoenergetisch (WP ersetzt Bestandsheizung vollständig)
@@ -36,7 +36,7 @@ Sales und Management warten.
 
 **Primäres Vorbild**: ein bestehender CPQ-Konfigurator eines Wettbewerbers
 für ähnliche Anwendungsfälle. SysKon soll zeigen, dass dieses Konzept für
-SmartZero umsetzbar ist — ob mit AI-Unterstützung, Eigenentwicklung oder
+das Pilotprodukt umsetzbar ist — ob mit AI-Unterstützung, Eigenentwicklung oder
 einer bestehenden CPQ-Lösung.
 
 ---

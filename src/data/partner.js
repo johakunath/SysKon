@@ -1,6 +1,7 @@
 // Datenebene: Installationspartner (SK-102, Demo). Fiktive Partnerbetriebe
 // mit Standort – Basis der Demo-Anfahrtskalkulation (src/logic/entfernung.js).
-// Hard Rule: keine realen Firmennamen; Städte sind real, Betriebe fiktiv.
+// Reale Partnernamen sind erlaubt (PO, Jul 2026); diese hier bleiben fiktiv,
+// bis der PO echte Namen liefert – nicht erfinden. Städte sind real.
 
 export const INSTALLATIONSPARTNER = [
   { id: 'partner_nord', name: 'Montagepartner Nord (fiktiv, Hamburg)', plz: '20095', lat: 53.55, lon: 10.0 },
