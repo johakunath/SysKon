@@ -15,6 +15,18 @@
 //   { typ:'status', wert }                            'gruen'|'gelb'|'orange'|'rot' oder '@feld';
 //                                                     Engine nimmt immer die schlechteste Stufe.
 // Konfliktauflösung: exclude schlägt require (Engine).
+//
+// `routingGrund` (SK-105): Pflichtfeld für jede Regel, die einen Status
+// SCHLECHTER als 'gruen' setzt. Beantwortet die Sales-Frage „warum bedingt/
+// Sonderfall?", die der Status allein nicht trennt – R10 (dünne Daten) und R06
+// (Schall) landen beide auf gelb/orange, brauchen aber verschiedene Owner.
+//   'daten'          fehlende/unsichere Angabe – keine Aussage über die Eignung
+//   'fachpruefung'   technische Bewertung nötig
+//   'kaufmaennisch'  Vertrags-/Preisrahmen nötig
+//   'produktgrenze'  außerhalb des freigegebenen Standardumfangs
+// Priorität bei mehreren Gründen: siehe GRUND_KATEGORIEN in logic/routing.js.
+// Invariante wird in tests/routing.test.js geprüft.
+//
 //   `ziel` ist normalerweise ein Eingabefeld (z. B. 'aufstellvariante') und sperrt dessen Optionen.
 //   Sonderfall: `ziel:'modul'` ist ein RESERVIERTER Eimer für Modul-Excludes – `wert` nennt dann den
 //   Modulnamen (wie bei require). Die Engine prüft `excluded.modul` und entfernt ein so gesperrtes,
@@ -46,6 +58,7 @@ export const REGELN = [
       { typ: 'status', wert: 'rot' },
       { typ: 'warn', kategorie: 'hinweis', text: 'Mehr als zwei Raumheizkreise: Das Standardpaket unterstützt max. zwei Raumheizkreise (zzgl. TWW-Kreis) – als hydraulischen Sonderfall intern bewerten und Scope separat klären.' },
     ],
+    routingGrund: 'produktgrenze',
     begruendung: 'Das Standardpaket unterstützt maximal zwei Raumheizkreise (exkl. TWW-Kreis) – technischer Sonderfall.',
   },
   {
@@ -67,6 +80,7 @@ export const REGELN = [
       { typ: 'status', wert: 'orange' },
       { typ: 'warn', kategorie: 'engineering', text: 'Innenstadtlage mit kritischer Schallsituation – Fachprüfung erforderlich.' },
     ],
+    routingGrund: 'fachpruefung',
     begruendung: 'Verdichtete Lage plus Schallrisiko ist kein Standardfall.',
   },
   {
@@ -82,6 +96,7 @@ export const REGELN = [
       { typ: 'warn', kategorie: 'engineering', text: 'Elektro-/Netzanschlussprüfung erforderlich (Anschlussleistung unbekannt).' },
       { typ: 'status', wert: 'gelb' },
     ],
+    routingGrund: 'daten',
     begruendung: 'Ohne Netzanschlussdaten kein belastbares Elektro-Paket.',
   },
   {
@@ -100,6 +115,7 @@ export const REGELN = [
       { typ: 'status', wert: 'gelb' },
       { typ: 'warn', kategorie: 'pe', text: 'Datenlage unter 60 % – Richtindikation nur als Gesprächsnotiz nutzbar.' },
     ],
+    routingGrund: 'daten',
     begruendung: 'Status wird bei niedriger Datenqualität mindestens auf gelb gedeckelt.',
   },
   {
@@ -124,6 +140,7 @@ export const REGELN = [
       { feld: 'kessel_nutzbar', op: '=', wert: 'unbekannt' },
     ]},
     dann: { typ: 'status', wert: 'gelb' },
+    routingGrund: 'daten',
     begruendung: 'Bestandskesselzustand unbekannt – interne Klärung nötig.',
   },
   {
@@ -133,12 +150,14 @@ export const REGELN = [
       { typ: 'warn', kategorie: 'foerderung', text: 'Förderfähigkeit unsicher – Förderprüfung vor externer Nutzung der Richtindikation.' },
       { typ: 'status', wert: 'gelb' },
     ],
+    routingGrund: 'daten',
     begruendung: 'Unsichere Förderung verändert das Netto-LV erheblich.',
   },
   {
     id: 'R14',
     wenn: { feld: 'heizlast_geschaetzt', op: '=', wert: true },
     dann: { typ: 'status', wert: 'gelb' },
+    routingGrund: 'daten',
     begruendung: 'Heizlast nur per Proxy geschätzt – Auslegung vorläufig.',
   },
   {
@@ -154,6 +173,7 @@ export const REGELN = [
       { typ: 'status', wert: 'orange' },
       { typ: 'warn', kategorie: 'engineering', text: 'Heizraumgröße oder Zugang problematisch – Container-Variante prüfen oder Fachprüfung einplanen.' },
     ],
+    routingGrund: 'fachpruefung',
     begruendung: 'Fundament/Einhausung hängen stark vom Heizraum ab; Container entlasten ihn.',
   },
   {
@@ -163,6 +183,7 @@ export const REGELN = [
       { typ: 'status', wert: 'rot' },
       { typ: 'warn', kategorie: 'hinweis', text: 'Keine Außenfläche verfügbar: Das Systempaket setzt Außenaufstellung der Wärmepumpe voraus – kein Standardfit; Alternativpfad prüfen oder Sonderfall markieren.' },
     ],
+    routingGrund: 'produktgrenze',
     begruendung: 'Das Systempaket setzt Außenaufstellung voraus – ohne Außenfläche keine Standardlösung.',
   },
   {
@@ -172,12 +193,14 @@ export const REGELN = [
       { typ: 'status', wert: 'rot' },
       { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad außerhalb des Standards: Nur der Hybrid-Pfad (Luft-Wasser-WP + Gas-Bestandskessel) ist aktuell standardfähig – als Sonderfall intern bewerten oder Roadmap-Termin nennen.' },
     ],
+    routingGrund: 'produktgrenze',
     begruendung: 'Technologiepfad außerhalb des aktuellen Standards (monoenergetisch ist Roadmap-Platzhalter).',
   },
   {
     id: 'R18',
     wenn: { feld: 'schall_ampel_aktiv', op: 'in', wert: ['gelb', 'orange'] },
     dann: { typ: 'status', wert: '@schall_status' },
+    routingGrund: 'fachpruefung',
     begruendung: 'Schall-Ampel: Lp = LW_Kaskade − 20·log10(r) − 8 − Abschlag; gelb = prüfpflichtig, orange = Fachprüfung. Abschätzung, keine rechtsverbindliche Schallberechnung.',
   },
   {
@@ -187,6 +210,7 @@ export const REGELN = [
       { typ: 'status', wert: 'rot' },
       { typ: 'warn', kategorie: 'hinweis', text: 'Versorgung mehrerer Gebäude ist kein Standardfit – als Sonderfall intern bewerten und Scope separat klären.' },
     ],
+    routingGrund: 'produktgrenze',
     begruendung: 'Das Systempaket versorgt genau ein Gebäude; Mehr-Gebäude-Versorgung ist technischer Sonderfall (Robert: Hard Blocker).',
   },
   {
@@ -196,6 +220,7 @@ export const REGELN = [
       { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur 66–70 °C: nur mit modernem R290-/Hochtemperatur-Setup standardfähig – interne Klärung der Auslegung.' },
       { typ: 'status', wert: 'gelb' },
     ],
+    routingGrund: 'fachpruefung',
     begruendung: 'Moderne R290-Luft/Wasser-WP erreichen bis 70 °C; im Hybrid deckt der Bestandskessel die Spitzen. Standardfähig mit interner Klärung statt Fachprüfung.',
   },
   {
@@ -205,6 +230,7 @@ export const REGELN = [
       { typ: 'warn', kategorie: 'engineering', text: 'Vorlauftemperatur über 70 °C – außerhalb des Standard-Hybridkorridors, Fachprüfung erforderlich.' },
       { typ: 'status', wert: 'orange' },
     ],
+    routingGrund: 'fachpruefung',
     begruendung: 'Über 70 °C ist Sonderfall jenseits gängiger R290-Hybrid-Auslegung – Fachprüfung erforderlich.',
   },
   {
@@ -214,6 +240,7 @@ export const REGELN = [
       { typ: 'warn', kategorie: 'hinweis', text: 'Technologiepfad noch offen: Berechnung nutzt den Hybrid-Standardpfad als aktuell günstigste modellierte Option.' },
       { typ: 'status', wert: 'gelb' },
     ],
+    routingGrund: 'daten',
     begruendung: 'Berechnung setzt unentschieden → hybrid; Hinweis damit Gesprächspartner den angenommenen Pfad sehen.',
   },
   {
@@ -223,6 +250,7 @@ export const REGELN = [
       { typ: 'warn', kategorie: 'hinweis', text: 'Laufzeit über 10 Jahre setzt Individualvertrag voraus (AVB-Fernwärme). Das Angebot zeigt beide Varianten (AVB 10 J + Individual). Keine Rechtsprüfung.' },
       { typ: 'status', wert: 'gelb' },
     ],
+    routingGrund: 'kaufmaennisch',
     begruendung: 'AVB-Fernwärme begrenzt Standardverträge auf 10 Jahre; 15/20 Jahre sind nur im Individualvertrag möglich – das Angebot zeigt daher beide Varianten.',
   },
 ]

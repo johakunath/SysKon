@@ -466,6 +466,21 @@ details summary:hover { color: var(--akzent); }
 .komponenten-feld select { width: 100%; }
 .komponenten-hinweis { display: block; margin-top: 4px; color: var(--muted); }
 .komponenten-warn { color: var(--st-rot); margin-top: 4px; }
+/* SK-105: Routing-Badge (Standard/Bedingt/Sonderfall) – Sales-Einordnung
+   über der internen Status-Ampel. */
+.routing-badge {
+  display: inline-block; flex: none;
+  border-radius: var(--radius-pill); padding: 2px 9px;
+  font-size: var(--fs-2xs); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border: 1px solid var(--st-unbekannt); color: var(--muted);
+}
+.routing-badge small { font-weight: 500; text-transform: none; letter-spacing: 0; }
+.routing-badge.routing-standard { border-color: var(--ok-rand); color: var(--st-gruen); background: var(--ok-bg); }
+.routing-badge.routing-bedingt { border-color: var(--warn-rand); color: var(--st-orange); background: var(--warn-bg); }
+.routing-badge.routing-sonderfall { border-color: var(--st-rot); color: var(--st-rot); background: var(--st-rot-hell); }
+.routing-zeile { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: 8px; flex-wrap: wrap; }
+
 .status-karte { border-left: 4px solid var(--akzent); }
 .status-karte.status-gruen { border-left-color: var(--st-gruen); }
 .status-karte.status-gelb { border-left-color: var(--st-gelb); }

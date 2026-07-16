@@ -21,6 +21,7 @@ import { ableiten, aufstellungEmpfehlung, zahl } from './calc.js'
 import { artikelKalkulation } from './artikelPreise.js'
 import { komponentenAuswahl } from './komponenten.js'
 import { gruppiereNachGruppe } from './lv.js'
+import { routingErgebnis } from './routing.js'
 import { contractingVarianten } from './pricing.js'
 
 export const STATUS_ORDER = ['gruen', 'gelb', 'orange', 'rot']
@@ -316,7 +317,8 @@ export function berechne(eingaben, opts = {}) {
         } else if (w.typ === 'status') {
           const wert = deref(w.wert, ctx, annahmen)
           if (STATUS_ORDER.includes(wert)) {
-            statusQuellen.push({ regelId: regel.id, wert, begruendung: regel.begruendung })
+            statusQuellen.push({ regelId: regel.id, wert, begruendung: regel.begruendung,
+              routingGrund: regel.routingGrund ?? null })
             status = schlechter(status, wert)
           }
         }
@@ -339,12 +341,18 @@ export function berechne(eingaben, opts = {}) {
   // Gewählte Aufstellvariante gesperrt oder im Placement-Korridor blockiert → Fachprüfung (SYS)
   const variantenSperre = (excluded.aufstellvariante ??= new Set())
   const placementBlocker = derived.aufstellung_blockierte_varianten?.[eingaben.aufstellvariante] ?? []
+  // SYS ist ein Engine-Sonderfall ohne Regel-Eintrag: die Routing-Quelle wird
+  // hier separat gehalten, damit statusQuellen (Regel-Nachweis) unverändert
+  // nur echte Regeln enthält (SK-105).
+  let sysQuelle = null
   if (eingaben.aufstellvariante && (variantenSperre.has(eingaben.aufstellvariante) || placementBlocker.length > 0)) {
     variantenSperre.add(eingaben.aufstellvariante)
     status = schlechter(status, 'orange')
     const blockerText = placementBlocker.length ? ` Gründe: ${placementBlocker.join('; ')}.` : ''
     warnungen.push({ regelId: 'SYS', kategorie: 'engineering',
       text: `Die gewählte Aufstellvariante ist im aktuellen Korridor blockiert – Variante wechseln oder Fachprüfung einplanen.${blockerText}` })
+    sysQuelle = { regelId: 'SYS', wert: 'orange', routingGrund: 'fachpruefung',
+      begruendung: 'Gewählte Aufstellvariante im aktuellen Korridor blockiert – Fachprüfung nötig.' }
   }
 
   // Jede Warnung mit dem korrelierten Status aus statusQuellen anreichern.
@@ -491,6 +499,15 @@ export function berechne(eingaben, opts = {}) {
   const datenlage = datenlageEinordnung(dq, fehlendeDaten, annahmen.dq_schwelle)
   const statusKorridor = STATUS_KORRIDOR[status] ?? STATUS_KORRIDOR.unbekannt
 
+  // SK-105: Sales-facing Einordnung (Standard/Bedingt/Sonderfall) als reine
+  // Ableitung aus Status + Status-Quellen. Der Status-Layer bleibt die interne
+  // Guardrail und ändert sein Verhalten nicht.
+  const routing = routingErgebnis({
+    status,
+    quellen: sysQuelle ? [...statusQuellen, sysQuelle] : statusQuellen,
+    fehlendeDaten,
+  })
+
   // Contracting-/Pricing-Layer (WP8): aus interner Kostensicht GP/AP/Preisgleit-
   // formel ableiten. `pricing.kunde` ist kundensicher, `pricing.intern` trägt die
   // Commercial-Interna (Marge, CAPEX, Zielrendite/IRR) hinter dem Sales-Toggle.
@@ -510,7 +527,7 @@ export function berechne(eingaben, opts = {}) {
 
   return {
     derived, dq, status, statusLabel: STATUS_LABEL[status], statusQuellen,
-    statusKorridor, datenlage, kundenScope,
+    statusKorridor, routing, datenlage, kundenScope,
     warnungen, gefeuert, konflikte,
     required: [...required],
     excluded: Object.fromEntries(Object.entries(excluded).map(([k, v]) => [k, [...v]])),

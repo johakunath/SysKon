@@ -4,6 +4,7 @@ import { FOERDERUNG_ART_LABEL } from '../data/annahmen.js'
 import { euro, num, prozent, VARIANTEN_NAME, korridorTitel } from './format.js'
 import { CONTRACTING_DEMO_HINWEIS } from '../data/texte.js'
 import Ampel from '../components/Ampel.jsx'
+import RoutingBadge from '../components/RoutingBadge.jsx'
 import ScopeListe from '../components/ScopeListe.jsx'
 
 // Anzeige-Labels der Komponenten-Typen (Reihenfolge folgt dem Katalog).
@@ -346,6 +347,16 @@ export default function Ergebnis({
 
   const statusKarte = (
     <div className={`karte status-karte status-${ergebnis.status ?? 'unbekannt'}`}>
+      {/* SK-105: Routing führt als Sales-Einordnung; der 4-stufige Status
+          bleibt darunter als interne Guardrail sichtbar. */}
+      <div className="routing-zeile">
+        <RoutingBadge routing={ergebnis.routing} istIntern={!istKunde} />
+        {!istKunde && ergebnis.routing?.gruende?.length > 0 && (
+          <span className="hinweis">
+            Regel {ergebnis.routing.gruende.map(g => g.regelId).join(', ')}
+          </span>
+        )}
+      </div>
       <div className="status-zeile">
         <Ampel status={ergebnis.status} groesse="gross" />
         <div>
@@ -353,7 +364,9 @@ export default function Ergebnis({
           <div className="hinweis">{summaryDetail}</div>
         </div>
       </div>
-      <p className="summary-aktion">{summaryAktion}</p>
+      <p className="summary-aktion">
+        {istKunde ? summaryAktion : ergebnis.routing?.naechsteAktion ?? summaryAktion}
+      </p>
     </div>
   )
 

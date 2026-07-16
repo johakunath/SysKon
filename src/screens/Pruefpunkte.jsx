@@ -1,5 +1,6 @@
 import React from 'react'
 import { euro, num, VARIANTEN_NAME } from './format.js'
+import { GRUND_META } from '../logic/routing.js'
 import Ampel from '../components/Ampel.jsx'
 
 // Interner Zwischenschritt zwischen "Angebot erstellen" und "Angebot":
@@ -25,7 +26,11 @@ export default function Pruefpunkte({ eingaben, ergebnis }) {
               <summary>Regel-Nachweis ({ergebnis.statusQuellen.length})</summary>
               <ul className="warnliste">
                 {ergebnis.statusQuellen.map((q, i) => (
-                  <li key={i}><strong>{q.regelId} → {q.wert}</strong>: {q.begruendung}</li>
+                  <li key={i}>
+                    <strong>{q.regelId} → {q.wert}</strong>
+                    {q.routingGrund ? ` (${GRUND_META[q.routingGrund]?.label ?? q.routingGrund})` : ''}
+                    : {q.begruendung}
+                  </li>
                 ))}
               </ul>
             </details>

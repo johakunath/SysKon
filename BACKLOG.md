@@ -48,9 +48,24 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 | 2 | SK-102 Katalog- & Kostendatenbank (CPQ-Demo) | Artikelstamm mit Rabattgruppen + simulierter DATANORM-Import, EK/VK-Kette im LV, Installations-Einzelpositionen, Anfahrt aus PLZ-Demo-Distanz, Service als Vertragsartikel (OpEx) | – | P1 | XL | Done |
 | 3 | SK-103 Offer-Config-Workflow-Bundle | Monitoring-Merge, Prüfpunkte-Nav-Step, AVB-Dual-Offer (15/20 J), Komponenten-Layer Phase 1 (WP+Speicher), Vendor-Scrub | SK-102 | P1 | XL | Done |
 | 4 | SK-104 Angebotsseite-Redesign & Komponenten-Layer Phase 2 | Angebotsseite 3-Spalten-Layout (Rahmendaten links, Auswahl mittig, Vorschau rechts ab 50 %), Komponenten-Typen Regelung + Monitoring, „Demo"- und Platzhalter-Namen aus der UI | SK-103 | P1 | L | Done |
-| 5 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
+| 5 | SK-105 Routing-Layer Standard/Bedingt/Sonderfall | Sales-facing Einordnung als Ableitung aus dem Status-Layer, inkl. Grundkategorie (Daten vs. Fachprüfung vs. Kaufmännisch vs. Produktgrenze) und nächster Aktion | – | P1 | S | Done |
+| 6 | SK-106 Strukturierte Kalkulations-Übergabe | Versionierter Export (JSON/CSV) als Eingabekontrakt für die bestehende Excel-Kalkulation + Entscheidungsprotokoll (gefeuerte Regeln, Status-Quellen, Konflikte) | SK-105; **PO-Entscheid nötig** (s. u.) | P1 | M | Blocked |
+| 7 | SK-107 Engine-Entkopplung + Regelversion | Drei Hard-Codings aus `engine.js` lösen (R11-Lookup, SYS-Sonderfall, Hybrid-Texte in `kundenScopeBauen`) + `REGELSATZ_VERSION` stempeln | – | P2 | S | Todo |
+| 8 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
 
 ## Aktueller Fokus
+
+SK-105 ist umgesetzt: Routing-Layer Standard/Bedingt/Sonderfall (`src/logic/routing.js`) als **Ableitung** aus dem bestehenden 4-Status-Layer — der Status bleibt unverändert die interne Guardrail. Kern ist die Grundkategorie (`daten` | `fachpruefung` | `kaufmaennisch` | `produktgrenze`), die der Status allein nicht trennt: R10 (dünne Daten) und R06 (Schall) landen beide auf gelb/orange, brauchen aber verschiedene Owner und nächste Schritte. Die Kategorie ist als `routingGrund` an der Regel hinterlegt (Daten, nicht Engine-Logik); `tests/routing.test.js` erzwingt die Invariante für neue Regeln. Sichtbar als Badge in Live-Preview und Angebotsseite; die Grundkategorie und der Regel-Nachweis bleiben der Internsicht vorbehalten.
+
+### Offener PO-Entscheid (blockt SK-106)
+
+**Ist Excel oder SysKon die Rechen-Quelle der Wahrheit für den Pilot?** SysKon rechnet GP/AP/IRR bereits selbst (`src/logic/pricing.js`, iterative Marge bis Ziel-IRR). Ein Excel-Handover-Kontrakt setzt voraus, dass diese Frage entschieden ist — beides gleichzeitig kann nicht Quelle der Wahrheit sein.
+
+### Bewusst nicht umgesetzt (ChatGPT-Input Jul 2026)
+
+- **Generic-Core-/Produkt-Pack-Layer für spätere Produkte (z. B. BHKW):** abgelehnt. Die Engine ist über Parameter-Injection (`opts.regeln/katalog/annahmen/fragen/artikel/komponenten`) bereits generisch; ein Produkt-Pack-Layer für ein nicht freigegebenes Produkt wäre spekulative Abstraktion mit dauerhafter Pflegelast. Stattdessen: SK-107 löst die drei realen Hard-Codings.
+- **Analytics-/BI-Datenschicht:** zurückgestellt, kein Pilotnutzen, bräuchte Persistenz.
+- **Namensgebung:** Der Input benennt durchgehend reale Firmen-/Produktnamen und fordert „TSZ-spezifische Logik". Die Hard Rule aus `CLAUDE.md` (keine realen Vendor-/Firmennamen im Repo) gilt weiter; Produktregelsätze bekommen bei Bedarf generische IDs.
 
 SK-104 ist umgesetzt: (1) Angebotsseite (intern) als 3-Spalten-Layout — Rahmendaten links (Gebäudeparameter, Status-Ampel, „Warum dieser Status", Datenlage), Bearbeitung/Auswahl mittig (Empfehlung + Komponenten-Auswahl), Angebotsvorschau/Ergebnisse rechts ab 50 % (LV, CAPEX, Pricing, Energie, OPEX, dann Aktionen + Gesprächsergebnis); Kundensicht bleibt 2-spaltig; (2) Komponenten-Layer um Typen Regelung + Monitoring erweitert (SmartControl-/Monitoring-Pakete in den Komponenten-Layer überführt, Varianten-Fragen entfallen); (3) „Demo" aus allen sichtbaren UI-Texten entfernt (Kommentare/Konstanten-Namen bleiben); (4) Herstellernamen bereinigt: „Dreammaker"→„Systemtechnik Süd" (realer Hersteller), „SmartZero" entfernt (interner Produktname), Suffixe „(fiktiver Hersteller)"/„(Demo-Referenz)" raus. Davor: SK-103 (Monitoring-Merge, Prüfpunkte-Nav, AVB-Dual-Offer, Komponenten-Layer Phase 1). Details: `docs/BACKLOG_WORK_PACKAGES.md`. SK-72 bleibt geblockt.
 
