@@ -5,6 +5,7 @@ import { FOERDERUNG_ART_LABEL } from '../data/annahmen.js'
 import { pruefeBedingung } from '../logic/engine.js'
 import { num, euro, VARIANTEN_NAME, korridorTitel, kundenPreviewText } from './format.js'
 import Ampel from '../components/Ampel.jsx'
+import RoutingBadge from '../components/RoutingBadge.jsx'
 
 const TECHNOLOGIEPFAD_PREVIEW = {
   hybrid: 'Hybrid',
@@ -268,10 +269,15 @@ function AngebotSnapshot({ ergebnis }) {
   )
 }
 
-function StatusUndOffenePunkte({ ergebnis, punkte }) {
+function StatusUndOffenePunkte({ ergebnis, punkte, istIntern = false }) {
   return (
     <div className="preview-block status-block" id="offene-punkte-block">
       <h4>Offene Punkte</h4>
+      {/* SK-105: Routing als Sales-Einordnung; Ampel/Status bleiben darunter. */}
+      <div className="routing-zeile">
+        <RoutingBadge routing={ergebnis.routing} istIntern={istIntern} />
+        <span className="hinweis">{kundenPreviewText(ergebnis.routing?.naechsteAktion)}</span>
+      </div>
       <div className="status-zeile kompakt">
         <Ampel status={ergebnis.status} groesse="klein" />
         <div>
@@ -476,7 +482,7 @@ export default function Konfiguration({ eingaben, setEingaben, annahmen, ergebni
             <UmfangsVorschau scope={scope} lvPositionen={ergebnis.lv.positionen} lv={ergebnis.lv} istIntern={sichtModus === 'intern'} />
           </div>
 
-          <StatusUndOffenePunkte ergebnis={ergebnis} punkte={offenePunkteKombiniert} />
+          <StatusUndOffenePunkte ergebnis={ergebnis} punkte={offenePunkteKombiniert} istIntern={sichtModus === 'intern'} />
         </div>
       </aside>
     </div>

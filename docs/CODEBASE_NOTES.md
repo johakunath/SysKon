@@ -26,6 +26,7 @@ Token-sparsame Orientierung für Agenten. Für Details nur die verlinkten Dateie
 
 - Gesamtstatus: `src/logic/engine.js` berechnet `ergebnis.status` aus `src/data/regeln.js` plus SYS-Sonderfall, wenn die gewählte Aufstellvariante gesperrt ist.
 - Status-Reihenfolge: `gruen < gelb < orange < rot`; die Engine behält immer den schlechtesten Status.
+- Routing (SK-105): `src/logic/routing.js` leitet die Sales-Einordnung `standard|bedingt|sonderfall` aus Status + Status-Quellen ab — reine **Ableitung**, keine zweite Wahrheit. Begründet wird nur mit Quellen auf der **finalen** Statusstufe. Neue Regeln mit Status schlechter als `gruen` brauchen ein `routingGrund` (Invariante in `tests/routing.test.js`). Der Engine-Sonderfall `SYS` hat keinen Regel-Eintrag und trägt seine Routing-Quelle separat, damit `statusQuellen` nur echte Regeln enthält.
 - Datenqualität: `dqScore()` nutzt sichtbare Pflichtfragen aus `src/data/fragen.js`; `unbekannt` zählt nicht als beantwortet.
 - Deferred Surfaces: `src/screens/Handover.jsx` ist **bewusst zurückgestellt** – nur über Tests gerendert, im sichtbaren Demo-Fluss nicht geroutet (kein App-Tab). Bei UI-Refactors mitziehen, aber nicht „aufräumen“/löschen, bis die Entscheidung revidiert wird (Review A5).
 - Förderlogik: `foerderfaehig` (engine.js) rechnet bewusst auf der Zwischensumme OHNE Contingency; die Förderung wird vom Brutto abgezogen → Contingency ist nicht förderfähig (konservativ, Review C3).
