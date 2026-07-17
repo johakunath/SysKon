@@ -54,6 +54,33 @@ describe('routingErgebnis', () => {
     expect(r.grundKategorie).toBeNull()
   })
 
+  it('Standard ohne PE-Warnungen: generischer Aktionstext', () => {
+    const r = routingErgebnis({ status: 'gruen', quellen: [], warnungen: [] })
+    expect(r.naechsteAktion).toContain('Standardpfad')
+    expect(r.naechsteAktion).not.toContain('Prüfpunkt')
+    expect(r.pruefpunktCount).toBe(0)
+  })
+
+  it('Standard mit PE-Warnungen: Prüfpunktanzahl in Aktion sichtbar', () => {
+    const warnungen = [
+      { regelId: 'R01', kategorie: 'pe', status: null },
+      { regelId: 'R99', kategorie: 'foerderung', status: null },
+    ]
+    const r = routingErgebnis({ status: 'gruen', quellen: [], warnungen })
+    expect(r.pruefpunktCount).toBe(1)
+    expect(r.naechsteAktion).toContain('1 interne')
+    expect(r.naechsteAktion).toContain('Prüfpunkt')
+  })
+
+  it('Förder- und Hinweis-Warnungen zählen nicht als Prüfpunkte', () => {
+    const warnungen = [
+      { regelId: 'R02', kategorie: 'foerderung', status: null },
+      { regelId: 'R09', kategorie: 'hinweis', status: null },
+    ]
+    const r = routingErgebnis({ status: 'gruen', quellen: [], warnungen })
+    expect(r.pruefpunktCount).toBe(0)
+  })
+
   it('rot wird Sonderfall', () => {
     const r = routingErgebnis({
       status: 'rot',

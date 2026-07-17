@@ -67,8 +67,16 @@ export const ROUTING_META = {
   },
 }
 
+// PE/Engineering-Warnungen (R01, R02 …) sind Teil jedes Standard-Hybrid-Falls.
+// Sie degradieren die Routing-Klasse NICHT — das würde `standard` unerreichbar
+// machen, da R01 auf jeden Hybrid-Fall feuert und Hybrid der einzige
+// standardfähige Pfad ist. Stattdessen macht `naechsteAktion` die laufenden
+// Prüfpunkte für Sales sichtbar, ohne die Einordnung selbst zu ändern.
 const AKTION = {
-  standard: 'Im Standardpfad weiterarbeiten; Annahmen im Gespräch sichtbar halten.',
+  standard: (pruefpunktCount = 0) =>
+    pruefpunktCount > 0
+      ? `Im Standardpfad weiterarbeiten; ${pruefpunktCount} interne Prüfpunkt${pruefpunktCount === 1 ? '' : 'e'} beachten.`
+      : 'Im Standardpfad weiterarbeiten; Annahmen im Gespräch sichtbar halten.',
   bedingt: {
     daten: 'Offene Pflichtdaten einsammeln und danach erneut einordnen.',
     fachpruefung: 'Fachprüfung einplanen; Ergebnis erst danach extern verwenden.',
@@ -81,8 +89,8 @@ const AKTION = {
   },
 }
 
-function naechsteAktion(klasse, grundKategorie) {
-  if (klasse === 'standard') return AKTION.standard
+function naechsteAktion(klasse, grundKategorie, pruefpunktCount = 0) {
+  if (klasse === 'standard') return AKTION.standard(pruefpunktCount)
   const je = AKTION[klasse]
   if (!je) return 'Konfiguration vervollständigen und anschließend erneut einordnen.'
   return je[grundKategorie] ?? je.fallback
@@ -107,9 +115,14 @@ function staerksteKategorie(gruende) {
  * @param {string} args.status         Finaler Status der Engine.
  * @param {Array}  args.quellen        Status-Quellen inkl. `routingGrund` (SYS eingeschlossen).
  * @param {Array}  args.fehlendeDaten  Offene Pflichtfragen ({ id, sektion, label, dq }).
+ * @param {Array}  args.warnungen      Engine-Warnungen ({ regelId, kategorie, status }).
+ *                                     Warn-only PE/Engineering-Regeln (R01, R02 …) degradieren
+ *                                     die Routing-Klasse nicht, werden aber als `pruefpunktCount`
+ *                                     im Ergebnis mitgeführt, damit die `naechsteAktion` sie
+ *                                     für Sales sichtbar machen kann.
  * @returns {object} routing
  */
-export function routingErgebnis({ status, quellen = [], fehlendeDaten = [] }) {
+export function routingErgebnis({ status, quellen = [], fehlendeDaten = [], warnungen = [] }) {
   const klasse = ROUTING_KLASSE_JE_STATUS[status] ?? null
   const meta = ROUTING_META[klasse] ?? ROUTING_META.unbekannt
 
@@ -120,6 +133,12 @@ export function routingErgebnis({ status, quellen = [], fehlendeDaten = [] }) {
   }))
   const grundKategorie = klasse === 'standard' ? null : staerksteKategorie(gruende)
 
+  // Nur intern relevante Warnkategorien zählen; Förderwarnungen und reine
+  // Hinweise betreffen keinen internen Prüfverantwortlichen.
+  const pruefpunktCount = warnungen.filter(
+    w => w.kategorie === 'pe' || w.kategorie === 'engineering'
+  ).length
+
   return {
     klasse,
     titel: meta.titel,
@@ -127,7 +146,8 @@ export function routingErgebnis({ status, quellen = [], fehlendeDaten = [] }) {
     grundKategorie,
     grundLabel: grundKategorie ? GRUND_META[grundKategorie].label : null,
     gruende,
-    naechsteAktion: naechsteAktion(klasse, grundKategorie),
+    pruefpunktCount,
+    naechsteAktion: naechsteAktion(klasse, grundKategorie, pruefpunktCount),
     offeneDaten: fehlendeDaten.slice().sort((a, b) => b.dq - a.dq).slice(0, 5),
   }
 }

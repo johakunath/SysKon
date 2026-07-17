@@ -506,6 +506,7 @@ export function berechne(eingaben, opts = {}) {
     status,
     quellen: sysQuelle ? [...statusQuellen, sysQuelle] : statusQuellen,
     fehlendeDaten,
+    warnungen,
   })
 
   // Contracting-/Pricing-Layer (WP8): aus interner Kostensicht GP/AP/Preisgleit-
