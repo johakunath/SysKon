@@ -26,4 +26,4 @@ Erstellungsdatum: 2026-07-20. Basis: Top-10-Erkenntnisse aus einem WP-Seminar (C
 
 ## Kernsatz
 
-„Erfolg = Objektselektion + niedrige VL-Temp + intelligentes WW + Stromkostenoptimierung + Monitoring" — deckt sich mit dem bestehenden Smart-Zero-/Status-Ansatz. SK-109..112 stärken genau diese Achsen.
+„Erfolg = Objektselektion + niedrige VL-Temp + intelligentes WW + Stromkostenoptimierung + Monitoring" — deckt sich mit dem bestehenden Systempaket-/Status-Ansatz. SK-109..112 stärken genau diese Achsen.
