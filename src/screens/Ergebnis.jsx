@@ -240,6 +240,7 @@ function KomponentenAuswahl({ ergebnis, eingaben, setEingaben }) {
     <div className="karte">
       <h3>Komponenten-Auswahl</h3>
       <p className="hinweis">Die Engine wählt je Typ die günstigste geeignete Komponente. Eine Auswahl hier überschreibt die Position im LV und die Preisberechnung live.</p>
+      <p className="hinweis"><strong>Monitoring ist Pflichtbaustein</strong> – nicht als optionale Ergänzung positionieren. Das Systempaket ist ein energieoptimiertes Wärmesystem; JAZ- und Betriebsdaten sind die Grundlage für Effizienzversprechen und Vertragserfüllung.</p>
       {Object.entries(ergebnis.komponentenAuswahl).map(([typ, auswahl]) => {
         const { gewaehlt, kandidaten, ueberschrieben, ungueltigeWahl } = auswahl
         const aktuellerWert = eingaben?.['komponente_' + typ] ?? 'auto'
@@ -664,9 +665,18 @@ export default function Ergebnis({
                   <tr><td>Gas Bestandskessel (η {annahmen.kessel_eta})</td><td className="r">{num(ergebnis.energie.gas_mwh)} MWh/a · {euro(ergebnis.energie.kosten_gas)}</td></tr>
                   <tr><td>WP-Volllaststunden</td><td className="r">{num(d.wp_volllaststunden)} h/a</td></tr>
                   <tr><td>Wärmekostenindikation</td><td className="r">{num(ergebnis.kennzahlen.waermekosten_mwh)} €/MWh</td></tr>
+                  {d.vorlauftemp_potenzial && (
+                    <tr className="hinweis-zeile">
+                      <td>VL-Temp.-Potenzial (→ ≤ {d.vorlauftemp_potenzial.klasse} °C)</td>
+                      <td className="r">JAZ +{num(d.vorlauftemp_potenzial.delta, 1)} (Demo)</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             ) : <p className="hinweis">Kein Wärmebedarf ableitbar – Verbrauch oder Fläche erfassen.</p>}
+            {d.vorlauftemp_potenzial && (
+              <p className="hinweis">VL-Potenzial: Bei Absenkung auf {d.vorlauftemp_potenzial.klasse} °C steigt die JAZ von {num(d.vorlauftemp_potenzial.jazAktuell, 1)} auf {num(d.vorlauftemp_potenzial.jazNiedrig, 1)} (Demo-Annahme). Heizkurve prüfen und optimieren, bevor Heizkörper getauscht werden.</p>
+            )}
           </div>
 
           <div className="karte">

@@ -360,6 +360,18 @@ export function ableiten(e, a) {
     wp_volllaststunden: energie && wp.wp_kw ? Math.round((energie.wp_waerme * 1000) / wp.wp_kw) : null,
     // Puffer-Sizing: Richtwert auf Basis kleinster WP-Einheit in homogener Kaskade
     puffer_empfehlung_liter: a.puffer_liter_je_kw * a.wp_modul_kw,
+    // VL-Potenzial (WP17/W2): JAZ-Gewinn bei einer Klasse niedrigerer VL-Temperatur.
+    // Zeigt den Effizienz-Hebel ohne neue Physik — bestehende resolveJaz-Klassen reichen.
+    vorlauftemp_potenzial: (() => {
+      const VL_STUFUNG = ['<=45', '46-50', '51-55', '56-60', '61-65', '66-70', '>70']
+      const aktuelleKlasse = e.vorlauftemp_klasse
+      const idx = VL_STUFUNG.indexOf(aktuelleKlasse)
+      if (idx <= 0) return null
+      const jazAktuell = resolveJaz(a, aktuelleKlasse)
+      const jazNiedrig = resolveJaz(a, VL_STUFUNG[idx - 1])
+      const delta = jazNiedrig - jazAktuell
+      return delta > 0 ? { jazAktuell, jazNiedrig, delta: Math.round(delta * 10) / 10, klasse: VL_STUFUNG[idx - 1] } : null
+    })(),
     ...anfahrtAbleitung(e, a),
   }
 }

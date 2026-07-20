@@ -104,6 +104,20 @@ export const KATALOG = [
               leistungsumfang: 'Zentrale Warmwasserbereitung im Durchflussbetrieb mit Puffer; hygienisch geprüfte Lösung ohne stehenden Warmwasserinhalt.',
             } },
         ]},
+      { wert: 'wohnungsstation', name: 'Wohnungsstationen',
+        positionen: [
+          { id: 'wohnungsstation_modul', text: 'Wohnungsstationen dezentral (WW-Übergabe pro WE)',
+            menge: 1, einheit: 'pausch.',
+            kosten: { typ: 'artikel', artikel: 'WT-WST-40' }, foerder: 'f_speicher', tag: 'capex',
+            begruendung: 'Dezentrale WW-Übergabe pro Wohneinheit; eliminiert Zirkulationsverluste im Steigleitungsnetz. Prüfpflichtig bzgl. Installationsaufwand je WE-Anzahl.',
+            pruefpflichtig: true,
+            kunde: {
+              titel: 'Wohnungsstationen (dezentral)',
+              hersteller: 'herstellerneutral',
+              produkt: 'Dezentrale WW-Übergabestationen pro Wohneinheit',
+              leistungsumfang: 'Dezentrale Warmwasser-Übergabe direkt in der Wohnung; eliminiert Zirkulationsverluste im Steigleitungsnetz. Scope und Aufwand je Objekt zu prüfen.',
+            } },
+        ]},
     ],
   },
   {

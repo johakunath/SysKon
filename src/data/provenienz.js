@@ -170,6 +170,15 @@ export const FELD_PROVENIENZ = {
     kundenAnnahme: 'WW-Modulvariante nach Gesprächsstand',
     followUp: 'Im weiteren Prozess konkretisieren',
   },
+  ww_zirkulation: {
+    quelle: ['sales_manuell', 'kunde_manuell'],
+    erfassungsweg: 'Im Gespräch erfasst oder Leitungspläne',
+    aktualitaet: 'einmalig',
+    vertrauen: 'niedrig',
+    skalierbar: false,
+    kundenAnnahme: 'Zirkulationsverluste nach Gesprächsstand',
+    followUp: 'Zirkulationskonzept und Leitungslängen konkretisieren',
+  },
   heizlast_bekannt: {
     quelle: ['sales_manuell'],
     erfassungsweg: 'Im Gespräch erfasst',
@@ -263,6 +272,15 @@ export const FELD_PROVENIENZ = {
     skalierbar: true,
     kundenAnnahme: 'Vorlauftemperaturniveau nach Betriebsdaten oder Angabe',
     followUp: 'Bei unbekannt: Vorlauftemperatur vor Empfehlung erfassen',
+  },
+  heizkurve_geprueft: {
+    quelle: ['kunde_manuell', 'sales_manuell'],
+    erfassungsweg: 'Kundenangabe oder Vor-Ort-Einschätzung',
+    aktualitaet: 'einmalig',
+    vertrauen: 'niedrig',
+    skalierbar: false,
+    kundenAnnahme: 'Heizkurven-Optimierungsstatus nach Gesprächsstand',
+    followUp: 'Heizkurve vor Heizkörpertausch messen und optimieren',
   },
   heizkoerper_ausreichend: {
     quelle: ['sales_manuell', 'kunde_manuell'],

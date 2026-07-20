@@ -53,6 +53,7 @@ Reihenfolge nach Demo-Vision Jun 2026. Details und Einwände der Ingenieure: `do
 | 7 | SK-107 Engine-Entkopplung + Regelversion | Drei Hard-Codings aus `engine.js` lösen (R11-Lookup, SYS-Sonderfall, Hybrid-Texte in `kundenScopeBauen`) + `REGELSATZ_VERSION` stempeln | – | P2 | S | Todo |
 | 8 | SK-108 Kaufmännische Excel-Logik übernehmen | Bestehende kaufmännische Excel-Kalkulationslogik nach SysKon überführen (PO-Wunsch). **Erst nach ausdrücklicher Freigabe starten**; Umfang und Quelle vorher klären | SK-107 | P1 | L | Blocked |
 | 9 | SK-72 Bestehende Tools & Learnings | Discovery: bestehende Contractor-Tools auswerten (erfordert Input vom PO) | – | P1 | M | Blocked |
+| – | WP17 Seminar-Learnings WP | SK-109..112 umgesetzt (WW-Konzept, VL-Potenzial, Monitoring-Framing, Netzanschluss); SK-113..115 deferred. Details: `docs/BACKLOG_WORK_PACKAGES.md`, Abgleich: `docs/SEMINAR_ABGLEICH_WP.md` | – | P2 | S | Done |
 
 ## Aktueller Fokus
 

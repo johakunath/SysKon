@@ -55,6 +55,23 @@ Status: **Blocked** – erfordert Zugang zu bestehenden Contractor-Tools durch d
 
 ---
 
+## WP17 – Seminar-Learnings Wärmepumpe (SK-109 … SK-115)
+
+Basis: Top-10-Erkenntnisse aus WP-Seminar. Abgleich: `docs/SEMINAR_ABGLEICH_WP.md`.
+SK-109..112 in diesem PR umgesetzt. SK-113..115 bewusst deferred (Scope-Entscheidung PO).
+
+| ID | Type | Area | Title | Description | Priority | Effort | Status |
+|---|---|---|---|---|---|---|---|
+| SK-109 | Story | WW-Konzept | Wohnungsstation + Zirkulation | Neue Option `wohnungsstation` in `ww_speicher_typ`; neue Frage `ww_zirkulation` (hoch/normal/unbekannt); Hinweis-Regel R24 bei hoher/unbekannter Zirkulation; Katalog-Variante + Artikel WT-WST-40. | P2 | S | Done |
+| SK-110 | Story | Vorlauftemperatur | VL-Potenzial-KPI + Heizkurven-Hinweis | `vorlauftemp_potenzial` in `calc.js` (JAZ-Delta zur nächst niedrigeren VL-Stufe); Frage `heizkurve_geprueft`; Hinweis-Regel R25; KPI-Zeile in Ergebnis-Screen. | P2 | S | Done |
+| SK-111 | Story | Monitoring | Monitoring als Standard-Baustein framen | Monitoring in Ergebnis als empfohlenen Standard kennzeichnen (Framing-Text „energieoptimiertes Wärmesystem"). Keine neue Rechenlogik. | P3 | XS | Done |
+| SK-112 | Story | Netzanschluss | Anschlussleistung + Electrical-Check-Hinweis | Feld `anschlussleistung_kva` (optional, kVA) in Sektion H; Hinweis-Regel R26 (Electrical Check in Leadphase: Netzbetreiber, SMGW). | P2 | XS | Done |
+| SK-113 | Epic | PV/Mieterstrom | PV+WP als Lead-Qualifier | Vollständiges PV-Rechenmodul (Ertrag, Eigennutzung, Direktvermarktung). Scope-Entscheidung PO nötig. | P2 | XL | Deferred |
+| SK-114 | Epic | Portfolio | Portfolio-/Quartiers-Navigator | Multi-Gebäude-Variantenvergleich. Eigenes Produkt, nicht der Einzelobjekt-CPQ. | P2 | XL | Deferred |
+| SK-115 | Story | Lastmanagement | §14a-Lastmanagement + Betriebs-Alerts | Dynamisches Lastmanagement, Heizstab-/COP-Alerts. Betriebsebene, nicht Konfigurations-Scope. | P3 | L | Deferred |
+
+---
+
 ## Roadmap-Epics (deferred / future)
 
 | ID | Type | Area | Title | Outcome | Priority | Effort | Status |

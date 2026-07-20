@@ -253,4 +253,30 @@ export const REGELN = [
     routingGrund: 'kaufmaennisch',
     begruendung: 'AVB-Fernwärme begrenzt Standardverträge auf 10 Jahre; 15/20 Jahre sind nur im Individualvertrag möglich – das Angebot zeigt daher beide Varianten.',
   },
+  // --- WP17: Seminar-Learnings ---
+  {
+    id: 'R24',
+    wenn: { und: [
+      { feld: 'ww_bereitung', op: '=', wert: 'zentral' },
+      { feld: 'ww_zirkulation', op: 'in', wert: ['hoch', 'unbekannt'] },
+      { feld: 'ww_speicher_typ', op: 'nicht_in', wert: ['wohnungsstation'] },
+    ]},
+    dann: { typ: 'warn', kategorie: 'hinweis', text: 'Hohe oder unbekannte Zirkulationsverluste: WW-Business-Case prüfen. Zirkulationsverluste können 30–50 % des WW-Bedarfs ausmachen – dezentrale Lösung (Wohnungsstation, Frischwasserstation) oder Zirkulationsoptimierung in Betracht ziehen.' },
+    begruendung: 'Seminar-Learning 3: Viele Business-Cases werden über Warmwasser gewonnen oder verloren. Zirkulation ist ein häufig unterschätzter Verlustposten.',
+  },
+  {
+    id: 'R25',
+    wenn: { und: [
+      { feld: 'vorlauftemp_klasse', op: 'in', wert: ['56-60', '61-65', '66-70', '>70'] },
+      { feld: 'heizkurve_geprueft', op: '!=', wert: 'ja' },
+    ]},
+    dann: { typ: 'warn', kategorie: 'hinweis', text: 'Heizkurve noch nicht geprüft: Zuerst Heizkurve messen und optimieren – das senkt die Vorlauftemperatur oft deutlich, ohne Heizkörper zu tauschen. Heizlastanalyse und Heizkurvenoptimierung als Standardprozess empfohlen.' },
+    begruendung: 'Seminar-Learning 1: Vorlauftemperatur ist der größte Wirtschaftlichkeitshebel. Heizkurven sind oft unnötig hoch eingestellt.',
+  },
+  {
+    id: 'R26',
+    wenn: { feld: 'netzanschluss_bekannt', op: '=', wert: 'ja' },
+    dann: { typ: 'warn', kategorie: 'hinweis', text: 'Electrical Check in der Leadphase: Netzbetreiber frühzeitig einbinden, Anschlussleistung für WP-Kaskade sichern, Smart-Meter-Gateway und zusätzliche Zähler einplanen – nicht erst im Engineering klären.' },
+    begruendung: 'Seminar-Learning 6: Hausanschluss und Netzanschluss früh prüfen; SMGW und Messkonzept sichern.',
+  },
 ]
