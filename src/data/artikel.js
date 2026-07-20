@@ -94,6 +94,16 @@ export const ARTIKEL = [
     preisstand: '2026-01-15',
   },
   {
+    artikelnummer: 'WT-WST-40',
+    lieferant: 'wt_nord',
+    rabattgruppe: 'SPEICHER',
+    kurztext: 'Wohnungsstation-Paket dezentral (Richtpreis, Demo)',
+    langtext: 'Dezentrale WW-Übergabestation pro Wohneinheit inkl. Übergabe-Wärmetauscher, Regelung und Anschlussset. Eliminiert Zirkulationsverluste im Steigleitungsnetz. Richtpreis-Demo; Aufwand je Objekt (WE-Anzahl, Leitungslängen) zu prüfen.',
+    listenpreis: 42000,
+    einheit: 'pausch.',
+    preisstand: '2026-07-01',
+  },
+  {
     artikelnummer: 'WT-SV-BASIS',
     lieferant: 'wt_nord',
     rabattgruppe: 'SERVICE',
